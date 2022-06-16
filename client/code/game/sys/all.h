@@ -1,0 +1,18 @@
+#pragma once
+
+#include "ai_core.h"
+#include "ammo_manager.h"
+#include "camera_manager.h"
+#include "day_cycle.h"
+#include "particle_system.h"
+#include "physics.h"
+#include "renderer.h"
+#include "sound_system.h"
+#include "time_system.h"
+#include "vehicle_manager.h"
+#include "explosion_manager.h"
+#include "game_control.h"
+#include "game_status.h"
+#include "spawn_system.h"
+#include "weapon_system.h"
+#include "world.h"

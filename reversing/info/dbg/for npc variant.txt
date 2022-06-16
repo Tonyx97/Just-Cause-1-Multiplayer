@@ -1,0 +1,22 @@
+// fn to hook = 0x8ADE60
+
+char npc_variant[0x554] = { 0 };
+
+int __fastcall hk_test(int a1, void*, int a2, Transform* a3, int a4, std::string* a5, int a6, int a7)
+{
+	// for npc variant
+
+	/*if (a6)
+	{
+		//log(GREEN, "data copied {:x} ({})", a6, *a5);
+
+		memcpy(npc_variant, (void*)a6, sizeof(npc_variant));
+
+		while (!GetAsyncKeyState(VK_F3))
+			Sleep(100);
+	}
+
+	//log(RED, "{:x} {:x} {} {} {} {:x} {:x}", a1, a2, (void*)a3, a4, *a5, a6, a7);
+
+	return jc::hooks::call<jc::proto::dbg::test>(a1, a2, a3, a4, a5, a6, a7);*/
+}

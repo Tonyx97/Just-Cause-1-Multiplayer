@@ -1,0 +1,17 @@
+/* // code to debug bone ids
+for (auto i = 0; i < 0x100; i++)
+{
+	const auto bone_absolute_location = pawn->get_bone_position(i);
+	if (bone_absolute_location.x == 0.0f) continue;
+
+	vec2 sp_bone;
+	camera->w2s(bone_absolute_location, sp_bone);
+
+	const auto screen_position = ImVec2(sp_bone.x, sp_bone.y);
+
+	char bone_string[30] = { 0 };
+	snprintf(bone_string, 30, "%d", i);
+
+	vList->AddText(screen_position, red_color, bone_string);
+}*/
+

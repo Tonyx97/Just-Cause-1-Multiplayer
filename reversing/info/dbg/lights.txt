@@ -1,0 +1,28 @@
+
+		/*auto ll = (*(void*(__thiscall**)(void*))((*(uint32_t *)jc::read<void *>(0xAF2458)) + 0x10))(jc::read<void *>(0xAF2458));
+
+		char data1[0x2C] = { 0 };
+		char data2[0x2C] = { 0 };
+		char data3[0x2C] = { 0 };
+
+		*(vec3*)data1 = p;
+		*(vec3*)data2 = p;
+		*(vec3*)data3 = p + vec3(0.f, 30.f, 0.f);
+
+		*(float*)(data1 + 0x20) = 1.f;
+		*(float*)(data1 + 0x24) = 1.51f;
+
+		*(float*)(data2 + 0xC) = float(rand() % 1000) / 1000.f;
+		*(float*)(data2 + 0x10) = float(rand() % 1000) / 1000.f;
+		*(float*)(data2 + 0x14) = float(rand() % 1000) / 1000.f;
+		*(float*)(data2 + 0x20) = 0.1f;
+		*(float*)(data2 + 0x24) = 0.7f;
+		*(float*)(data2 + 0x28) = 0.1f;
+
+		*(float*)(data3 + 0x20) = 5.f;
+		*(float*)(data3 + 0x24) = 0.1f;
+		*(float*)(data3 + 0x28) = 0.6f;
+
+		(*(void(__thiscall**)(void*, char*))(*(uint32_t*)ll + 4))(ll, data1);
+		(*(void(__thiscall**)(void*, char*))(*(uint32_t*)ll + 4))(ll, data2);
+		(*(void(__thiscall**)(void*, char*))(*(uint32_t*)ll + 4))(ll, data3);*/

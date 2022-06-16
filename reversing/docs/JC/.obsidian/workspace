@@ -1,0 +1,103 @@
+{
+  "main": {
+    "id": "1708d965e2859303",
+    "type": "split",
+    "children": [
+      {
+        "id": "b4a0aa1ca47b9ceb",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "tony_daily/16-06-2022.md",
+            "mode": "source",
+            "source": false
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "0bf26b4aa86762c1",
+    "type": "split",
+    "children": [
+      {
+        "id": "59078d848d674df9",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3b73bd8a29319710",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "89ddef219b9917c5",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 221
+  },
+  "right": {
+    "id": "6da004efe3ccc1b6",
+    "type": "split",
+    "children": [
+      {
+        "id": "0d4f9f84ac8aa470",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "38d34ca19226e514",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "tony_daily/16-06-2022.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "b4a0aa1ca47b9ceb",
+  "lastOpenFiles": [
+    "tony_daily/16-06-2022.md",
+    "tony_daily/13-06-2022.md",
+    "tony_daily/09-06-2022.md",
+    "tony_daily/14-06-2022.md",
+    "tony_daily/15-06-2022.md",
+    "tony_daily/22-05-2022 (merged).md",
+    "tony_daily/23-05-2022 (merged).md",
+    "tony_daily/25-05-2022 (merged).md",
+    "tony_daily/26-05-2022 (merged).md",
+    "tony_daily/27-05-2022 (merged).md"
+  ]
+}

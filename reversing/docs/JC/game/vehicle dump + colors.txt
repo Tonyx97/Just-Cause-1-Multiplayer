@@ -1,0 +1,123 @@
+Paintjobs:
+0 - no faction paint
+2 - agency
+3 - military
+4 - police
+5 - guerillas
+6 - black hand
+7 - montano purple
+8 - rioja yellow
+
+Vehicle List:
+Exported\Vehicles\Land_Vehicles\LAVE_001_Compact_Car_1.ee  					Baxter Petit
+Exported\Vehicles\Land_Vehicles\LAVE_002_normal_car_1.ee  					Chevalier Streetbird de luxe
+Exported\Vehicles\Land_Vehicles\LAVE_003_Normal_Car_2.ee  					Scando 700 Sedan
+Exported\Vehicles\Land_Vehicles\LAVE_004_Van.ee  							Cutler Bullhorn 
+Exported\Vehicles\Land_Vehicles\lave_004_van_black.ee  						Cutler Bullhorn
+Exported\Vehicles\Land_Vehicles\LAVE_005_Luxuary_Car_1.ee  					Rossi 866 Corral 		
+Exported\Vehicles\Land_Vehicles\LAVE_006_BigJeep.ee  						Emvee Armadillo
+Exported\Vehicles\Land_Vehicles\A1M1\Sheldons_Jeep.ee  						Emvee Armadillo
+Exported\Vehicles\Land_Vehicles\LAVE_006_BigJeep_1_MG_front.ee  			Emvee Armadillo
+Exported\Vehicles\Land_Vehicles\LAVE_006_BigJeep_1_MG_back.ee  				Emvee Armadillo
+Exported\Vehicles\Land_Vehicles\LAVE_007_Jeep2.ee  							Huerta Mesa
+Exported\Vehicles\Land_Vehicles\LAVE_008_Pickup.ee  						Shimizu Tumbleweed
+Exported\Vehicles\Land_Vehicles\LAVE_008_Pickup_FMG_G.ee  					Shimizu Tumbleweed
+Exported\Vehicles\Land_Vehicles\LAVE_008_Pickup_BMG_G.ee  					Shimizu Tumbleweed
+Exported\Vehicles\Land_Vehicles\LAVE_009_truck_medium_1.ee  				Vanderbildt Route 66
+Exported\Vehicles\Land_Vehicles\LAVE_010_ATV.ee  							Fukuda Buckskin Trapper
+Exported\Vehicles\Land_Vehicles\LAVE_011_Motorbike.ee						Yamada 37 14 Vaquero
+Exported\Vehicles\Land_Vehicles\lave_011_motorbikecivil.ee  				Yamada 37 14 Vaquero
+Exported\Vehicles\Land_Vehicles\LAVE_012_Motorcycle_2.ee  					Victory Bellevue
+Exported\Vehicles\Land_Vehicles\LAVE_013_Armored_transport.ee				Meister ATV 4
+Exported\Vehicles\Land_Vehicles\lave_013_sidem_transport.ee  				Meister ATV 4
+Exported\Vehicles\Land_Vehicles\LAVE_014_tank.ee  							Ballard M5B1 Scout
+Exported\Vehicles\Land_Vehicles\LAVE_014_tank_AA.ee  						Ballard Centronel AAWV-21 
+Exported\Vehicles\Land_Vehicles\LAVE_014_tank_Rocket.ee  					Ballard Sentry STRL-14 
+Exported\Vehicles\Land_Vehicles\LAVE_017_normal_car_4.ee  					Potomac Silverbullet
+Exported\Vehicles\Land_Vehicles\LAVE_018_normal_car_5.ee  					Cutler Randall Arrowhead
+Exported\Vehicles\Land_Vehicles\LAVE_019_limosine.ee  						Fusilier Commander
+Exported\Vehicles\Land_Vehicles\LAVE_020_pickup_2.ee  						Europ
+Exported\Vehicles\Land_Vehicles\LAVE_021_Truck_medium_2.ee  				Battaille GPT 6
+Exported\Vehicles\Land_Vehicles\LAVE_022_Bulldozer.ee  						Scando Track Loader Extreme
+Exported\Vehicles\Land_Vehicles\LAVE_024_compactcar_2.ee  					Reichsmobil Compact Mark II
+Exported\Vehicles\Land_Vehicles\lave_025_normalcar_6.ee  					Yamada Redwood SUV
+Exported\Vehicles\Land_Vehicles\LAVE_026_Normal_Car_7.ee  					Hurst Dagger
+Exported\Vehicles\Land_Vehicles\LAVE_027_luxuary_car_2.ee  					Chevalier Supernova
+Exported\Vehicles\Land_Vehicles\LAVE_028_Jeep_3.ee  						Wallys GP
+Exported\Vehicles\Land_Vehicles\LAVE_028_Jeep_3MGF.ee						Wallys GP
+Exported\Vehicles\Land_Vehicles\LAVE_028_Jeep_3_MGB.ee						Wallys GP
+Exported\Vehicles\Land_Vehicles\LAVE_029_Compact_Car_3.ee  					Squire Synco
+Exported\Vehicles\Land_Vehicles\LAVE_030_Pickup_3.ee  						Reichsmobil Transport
+Exported\Vehicles\Land_Vehicles\LAVE_031_Pickup_4.ee  						Hurst Buckaroo
+Exported\Vehicles\Land_Vehicles\LAVE_031_Pickup_4_FMG.ee  					Hurst Buckaroo
+Exported\Vehicles\Land_Vehicles\LAVE_031_Pickup_4_BMG.ee  					Hurst Buckaroo
+Exported\Vehicles\Land_Vehicles\LAVE_032_Truck_medium_3.ee  				Meyer Compact T
+Exported\Vehicles\Land_Vehicles\LAVE_032_Truck_medium_3_MG.ee  				Meyer Compact T
+Exported\Vehicles\Land_Vehicles\LAVE_033_Motorcycle_3.ee  					Schulz Las Vegas
+Exported\Vehicles\Land_Vehicles\LAVE_034_motorcycle_4.ee  					Mosca 125 Rallye
+Exported\Vehicles\Land_Vehicles\LAVE_035_Normal_car_8.ee  					Cutler Randall Conquistador
+Exported\Vehicles\Land_Vehicles\LAVE_037_Military_truck.ee  				Meister LAV 4
+Exported\Vehicles\Land_Vehicles\LAVE_039_Police_car.ee  					Vaultier Sedan Patrol Compact
+Exported\Vehicles\Land_Vehicles\LAVE_040_police_van.ee  					Vaultier ALEV Patrol Special
+Exported\Vehicles\Land_Vehicles\LAVE_041_ambulance.ee  						MacNamara Emergency III
+Exported\Vehicles\Land_Vehicles\LAVE_042_Bus.ee  							Pankhurst Bus Tap Tap
+Exported\Vehicles\Land_Vehicles\LAVE_043_Rally_Car.ee  						Fukuda Tournament
+Exported\Vehicles\Land_Vehicles\LAVE_044_Monster_Truck.ee  					The Vampire
+Exported\Vehicles\Land_Vehicles\LAVE_044_Monster_Truck_MG.ee				The Vampire
+Exported\Vehicles\Land_Vehicles\LAVE_045_James_Bond_Car.ee 					no name? will it even spawn? 
+Exported\Vehicles\Land_Vehicles\LAVE_046_Military_buggy.ee  				Stinger Buggy
+Exported\Vehicles\Land_Vehicles\LAVE_046_Civilian_buggy.ee  				Stinger Buggy
+Exported\Vehicles\Land_Vehicles\LAVE_048_Taxi.ee  							Taxi
+Exported\Vehicles\Land_Vehicles\LAVE_050_service_vehicle.ee  				AVIA Airport service vehicle
+Exported\Vehicles\Land_Vehicles\LAVE 051 LAVE_051_Military_offroad_bike.ee  Apache Army Model 842 
+Exported\Vehicles\Land_Vehicles\LAVE_052_military_6_wheel_ATV.ee  			Rotor industries ATRV
+Exported\Vehicles\Land_Vehicles\LAVE_053_Racingbike.ee  					Fukuda Bluebolt
+Exported\Vehicles\Land_Vehicles\LAVE_054_Agency_Jeep.ee  					GP Thunder Extreme Prototype
+Exported\Vehicles\Land_Vehicles\LAVE_055_Tank_3_Rocket.ee  					Harlan OTWV 2 TOW
+Exported\Vehicles\Land_Vehicles\LAVE_055_tank_AA.ee  						Harlan OTWV 2 AAA
+Exported\Vehicles\Land_Vehicles\LAVE_055_Tank_3.ee  						Harlan OTWV 2 CAN
+Exported\Vehicles\Land_Vehicles\LAVE_056_Bus_2.ee							Vanderbildt Streamliner
+exported\vehicles\air_vehicles\arve_001_civilchopper				Mullen H45 Dragonfly
+exported\vehicles\air_vehicles\arve_002_attack_helicopter.ee		Jackson Z-19 Skreemer
+exported\vehicles\air_vehicles\arve_003_transport_helicopter.ee		HH 22 Savior
+exported\vehicles\air_vehicles\arve_003_rocket_helicopter.ee		HH 22 Savior
+exported\vehicles\air_vehicles\arve_005_fighter_jet.ee				Rage Johnston F6 Comet
+exported\vehicles\air_vehicles\arve_006_propeller_plane.ee			Huerta SPA Ocelot
+exported\vehicles\air_vehicles\ARVE_006_CropDuster.ee				Huerta SPA Ocelot
+exported\vehicles\air_vehicles\arve_007_military_helicopter.ee		Delta 5H4 Boxhead
+exported\vehicles\air_vehicles\arve_008_cargo_plane.ee				Alexander AX 14
+exported\vehicles\air_vehicles\arve_009_millitary_heli_3.ee			Jackson JC 2 Alamo
+exported\vehicles\air_vehicles\arve_010_learjet.ee					Stirling Jet Executive
+exported\vehicles\air_vehicles\ARVE_012_police_helicopter.ee		Huertaz PAS1 Aztek
+exported\vehicles\air_vehicles\arve_013_fighter_jet_2.ee			Rage Johnston F10 Wraith
+exported\vehicles\air_vehicles\ARVE_014_Civilian_Plane.ee			Stirling STL 3 Octavio
+exported\vehicles\air_vehicles\ARVE_015_Military_Heli_2.ee			Fukuda MH Ronin
+exported\vehicles\air_vehicles\arve_016_large_attack_helikopter.ee	Novak Walker AH 16 Hammerbolt
+exported\vehicles\air_vehicles\ARVE_017_presidential_plane.ee		The Excelsior, El Grande
+exported\vehicles\air_vehicles\arve_018_propellerplane.ee			Walker PA Twin Fin
+exported\vehicles\air_vehicles\arve_020_special_attack_heli.ee		Delta MAH 15 Chimaera
+exported\vehicles\air_vehicles\arve_022_old_school_fighter.ee		McKenzie Fergusson F2 Victor
+Exported\Vehicles\Air_Vehicles\ARVE_023_Gyrocopter.ee				Whiptail Gyrocopter
+exported\vehicles\air_vehicles\arve_025_fighter_jet_3.ee			Ulysses-McCoy Redcloud
+exported\vehicles\sea_vehicles\SEVE_001_Water_Scooter.ee			Shimizu Mach 2
+exported\vehicles\sea_vehicles\seve_002_patrolboat_medium.ee		Triton Patroller
+exported\vehicles\sea_vehicles\seve_004_kittyhawk.ee				Triton Hornet
+exported\vehicles\sea_vehicles\seve_005_speedboat.ee				Triton - G3 Taiphoon
+exported\vehicles\sea_vehicles\SEVE_006_Yacht.ee					Miami Sport Wave +
+exported\vehicles\sea_vehicles\SEVE_007_underwater_scooter.ee		Shimizu Scuba boy
+exported\vehicles\sea_vehicles\SEVE_008_patrol_boat_large.ee		Triton Broadsider
+exported\vehicles\sea_vehicles\SEVE_008_patrol_boat_largeFGL.ee		Triton Broadsider
+exported\vehicles\sea_vehicles\SEVE_008_patrol_boatlargeBMG.ee		Triton Broadsider
+exported\vehicles\sea_vehicles\SEVE_010_water_scooter.ee			Shimizu Nayad 700			
+exported\vehicles\sea_vehicles\seve_011_patrolboat_medbmg_2.ee		Pequod Harpoon PC 350
+exported\vehicles\sea_vehicles\seve_011_patrolboat_mediumBI_2.ee	Pequod Harpoon PC 350
+exported\vehicles\sea_vehicles\SEVE_011_patrolboat_medium_2.ee		Pequod Harpoon PC 350
+exported\vehicles\sea_vehicles\seve_013_speedboat1.ee				Viper boatworks Seaserpent III +
+exported\vehicles\sea_vehicles\seve_014_speedboat_2.ee				Triereme - RC Athena +
+exported\vehicles\sea_vehicles\SEVE_014_speedboat_2MG.ee			Triereme - RC Athena
+exported\vehicles\sea_vehicles\seve_015_yacht2.ee					Royal 500 - great white +
+exported\vehicles\sea_vehicles\seve_018_sailing_boat_2.ee			Bosphorus boatworks - Patna exclusive +
+exported\vehicles\sea_vehicles\seve_020_zodiac.ee					Jaeger 5FJ 7
+exported\vehicles\sea_vehicles\seve_021_fishingboat_special.ee		Fishing boat
+exported\vehicles\sea_vehicles\seve_022_fishing_boat.ee				Fishing boat
+Exported\Vehicles\Sea_Vehicles\SEVE_023_speedboat_special.ee		Bald Eagle Persuader agency boat at Agency 2 safehouse

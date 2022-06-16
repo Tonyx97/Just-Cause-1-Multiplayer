@@ -1,0 +1,36 @@
+		/*log(WHITE, "--------------------------");
+		log(GREEN, "a1 {:x}", ptr(a1));
+
+		struct Node
+		{
+			Node *left,
+				*parent,
+				*right;
+			ptr	  hash;
+			int	  type;
+			void* data;
+			bool  unk2;
+			bool  is_leaf;
+		};
+
+		Node* first = jc::read<Node*>(a1, 0x4);
+		Node* root	= jc::read<Node*>(first, 0x4);
+
+		std::function<void(Node*)> walk_tree = [&](Node* n)
+		{
+			if (n->hash != first->hash)
+			{
+				log(GREEN, "[{}] {:x} {} {} -> data {:x}", n->is_leaf, n->hash, n->type, n->unk2, ptr(n->data));
+			}
+
+			if (!n->is_leaf)
+			{
+				walk_tree(n->left);
+				walk_tree(n->right);
+			}
+		};
+
+		walk_tree(root);
+
+		while (!GetAsyncKeyState(VK_F3))
+			Sleep(100);*/

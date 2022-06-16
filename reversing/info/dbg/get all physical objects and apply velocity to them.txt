@@ -1,0 +1,74 @@
+ptr container[5] = { 0 };
+
+		vec3 min = local_pos - vec3(20.f);
+		vec3 max = local_pos + vec3(20.f);
+
+		// creation
+
+		jc::this_call<int>(0x84C710, container, &min, &max);
+		jc::this_call<int>(0x84C630, container);
+
+		// do stuff with it
+
+		log(RED, "result = {}", (void*)container);
+
+		auto data	   = jc::read<ptr>(container, 0x10);
+		auto list	   = jc::read<ptr>(data, 0x80);
+		auto list_size = jc::read<int>(data, 0x84);
+
+		bool done = false;
+
+		for (int i = 0; i < list_size; ++i)
+		{
+			if (auto entry = jc::read<ptr>(list + (i * 0x4)))
+				if (auto entry2 = jc::read<ptr>(entry, 0x20))
+					if (auto entry3 = jc::read<ptr>(entry2, 0x30))
+						if (auto entry4 = jc::read<ptr>(entry3, 0x4))
+							if (auto character = jc::read<Character*>(entry4, 0xC))
+							{
+								const char* p = nullptr;
+
+								jc::std_call<const char*>(*(ptr*)(*(ptr*)character + 0x78), &p);
+
+								if (strstr(p, "CChar"))
+								{
+									ptr out[6] = { 0 };
+									
+									//(*(int(__thiscall**)(Character*, ptr*))(*(ptr*)character + 0xC))(character, out);
+
+									log(RED, "[{}] {} {} {:x}", jc::read<int>(entry3), p, (void*)character, out[1]);
+
+									struct vel_test
+									{
+										vec3  dir;
+										vec3  pos;
+										float vel;
+										float damage;
+										float unk1, unk2;
+										float min_vel;
+									} ay;
+
+									ay.dir	   = { 0.f, 10.f, 0.f };
+									ay.pos	   = local_pos;
+									ay.vel	   = 0.f;
+									ay.damage  = 0.f;
+									ay.unk1	   = 1.f;
+									ay.unk2	   = 1.f;
+									ay.min_vel = 100.f;
+
+									vec3 test = vec3(0.f, 10.f, 0.f);
+
+									//(*(int(__thiscall**)(ptr, vec3*))(*(ptr*)out[1] + 0x10))(out[1], &test);
+
+									(*(void(__thiscall**)(Character*, vel_test*))(*(ptr*)character + 0x7C))(character, &ay);
+								}
+							}
+		}
+
+		/*while (!GetAsyncKeyState(VK_F3))
+			Sleep(100);*/
+
+		// destruction
+
+		jc::this_call<int>(0x84C650, container);
+		jc::this_call<int>(0x84C5C0, container);
