@@ -191,7 +191,7 @@ VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
 		// map.insert<ValueType_Mat4>(0xacaefb1, {}); // put your matrix here
 		map.insert<ValueType_String>(0xb8fbd88e, R"(rm_11_vehicle)");
 		map.insert<ValueType_Bool>(0x31386da9, false);
-		map.insert<ValueType_String>(0x8eb5aff2, R"(Exported\Vehicles\Land_Vehicles\LAVE_045_James_Bond_Car.ee)");
+		map.insert<ValueType_String>(0x8eb5aff2, R"(Exported\Vehicles\Land_Vehicles\LAVE_055_Tank_3.ee)");
 		map.insert<ValueType_Int>(0x69a3a614, 1);
 		map.insert<ValueType_Int>(0xc66ca195, 0);
 		map.insert<ValueType_Float>(0xd2f9579a, 150.00f);
