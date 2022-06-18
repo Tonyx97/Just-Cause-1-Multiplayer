@@ -179,9 +179,7 @@ VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
 		map.insert<ValueType_Int>(0x26fd83ce, 1);
 		map.insert<ValueType_Int>(0xf2bf8625, 30);
 		map.insert<ValueType_String>(0x7c87224d, R"(rm_respawn rm_11_release)");
-		// map.insert<ValueType_String>(0x7c87224d, R"()"); // weird string 3
 		map.insert<ValueType_String>(0x6ea4cb25, R"(rm_11_release)");
-		// map.insert<ValueType_String>(0x6ea4cb25, R"()"); // weird string 3
 		map.insert<ValueType_Int>(0x604e298b, 0);
 		map.insert<ValueType_Int>(0x5f2bb3f6, 0);
 		map.insert<ValueType_Int>(0x35432b1a, 0);
@@ -191,11 +189,16 @@ VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
 		// map.insert<ValueType_Mat4>(0xacaefb1, {}); // put your matrix here
 		map.insert<ValueType_String>(0xb8fbd88e, R"(rm_11_vehicle)");
 		map.insert<ValueType_Bool>(0x31386da9, false);
-		map.insert<ValueType_String>(0x8eb5aff2, R"(Exported\Vehicles\Land_Vehicles\LAVE_055_Tank_3.ee)");
+		map.insert<ValueType_String>(0x8eb5aff2, R"(Exported\Vehicles\Land_Vehicles\LAVE_031_Pickup_4_BMG.ee)");
 		map.insert<ValueType_Int>(0x69a3a614, 1);
 		map.insert<ValueType_Int>(0xc66ca195, 0);
 		map.insert<ValueType_Float>(0xd2f9579a, 150.00f);
 		map.insert<ValueType_Int>(0x31386da9, 0);
+
+		log(RED, "VehicleSpawnPoint: {:x}", ptr(spawn_point));
+
+		while (!GetAsyncKeyState(VK_F3))
+			Sleep(100);
 
 		spawn_point->init_from_map(&map);
 		spawn_point->set_position(position);

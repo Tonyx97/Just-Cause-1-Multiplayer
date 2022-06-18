@@ -173,7 +173,9 @@ int __fastcall hk_create_std_string(std::string* _this, void*, const char* str, 
 		}
 	}
 
-	return jc::hooks::call<jc::proto::dbg::init_std_string>(_this, str, size);
+	auto res = jc::hooks::call<jc::proto::dbg::init_std_string>(_this, str, size);
+
+	return res;
 }
 
 void* __fastcall hk_raycast(uintptr_t _this, void*, ray* r, int a1, float distance, ray_hit_info* hit_info, void* a3, bool a4, bool a5)
@@ -238,6 +240,16 @@ bool __fastcall hk_map_find_float(ptr map, void*, uint32_t* hash, float* out)
 
 	if (res && g_rec_map)
 		log(GREEN, "map.insert<ValueType_Float>(0x{:x}, {:.2f}f);", *hash, *out);
+
+	return res;
+}
+
+bool __fastcall hk_map_find_vec3(ptr map, void*, uint32_t* hash, vec3* out)
+{
+	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_vec3>(map, hash, out);
+
+	if (res && g_rec_map)
+		log(GREEN, "map.insert<ValueType_Vec3>(0x{:x}, .); // {{ {}, {}, {} }}", *hash, out->x, out->y, out->z);
 
 	return res;
 }
@@ -335,6 +347,7 @@ void jc::clean_dbg::init()
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_int16>(&hk_map_find_int16);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_int>(&hk_map_find_int);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_float>(&hk_map_find_float);
+	jc::hooks::hook<jc::proto::dbg::map_dumper::find_vec3>(&hk_map_find_vec3);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_mat4>(&hk_map_find_mat4);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_string>(&hk_map_find_str1);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_string2>(&hk_map_find_str2);
@@ -438,6 +451,7 @@ void jc::clean_dbg::destroy()
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_int16>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_int>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_float>();
+	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_vec3>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_string>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_string2>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_string3>();

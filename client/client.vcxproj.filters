@@ -258,6 +258,9 @@
     <ClCompile Include="code\mp\net_handlers\day_cycle\nh_day_cycle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\game\object\mounted_gun\mounted_gun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\prof\prof.h">
@@ -531,6 +534,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\mp\net_handlers\day_cycle\nh_day_cycle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\mounted_gun\mounted_gun.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

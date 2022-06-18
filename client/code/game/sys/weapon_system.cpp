@@ -46,7 +46,7 @@ void WeaponSystem::dump()
 		std::erase(name, '(');
 		std::erase(name, ')');
 
-		log(GREEN, "Weapon_{} = {},", name, id); });
+		log(GREEN, "Weapon_{} = {}, // {}", name, id, t->get_name()); });
 
 	log(RED, "}};");
 }

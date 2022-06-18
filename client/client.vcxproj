@@ -113,6 +113,7 @@
     <ClCompile Include="code\core\test_units.cpp" />
     <ClCompile Include="code\game\object\action_point_owner\action_point_owner.cpp" />
     <ClCompile Include="code\game\object\alive_object\alive_object.cpp" />
+    <ClCompile Include="code\game\object\mounted_gun\mounted_gun.cpp" />
     <ClCompile Include="code\game\object\spawn_point\agent_spawn_point.cpp" />
     <ClCompile Include="code\game\object\area_damage\area_damage.cpp" />
     <ClCompile Include="code\game\object\character_handle\character_handle.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="code\defs\global_types.h" />
     <ClInclude Include="code\game\object\action_point_owner\action_point_owner.h" />
     <ClInclude Include="code\game\object\alive_object\alive_object.h" />
+    <ClInclude Include="code\game\object\mounted_gun\mounted_gun.h" />
     <ClInclude Include="code\game\object\spawn_point\agent_spawn_point.h" />
     <ClInclude Include="code\game\object\area_damage\area_damage.h" />
     <ClInclude Include="code\game\object\character_handle\character_handle.h" />

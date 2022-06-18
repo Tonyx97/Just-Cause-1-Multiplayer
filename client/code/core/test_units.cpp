@@ -8,6 +8,7 @@
 #include <game/object/character/character.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/transform/transform.h>
+#include <game/object/mounted_gun/mounted_gun.h>
 #include <game/object/weapon/weapon.h>
 #include <game/sys/all.h>
 
@@ -31,22 +32,12 @@ bool __fastcall hk_test(int a1, void*, int key)
 	return res;
 }
 
-int __stdcall hk_test2(int m, int eye, int at, vec3* up)
+int __fastcall hk_test2(int m, void*, std::string* str)
 {
-	const auto test = (mat4*)m;
+	if (str)
+		log(RED, "Requested '{}'", str->c_str());
 
-	if (_ReturnAddress() == (void*)0x71C1F0)
-	{
-		log(GREEN, "{} {} {}", up->x, up->y, up->z);
-
-		*up = vec3(0.f, 1.f, 0.f);
-
-		return jc::hooks::call<jc::proto::dbg::test2>(m, eye, at, up);
-	}
-	
-	auto res = jc::hooks::call<jc::proto::dbg::test2>(m, eye, at, up);
-
-	return res;
+	return jc::hooks::call<jc::proto::dbg::test2>(m, str);
 }
 
 void jc::test_units::init()
@@ -91,14 +82,53 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD2))
 	{
-		handle = g_spawn->spawn_character("female1", local_pos + vec3(2.f, 0.f, 0.f), Weapon_Pistol);
+		//handle = g_spawn->spawn_character("female1", local_pos + vec3(2.f, 0.f, 0.f), Weapon_Pistol);
 
-		log(RED, "handle {} (char {})", (void*)handle, (void*)handle->get_character());
+		//log(RED, "handle {} (char {})", (void*)handle, (void*)handle->get_character());
 	}
+
+	static std::vector<ref<MountedGun>> temp_holder;
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		handle->destroy();
+		//handle->destroy();
+
+		auto rf = g_game_control->create_object<MountedGun>();
+
+		if (rf)
+		{
+			g_game_control->enable_object(rf);
+
+			log(GREEN, "Mounted gun created {:x}", ptr(rf.obj));
+
+			object_base_map map {};
+
+			map.insert<ValueType_String>(0x274e57fb, R"(Mounted M60)");
+			map.insert<ValueType_Float>(0x71b9da94, -1.00f);
+			map.insert<ValueType_Float>(0x9fcd3bc1, 1.00f);
+			map.insert<ValueType_Float>(0x9b92cd11, -0.33f);
+			map.insert<ValueType_Float>(0x29ae9b9d, 0.48f);
+			map.insert<ValueType_Float>(0x8515daf3, 8.00f);
+			map.insert<ValueType_Float>(0x9c6cd67c, 8.00f);
+			map.insert<ValueType_Float>(0xed737006, 0.07f);
+			map.insert<ValueType_Float>(0x3b6ca735, 0.09f);
+			map.insert<ValueType_Float>(0xfa10a8d, 100.00f);
+			//map.insert<ValueType_Mat4>(0x316ec15e, .); // put your matrix here
+			//map.insert<ValueType_Mat4>(0xb5be7095, .); // put your matrix here
+			map.insert<ValueType_Float>(0xfff34f1e, 0.70f);
+			map.insert<ValueType_Float>(0xf4787d50, 1.00f);
+			map.insert<ValueType_Bool>(0x66869321, true);
+			map.insert<ValueType_Mat4>(0xACAEFB1, &local_t);
+			//map.insert<ValueType_String>(0xA4AB5487, "weapons\\weap_011_lave_037_mount.lod");
+			map.insert<ValueType_String>(0x3921ad5f, R"(weapons\weap_011_lave_037_mount.lod)");
+			//map.insert<ValueType_String>(0xA4AB5487, "building_blocks\\general\\oil_barrel_red.lod");
+
+			
+
+			jc::this_call(0x645AA0, rf.obj, &map);
+
+			temp_holder.push_back(std::move(rf));
+		}
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD7))
@@ -112,6 +142,28 @@ void jc::test_units::test_0()
 		std::string name = "exported\\agenttypes\\key_characters\\KEY_Kane_Bikini.ee";
 
 		bool res = jc::this_call(0x5C0CE0, mem, &name);
+
+		log(RED, "Request {:x}", ptr(mem));
+
+		auto p = jc::read<ptr>(mem, 0x118);
+
+		while (!jc::read<bool>(p, 0x8))
+		{
+			auto asset_loader = jc::read<ptr>(0xDA1C24);
+
+			log(CYAN, "loading {:x}", p);
+
+			jc::this_call(0x989640, asset_loader);
+
+			SleepEx(0, true);
+		}
+
+		local_char->set_model("female1");
+
+		//jc::v_call(mem, 3);
+		//jc::v_call(mem, 2, 1);
+
+		log(CYAN, "loaded");
 
 		log(RED, "result: {}", res);
 	}
