@@ -1,3 +1,3 @@
-# Just-Cause-1-Multiplayer
+# Just Cause 1 Multiplayer
 
-Just Cause 1 multiplayer modification. WIP.
+This mods adds advanced multiplayer functionality to Just Cause 1 game. WIP.
