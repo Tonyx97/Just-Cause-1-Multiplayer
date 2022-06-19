@@ -32,6 +32,8 @@ namespace jc::stl
 			jc::this_call(jc::string::fn::INIT, this, str, strlen(str));
 		}
 
+		//const char* c_str() const  { return std::as_const(data); }
+
 		string& operator=(const char* str)
 		{
 			string right(str);

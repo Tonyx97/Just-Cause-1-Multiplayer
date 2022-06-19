@@ -12,6 +12,7 @@
 
 #include <mp/net.h>
 #include <mp/chat/chat.h>
+#include <mp/sync_hooks/sync_hooks.h>
 
 HMODULE g_module = nullptr;
 
@@ -40,15 +41,6 @@ void dll_thread()
 
 		SwitchToThread();
 	} while (true);
-
-	// initializing MH
-
-	log(GREEN, "Initializing MH and patches...");
-
-	jc::hooks::init();
-	jc::clean_dbg::init();
-	jc::patches::apply();
-	jc::test_units::init();
 
 	// initialize mod systems
 
@@ -97,6 +89,16 @@ void dll_thread()
 #else
 	g_net->init("192.168.0.22", "test_user");	// todojc
 #endif
+
+	// initializing MH
+
+	log(GREEN, "Initializing MH and patches...");
+
+	jc::hooks::init();
+	jc::clean_dbg::init();
+	jc::patches::apply();
+	jc::sync_hooks::apply();
+	jc::test_units::init();
 
 	// initialize game systems/managers
 
@@ -153,6 +155,7 @@ void dll_thread()
 	// uninitialize MH
 
 	jc::test_units::destroy();
+	jc::sync_hooks::undo();
 	jc::patches::undo();
 	jc::clean_dbg::destroy();
 	jc::hooks::destroy();

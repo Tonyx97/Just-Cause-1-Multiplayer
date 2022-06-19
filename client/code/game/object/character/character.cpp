@@ -5,11 +5,44 @@
 #include "../transform/transform.h"
 #include "../weapon/weapon_belt.h"
 
+#include <game/sys/world.h>
 #include <game/sys/physics.h>
 
 #include <havok/character_proxy.h>
 #include <havok/motion_state.h>
 #include <havok/simple_shape_phantom.h>
+
+// hooks
+
+namespace jc::character::hook
+{
+	void __fastcall set_animation_internal(void* a1, void*, int* a2, ptr a3, std::string* a4, bool a5, float a6)
+	{
+		if (const auto localplayer = g_world->get_localplayer_character())
+			if (const auto skl = localplayer->get_skeleton())
+				if (skl->get_skeleton_0()->get_animator() == a1 ||
+					skl->get_skeleton_1()->get_animator() == a1)
+				{
+					// send packet here
+
+					log(GREEN, "{} {} {} {}", a1, a5, a6, a4->c_str());
+				}
+
+		return jc::hooks::call<jc::character::hook::set_animation_internal_t>(a1, a2, a3, a4, a5, a6);
+	}
+
+	void apply()
+	{
+		jc::hooks::hook<set_animation_internal_t>(&set_animation_internal);
+	}
+
+	void undo()
+	{
+		jc::hooks::unhook<set_animation_internal_t>();
+	}
+}
+
+// statics
 
 void Character::SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai)
 {
@@ -25,6 +58,8 @@ void Character::rebuild_skeleton()
 	jc::this_call<ptr>(jc::character::fn::DESTROY_SKELETON, skeleton);
 	jc::this_call<ptr>(jc::character::fn::CREATE_SKELETON, skeleton);
 }
+
+// character
 
 void Character::set_grenades_ammo(int32_t v)
 {

@@ -39,6 +39,16 @@ namespace jc::character
 		static constexpr uint32_t AI_PUNCH_DAMAGE	  = 0x5A43F5;
 		static constexpr uint32_t PLAYER_PUNCH_DAMAGE = 0x5A43EC;
 	}
+
+	namespace hook
+	{
+		using set_animation_internal_t = prototype<void(__thiscall*)(void*, int*, ptr, std::string*, bool, float), 0x7915E0, util::hash::JENKINS("CharSetAnim")>;
+
+		static constexpr uint32_t SET_ANIMATION_INTERNAL = 0x7915E0;
+
+		void apply();
+		void undo();
+	}
 }
 
 class Transform;

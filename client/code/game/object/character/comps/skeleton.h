@@ -2,8 +2,15 @@
 
 namespace jc::skeleton
 {
-	static constexpr uint32_t BONE_LIST		 = 0x260; // Bone*
-	static constexpr uint32_t TRANSFORM_LIST = 0x294; // Transform*
+	static constexpr uint32_t BONE_LIST			= 0x260; // Bone*
+	static constexpr uint32_t TRANSFORM_LIST	= 0x294; // Transform*
+	static constexpr uint32_t SKELETON_0		= 0x2AC; // SkeletonInstance*
+	static constexpr uint32_t SKELETON_1		= 0x2B4; // SkeletonInstance*
+}
+
+namespace jc::skeleton_instance
+{
+	static constexpr uint32_t ANIMATOR = 0x38; // void*
 }
 
 class Transform;
@@ -49,6 +56,13 @@ public:
 	[[nodiscard]] size_t get_bone_count() const { return bones.size(); }
 };
 
+class SkeletonInstance
+{
+public:
+
+	void* get_animator() const;
+};
+
 class Skeleton
 {
 private:
@@ -56,4 +70,7 @@ private:
 
 public:
 	bool get_bone_transform(BoneID index, Transform& out);
+
+	SkeletonInstance* get_skeleton_0() const;
+	SkeletonInstance* get_skeleton_1() const;
 };

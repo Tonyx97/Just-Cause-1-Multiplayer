@@ -143,6 +143,7 @@
     <ClCompile Include="code\mp\net.cpp" />
     <ClCompile Include="code\mp\net_handlers\chat\nh_chat.cpp" />
     <ClCompile Include="code\mp\net_handlers\day_cycle\nh_day_cycle.cpp" />
+    <ClCompile Include="code\mp\sync_hooks\sync_hooks.cpp" />
     <ClCompile Include="code\stl\ref.cpp" />
     <ClCompile Include="code\game\object\simple_rigid_object\simple_rigid_object.cpp" />
     <ClCompile Include="code\game\object\spawn_point\spawn_point.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="code\mp\net_handlers\all.h" />
     <ClInclude Include="code\mp\net_handlers\chat\nh_chat.h" />
     <ClInclude Include="code\mp\net_handlers\day_cycle\nh_day_cycle.h" />
+    <ClInclude Include="code\mp\sync_hooks\sync_hooks.h" />
     <ClInclude Include="code\stl\ref.h" />
     <ClInclude Include="code\game\object\simple_rigid_object\simple_rigid_object.h" />
     <ClInclude Include="code\game\object\spawn_point\spawn_point.h" />

@@ -107,23 +107,19 @@ void jc::test_units::test_0()
 
 			if (g_rsrc_streamer->all_queues_empty())
 			{
-				while (true)
+				while (!ee_resource->is_loaded())
 				{
 					log(GREEN, "[loading]");
 
 					g_rsrc_streamer->dispatch();
 
 					ee_resource->check();
-
-					if (ee_resource->is_loaded())
-						break;
 				}
 
 				local_char->set_model("female1");
 			}
 		}
 	}
-	
 
 	if (g_key->is_key_down(VK_NUMPAD1))
 	{
