@@ -11,6 +11,7 @@
 #include "time_system.h"
 #include "vehicle_manager.h"
 #include "explosion_manager.h"
+#include "resource_streamer.h"
 #include "game_control.h"
 #include "game_status.h"
 #include "spawn_system.h"

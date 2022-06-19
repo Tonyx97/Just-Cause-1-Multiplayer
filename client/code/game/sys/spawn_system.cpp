@@ -10,6 +10,7 @@
 #include <game/object/transform/transform.h>
 #include <game/object/spawn_point/agent_spawn_point.h>
 #include <game/object/spawn_point/vehicle_spawn_point.h>
+#include <game/object/mounted_gun/mounted_gun.h>
 
 namespace jc::spawn_system
 {
@@ -19,6 +20,7 @@ namespace jc::spawn_system
 		vec<ref<DamageableObject>>	damageables;
 		vec<ref<AgentSpawnPoint>>	agent_spawns;
 		vec<ref<VehicleSpawnPoint>> vehicle_spawns;
+		vec<ref<MountedGun>>		mounted_guns;
 	}
 }
 
@@ -91,15 +93,13 @@ SimpleRigidObject* SpawnSystem::spawn_simple_rigid_object(const vec3& position, 
 {
 	Transform transform(position);
 
-	auto rf = SimpleRigidObject::ALLOC()->create(&transform, model_name, pfx_name);
-
-	if (auto obj = *rf)
+	if (auto rf = SimpleRigidObject::ALLOC()->create(&transform, model_name, pfx_name))
 	{
 		g_game_control->enable_object(rf);
 
 		jc::spawn_system::v::simple_rigid_objects.push_back(std::move(rf));
 
-		return obj;
+		return *rf;
 	}
 
 	return nullptr;
@@ -109,15 +109,13 @@ DamageableObject* SpawnSystem::spawn_damageable_object(const vec3& position, con
 {
 	Transform transform(position);
 
-	auto rf = DamageableObject::CREATE(&transform, model_name, pfx_name);
-
-	if (auto obj = *rf)
+	if (auto rf = DamageableObject::CREATE(&transform, model_name, pfx_name))
 	{
 		g_game_control->enable_object(rf);
 
 		jc::spawn_system::v::damageables.push_back(std::move(rf));
 
-		return obj;
+		return *rf;
 	}
 
 	return nullptr;
@@ -125,9 +123,7 @@ DamageableObject* SpawnSystem::spawn_damageable_object(const vec3& position, con
 
 AgentSpawnPoint* SpawnSystem::create_agent_spawn_point(const vec3& position)
 {
-	auto rf = g_game_control->create_object<AgentSpawnPoint>();
-
-	if (const auto spawn_point = *rf)
+	if (auto rf = g_game_control->create_object<AgentSpawnPoint>())
 	{
 		object_base_map map {};
 
@@ -154,6 +150,8 @@ AgentSpawnPoint* SpawnSystem::create_agent_spawn_point(const vec3& position)
 		map.insert<ValueType_Float>(0xd2f9579a, 40.00f);
 		map.insert<ValueType_Int>(0x31386da9, 0);
 
+		const auto spawn_point = *rf;
+
 		spawn_point->init_from_map(&map);
 		spawn_point->set_position(position);
 
@@ -169,9 +167,7 @@ AgentSpawnPoint* SpawnSystem::create_agent_spawn_point(const vec3& position)
 
 VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
 {
-	auto rf = g_game_control->create_object<VehicleSpawnPoint>();
-
-	if (const auto spawn_point = *rf)
+	if (auto rf = g_game_control->create_object<VehicleSpawnPoint>())
 	{
 		object_base_map map {};
 
@@ -195,10 +191,9 @@ VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
 		map.insert<ValueType_Float>(0xd2f9579a, 150.00f);
 		map.insert<ValueType_Int>(0x31386da9, 0);
 
-		log(RED, "VehicleSpawnPoint: {:x}", ptr(spawn_point));
+		const auto spawn_point = *rf;
 
-		while (!GetAsyncKeyState(VK_F3))
-			Sleep(100);
+		log(RED, "VehicleSpawnPoint: {:x}", ptr(*rf));
 
 		spawn_point->init_from_map(&map);
 		spawn_point->set_position(position);
@@ -209,6 +204,47 @@ VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
 		jc::spawn_system::v::vehicle_spawns.push_back(std::move(rf));
 
 		return spawn_point;
+	}
+
+	return nullptr;
+}
+
+MountedGun* SpawnSystem::spawn_mounted_gun(const vec3& position)
+{
+	if (auto rf = g_game_control->create_object<MountedGun>())
+	{
+		Transform transform(position);
+
+		object_base_map map {};
+
+		map.insert<ValueType_String>(0x274e57fb, R"(Mounted M60)");
+		map.insert<ValueType_Float>(0x71b9da94, -6.25f);
+		map.insert<ValueType_Float>(0x9fcd3bc1, 1.00f);
+		map.insert<ValueType_Float>(0x9b92cd11, -6.33f);
+		map.insert<ValueType_Float>(0x29ae9b9d, 0.48f);
+		map.insert<ValueType_Float>(0x8515daf3, 8.00f);
+		map.insert<ValueType_Float>(0x9c6cd67c, 8.00f);
+		map.insert<ValueType_Float>(0xed737006, 0.07f);
+		map.insert<ValueType_Float>(0x3b6ca735, 0.09f);
+		map.insert<ValueType_Float>(0xfa10a8d, 100.00f);
+		//map.insert<ValueType_Mat4>(0x316ec15e, .); // put your matrix here
+		//map.insert<ValueType_Mat4>(0xb5be7095, .); // put your matrix here
+		map.insert<ValueType_Float>(0xfff34f1e, 0.70f);
+		map.insert<ValueType_Float>(0xf4787d50, 1.00f);
+		map.insert<ValueType_Bool>(0x66869321, true);
+		map.insert<ValueType_Mat4>(0xACAEFB1, &transform);
+		//map.insert<ValueType_String>(0xA4AB5487, "weapons\\weap_011_lave_037_mount.lod");
+		//map.insert<ValueType_String>(0x3921ad5f, "weapons\\weap_011_lave_037_mount.lod");
+
+		const auto mounted_gun = *rf;
+
+		mounted_gun->init_from_map(&map);
+
+		g_game_control->enable_object(rf);
+
+		jc::spawn_system::v::mounted_guns.push_back(std::move(rf));
+
+		return mounted_gun;
 	}
 
 	return nullptr;

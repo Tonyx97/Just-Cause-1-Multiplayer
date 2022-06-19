@@ -12,6 +12,7 @@
 #include <intrin.h>
 #include <map>
 #include <mutex>
+#include <deque>
 #include <numbers>
 #include <regex>
 #include <set>

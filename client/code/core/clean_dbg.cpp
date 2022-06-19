@@ -196,11 +196,18 @@ bool g_rec_map = false;
 
 int __fastcall hk_casp_vcall6(ptr casp, void*, ptr map)
 {
-	g_rec_map = true;
-	log(WHITE, "---------------------------------------------------");
+	//g_rec_map = true;
+
+	if (g_rec_map)
+		log(WHITE, "---------------------------------------------------");
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::vcall6_obj_init>(casp, map);
-	log(WHITE, "---------------------------------------------------");
-	g_rec_map = false;
+
+	if (g_rec_map)
+		log(WHITE, "---------------------------------------------------");
+
+	//g_rec_map = false;
+
 	return res;
 }
 

@@ -13,6 +13,7 @@ class SimpleRigidObject;
 class DamageableObject;
 class AgentSpawnPoint;
 class VehicleSpawnPoint;
+class MountedGun;
 
 class SpawnSystem
 {
@@ -31,6 +32,7 @@ public:
 	DamageableObject*  spawn_damageable_object(const vec3& position, const std::string& model_name, const std::string& pfx_name);
 	AgentSpawnPoint*   create_agent_spawn_point(const vec3& position);
 	VehicleSpawnPoint* create_vehicle_spawn_point(const vec3& position);
+	MountedGun*		   spawn_mounted_gun(const vec3& position);
 };
 
 inline SpawnSystem* g_spawn = nullptr;

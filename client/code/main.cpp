@@ -67,21 +67,22 @@ void dll_thread()
 
 	log(GREEN, "Initializing game systems...");
 
-	g_game_control = jc::read<GameControl*>(jc::game_control::SINGLETON);
-	g_renderer	   = jc::read<Renderer*>(jc::renderer::SINGLETON);
-	g_world		   = jc::read<World*>(jc::world::SINGLETON);
-	g_camera	   = jc::read<CameraManager*>(jc::camera_manager::SINGLETON);
-	g_physics	   = jc::read<Physics*>(jc::physics::SINGLETON);
-	g_vehicle	   = jc::read<VehicleManager*>(jc::vehicle_manager::SINGLETON);
-	g_ammo		   = jc::read<AmmoManager*>(jc::ammo_manager::SINGLETON);
-	g_sound		   = jc::read<SoundSystem*>(jc::sound_system::SINGLETON);
-	g_time		   = jc::read<TimeSystem*>(jc::time_system::SINGLETON);
-	g_particle	   = jc::read<ParticleSystem*>(jc::particle_system::SINGLETON);
-	g_day_cycle	   = jc::read<DayCycle*>(jc::day_cycle::SINGLETON);
-	g_weapon	   = jc::read<WeaponSystem*>(jc::weapon_system::SINGLETON);
-	g_spawn		   = jc::read<SpawnSystem*>(jc::spawn_system::SINGLETON);
-	g_ai		   = jc::read<AiCore*>(jc::ai_core::SINGLETON);
-	g_game_status  = jc::read<GameStatus*>(jc::game_status::SINGLETON);
+	g_game_control	= jc::read<GameControl*>(jc::game_control::SINGLETON);
+	g_renderer		= jc::read<Renderer*>(jc::renderer::SINGLETON);
+	g_world			= jc::read<World*>(jc::world::SINGLETON);
+	g_camera		= jc::read<CameraManager*>(jc::camera_manager::SINGLETON);
+	g_physics		= jc::read<Physics*>(jc::physics::SINGLETON);
+	g_vehicle		= jc::read<VehicleManager*>(jc::vehicle_manager::SINGLETON);
+	g_ammo			= jc::read<AmmoManager*>(jc::ammo_manager::SINGLETON);
+	g_sound			= jc::read<SoundSystem*>(jc::sound_system::SINGLETON);
+	g_time			= jc::read<TimeSystem*>(jc::time_system::SINGLETON);
+	g_particle		= jc::read<ParticleSystem*>(jc::particle_system::SINGLETON);
+	g_day_cycle		= jc::read<DayCycle*>(jc::day_cycle::SINGLETON);
+	g_weapon		= jc::read<WeaponSystem*>(jc::weapon_system::SINGLETON);
+	g_spawn			= jc::read<SpawnSystem*>(jc::spawn_system::SINGLETON);
+	g_ai			= jc::read<AiCore*>(jc::ai_core::SINGLETON);
+	g_game_status	= jc::read<GameStatus*>(jc::game_status::SINGLETON);
+	g_rsrc_streamer = jc::read<ResourceStreamer*>(jc::resource_streamer::SINGLETON);
 
 	// initialize net
 
@@ -114,6 +115,7 @@ void dll_thread()
 	g_spawn->init();
 	g_ai->init();
 	g_game_status->init();
+	g_rsrc_streamer->init();
 
 	// f8 = exit key (unloads the mod only)
 
@@ -131,6 +133,7 @@ void dll_thread()
 
 	// destroy game systems
 
+	g_rsrc_streamer->destroy();
 	g_game_status->destroy();
 	g_ai->destroy();
 	g_spawn->destroy();
