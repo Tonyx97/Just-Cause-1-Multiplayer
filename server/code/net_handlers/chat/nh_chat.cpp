@@ -2,7 +2,7 @@
 
 #include "nh_chat.h"
 
-enet::PacketResult nh::chat::dispatch(const enet::PacketR& p)
+enet::PacketResult nh::chat::msg(const enet::PacketR& p)
 {
 	const auto player_name = p.get_str();
 	const auto message = p.get_str();

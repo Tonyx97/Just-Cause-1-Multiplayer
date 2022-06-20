@@ -42,7 +42,7 @@
     <ClCompile Include="code\net_handlers\init\nh_init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\net_handlers\player\nh_player.cpp">
+    <ClCompile Include="code\net_handlers\player_client\nh_player_client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,7 +89,7 @@
     <ClInclude Include="code\net_handlers\init\nh_init.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\net_handlers\player\nh_player.h">
+    <ClInclude Include="code\net_handlers\player_client\nh_player_client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

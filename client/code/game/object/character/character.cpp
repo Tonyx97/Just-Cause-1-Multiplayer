@@ -25,10 +25,10 @@ namespace jc::character::hook
 				if (skl->get_skeleton_0()->get_animator() == a1 ||
 					skl->get_skeleton_1()->get_animator() == a1)
 				{
-					enet::PacketW p(PlayerPID_SetAnim);
+					/*enet::PacketW p(PlayerPID_SetAnim);
 
 					p.add(a4->c_str());
-					p.send();
+					p.send();*/
 				}
 
 		return jc::hooks::call<jc::character::hook::set_animation_internal_t>(a1, a2, a3, a4, a5, a6);

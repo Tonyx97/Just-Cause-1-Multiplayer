@@ -75,14 +75,14 @@ void enet::add_channel_dispatcher(uint8_t id, const channel_dispatch_t& fn)
 
 void enet::call_channel_dispatcher(const ENetEvent& e)
 {
-	const auto id = e.channelID;
+	const auto channel = e.channelID;
 
-	check(id >= 0 && id < ChannelID_Max, "Invalid channel ID");
+	check(channel >= 0 && channel < ChannelID_Max, "Invalid channel ID");
 
 	PacketR p(e);
 
-	switch (channel_fns[id](p))
+	switch (channel_fns[channel](p))
 	{
-	case PacketRes_NotFound: logt(RED, "Unknown packet received, id = '{}', channel = '{}'", id, p.get_channel()); return;
+	case PacketRes_NotFound: logt(RED, "Unknown packet received, id = '{}', channel = '{}'", p.get_id(), p.get_channel()); return;
 	}
 }

@@ -276,6 +276,9 @@
     <ClCompile Include="code\mp\sync_hooks\sync_hooks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\mp\player_client\player_client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\prof\prof.h">
@@ -567,6 +570,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\mp\sync_hooks\sync_hooks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\mp\player_client\player_client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

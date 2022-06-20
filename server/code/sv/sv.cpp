@@ -45,7 +45,7 @@ void Server::setup_channels()
 	{
 		switch (auto id = p.get_id())
 		{
-		case PlayerPID_SetAnim: return nh::player::dispatch(p);
+		case PlayerClientPID_SetNickname: return nh::player_client::nick(p);
 		}
 
 		return enet::PacketRes_NotFound;
@@ -55,7 +55,7 @@ void Server::setup_channels()
 	{
 		switch (auto id = p.get_id())
 		{
-		case ChatPID_ChatMsg: return nh::chat::dispatch(p);
+		case ChatPID_ChatMsg: return nh::chat::msg(p);
 		}
 
 		return enet::PacketRes_NotFound;
@@ -65,7 +65,7 @@ void Server::setup_channels()
 	{
 		switch (auto id = p.get_id())
 		{
-		case InitPID_Init: return nh::init::dispatch(p);
+		case InitPID_Init: return nh::init::init(p);
 		}
 
 		return enet::PacketRes_NotFound;

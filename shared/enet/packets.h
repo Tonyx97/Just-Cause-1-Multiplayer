@@ -4,12 +4,19 @@
 
 enum GenericPacketID : unsigned int
 {
+	GenericPID_Max
+};
+
+enum PlayerClientPacketID : unsigned int
+{
+	PlayerClientPID_SetNickname = GenericPID_Max,
+	PlayerClientPID_Max
 };
 
 enum PlayerPacketID : unsigned int
 {
-	PlayerPID_SetNickname,
-	PlayerPID_SetAnim
+	PlayerPID_SetAnim = PlayerClientPID_Max,
+	PlayerPID_Max
 };
 
 enum DayCyclePacketID : unsigned int

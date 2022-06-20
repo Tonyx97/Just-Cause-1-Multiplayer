@@ -2,7 +2,7 @@
 
 #include "nh_init.h"
 
-enet::PacketResult nh::init::dispatch(const enet::PacketR& p)
+enet::PacketResult nh::init::init(const enet::PacketR& p)
 {
 	const auto pc = p.get_player_client();
 	const auto nick = p.get_str();
