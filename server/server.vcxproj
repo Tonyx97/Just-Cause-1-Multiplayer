@@ -156,6 +156,7 @@
     <ClCompile Include="code\main.cpp" />
     <ClCompile Include="code\net_handlers\chat\nh_chat.cpp" />
     <ClCompile Include="code\net_handlers\init\nh_init.cpp" />
+    <ClCompile Include="code\net_handlers\player\nh_player.cpp" />
     <ClCompile Include="code\player_client\player_client.cpp" />
     <ClCompile Include="code\sv\sv.cpp" />
   </ItemGroup>
@@ -172,6 +173,7 @@
     <ClInclude Include="code\net_handlers\all.h" />
     <ClInclude Include="code\net_handlers\chat\nh_chat.h" />
     <ClInclude Include="code\net_handlers\init\nh_init.h" />
+    <ClInclude Include="code\net_handlers\player\nh_player.h" />
     <ClInclude Include="code\player_client\player_client.h" />
     <ClInclude Include="code\sv\sv.h" />
   </ItemGroup>

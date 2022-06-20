@@ -167,24 +167,34 @@ namespace enet
 			data.insert(data.end(), ptr, ptr + sizeof(T));
 		}
 
-		void add(const std::string& str)
+		void add(const wchar_t* str)
 		{
-			const auto len		= str.length();
-			const auto len_ptr	= BITCAST(uint8_t*, &len);
-			const auto data_ptr = BITCAST(uint8_t*, str.data());
+			const auto len = wcslen(str) * 2;
+			const auto len_ptr = BITCAST(uint8_t*, &len);
+			const auto data_ptr = BITCAST(uint8_t*, str);
 
 			data.insert(data.end(), len_ptr, len_ptr + sizeof(len));
-			data.insert(data.end(), str.begin(), str.end());
+			data.insert(data.end(), data_ptr, data_ptr + len);
+		}
+
+		void add(const char* str)
+		{
+			const auto len = strlen(str);
+			const auto len_ptr = BITCAST(uint8_t*, &len);
+			const auto data_ptr = BITCAST(uint8_t*, str);
+
+			data.insert(data.end(), len_ptr, len_ptr + sizeof(len));
+			data.insert(data.end(), data_ptr, data_ptr + len);
+		}
+
+		void add(const std::string& str)
+		{
+			add(str.data());
 		}
 
 		void add(const std::wstring& str)
 		{
-			const auto len = str.length() * 2;
-			const auto len_ptr = BITCAST(uint8_t*, &len);
-			const auto data_ptr = BITCAST(uint8_t*, str.data());
-
-			data.insert(data.end(), len_ptr, len_ptr + sizeof(len));
-			data.insert(data.end(), data_ptr, data_ptr + len);
+			add(str.data());
 		}
 
 #ifdef JC_CLIENT

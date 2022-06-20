@@ -4,10 +4,10 @@
 
 enet::PacketResult nh::chat::dispatch(const enet::PacketR& p)
 {
-	enet::PacketW out(ChatPID_ChatMsg);
-
 	const auto player_name = p.get_str();
 	const auto message = p.get_str();
+
+	enet::PacketW out(ChatPID_ChatMsg);
 
 	out.add(player_name);
 	out.add(message);

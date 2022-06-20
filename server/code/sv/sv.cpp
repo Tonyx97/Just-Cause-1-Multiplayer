@@ -41,9 +41,10 @@ void Server::setup_channels()
 {
 	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::PacketR& p)
 	{
-		/*switch (auto id = p.get_id())
+		switch (auto id = p.get_id())
 		{
-		}*/
+		case PlayerPID_SetAnim: return nh::player::dispatch(p);
+		}
 
 		return enet::PacketRes_NotFound;
 	});

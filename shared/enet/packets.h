@@ -9,6 +9,7 @@ enum GenericPacketID : unsigned int
 enum PlayerPacketID : unsigned int
 {
 	PlayerPID_SetNickname,
+	PlayerPID_SetAnim
 };
 
 enum DayCyclePacketID : unsigned int

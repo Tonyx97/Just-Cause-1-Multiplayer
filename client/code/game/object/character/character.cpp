@@ -12,6 +12,8 @@
 #include <havok/motion_state.h>
 #include <havok/simple_shape_phantom.h>
 
+#include <mp/net.h>
+
 // hooks
 
 namespace jc::character::hook
@@ -23,9 +25,10 @@ namespace jc::character::hook
 				if (skl->get_skeleton_0()->get_animator() == a1 ||
 					skl->get_skeleton_1()->get_animator() == a1)
 				{
-					// send packet here
+					enet::PacketW p(PlayerPID_SetAnim);
 
-					log(GREEN, "{} {} {} {}", a1, a5, a6, a4->c_str());
+					p.add(a4->c_str());
+					p.send();
 				}
 
 		return jc::hooks::call<jc::character::hook::set_animation_internal_t>(a1, a2, a3, a4, a5, a6);

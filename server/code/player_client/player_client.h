@@ -32,6 +32,8 @@ public:
 	bool is_timed_out() const { return timed_out; }
 
 	ENetPeer* get_peer() const { return peer; }
+
+	const std::string& get_nick() const { return nick; }
 };
 
 #define AS_PC(pc)					(BITCAST(PlayerClient*, pc))

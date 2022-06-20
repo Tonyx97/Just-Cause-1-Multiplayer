@@ -42,6 +42,9 @@
     <ClCompile Include="code\net_handlers\init\nh_init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\net_handlers\player\nh_player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\defs\enet.h">
@@ -84,6 +87,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\net_handlers\init\nh_init.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\net_handlers\player\nh_player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
