@@ -11,6 +11,8 @@ bool Server::init()
 	if (enet_initialize() != 0)
 		return logbwt(RED, "Error occurred while initializing server");
 
+	enet::init();
+
 	const auto address = ENetAddress
 	{
 		.host = ENET_HOST_ANY,

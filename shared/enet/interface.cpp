@@ -5,6 +5,11 @@
 namespace enet
 {
 	channel_dispatch_t channel_fns[ChannelID_Max] = { nullptr };
+
+#ifdef JC_SERVER
+	std::unordered_set<NID> free_nids,
+							used_nids;
+#endif
 }
 
 #ifdef JC_CLIENT
@@ -26,7 +31,42 @@ ENetHost* enet::GET_HOST()
 {
 	return g_sv->get_host();
 }
+
+NID enet::GET_FREE_NID()
+{
+	check(!free_nids.empty(), "No more free NIDs available");
+
+	const auto it = free_nids.begin();
+	const auto nid = *it;
+
+	free_nids.erase(it);
+	used_nids.insert(nid);
+
+    return nid;
+}
+
+void enet::FREE_NID(NID nid)
+{
+	auto it = used_nids.find(nid);
+
+	check(it != used_nids.end(), "NID {} not used", nid);
+
+	used_nids.erase(it);
+	free_nids.insert(nid);
+}
 #endif
+
+void enet::init()
+{
+#ifdef JC_CLIENT
+	//
+#else
+	// create a total of 2048 possible nids (1-2048)
+
+	for (NID i = 1u; i < 2048u + 1u; ++i)
+		free_nids.insert(free_nids.end(), i);
+#endif
+}
 
 void enet::add_channel_dispatcher(uint8_t id, const channel_dispatch_t& fn)
 {

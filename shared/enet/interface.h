@@ -9,6 +9,10 @@
 #define AVOID_INTERFACE_RECURSION
 
 class PlayerClient;
+
+// network id of an object
+//
+using NID = uint32_t;
 #endif
 
 namespace enet
@@ -29,6 +33,10 @@ namespace enet
 	ENetHost* GET_CLIENT_HOST();
 #else
 	ENetHost* GET_HOST();
+
+	NID GET_FREE_NID();
+
+	void FREE_NID(NID nid);
 #endif
 
 	inline void send_packet_broadcast(ENetHost* host, const void* data, size_t size, ENetPacketFlag flags = ENET_PACKET_FLAG_RELIABLE, uint8_t channel = ChannelID_Generic)
@@ -230,6 +238,7 @@ namespace enet
 
 	using channel_dispatch_t = std::function<PacketResult(const PacketR&)>;
 
+	void init();
 	void add_channel_dispatcher(uint8_t id, const channel_dispatch_t& fn);
 	void call_channel_dispatcher(const ENetEvent& id);
 

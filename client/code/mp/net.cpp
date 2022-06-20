@@ -13,6 +13,8 @@ bool Net::init(const std::string& ip, const std::string& nick)
 
 	logb(GREEN, "enet initialized");
 
+	enet::init();
+
 	if (!(client = enet_host_create(nullptr, 1, 2, 0, 0)))
 		return logb(RED, "Could not create enet client");
 

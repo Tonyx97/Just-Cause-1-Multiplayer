@@ -16,6 +16,8 @@ private:
 
 	std::string nick;
 
+	NID nid = 0u;
+
 	bool ready = false,
 		 timed_out = false;
 
