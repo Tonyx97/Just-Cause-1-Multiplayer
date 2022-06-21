@@ -2,9 +2,11 @@
 
 #include <timer/timer.h>
 
+#include "sv.h"
+
 #include <net_handlers/all.h>
 
-#include "sv.h"
+#include <player_client/player_client.h>
 
 bool Server::init()
 {
@@ -45,9 +47,9 @@ void Server::setup_channels()
 
 	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::PacketR& p)
 	{
-		switch (auto id = p.get_id())
+		/*switch (auto id = p.get_id())
 		{
-		}
+		}*/
 
 		return enet::PacketRes_NotFound;
 	});
@@ -95,16 +97,16 @@ void Server::add_player_client(ENetEvent& e)
 
 	e.peer->data = pc;
 
-	player_clients.insert(pc);
+	player_clients.insert({ pc->get_nid(), pc });
 }
 
 void Server::remove_player_client(ENetEvent& e)
 {
 	const auto pc = AS_PC(e.peer->data);
 
-	check(pc, "Invalid player client");
+	check(pc, "Invalid player client at '{}'", CURR_FN);
 
-	player_clients.erase(pc);
+	player_clients.erase(pc->get_nid());
 
 	DESTROY_PLAYER_CLIENT(pc);
 
@@ -154,13 +156,16 @@ void Server::send_global_packets()
 
 	static auto day_cycle_timer = timer::add_timer(1000, [&]()
 	{
-		enet::PacketW s(DayCyclePID_SetTime);
-
 		static float test = 0.f;
 
 		//test += 0.05f;
 
-		s.add(test);
-		s.send_broadcast();
+		enet::send_broadcast_reliable(DayCyclePID_SetTime, test);
 	});
+}
+
+PlayerClient* Server::get_player_client_by_nid(NID nid)
+{
+	auto it = player_clients.find(nid);
+	return it != player_clients.end() ? it->second : nullptr;
 }

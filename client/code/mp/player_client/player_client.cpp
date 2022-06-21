@@ -2,8 +2,9 @@
 
 #include "player_client.h"
 
-PlayerClient::PlayerClient()
+PlayerClient::PlayerClient(NID nid)
 {
+	set_nid(nid);
 }
 
 PlayerClient::~PlayerClient()

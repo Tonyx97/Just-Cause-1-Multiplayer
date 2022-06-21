@@ -2,10 +2,12 @@
 
 #include "nh_init.h"
 
+#include <player_client/player_client.h>
+
 enet::PacketResult nh::init::init(const enet::PacketR& p)
 {
-	const auto pc = p.get_player_client();
-	const auto nick = p.get_str();
+	const auto pc = p.get_player_client_owner();
+	const auto nick = p.get_str<std::string>();
 
 	pc->set_nick(nick);
 
@@ -13,10 +15,7 @@ enet::PacketResult nh::init::init(const enet::PacketR& p)
 
 	// send the init information to the client
 
-	enet::PacketW sp(p.get_id());
-
-	sp.add("verified");
-	sp.send(p.get_peer(), ChannelID_Init);
+	enet::send_reliable<ChannelID_Init>(p.get_peer(), p.get_id(), pc->get_nid());
 
 	return enet::PacketRes_Ok;
 }

@@ -6,7 +6,7 @@
 
 enet::PacketResult nh::day_cycle::dispatch(const enet::PacketR& p)
 {
-	g_day_cycle->set_time(p.get<float>());
+	g_day_cycle->set_time(p.get_float());
 
 	return enet::PacketRes_Ok;
 }

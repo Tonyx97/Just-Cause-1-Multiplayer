@@ -4,14 +4,14 @@
 
 #include "nh_chat.h"
 
+#include <mp/player_client/player_client.h>
+
 enet::PacketResult nh::chat::dispatch(const enet::PacketR& p)
 {
-	enet::PacketW out(ChatPID_ChatMsg);
+	const auto player = p.get_net_obj()->cast_safe<PlayerClient>();
+	const auto message = p.get_str<std::string>();
 
-	const auto player_name = p.get_str();
-	const auto message = p.get_str();
-
-	g_chat->add_chat_msg(player_name + ": " + message);
+	g_chat->add_chat_msg(player->get_nick() + ": " + message);
 
 	return enet::PacketRes_Ok;
 }

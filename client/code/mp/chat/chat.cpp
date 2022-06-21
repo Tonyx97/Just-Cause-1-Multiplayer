@@ -171,14 +171,7 @@ void Chat::end_typing(bool send)
 			}
 		}
 	}
-	else
-	{
-		enet::PacketW p(ChatPID_ChatMsg);
-
-		p.add(g_net->get_nick());
-		p.add(msg_to_send);
-		p.send(ChannelID_Chat);
-	}
+	else enet::send_reliable<ChannelID_Chat>(ChatPID_ChatMsg, msg_to_send);
 }
 
 void Chat::add_chat_msg(const std::string& msg)

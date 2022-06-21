@@ -6,6 +6,7 @@
 #include <tlhelp32.h>
 
 #include <filesystem>
+#include <concepts>
 #include <fstream>
 #include <functional>
 #include <future>

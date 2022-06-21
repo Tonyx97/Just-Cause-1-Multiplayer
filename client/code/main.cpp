@@ -38,7 +38,8 @@ void dll_thread()
 					if (auto physics = jc::read<World*>(jc::physics::SINGLETON))
 						if (auto spawn_system = jc::read<SpawnSystem*>(jc::spawn_system::SINGLETON))
 							if (auto game_status = jc::read<GameStatus*>(jc::game_status::SINGLETON))
-								break;
+								if (auto day_cycle = jc::read<DayCycle*>(jc::day_cycle::SINGLETON))
+									break;
 
 		SwitchToThread();
 	} while (true);

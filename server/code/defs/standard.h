@@ -11,6 +11,7 @@
 #include <future>
 #include <intrin.h>
 #include <map>
+#include <concepts>
 #include <mutex>
 #include <numbers>
 #include <regex>

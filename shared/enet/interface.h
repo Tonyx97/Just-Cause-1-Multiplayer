@@ -1,17 +1,10 @@
 #pragma once
 
-#include <enet.h>
-
+#include "serializer.h"
 #include "packets.h"
 #include "channels.h"
 
 class PlayerClient;
-
-// network id of an object
-//
-using NID = uint32_t;
-
-static constexpr NID INVALID_NID = 0u;
 
 namespace enet
 {
@@ -31,10 +24,6 @@ namespace enet
 	ENetHost* GET_CLIENT_HOST();
 #else
 	ENetHost* GET_HOST();
-
-	NID GET_FREE_NID();
-
-	void FREE_NID(NID nid);
 #endif
 
 	inline void send_packet_broadcast(ENetHost* host, const void* data, size_t size, ENetPacketFlag flags = ENET_PACKET_FLAG_RELIABLE, uint8_t channel = ChannelID_Generic)
@@ -72,6 +61,41 @@ namespace enet
 		return send_packet(peer, &data, sizeof(data), flags, channel);
 	}
 
+#ifdef JC_CLIENT
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_reliable(uint32_t id, const A&... args)
+	{
+		vec<uint8_t> data;
+
+		serialize(data, id);
+		serialize_params(data, args...);
+
+		send_packet(GET_CLIENT_PEER(), data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
+	}
+#else
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_reliable(ENetPeer* peer, uint32_t id, const A&... args)
+	{
+		vec<uint8_t> data;
+
+		serialize(data, id);
+		serialize_params(data, args...);
+
+		send_packet(peer, data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
+	}
+
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_broadcast_reliable(uint32_t id, const A&... args)
+	{
+		vec<uint8_t> data;
+
+		serialize(data, id);
+		serialize_params(data, args...);
+
+		send_packet_broadcast(GET_HOST(), data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
+}
+#endif
+
 	/**
 	 * Class used to read a packet
 	 */
@@ -101,7 +125,7 @@ namespace enet
 		{
 			check(!view, "Not supported yet");
 
-			id = get<uint32_t>();
+			id = get_int<uint32_t>();
 
 #ifdef JC_SERVER
 			pc = BITCAST(PlayerClient*, e.peer->data);
@@ -117,23 +141,31 @@ namespace enet
 		ENetPeer* get_peer() const { return peer; }
 
 #ifdef JC_SERVER
-		PlayerClient* get_player_client() const { return pc; }
+		PlayerClient* get_player_client_owner() const { return pc; }
 #endif
 
 		uint32_t get_id() const { return id; }
 		uint8_t get_channel() const { return channel; }
 
 		template <typename T>
-		T get() const
+		T get_int() const
 		{
 			return *BITCAST(T*, data + std::exchange(offset, offset + sizeof(T)));
 		}
 
-		std::string get_str() const
+		float get_float() const
+		{
+			return get_int<float>();
+		}
+
+		NetObject* get_net_obj() const;
+
+		template <typename T>
+		T get_str() const
 		{
 			const auto len = *BITCAST(size_t*, data + std::exchange(offset, offset + sizeof(size_t)));
 
-			std::string out;
+			T out;
 
 			out.resize(len);
 
@@ -167,44 +199,10 @@ namespace enet
 
 		uint32_t get_id() const { return id; }
 
-		template <typename T, std::enable_if_t<!std::is_same_v<T, std::string> && !std::is_array_v<T>>* = nullptr>
-		void add(const T& v)
+		template <typename... A>
+		void add(const A&... args)
 		{
-			const auto ptr = BITCAST(uint8_t*, &v);
-
-			data.insert(data.end(), ptr, ptr + sizeof(T));
-		}
-
-		void add(PlayerClient* pc);
-
-		void add(const wchar_t* str)
-		{
-			const auto len = wcslen(str) * 2;
-			const auto len_ptr = BITCAST(uint8_t*, &len);
-			const auto data_ptr = BITCAST(uint8_t*, str);
-
-			data.insert(data.end(), len_ptr, len_ptr + sizeof(len));
-			data.insert(data.end(), data_ptr, data_ptr + len);
-		}
-
-		void add(const char* str)
-		{
-			const auto len = strlen(str);
-			const auto len_ptr = BITCAST(uint8_t*, &len);
-			const auto data_ptr = BITCAST(uint8_t*, str);
-
-			data.insert(data.end(), len_ptr, len_ptr + sizeof(len));
-			data.insert(data.end(), data_ptr, data_ptr + len);
-		}
-
-		void add(const std::string& str)
-		{
-			add(str.data());
-		}
-
-		void add(const std::wstring& str)
-		{
-			add(str.data());
+			serialize_params(data, args...);
 		}
 
 #ifdef JC_CLIENT
@@ -297,9 +295,3 @@ namespace enet
 		return received;
 	}
 }
-
-#ifdef JC_SERVER
-#define AVOID_INTERFACE_RECURSION
-
-#include <player_client/player_client.h>
-#endif

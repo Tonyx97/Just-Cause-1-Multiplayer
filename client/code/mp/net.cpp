@@ -5,6 +5,7 @@
 #include <game/sys/all.h>
 
 #include <mp/net_handlers/all.h>
+#include <mp/player_client/player_client.h>
 
 bool Net::init(const std::string& ip, const std::string& nick)
 {
@@ -47,19 +48,19 @@ bool Net::init(const std::string& ip, const std::string& nick)
 	log(GREEN, "Connected");
 	log(YELLOW, "Waiting for init packet...");
 
-	enet::PacketW init_p(InitPID_Init);
-
-	init_p.add(nick);
-	init_p.send(ChannelID_Init);
+	enet::send_reliable<ChannelID_Init>(InitPID_Init, nick);
 
 	// we need to get the init packet first, all packets coming before the init packet will be
 	// completely discarded and ignored
 
-	if (!enet::wait_until_packet(InitPID_Init, ChannelID_Init, [](const enet::PacketR& p)
+	if (!enet::wait_until_packet(InitPID_Init, ChannelID_Init, [&](const enet::PacketR& p)
 	{
-		log(GREEN, "Init packet received ({} - {})", p.get_str(), p.get_channel());
+		const auto nid = p.get_int<NID>();
 
-		// add more stuff to this packet since it's quite important
+		log(GREEN, "Init packet received (NID: {:x})", nid);
+
+		local = add_player_client(nid);
+		local->set_nick(nick);
 	})) return logb(RED, "Could not receive the init packet");
 
 	return (connected = true);
@@ -96,6 +97,8 @@ void Net::disconnect()
 
 	if (timed_out)
 		log(RED, "Time out");
+
+	remove_player_client(local);
 
 	peer	  = nullptr;
 	connected = false;
@@ -167,6 +170,30 @@ void Net::setup_channels()
 	{
 		return enet::PacketRes_NotFound;
 	});
+}
+
+PlayerClient* Net::add_player_client(NID nid)
+{
+	const auto pc = CREATE_PLAYER_CLIENT(nid);
+
+	player_clients.insert({ nid, pc });
+
+	return pc;
+}
+
+PlayerClient* Net::get_player_client_by_nid(NID nid)
+{
+	auto it = player_clients.find(nid);
+	return it != player_clients.end() ? it->second : nullptr;
+}
+
+void Net::remove_player_client(PlayerClient* v)
+{
+	check(v, "Invalid player client at '{}'", CURR_FN);
+
+	player_clients.erase(v->get_nid());
+
+	DESTROY_PLAYER_CLIENT(v);
 }
 
 void Net::tick()
