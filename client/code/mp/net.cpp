@@ -52,12 +52,11 @@ bool Net::init(const std::string& ip, const std::string& nick)
 	init_p.add(nick);
 	init_p.send(ChannelID_Init);
 
-	if (!enet::wait_until_packet(InitPID_Init, [](ENetEvent& e)
+	// we need to get the init packet first, all packets coming before the init packet will be
+	// completely discarded and ignored
+
+	if (!enet::wait_until_packet(InitPID_Init, ChannelID_Init, [](const enet::PacketR& p)
 	{
-		enet::PacketR p(e);
-
-		check(p.get_channel() == ChannelID_Init, "Invalid init packet channel");
-
 		log(GREEN, "Init packet received ({} - {})", p.get_str(), p.get_channel());
 
 		// add more stuff to this packet since it's quite important
@@ -114,6 +113,8 @@ void Net::destroy()
 
 void Net::setup_channels()
 {
+	// generic packet dispatcher
+
 	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::PacketR& p)
 	{
 		// if localplayer is not in game then we don't want any of these packets
@@ -129,6 +130,22 @@ void Net::setup_channels()
 		return enet::PacketRes_NotFound;
 	});
 
+	// player client dispatcher
+
+	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const enet::PacketR& p)
+	{
+		switch (auto id = p.get_id())
+		{
+		case PlayerClientPID_Connect:		return nh::player_client::connect(p);
+		case PlayerClientPID_Disconnect:	return nh::player_client::disconnect(p);
+		case PlayerClientPID_Nick:			return nh::player_client::nick(p);
+		}
+
+		return enet::PacketRes_NotFound;
+	});
+
+	// chat dispatcher
+
 	enet::add_channel_dispatcher(ChannelID_Chat, [&](const enet::PacketR& p)
 	{
 		// if localplayer is not in game then we don't want any of these packets
@@ -143,6 +160,8 @@ void Net::setup_channels()
 
 		return enet::PacketRes_NotFound;
 	});
+
+	// conn init dispatcher
 
 	enet::add_channel_dispatcher(ChannelID_Init, [&](const enet::PacketR& p)
 	{

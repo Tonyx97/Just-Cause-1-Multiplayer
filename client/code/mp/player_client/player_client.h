@@ -1,8 +1,6 @@
 #pragma once
 
-#ifndef AVOID_INTERFACE_RECURSION
 #include <enet/interface.h>
-#endif
 
 class Player;
 
@@ -13,6 +11,8 @@ private:
 	Player* player = nullptr;
 
 	std::string nick;
+
+	NID nid = INVALID_NID;
 
 	bool ready = false;
 
@@ -25,6 +25,8 @@ public:
 	void set_ready() { ready = true; }
 
 	bool is_ready() const { return ready; }
+
+	NID get_nid() const { return nid; }
 
 	const std::string& get_nick() const { return nick; }
 };

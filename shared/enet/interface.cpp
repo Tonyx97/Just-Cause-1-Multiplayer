@@ -1,6 +1,10 @@
 #include <defs/standard.h>
 
-#include "interface.h"
+#ifdef JC_CLIENT
+#include <mp/player_client/player_client.h>
+#else
+#include <player_client/player_client.h>
+#endif
 
 namespace enet
 {
@@ -10,6 +14,11 @@ namespace enet
 	std::unordered_set<NID> free_nids,
 							used_nids;
 #endif
+
+    void PacketW::add(PlayerClient* pc)
+    {
+		add(pc->get_nid());
+    }
 }
 
 #ifdef JC_CLIENT

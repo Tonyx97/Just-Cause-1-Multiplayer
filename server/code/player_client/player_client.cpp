@@ -9,10 +9,20 @@ PlayerClient::PlayerClient(ENetPeer* peer) : peer(peer)
 	nid = enet::GET_FREE_NID();
 	
 	logt(GREEN, "Player client connected (NID {:x})", nid);
+
+	enet::PacketW p(PlayerClientPID_Connect);
+
+	p.add("test");
+	p.send_broadcast(ChannelID_PlayerClient);
 }
 
 PlayerClient::~PlayerClient()
 {
+	enet::PacketW p(PlayerClientPID_Disconnect);
+
+	p.add("test");
+	p.send_broadcast(ChannelID_PlayerClient);
+
 	if (timed_out)
 		logt(RED, "'{}' disconnected due to timeout (NID {:x})", nick, nid);
 	else logt(YELLOW, "'{}' disconnected (NID {:x})", nick, nid);

@@ -41,15 +41,30 @@ void Server::destroy()
 
 void Server::setup_channels()
 {
+	// generic packet dispatcher
+
 	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::PacketR& p)
 	{
 		switch (auto id = p.get_id())
 		{
-		case PlayerClientPID_SetNickname: return nh::player_client::nick(p);
 		}
 
 		return enet::PacketRes_NotFound;
 	});
+
+	// player client dispatcher
+
+	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const enet::PacketR& p)
+	{
+		switch (auto id = p.get_id())
+		{
+		case PlayerClientPID_Nick: return nh::player_client::nick(p);
+		}
+
+		return enet::PacketRes_NotFound;
+	});
+
+	// chat dispatcher
 
 	enet::add_channel_dispatcher(ChannelID_Chat, [&](const enet::PacketR& p)
 	{
@@ -60,6 +75,8 @@ void Server::setup_channels()
 
 		return enet::PacketRes_NotFound;
 	});
+
+	// conn init dispatcher
 
 	enet::add_channel_dispatcher(ChannelID_Init, [&](const enet::PacketR& p)
 	{

@@ -103,7 +103,7 @@ void jc::test_units::test_0()
 		{
 			auto ee_resource = ExportedEntityResource::CREATE();
 
-			ee_resource->push("Exported\\AgentTypes\\Key_Characters\\KEY_Kane_Bikini.ee");
+			ee_resource->push("KEY_Kane_Bikini.ee");
 
 			if (g_rsrc_streamer->all_queues_empty())
 			{

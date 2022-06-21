@@ -37,27 +37,15 @@ void dll_thread()
 				if (auto world = jc::read<World*>(jc::world::SINGLETON))
 					if (auto physics = jc::read<World*>(jc::physics::SINGLETON))
 						if (auto spawn_system = jc::read<SpawnSystem*>(jc::spawn_system::SINGLETON))
-							break;
+							if (auto game_status = jc::read<GameStatus*>(jc::game_status::SINGLETON))
+								break;
 
 		SwitchToThread();
 	} while (true);
 
-	// initialize mod systems
-
-	log(GREEN, "Initializing mod systems...");
-
-	g_ui		= JC_ALLOC(UI);
-	g_key		= JC_ALLOC(Keycode);
-	g_explosion = JC_ALLOC(ExplosionManager);
-	g_net		= JC_ALLOC(Net);
-	g_chat		= JC_ALLOC(Chat);
-
-	g_key->init();
-	g_explosion->init();
-
 	// get game systems
 
-	log(GREEN, "Initializing game systems...");
+	log(GREEN, "Getting game systems...");
 
 	g_game_control	= jc::read<GameControl*>(jc::game_control::SINGLETON);
 	g_renderer		= jc::read<Renderer*>(jc::renderer::SINGLETON);
@@ -76,31 +64,9 @@ void dll_thread()
 	g_game_status	= jc::read<GameStatus*>(jc::game_status::SINGLETON);
 	g_rsrc_streamer = jc::read<ResourceStreamer*>(jc::resource_streamer::SINGLETON);
 
-	// initialize net
-
-#ifdef _DEBUG
-	char nick[256] = { 0 };
-
-	auto len = DWORD(256);
-
-	GetUserNameA(nick, &len);
-
-	g_net->init("192.168.0.22", nick);
-#else
-	g_net->init("192.168.0.22", "test_user");	// todojc
-#endif
-
-	// initializing MH
-
-	log(GREEN, "Initializing MH and patches...");
-
-	jc::hooks::init();
-	jc::clean_dbg::init();
-	jc::patches::apply();
-	jc::sync_hooks::apply();
-	jc::test_units::init();
-
 	// initialize game systems/managers
+
+	log(GREEN, "Initializing game systems...");
 
 	g_game_control->init();
 	g_renderer->init();
@@ -119,6 +85,57 @@ void dll_thread()
 	g_game_status->init();
 	g_rsrc_streamer->init();
 
+	// initialize mod systems
+
+	log(GREEN, "Creating mod systems...");
+
+	g_ui = JC_ALLOC(UI);
+	g_key = JC_ALLOC(Keycode);
+	g_explosion = JC_ALLOC(ExplosionManager);
+	g_net = JC_ALLOC(Net);
+	g_chat = JC_ALLOC(Chat);
+
+	// initializing MH
+
+	log(GREEN, "Initializing MH and patches...");
+
+	jc::hooks::init();
+	jc::clean_dbg::init();
+	jc::patches::apply();
+	jc::sync_hooks::apply();
+	jc::test_units::init();
+
+	// initialize mod systems
+
+	log(GREEN, "Initializing mod systems...");
+
+	g_key->init();
+	g_explosion->init();
+	
+	// hook present
+
+	log(GREEN, "Hooking present...");
+
+	g_renderer->hook_present();
+
+	// initialize net
+
+	log(GREEN, "Initializing NET...");
+
+#ifdef _DEBUG
+	char nick[256] = { 0 };
+
+	auto len = DWORD(256);
+
+	GetUserNameA(nick, &len);
+
+	g_net->init("192.168.0.22", nick);
+#else
+	g_net->init("192.168.0.22", "test_user");	// todojc
+#endif
+
+	log(GREEN, "Mod initialized");
+
 	// f8 = exit key (unloads the mod only)
 
 	bool game_exit = false;
@@ -126,12 +143,19 @@ void dll_thread()
 	while (!GetAsyncKeyState(VK_F8) && !(game_exit = GetAsyncKeyState(VK_F9)))
 		Sleep(50);
 
-	// destroy mod systems
+	// wait until we disconnected and the ui is cleaned
 
 	g_net->destroy();
+	g_ui->wait_until_destruction();
+
+	// unhook the present since we cleaned the ui system data
+
+	g_renderer->unhook_present();
+
+	// destroy the rest of the mod systems
+
 	g_explosion->destroy();
 	g_key->destroy();
-	g_ui->wait_until_destruction();
 
 	// destroy game systems
 

@@ -134,6 +134,7 @@ void UI::destroy()
 
 	initialized = false;
 	destroyed	= true;
+	destroying	= false;
 }
 
 void UI::dispatch()

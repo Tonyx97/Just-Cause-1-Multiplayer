@@ -5,15 +5,13 @@
 #include "packets.h"
 #include "channels.h"
 
-#ifdef JC_SERVER
-#define AVOID_INTERFACE_RECURSION
-
 class PlayerClient;
 
 // network id of an object
 //
 using NID = uint32_t;
-#endif
+
+static constexpr NID INVALID_NID = 0u;
 
 namespace enet
 {
@@ -101,6 +99,8 @@ namespace enet
 			, channel(e.channelID)
 			, as_view(view)
 		{
+			check(!view, "Not supported yet");
+
 			id = get<uint32_t>();
 
 #ifdef JC_SERVER
@@ -174,6 +174,8 @@ namespace enet
 
 			data.insert(data.end(), ptr, ptr + sizeof(T));
 		}
+
+		void add(PlayerClient* pc);
 
 		void add(const wchar_t* str)
 		{
@@ -273,7 +275,7 @@ namespace enet
 	}
 
 	template <typename Fn>
-	inline bool wait_until_packet(uint32_t id, const Fn& fn, uint32_t timeout = 5000)
+	inline bool wait_until_packet(uint32_t id, uint8_t channel, const Fn& fn, uint32_t timeout = 5000)
 	{
 		bool received = false;
 
@@ -283,11 +285,9 @@ namespace enet
 		{
 			dispatch_packet([&](ENetEvent& e)
 			{
-				PacketR p(e, true);
-
-				if (!received && p.get_id() == id)
+				if (PacketR p(e); !received && p.get_id() == id && p.get_channel() == channel)
 				{
-					fn(e);
+					fn(p);
 
 					received = true;
 				}

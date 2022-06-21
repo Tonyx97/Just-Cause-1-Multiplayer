@@ -7,21 +7,25 @@ enum GenericPacketID : unsigned int
 	GenericPID_Max
 };
 
-enum PlayerClientPacketID : unsigned int
-{
-	PlayerClientPID_SetNickname = GenericPID_Max,
-	PlayerClientPID_Max
-};
-
 enum PlayerPacketID : unsigned int
 {
-	PlayerPID_SetAnim = PlayerClientPID_Max,
+	PlayerPID_SetAnim = GenericPID_Max,
 	PlayerPID_Max
 };
 
 enum DayCyclePacketID : unsigned int
 {
 	DayCyclePID_SetTime,
+};
+
+// player client
+
+enum PlayerClientPacketID : unsigned int
+{
+	PlayerClientPID_Connect,
+	PlayerClientPID_Disconnect,
+	PlayerClientPID_Nick,
+	PlayerClientPID_Max
 };
 
 // chat packets

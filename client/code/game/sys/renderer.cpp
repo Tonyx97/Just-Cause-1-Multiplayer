@@ -45,11 +45,19 @@ void Renderer::on_reset()
 
 void Renderer::init()
 {
+}
+
+void Renderer::destroy()
+{
+}
+
+void Renderer::hook_present()
+{
 	jc::hooks::hook<jc::proto::game_present>(&hk_game_present);
 	jc::hooks::vhook<jc::proto::reset>(get_device(), &hk_reset);
 }
 
-void Renderer::destroy()
+void Renderer::unhook_present()
 {
 	jc::hooks::unhook<jc::proto::reset>();
 	jc::hooks::unhook<jc::proto::game_present>();

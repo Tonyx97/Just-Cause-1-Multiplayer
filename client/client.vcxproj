@@ -143,6 +143,7 @@
     <ClCompile Include="code\mp\net.cpp" />
     <ClCompile Include="code\mp\net_handlers\chat\nh_chat.cpp" />
     <ClCompile Include="code\mp\net_handlers\day_cycle\nh_day_cycle.cpp" />
+    <ClCompile Include="code\mp\net_handlers\player_client\nh_player_client.cpp" />
     <ClCompile Include="code\mp\player_client\player_client.cpp" />
     <ClCompile Include="code\mp\sync_hooks\sync_hooks.cpp" />
     <ClCompile Include="code\stl\ref.cpp" />
@@ -235,6 +236,7 @@
     <ClInclude Include="code\mp\net_handlers\all.h" />
     <ClInclude Include="code\mp\net_handlers\chat\nh_chat.h" />
     <ClInclude Include="code\mp\net_handlers\day_cycle\nh_day_cycle.h" />
+    <ClInclude Include="code\mp\net_handlers\player_client\nh_player_client.h" />
     <ClInclude Include="code\mp\player_client\player_client.h" />
     <ClInclude Include="code\mp\sync_hooks\sync_hooks.h" />
     <ClInclude Include="code\stl\ref.h" />

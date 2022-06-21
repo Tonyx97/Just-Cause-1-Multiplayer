@@ -14,6 +14,8 @@ public:
 	void destroy();
 	void on_present();
 	void on_reset();
+	void hook_present();
+	void unhook_present();
 
 	IDirect3DDevice9* get_device() const;
 
