@@ -18,19 +18,7 @@
     <ClCompile Include="code\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\prof\prof.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shared\utils\utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\sv\sv.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shared\timer\timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shared\enet\interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\player_client\player_client.cpp">
@@ -45,12 +33,6 @@
     <ClCompile Include="code\net_handlers\player_client\nh_player_client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\enet\net_obj.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shared\enet\serializer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\defs\enet.h">
@@ -62,25 +44,7 @@
     <ClInclude Include="code\defs\standard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\prof\prof.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\utils\utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\enet\interface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="code\sv\sv.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\enet\packets.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\timer\timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\enet\channels.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\player_client\player_client.h">
@@ -96,12 +60,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\net_handlers\player_client\nh_player_client.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\enet\net_obj.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\enet\serializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

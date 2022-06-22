@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{dffbc708-890d-491b-980f-e8613869783b}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)defs\json.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)enet\channels.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)enet\interface.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)enet\net_obj.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)enet\packets.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)enet\serializer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)memory\defs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)memory\memory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)prof\prof.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)timer\timer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)enet\interface.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)enet\net_obj.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)enet\serializer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)prof\prof.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)timer\timer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\utils.cpp" />
+  </ItemGroup>
+</Project>

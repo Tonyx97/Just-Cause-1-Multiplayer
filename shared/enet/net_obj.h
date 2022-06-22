@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef JC_LOADER
+
 // network id of an object
 //
 using NID = uint32_t;
@@ -58,3 +60,4 @@ public:
 
 	NID get_nid() const { return nid; }
 };
+#endif

@@ -35,6 +35,7 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
+    <Import Project="..\shared\shared.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -106,11 +107,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\shared\enet\interface.cpp" />
-    <ClCompile Include="..\shared\enet\net_obj.cpp" />
-    <ClCompile Include="..\shared\enet\serializer.cpp" />
-    <ClCompile Include="..\shared\prof\prof.cpp" />
-    <ClCompile Include="..\shared\utils\utils.cpp" />
     <ClCompile Include="code\core\clean_dbg.cpp" />
     <ClCompile Include="code\core\test_units.cpp" />
     <ClCompile Include="code\game\object\action_point_owner\action_point_owner.cpp" />
@@ -197,11 +193,6 @@
     <ClCompile Include="code\patches\patches.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\shared\enet\interface.h" />
-    <ClInclude Include="..\shared\enet\net_obj.h" />
-    <ClInclude Include="..\shared\enet\serializer.h" />
-    <ClInclude Include="..\shared\prof\prof.h" />
-    <ClInclude Include="..\shared\utils\utils.h" />
     <ClInclude Include="code\core\clean_dbg.h" />
     <ClInclude Include="code\core\patching.h" />
     <ClInclude Include="code\core\test_units.h" />

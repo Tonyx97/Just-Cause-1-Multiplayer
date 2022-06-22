@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef JC_LOADER
+
 using timer_fn_t = std::function<void()>;
 
 class Timer;
@@ -42,3 +44,4 @@ public:
 		}
 	}
 };
+#endif

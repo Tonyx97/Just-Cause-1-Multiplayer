@@ -56,6 +56,7 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
+    <Import Project="..\shared\shared.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -149,12 +150,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\shared\enet\interface.cpp" />
-    <ClCompile Include="..\shared\enet\net_obj.cpp" />
-    <ClCompile Include="..\shared\enet\serializer.cpp" />
-    <ClCompile Include="..\shared\prof\prof.cpp" />
-    <ClCompile Include="..\shared\timer\timer.cpp" />
-    <ClCompile Include="..\shared\utils\utils.cpp" />
     <ClCompile Include="code\main.cpp" />
     <ClCompile Include="code\net_handlers\chat\nh_chat.cpp" />
     <ClCompile Include="code\net_handlers\init\nh_init.cpp" />
@@ -163,14 +158,6 @@
     <ClCompile Include="code\sv\sv.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\shared\enet\channels.h" />
-    <ClInclude Include="..\shared\enet\interface.h" />
-    <ClInclude Include="..\shared\enet\net_obj.h" />
-    <ClInclude Include="..\shared\enet\packets.h" />
-    <ClInclude Include="..\shared\enet\serializer.h" />
-    <ClInclude Include="..\shared\prof\prof.h" />
-    <ClInclude Include="..\shared\timer\timer.h" />
-    <ClInclude Include="..\shared\utils\utils.h" />
     <ClInclude Include="code\defs\enet.h" />
     <ClInclude Include="code\defs\libs.h" />
     <ClInclude Include="code\defs\standard.h" />

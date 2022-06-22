@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef JC_LOADER
+
 #include <enet.h>
 
 #ifdef JC_SERVER
@@ -97,3 +99,4 @@ namespace enet
 		serialize(buffer, args...);
 	}
 }
+#endif

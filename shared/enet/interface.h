@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef JC_LOADER
+
 #include "serializer.h"
 #include "packets.h"
 #include "channels.h"
@@ -295,3 +297,4 @@ namespace enet
 		return received;
 	}
 }
+#endif

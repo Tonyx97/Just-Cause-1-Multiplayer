@@ -1,3 +1,4 @@
+#ifndef JC_LOADER
 #include <defs/standard.h>
 
 #include "timer.h"
@@ -34,3 +35,4 @@ void timer::clear_timers()
 
 	timers.clear();
 }
+#endif

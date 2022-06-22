@@ -1,3 +1,4 @@
+#ifndef JC_LOADER
 #include <defs/standard.h>
 
 #include "interface.h"
@@ -75,3 +76,4 @@ void enet::call_channel_dispatcher(const ENetEvent& e)
 	case PacketRes_NotFound: logt(RED, "Unknown packet received, id = '{}', channel = '{}'", p.get_id(), p.get_channel()); return;
 	}
 }
+#endif

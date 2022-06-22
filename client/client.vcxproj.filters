@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\shared\prof\prof.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -106,9 +103,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\character\comps\vehicle_controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shared\utils\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\sys\particle_system.cpp">
@@ -240,9 +234,6 @@
     <ClCompile Include="code\mp\net.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\enet\interface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\mp\chat\chat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -282,17 +273,8 @@
     <ClCompile Include="code\mp\net_handlers\player_client\nh_player_client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\enet\serializer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shared\enet\net_obj.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\shared\prof\prof.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="code\defs\libs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -390,9 +372,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\character\comps\vehicle_controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\utils\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\sys\particle_system.h">
@@ -542,9 +521,6 @@
     <ClInclude Include="code\defs\enet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\enet\interface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="code\mp\chat\chat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -585,12 +561,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\mp\net_handlers\player_client\nh_player_client.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\enet\serializer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\enet\net_obj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

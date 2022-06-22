@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\shared\prof\prof.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\loader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -27,21 +24,12 @@
     <ClCompile Include="code\ini\INIReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\utils\utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\shared\prof\prof.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="code\ini\ini.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\ini\INIReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\utils\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\defs\standard.h">

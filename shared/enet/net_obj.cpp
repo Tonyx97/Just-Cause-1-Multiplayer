@@ -1,3 +1,4 @@
+#ifndef JC_LOADER
 #include <defs/standard.h>
 
 #include "net_obj.h"
@@ -49,4 +50,5 @@ NetObject::~NetObject()
 {
 	enet::FREE_NID(nid);
 }
+#endif
 #endif
