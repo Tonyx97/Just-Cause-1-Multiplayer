@@ -1,6 +1,6 @@
 #pragma once
 
-#include <enet/interface.h>
+#include <net/interface.h>
 
 namespace nh::day_cycle
 {

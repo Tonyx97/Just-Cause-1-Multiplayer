@@ -2,9 +2,9 @@
 
 #ifndef JC_LOADER
 
-#include "serializer.h"
-#include "packets.h"
 #include "channels.h"
+#include "packets.h"
+#include "serializer.h"
 
 class PlayerClient;
 

@@ -1,6 +1,6 @@
 #include <defs/standard.h>
 
-#include <enet/interface.h>
+#include <net/interface.h>
 
 #include "player_client.h"
 

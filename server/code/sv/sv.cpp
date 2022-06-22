@@ -91,28 +91,6 @@ void Server::setup_channels()
 	});
 }
 
-void Server::add_player_client(ENetEvent& e)
-{
-	const auto pc = CREATE_PLAYER_CLIENT(e.peer);
-
-	e.peer->data = pc;
-
-	player_clients.insert({ pc->get_nid(), pc });
-}
-
-void Server::remove_player_client(ENetEvent& e)
-{
-	const auto pc = AS_PC(e.peer->data);
-
-	check(pc, "Invalid player client at '{}'", CURR_FN);
-
-	player_clients.erase(pc->get_nid());
-
-	DESTROY_PLAYER_CLIENT(pc);
-
-	e.peer->data = nullptr;
-}
-
 void Server::tick()
 {
 	// send all independent packets to all clients
@@ -152,7 +130,7 @@ void Server::tick()
 
 void Server::send_global_packets()
 {
-	SetWindowText(GetConsoleWindow(), std::format(L"JC:MP Server ({} players connected)", player_clients.size()).c_str());
+	SetWindowText(GetConsoleWindow(), std::format(L"JC:MP Server ({} players connected)", get_player_client_count()).c_str());
 
 	static auto day_cycle_timer = timer::add_timer(1000, [&]()
 	{
@@ -162,10 +140,4 @@ void Server::send_global_packets()
 
 		enet::send_broadcast_reliable(DayCyclePID_SetTime, test);
 	});
-}
-
-PlayerClient* Server::get_player_client_by_nid(NID nid)
-{
-	auto it = player_clients.find(nid);
-	return it != player_clients.end() ? it->second : nullptr;
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <enet/net_obj.h>
+#include <shared_mp/net_obj.h>
 
 class Player;
 

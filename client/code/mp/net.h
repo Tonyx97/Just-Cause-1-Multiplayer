@@ -1,13 +1,12 @@
 #pragma once
 
-#include <enet/interface.h>
+#include <shared_mp/object_lists.h>
 
 class PlayerClient;
 
-class Net
+class Net : public ObjectLists
 {
 private:
-	std::unordered_map<NID, PlayerClient*> player_clients;
 
 	ENetHost* client = nullptr;
 	ENetPeer* peer	 = nullptr;
@@ -27,12 +26,9 @@ public:
 	bool init(const std::string& ip, const std::string& nick);
 	void destroy();
 	void setup_channels();
-	void remove_player_client(PlayerClient* v);
 	void tick();
 	void set_net_stats(int v) { net_stat = v; }
 
-	PlayerClient* add_player_client(NID nid);
-	PlayerClient* get_player_client_by_nid(NID nid);
 	PlayerClient* get_local() const { return local; }
 
 	ENetHost* get_host() const { return client; }

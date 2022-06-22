@@ -4,11 +4,7 @@
 
 #include <enet.h>
 
-#ifdef JC_SERVER
-#include <player_client/player_client.h>
-#else
-#include "net_obj.h"
-#endif
+#include <shared_mp/net_obj.h>
 
 namespace enet
 {

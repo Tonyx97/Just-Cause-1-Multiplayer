@@ -172,30 +172,6 @@ void Net::setup_channels()
 	});
 }
 
-PlayerClient* Net::add_player_client(NID nid)
-{
-	const auto pc = CREATE_PLAYER_CLIENT(nid);
-
-	player_clients.insert({ nid, pc });
-
-	return pc;
-}
-
-PlayerClient* Net::get_player_client_by_nid(NID nid)
-{
-	auto it = player_clients.find(nid);
-	return it != player_clients.end() ? it->second : nullptr;
-}
-
-void Net::remove_player_client(PlayerClient* v)
-{
-	check(v, "Invalid player client at '{}'", CURR_FN);
-
-	player_clients.erase(v->get_nid());
-
-	DESTROY_PLAYER_CLIENT(v);
-}
-
 void Net::tick()
 {
 	if (!connected || !client)

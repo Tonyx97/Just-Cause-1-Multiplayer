@@ -2,7 +2,6 @@
 #include <defs/standard.h>
 
 #include "serializer.h"
-#include "net_obj.h"
 
 void enet::serialize_net_object(vec<uint8_t>& buffer, NetObject* v)
 {
