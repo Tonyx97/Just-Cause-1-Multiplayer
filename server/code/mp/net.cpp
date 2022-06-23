@@ -3,8 +3,7 @@
 #include <timer/timer.h>
 
 #include "net.h"
-
-#include <net_handlers/all.h>
+#include "net_handlers/all.h"
 
 #include <shared_mp/player_client/player_client.h>
 

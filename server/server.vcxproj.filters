@@ -21,13 +21,13 @@
     <ClCompile Include="code\mp\net.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\net_handlers\chat\nh_chat.cpp">
+    <ClCompile Include="code\mp\net_handlers\chat\nh_chat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\net_handlers\init\nh_init.cpp">
+    <ClCompile Include="code\mp\net_handlers\init\nh_init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\net_handlers\player_client\nh_player_client.cpp">
+    <ClCompile Include="code\mp\net_handlers\player_client\nh_player_client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,16 +44,16 @@
     <ClInclude Include="code\mp\net.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\net_handlers\chat\nh_chat.h">
+    <ClInclude Include="code\mp\net_handlers\chat\nh_chat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\net_handlers\all.h">
+    <ClInclude Include="code\mp\net_handlers\all.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\net_handlers\init\nh_init.h">
+    <ClInclude Include="code\mp\net_handlers\init\nh_init.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\net_handlers\player_client\nh_player_client.h">
+    <ClInclude Include="code\mp\net_handlers\player_client\nh_player_client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
