@@ -15,8 +15,7 @@ enet::PacketResult nh::check::net_objects(const enet::PacketR& p)
 
 	for (int i = 0; i < count; ++i)
 	{
-		const auto nid = p.get_int<NID>();
-		const auto type = p.get_int<uint32_t>();
+		DESERIALIZE_NID_AND_TYPE(p);
 
 		if (g_net->get_net_object_by_nid(nid))
 		{
@@ -29,9 +28,9 @@ enet::PacketResult nh::check::net_objects(const enet::PacketR& p)
 		{
 		case NetObject_Player:
 		{
-			log(YELLOW, "New player added with NID {:x}", nid);
+			const auto new_player = g_net->add_player_client(nid);
 
-			g_net->add_player_client(nid);
+			log(YELLOW, "Created new player from net objects check: {:x}", CURR_FN, new_player->get_nid());
 		}
 		default:
 			log(RED, "Unknown type of net object at '{}'", CURR_FN);

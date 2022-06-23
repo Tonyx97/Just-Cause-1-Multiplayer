@@ -52,4 +52,6 @@ public:
 #define AS_PC(pc)							BITCAST(PlayerClient*, pc)
 #define CREATE_PLAYER_CLIENT(nid_or_peer)	JC_ALLOC(PlayerClient, nid_or_peer)
 #define DESTROY_PLAYER_CLIENT(pc)			JC_FREE(pc)
+#define DESERIALIZE_NID_AND_TYPE(p)			const auto nid = p.get_int<NID>(); \
+											const auto type = p.get_int<uint32_t>()
 #endif
