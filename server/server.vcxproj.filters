@@ -18,7 +18,7 @@
     <ClCompile Include="code\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\sv\sv.cpp">
+    <ClCompile Include="code\mp\net.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\net_handlers\chat\nh_chat.cpp">
@@ -41,7 +41,7 @@
     <ClInclude Include="code\defs\standard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\sv\sv.h">
+    <ClInclude Include="code\mp\net.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\net_handlers\chat\nh_chat.h">

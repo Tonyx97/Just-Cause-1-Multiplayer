@@ -1,7 +1,7 @@
 #include <defs/standard.h>
 #include <defs/libs.h>
 
-#include <sv/sv.h>
+#include <mp/net.h>
 
 #include <timer/timer.h>
 
@@ -11,16 +11,16 @@ int main()
 
 	// initialize the server
 
-	g_sv = JC_ALLOC(Server);
+	g_net = JC_ALLOC(Net);
 
-	if (!g_sv->init())
+	if (!g_net->init())
 		return EXIT_FAILURE;
 
 	// start with the server logic
 
 	while (!GetAsyncKeyState(VK_F7))
 	{
-		g_sv->tick();
+		g_net->tick();
 
 		// check timers
 		
@@ -33,9 +33,9 @@ int main()
 
 	// destroy the server
 
-	g_sv->destroy();
+	g_net->destroy();
 
-	JC_FREE(g_sv);
+	JC_FREE(g_net);
 
 	return EXIT_SUCCESS;
 }

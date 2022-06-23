@@ -160,6 +160,10 @@ namespace util
 		}
 	}
 
+	namespace cpp
+	{
+	}
+
 	namespace win
 	{
 		inline std::wstring get_clipboard_text()

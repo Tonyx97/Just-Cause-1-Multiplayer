@@ -3,30 +3,20 @@
 
 #include "interface.h"
 
-#ifdef JC_CLIENT
 #include <mp/net.h>
-#else
-#include <sv/sv.h>
-#endif
 
-#include <shared_mp/player_client/player_client.h>
+#include <shared_mp/objs/all.h>
 
 namespace enet
 {
 	channel_dispatch_t channel_fns[ChannelID_Max] = { nullptr };
 
-    NetObject* PacketR::get_net_obj() const
+	NetObject* PacketR::get_net_object_impl() const
     {
 		const auto nid = get_int<NID>();
 		const auto type = get_int<uint32_t>();
 
-		// todojc - make a list of all net objects including players and other stuff like vehicles etc.
-
-#ifdef JC_CLIENT
-		return g_net->get_player_client_by_nid(nid);
-#else
-		return g_sv->get_player_client_by_nid(nid);
-#endif
+		return g_net->get_net_object_by_nid(nid);
     }
 }
 
@@ -35,17 +25,12 @@ ENetPeer* enet::GET_CLIENT_PEER()
 {
 	return g_net->get_peer();
 }
+#endif
 
-ENetHost* enet::GET_CLIENT_HOST()
+ENetHost* enet::GET_HOST()
 {
 	return g_net->get_host();
 }
-#else
-ENetHost* enet::GET_HOST()
-{
-	return g_sv->get_host();
-}
-#endif
 
 void enet::init()
 {

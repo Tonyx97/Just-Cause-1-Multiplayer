@@ -23,6 +23,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <utils/utils.h>
+
 #include <prof/prof.h>
 
 #include <memory/defs.h>

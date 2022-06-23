@@ -23,10 +23,9 @@ namespace enet
 
 #ifdef JC_CLIENT
 	ENetPeer* GET_CLIENT_PEER();
-	ENetHost* GET_CLIENT_HOST();
-#else
-	ENetHost* GET_HOST();
 #endif
+
+	ENetHost* GET_HOST();
 
 	inline void send_packet_broadcast(ENetHost* host, const void* data, size_t size, ENetPacketFlag flags = ENET_PACKET_FLAG_RELIABLE, uint8_t channel = ChannelID_Generic)
 	{
@@ -116,6 +115,8 @@ namespace enet
 		uint8_t		   channel = 0u;
 		bool		   as_view = false;
 
+		NetObject* get_net_object_impl() const;
+
 	public:
 		PacketR(const ENetEvent& e, bool view = false)
 			: peer(e.peer)
@@ -160,7 +161,11 @@ namespace enet
 			return get_int<float>();
 		}
 
-		NetObject* get_net_obj() const;
+		template <typename T>
+		T* get_net_object() const
+		{
+			return get_net_object_impl()->cast_safe<T>();
+		}
 
 		template <typename T>
 		T get_str() const
@@ -249,13 +254,7 @@ namespace enet
 	{
 		ENetEvent e;
 
-#ifdef JC_CLIENT
-		ENetHost* host = GET_CLIENT_HOST();
-#else
-		ENetHost* host = GET_HOST();
-#endif
-
-		while (enet_host_service(host, &e, timeout) > 0)
+		while (enet_host_service(GET_HOST(), &e, timeout) > 0)
 			fn(e);
 	}
 
@@ -264,13 +263,7 @@ namespace enet
 	{
 		ENetEvent e;
 
-#ifdef JC_CLIENT
-		ENetHost* host = GET_CLIENT_HOST();
-#else
-		ENetHost* host = GET_HOST();
-#endif
-
-		if (enet_host_service(host, &e, timeout) > 0)
+		if (enet_host_service(GET_HOST(), &e, timeout) > 0)
 			fn(e);
 	}
 

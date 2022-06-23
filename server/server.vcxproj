@@ -154,7 +154,7 @@
     <ClCompile Include="code\net_handlers\chat\nh_chat.cpp" />
     <ClCompile Include="code\net_handlers\init\nh_init.cpp" />
     <ClCompile Include="code\net_handlers\player_client\nh_player_client.cpp" />
-    <ClCompile Include="code\sv\sv.cpp" />
+    <ClCompile Include="code\mp\net.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\defs\enet.h" />
@@ -164,7 +164,7 @@
     <ClInclude Include="code\net_handlers\chat\nh_chat.h" />
     <ClInclude Include="code\net_handlers\init\nh_init.h" />
     <ClInclude Include="code\net_handlers\player_client\nh_player_client.h" />
-    <ClInclude Include="code\sv\sv.h" />
+    <ClInclude Include="code\mp\net.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

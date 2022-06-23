@@ -2,7 +2,7 @@
 
 #include <shared_mp/object_lists.h>
 
-class Server : public ObjectLists
+class Net : public ObjectLists
 {
 private:
 	ENetHost* sv = nullptr;
@@ -17,4 +17,4 @@ public:
 	ENetHost* get_host() const { return sv; };
 };
 
-inline Server* g_sv = nullptr;
+inline Net* g_net = nullptr;

@@ -2,13 +2,13 @@
 
 #include <timer/timer.h>
 
-#include "sv.h"
+#include "net.h"
 
 #include <net_handlers/all.h>
 
 #include <shared_mp/player_client/player_client.h>
 
-bool Server::init()
+bool Net::init()
 {
 	if (enet_initialize() != 0)
 		return logbwt(RED, "Error occurred while initializing server");
@@ -35,13 +35,13 @@ bool Server::init()
 	return true;
 }
 
-void Server::destroy()
+void Net::destroy()
 {
 	enet_host_destroy(sv);
 	enet_deinitialize();
 }
 
-void Server::setup_channels()
+void Net::setup_channels()
 {
 	// generic packet dispatcher
 
@@ -91,7 +91,7 @@ void Server::setup_channels()
 	});
 }
 
-void Server::tick()
+void Net::tick()
 {
 	// send all independent packets to all clients
 	// such as day cycle time etc
@@ -128,7 +128,7 @@ void Server::tick()
 	std::this_thread::sleep_for(std::chrono::microseconds(8333));
 }
 
-void Server::send_global_packets()
+void Net::send_global_packets()
 {
 	SetWindowText(GetConsoleWindow(), std::format(L"JC:MP Server ({} players connected)", get_player_client_count()).c_str());
 

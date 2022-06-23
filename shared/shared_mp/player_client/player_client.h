@@ -2,11 +2,9 @@
 
 #ifndef JC_LOADER
 
-#include <shared_mp/objs/net_object.h>
-
 class Player;
 
-class PlayerClient : public NetObject
+class PlayerClient
 {
 private:
 
@@ -24,10 +22,6 @@ private:
 
 public:
 
-	static constexpr uint32_t TYPE() { return NetObject_Player; }
-
-	uint32_t get_type() const override { return TYPE(); }
-
 #ifdef JC_CLIENT
 	PlayerClient(NID nid);
 #else
@@ -39,6 +33,10 @@ public:
 	void set_ready() { ready = true; }
 
 	bool is_ready() const { return ready; }
+
+	NID get_nid() const;
+
+	Player* get_player() const { return player; }
 
 	const std::string& get_nick() const { return nick; }
 

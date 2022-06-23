@@ -4,24 +4,27 @@
 #include "object_lists.h"
 
 #include <shared_mp/player_client/player_client.h>
+#include <shared_mp/objs/player.h>
 
 #ifdef JC_CLIENT
 PlayerClient* ObjectLists::add_player_client(NID nid)
 {
 	const auto pc = CREATE_PLAYER_CLIENT(nid);
 
-	player_clients.insert({ nid, pc });
+	add_net_object(pc->get_player());
 
 	return pc;
 }
 
-void ObjectLists::remove_player_client(PlayerClient* v)
+bool ObjectLists::remove_player_client(PlayerClient* pc)
 {
-	check(v, "Invalid player client at '{}'", CURR_FN);
+	check(pc, "Invalid player client at '{}'", CURR_FN);
 
-	player_clients.erase(v->get_nid());
+	remove_net_object(pc->get_player());
 
-	DESTROY_PLAYER_CLIENT(v);
+	DESTROY_PLAYER_CLIENT(pc);
+
+	return true;
 }
 #else
 PlayerClient* ObjectLists::add_player_client(ENetEvent& e)
@@ -35,19 +38,75 @@ PlayerClient* ObjectLists::add_player_client(ENetEvent& e)
 	return pc;
 }
 
-void ObjectLists::remove_player_client(ENetEvent& e)
+bool ObjectLists::remove_player_client(ENetEvent& e)
 {
 	const auto pc = AS_PC(e.peer->data);
 
 	check(pc, "Invalid player client at '{}'", CURR_FN);
 
-	player_clients.erase(pc->get_nid());
+	remove_net_object(pc->get_player());
 
 	DESTROY_PLAYER_CLIENT(pc);
 
 	e.peer->data = nullptr;
+
+	return true;
 }
 #endif
+
+NetObject* ObjectLists::get_net_object_by_nid_impl(NID nid)
+{
+	auto it = net_objects.find(nid);
+	return it != net_objects.end() ? it->second : nullptr;
+}
+
+NetObject* ObjectLists::add_net_object(NetObject* net_obj)
+{
+	const auto nid = net_obj->get_nid();
+
+	switch (net_obj->get_type())
+	{
+	case NetObject_Player:
+	{
+		player_clients.insert({ nid, net_obj->get_player_client()});
+		players.insert({ nid, net_obj->cast<Player>() });
+		break;
+	}
+	default:
+		return nullptr;
+	}
+
+	net_objects.insert({ nid, net_obj });
+
+	return net_obj;
+}
+
+bool ObjectLists::remove_net_object(NetObject* net_obj)
+{
+	const auto nid = net_obj->get_nid();
+
+	switch (net_obj->get_type())
+	{
+	case NetObject_Player:
+	{
+		player_clients.erase(nid);
+		players.erase(nid);
+		break;
+	}
+	default:
+		return false;
+	}
+
+	net_objects.erase(nid);
+
+	return true;
+}
+
+Player* ObjectLists::get_player_by_nid(NID nid)
+{
+	auto it = players.find(nid);
+	return it != players.end() ? it->second : nullptr;
+}
 
 PlayerClient* ObjectLists::get_player_client_by_nid(NID nid)
 {

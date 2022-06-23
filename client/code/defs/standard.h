@@ -31,6 +31,8 @@
 
 #include "global_types.h"
 
+#include <utils/utils.h>
+
 #include <prof/prof.h>
 
 #include <memory/defs.h>
