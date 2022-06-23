@@ -168,7 +168,7 @@ namespace enet
 			{
 				if constexpr (std::is_same_v<T, NetObject>)
 					return net_obj;
-				else net_obj->cast_safe<T>();
+				else return net_obj->cast_safe<T>();
 			}
 
 			return nullptr;
