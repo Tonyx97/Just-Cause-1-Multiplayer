@@ -39,21 +39,6 @@ bool ObjectLists::remove_player_client(PlayerClient* pc)
 	return true;
 }
 
-/*bool ObjectLists::remove_player_client(ENetEvent& e)
-{
-	const auto pc = AS_PC(e.peer->data);
-
-	check(pc, "Invalid player client at '{}'", CURR_FN);
-
-	remove_net_object(pc->get_player());
-
-	DESTROY_PLAYER_CLIENT(pc);
-
-	e.peer->data = nullptr;
-
-	return true;
-}*/
-
 NetObject* ObjectLists::get_net_object_by_nid_impl(NID nid)
 {
 	auto it = net_objects.find(nid);
