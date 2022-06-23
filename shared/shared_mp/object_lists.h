@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef JC_LOADER
-#include "net_obj.h"
+#include <shared_mp/objs/net_object.h>
 
 #include <net/interface.h>
 

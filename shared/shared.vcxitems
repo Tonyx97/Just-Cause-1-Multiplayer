@@ -17,22 +17,25 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)defs\json.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\channels.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\interface.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_obj.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\objs\all.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\objs\net_object.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\packets.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\serializer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)memory\defs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)memory\memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)prof\prof.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\object_lists.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\player_client\player_client.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)timer\timer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)net\interface.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_obj.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\objs\net_object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)net\serializer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)prof\prof.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\object_lists.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\player_client\player_client.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)timer\timer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\utils.cpp" />
   </ItemGroup>

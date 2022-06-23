@@ -4,7 +4,7 @@
 
 #include <enet.h>
 
-#include <shared_mp/net_obj.h>
+#include <shared_mp/objs/all.h>
 
 namespace enet
 {

@@ -3,11 +3,7 @@
 
 #include "object_lists.h"
 
-#ifdef JC_CLIENT
-#include <mp/player_client/player_client.h>
-#else
-#include <player_client/player_client.h>
-#endif
+#include <shared_mp/player_client/player_client.h>
 
 #ifdef JC_CLIENT
 PlayerClient* ObjectLists::add_player_client(NID nid)

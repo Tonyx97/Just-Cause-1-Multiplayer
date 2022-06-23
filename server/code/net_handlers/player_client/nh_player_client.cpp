@@ -2,7 +2,7 @@
 
 #include "nh_player_client.h"
 
-#include <player_client/player_client.h>
+#include <shared_mp/player_client/player_client.h>
 
 enet::PacketResult nh::player_client::nick(const enet::PacketR& p)
 {

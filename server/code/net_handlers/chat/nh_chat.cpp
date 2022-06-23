@@ -2,7 +2,7 @@
 
 #include "nh_chat.h"
 
-#include <player_client/player_client.h>
+#include <shared_mp/player_client/player_client.h>
 
 enet::PacketResult nh::chat::msg(const enet::PacketR& p)
 {

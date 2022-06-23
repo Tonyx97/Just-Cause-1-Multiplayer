@@ -21,9 +21,6 @@
     <ClCompile Include="code\sv\sv.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\player_client\player_client.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\net_handlers\chat\nh_chat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,9 +42,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\sv\sv.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\player_client\player_client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\net_handlers\chat\nh_chat.h">

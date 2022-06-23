@@ -6,7 +6,7 @@
 
 #include <net_handlers/all.h>
 
-#include <player_client/player_client.h>
+#include <shared_mp/player_client/player_client.h>
 
 bool Server::init()
 {

@@ -4,7 +4,7 @@
 
 #include "nh_chat.h"
 
-#include <mp/player_client/player_client.h>
+#include <shared_mp/player_client/player_client.h>
 
 enet::PacketResult nh::chat::dispatch(const enet::PacketR& p)
 {

@@ -2,7 +2,7 @@
 
 #include "nh_init.h"
 
-#include <player_client/player_client.h>
+#include <shared_mp/player_client/player_client.h>
 
 enet::PacketResult nh::init::init(const enet::PacketR& p)
 {

@@ -5,13 +5,11 @@
 
 #ifdef JC_CLIENT
 #include <mp/net.h>
-
-#include <mp/player_client/player_client.h>
 #else
 #include <sv/sv.h>
-
-#include <player_client/player_client.h>
 #endif
+
+#include <shared_mp/player_client/player_client.h>
 
 namespace enet
 {

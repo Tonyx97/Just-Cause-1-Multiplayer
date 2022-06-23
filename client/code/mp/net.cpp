@@ -5,7 +5,8 @@
 #include <game/sys/all.h>
 
 #include <mp/net_handlers/all.h>
-#include <mp/player_client/player_client.h>
+
+#include <shared_mp/player_client/player_client.h>
 
 bool Net::init(const std::string& ip, const std::string& nick)
 {
