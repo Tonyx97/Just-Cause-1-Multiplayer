@@ -111,7 +111,7 @@ void Net::tick()
 		}
 		case ENET_EVENT_TYPE_CONNECT:
 		{
-			add_player_client(e);
+			add_player_client(e.peer);
 			break;
 		}
 		case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
@@ -121,7 +121,11 @@ void Net::tick()
 			[[fallthrough]];
 		}
 		case ENET_EVENT_TYPE_DISCONNECT:
-			remove_player_client(e);
+		{
+			remove_player_client(AS_PC(e.peer->data));
+
+			e.peer->data = nullptr;
+		}
 		}
 	});
 

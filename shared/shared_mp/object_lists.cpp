@@ -11,10 +11,22 @@ PlayerClient* ObjectLists::add_player_client(NID nid)
 {
 	const auto pc = CREATE_PLAYER_CLIENT(nid);
 
-	add_net_object(pc->get_player());
+	check(add_net_object(pc->get_player()), "Could not add a player client");
 
 	return pc;
 }
+#else
+PlayerClient* ObjectLists::add_player_client(ENetPeer* peer)
+{
+	const auto pc = CREATE_PLAYER_CLIENT(peer);
+
+	peer->data = pc;
+
+	check(add_net_object(pc->get_player()), "Could not add a player client");
+
+	return pc;
+}
+#endif
 
 bool ObjectLists::remove_player_client(PlayerClient* pc)
 {
@@ -26,19 +38,8 @@ bool ObjectLists::remove_player_client(PlayerClient* pc)
 
 	return true;
 }
-#else
-PlayerClient* ObjectLists::add_player_client(ENetEvent& e)
-{
-	const auto pc = CREATE_PLAYER_CLIENT(e.peer);
 
-	e.peer->data = pc;
-
-	player_clients.insert({ pc->get_nid(), pc });
-
-	return pc;
-}
-
-bool ObjectLists::remove_player_client(ENetEvent& e)
+/*bool ObjectLists::remove_player_client(ENetEvent& e)
 {
 	const auto pc = AS_PC(e.peer->data);
 
@@ -51,8 +52,7 @@ bool ObjectLists::remove_player_client(ENetEvent& e)
 	e.peer->data = nullptr;
 
 	return true;
-}
-#endif
+}*/
 
 NetObject* ObjectLists::get_net_object_by_nid_impl(NID nid)
 {

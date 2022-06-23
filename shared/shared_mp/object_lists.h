@@ -18,13 +18,11 @@ public:
 
 #ifdef JC_CLIENT
 	PlayerClient* add_player_client(NID nid);
+#else
+	PlayerClient* add_player_client(ENetPeer* peer);
+#endif
 
 	bool remove_player_client(PlayerClient* pc);
-#else
-	PlayerClient* add_player_client(ENetEvent& e);
-
-	bool remove_player_client(ENetEvent& e);
-#endif
 
 	template <typename T = NetObject>
 	T* get_net_object_by_nid(NID nid)
