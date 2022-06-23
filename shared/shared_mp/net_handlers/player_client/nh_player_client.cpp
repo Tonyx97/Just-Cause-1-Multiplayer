@@ -6,18 +6,20 @@
 
 enet::PacketResult nh::player_client::connect(const enet::PacketR& p)
 {
-	/*const auto player_name = p.get_str(); // todojc
-
-	log(YELLOW, "[{}] {}", CURR_FN, player_name);*/
+	if (const auto player = p.get_net_object<Player>())
+	{
+		log(YELLOW, "[{}] {}", CURR_FN, player->get_nid());
+	}
 
 	return enet::PacketRes_Ok;
 }
 
 enet::PacketResult nh::player_client::disconnect(const enet::PacketR& p)
 {
-	/*const auto player_name = p.get_str(); // todojc
-
-	log(YELLOW, "[{}] {}", CURR_FN, player_name);*/
+	if (const auto player = p.get_net_object<Player>())
+	{
+		log(YELLOW, "[{}] {}", CURR_FN, player->get_nid());
+	}
 
 	return enet::PacketRes_Ok;
 }
@@ -25,10 +27,14 @@ enet::PacketResult nh::player_client::disconnect(const enet::PacketR& p)
 enet::PacketResult nh::player_client::nick(const enet::PacketR& p)
 {
 #ifdef JC_CLIENT
-	/*const auto player_name = p.get_str();  // todojc
-	const auto nick = p.get_str();  // todojc
+	if (const auto player = p.get_net_object<Player>())
+	{
+		const auto nick = p.get_str<std::string>();
 
-	log(YELLOW, "[{}] {}", CURR_FN, nick);*/
+		player->get_client()->set_nick(nick);
+
+		log(YELLOW, "[{}] {} {}", CURR_FN, player->get_nid(), nick);
+	}
 #else
 	const auto nick = p.get_str<std::string>();
 	const auto pc = p.get_player_client_owner();

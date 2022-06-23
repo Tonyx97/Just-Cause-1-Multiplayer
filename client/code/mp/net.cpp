@@ -47,7 +47,6 @@ bool Net::init(const std::string& ip, const std::string& nick)
 	}
 
 	log(GREEN, "Connected");
-	log(YELLOW, "Waiting for init packet...");
 
 	enet::send_reliable<ChannelID_Init>(InitPID_Init, nick);
 

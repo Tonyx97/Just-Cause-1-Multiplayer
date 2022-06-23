@@ -164,7 +164,14 @@ namespace enet
 		template <typename T>
 		T* get_net_object() const
 		{
-			return get_net_object_impl()->cast_safe<T>();
+			if (const auto net_obj = get_net_object_impl())
+			{
+				if constexpr (std::is_same_v<T, NetObject>)
+					return net_obj;
+				else net_obj->cast_safe<T>();
+			}
+
+			return nullptr;
 		}
 
 		template <typename T>

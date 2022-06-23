@@ -34,7 +34,14 @@ public:
 		else net_obj->cast<T>();
 	}
 
-	size_t get_player_client_count() const { return player_clients.size(); }
+	template <typename Fn>
+	void for_each_net_object(const Fn& fn)
+	{
+		for (const auto& [nid, obj] : net_objects)
+			fn(nid, obj);
+	}
+
+	size_t get_player_clients_count() const { return player_clients.size(); }
 	size_t get_net_objects_count() const { return net_objects.size(); }
 
 	NetObject* add_net_object(NetObject* net_obj);

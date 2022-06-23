@@ -19,7 +19,7 @@ enet::PacketResult nh::init::init(const enet::PacketR& p)
 	g_net->set_ready();
 
 	log(GREEN, "Init packet received (NID: {:x})", nid);
-	log(GREEN, "Localplayer: {})", (void*)g_net->get_local());
+	log(GREEN, "Localplayer: {}", (void*)g_net->get_local());
 
 	// ask the server to check for net objects and create the proper instances locally
 	

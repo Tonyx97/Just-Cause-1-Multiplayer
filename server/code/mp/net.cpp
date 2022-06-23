@@ -145,7 +145,7 @@ void Net::tick()
 
 void Net::send_global_packets()
 {
-	SetWindowText(GetConsoleWindow(), std::format(L"JC:MP Server ({} players connected)", get_player_client_count()).c_str());
+	SetWindowText(GetConsoleWindow(), std::format(L"JC:MP Server ({} players connected)", get_player_clients_count()).c_str());
 
 	static auto day_cycle_timer = timer::add_timer(1000, [&]()
 	{
