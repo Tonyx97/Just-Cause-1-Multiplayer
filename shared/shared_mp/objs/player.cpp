@@ -14,7 +14,6 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 #else
 Player::Player(PlayerClient* pc) : client(pc)
 {
-	set_streamer(this);
 	set_player_client(pc);
 }
 #endif
