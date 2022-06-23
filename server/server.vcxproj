@@ -57,6 +57,7 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
     <Import Project="..\shared\shared.vcxitems" Label="Shared" />
+    <Import Project="..\profiling\profiling.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -151,19 +152,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="code\main.cpp" />
-    <ClCompile Include="code\mp\net_handlers\chat\nh_chat.cpp" />
-    <ClCompile Include="code\mp\net_handlers\init\nh_init.cpp" />
-    <ClCompile Include="code\mp\net_handlers\player_client\nh_player_client.cpp" />
     <ClCompile Include="code\mp\net.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\defs\enet.h" />
     <ClInclude Include="code\defs\libs.h" />
     <ClInclude Include="code\defs\standard.h" />
-    <ClInclude Include="code\mp\net_handlers\all.h" />
-    <ClInclude Include="code\mp\net_handlers\chat\nh_chat.h" />
-    <ClInclude Include="code\mp\net_handlers\init\nh_init.h" />
-    <ClInclude Include="code\mp\net_handlers\player_client\nh_player_client.h" />
     <ClInclude Include="code\mp\net.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

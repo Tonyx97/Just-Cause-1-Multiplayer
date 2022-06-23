@@ -30,7 +30,7 @@ public:
 	~PlayerClient();
 
 	void set_nick(const std::string& v);
-	void set_ready() { ready = true; }
+	void set_ready();
 
 	bool is_ready() const { return ready; }
 

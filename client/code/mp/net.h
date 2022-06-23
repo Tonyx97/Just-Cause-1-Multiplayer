@@ -18,6 +18,7 @@ private:
 	int net_stat = 0;
 
 	bool connected = false,
+		 ready = false,
 		 timed_out = false;
 
 	void disconnect();
@@ -25,9 +26,13 @@ private:
 public:
 	bool init(const std::string& ip, const std::string& nick);
 	void destroy();
+	void add_local(NID nid);
+	void set_ready();
 	void setup_channels();
 	void tick();
 	void set_net_stats(int v) { net_stat = v; }
+
+	bool is_ready() const { return ready; }
 
 	PlayerClient* get_local() const { return local; }
 

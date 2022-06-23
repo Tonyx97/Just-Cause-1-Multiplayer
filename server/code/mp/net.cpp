@@ -3,8 +3,8 @@
 #include <timer/timer.h>
 
 #include "net.h"
-#include "net_handlers/all.h"
 
+#include <shared_mp/net_handlers/all.h>
 #include <shared_mp/player_client/player_client.h>
 
 bool Net::init()
@@ -72,6 +72,18 @@ void Net::setup_channels()
 		switch (auto id = p.get_id())
 		{
 		case ChatPID_ChatMsg: return nh::chat::msg(p);
+		}
+
+		return enet::PacketRes_NotFound;
+	});
+
+	// check dispatcher
+
+	enet::add_channel_dispatcher(ChannelID_Check, [&](const enet::PacketR& p)
+	{
+		switch (auto id = p.get_id())
+		{
+		case CheckPID_NetObjects: return nh::check::net_objects(p);
 		}
 
 		return enet::PacketRes_NotFound;

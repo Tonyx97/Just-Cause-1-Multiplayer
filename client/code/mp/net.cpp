@@ -4,7 +4,7 @@
 
 #include <game/sys/all.h>
 
-#include <mp/net_handlers/all.h>
+#include <shared_mp/net_handlers/all.h>
 
 #include <shared_mp/player_client/player_client.h>
 
@@ -50,19 +50,6 @@ bool Net::init(const std::string& ip, const std::string& nick)
 	log(YELLOW, "Waiting for init packet...");
 
 	enet::send_reliable<ChannelID_Init>(InitPID_Init, nick);
-
-	// we need to get the init packet first, all packets coming before the init packet will be
-	// completely discarded and ignored
-
-	if (!enet::wait_until_packet(InitPID_Init, ChannelID_Init, [&](const enet::PacketR& p)
-	{
-		const auto nid = p.get_int<NID>();
-
-		log(GREEN, "Init packet received (NID: {:x})", nid);
-
-		local = add_player_client(nid);
-		local->set_nick(nick);
-	})) return logb(RED, "Could not receive the init packet");
 
 	return (connected = true);
 }
@@ -115,6 +102,17 @@ void Net::destroy()
 	client = nullptr;
 }
 
+void Net::add_local(NID nid)
+{
+	local = add_player_client(nid);
+	local->set_nick(nick);
+}
+
+void Net::set_ready()
+{
+	ready = true;
+}
+
 void Net::setup_channels()
 {
 	// generic packet dispatcher
@@ -159,7 +157,19 @@ void Net::setup_channels()
 
 		switch (auto id = p.get_id())
 		{
-		case ChatPID_ChatMsg: return nh::chat::dispatch(p);
+		case ChatPID_ChatMsg: return nh::chat::msg(p);
+		}
+
+		return enet::PacketRes_NotFound;
+	});
+
+	// check dispatcher
+
+	enet::add_channel_dispatcher(ChannelID_Check, [&](const enet::PacketR& p)
+	{
+		switch (auto id = p.get_id())
+		{
+		case CheckPID_NetObjects: return nh::check::net_objects(p);
 		}
 
 		return enet::PacketRes_NotFound;
@@ -169,6 +179,11 @@ void Net::setup_channels()
 
 	enet::add_channel_dispatcher(ChannelID_Init, [&](const enet::PacketR& p)
 	{
+		switch (auto id = p.get_id())
+		{
+		case InitPID_Init: return nh::init::init(p);
+		}
+
 		return enet::PacketRes_NotFound;
 	});
 }

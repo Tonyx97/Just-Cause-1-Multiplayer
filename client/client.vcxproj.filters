@@ -240,13 +240,7 @@
     <ClCompile Include="code\mp\cmd\cmd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\mp\net_handlers\chat\nh_chat.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\game\sys\game_status.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\mp\net_handlers\day_cycle\nh_day_cycle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\mounted_gun\mounted_gun.cpp">
@@ -265,9 +259,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\mp\sync_hooks\sync_hooks.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\mp\net_handlers\player_client\nh_player_client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -524,16 +515,7 @@
     <ClInclude Include="code\mp\cmd\cmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\mp\net_handlers\chat\nh_chat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\mp\net_handlers\all.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="code\game\sys\game_status.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\mp\net_handlers\day_cycle\nh_day_cycle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\mounted_gun\mounted_gun.h">
@@ -552,9 +534,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\mp\sync_hooks\sync_hooks.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\mp\net_handlers\player_client\nh_player_client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

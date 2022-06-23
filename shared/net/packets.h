@@ -35,6 +35,13 @@ enum ChatPacketID : unsigned int
 	ChatPID_ChatMsg,
 };
 
+// check packets
+
+enum CheckPacketID : unsigned int
+{
+	CheckPID_NetObjects,
+};
+
 // init packets
 
 enum InitPacketID : unsigned int
