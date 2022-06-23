@@ -46,8 +46,6 @@ void PlayerClient::set_nick(const std::string& v)
 void PlayerClient::set_ready()
 {
 	ready = true;
-
-	// send packet here
 }
 
 NID PlayerClient::get_nid() const
