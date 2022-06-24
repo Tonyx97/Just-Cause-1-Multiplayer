@@ -32,6 +32,16 @@ public:
 	void tick();
 	void set_net_stats(int v) { net_stat = v; }
 
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_reliable(uint32_t id, const A&... args)
+	{
+		vec<uint8_t> data;
+
+		enet::serialize(data, id);
+		enet::serialize_params(data, args...);
+		enet::send_packet(enet::GET_CLIENT_PEER(), data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
+	}
+
 	bool is_ready() const { return ready; }
 
 	PlayerClient* get_local() const { return local; }

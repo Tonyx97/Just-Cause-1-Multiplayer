@@ -18,39 +18,8 @@ public:
 
 #ifdef JC_CLIENT
 	PlayerClient* add_player_client(NID nid);
-
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_reliable(uint32_t id, const A&... args)
-	{
-		vec<uint8_t> data;
-		
-		enet::serialize(data, id);
-		enet::serialize_params(data, args...);
-		enet::send_packet(enet::GET_CLIENT_PEER(), data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
-	}
 #else
 	PlayerClient* add_player_client(ENetPeer* peer);
-
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_broadcast_reliable(PlayerClient* ignore_pc, uint32_t id, const A&... args)
-	{
-		enet::PacketW p(id);
-
-		p.add(args...);
-		p.ready();
-
-		for_each_player_client([&](NID, PlayerClient* pc)
-		{
-			if (pc != ignore_pc)
-				pc->send<channel>(p);
-		});
-	}
-
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_broadcast_reliable(uint32_t id, const A&... args)
-	{
-		send_broadcast_reliable<channel>(nullptr, id, args...);
-	}
 #endif
 
 	bool remove_player_client(PlayerClient* pc);
