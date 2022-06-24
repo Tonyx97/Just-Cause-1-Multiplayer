@@ -10,8 +10,6 @@ private:
 
 	Player* player = nullptr;
 
-	std::string nick;
-
 	bool ready = false;
 
 #ifdef JC_SERVER
@@ -38,7 +36,7 @@ public:
 
 	Player* get_player() const { return player; }
 
-	const std::string& get_nick() const { return nick; }
+	const std::string& get_nick() const;
 
 #ifdef JC_SERVER
 	void set_timed_out() { timed_out = true; }

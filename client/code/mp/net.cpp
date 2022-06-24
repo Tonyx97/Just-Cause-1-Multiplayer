@@ -103,6 +103,8 @@ void Net::destroy()
 
 void Net::add_local(NID nid)
 {
+	check(!local, "Localplayer must not exists");
+
 	local = add_player_client(nid);
 	local->set_nick(nick);
 }
@@ -168,7 +170,8 @@ void Net::setup_channels()
 	{
 		switch (auto id = p.get_id())
 		{
-		case CheckPID_NetObjects: return nh::check::net_objects(p);
+		case CheckPID_NetObjects:			return nh::check::net_objects(p);
+		case CheckPID_PlayersStaticInfo:	return nh::check::players_static_info(p);
 		}
 
 		return enet::PacketRes_NotFound;

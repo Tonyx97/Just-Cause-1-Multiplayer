@@ -15,7 +15,7 @@ enum PlayerPacketID : unsigned int
 
 enum DayCyclePacketID : unsigned int
 {
-	DayCyclePID_SetTime,
+	DayCyclePID_SetTime,	// day cycle set hour time (0.0-24.0)
 };
 
 // player client
@@ -32,14 +32,15 @@ enum PlayerClientPacketID : unsigned int
 
 enum ChatPacketID : unsigned int
 {
-	ChatPID_ChatMsg,
+	ChatPID_ChatMsg,		// chat message
 };
 
 // check packets
 
 enum CheckPacketID : unsigned int
 {
-	CheckPID_NetObjects,
+	CheckPID_NetObjects,				// sync the instances for all net objects (single or broadcast)
+	CheckPID_PlayersStaticInfo,			// sync players static info (single or broadcast)
 };
 
 // init packets

@@ -31,8 +31,8 @@ PlayerClient::~PlayerClient()
 	enet::send_broadcast_reliable<ChannelID_PlayerClient>(PlayerClientPID_Disconnect, player);
 
 	if (timed_out)
-		logt(RED, "'{}' disconnected due to timeout (NID {:x})", nick, get_nid());
-	else logt(YELLOW, "'{}' disconnected (NID {:x})", nick, get_nid());
+		logt(RED, "'{}' disconnected due to timeout (NID {:x})", player->get_nick(), get_nid());
+	else logt(YELLOW, "'{}' disconnected (NID {:x})", player->get_nick(), get_nid());
 #endif
 
 	JC_FREE(player);
@@ -40,7 +40,7 @@ PlayerClient::~PlayerClient()
 
 void PlayerClient::set_nick(const std::string& v)
 {
-	nick = v;
+	player->set_nick(v);
 }
 
 void PlayerClient::set_ready()
@@ -51,5 +51,10 @@ void PlayerClient::set_ready()
 NID PlayerClient::get_nid() const
 {
 	return player->get_nid();
+}
+
+const std::string& PlayerClient::get_nick() const
+{
+	return player->get_nick();
 }
 #endif

@@ -94,7 +94,7 @@ namespace enet
 		serialize_params(data, args...);
 
 		send_packet_broadcast(GET_HOST(), data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
-}
+	}
 #endif
 
 	/**

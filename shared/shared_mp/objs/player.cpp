@@ -21,4 +21,9 @@ Player::Player(PlayerClient* pc) : client(pc)
 Player::~Player()
 {
 }
+
+void Player::set_nick(const std::string& v)
+{
+	static_info.nick = v;
+}
 #endif

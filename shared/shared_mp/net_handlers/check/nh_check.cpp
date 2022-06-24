@@ -51,3 +51,23 @@ enet::PacketResult nh::check::net_objects(const enet::PacketR& p)
 
 	return enet::PacketRes_Ok;
 }
+
+enet::PacketResult nh::check::players_static_info(const enet::PacketR& p)
+{
+#ifdef JC_CLIENT
+
+#else
+	/*enet::PacketW out_p(CheckPID_NetObjects);
+
+	out_p.add(g_net->get_net_objects_count());
+
+	g_net->for_each_net_object([&](NID nid, NetObject* obj)
+	{
+		out_p.add(obj);
+	});
+
+	out_p.send(p.get_peer(), ChannelID_Check);*/
+#endif
+
+	return enet::PacketRes_Ok;
+}

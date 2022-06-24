@@ -6,9 +6,16 @@
 
 class PlayerClient;
 
+struct PlayerStaticInfo
+{
+	std::string nick;
+};
+
 class Player : public NetObject
 {
 private:
+
+	PlayerStaticInfo static_info;
 
 	PlayerClient* client = nullptr;
 
@@ -25,6 +32,10 @@ public:
 #endif
 	~Player();
 
+	void set_nick(const std::string& v);
+
 	PlayerClient* get_client() const { return client; }
+
+	const std::string& get_nick() const { return static_info.nick; }
 };
 #endif

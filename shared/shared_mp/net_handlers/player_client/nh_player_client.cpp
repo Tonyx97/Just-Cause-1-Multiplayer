@@ -11,6 +11,7 @@ enet::PacketResult nh::player_client::connect(const enet::PacketR& p)
 #ifdef JC_CLIENT
 	DESERIALIZE_NID_AND_TYPE(p);
 
+	check(g_net->get_local()->get_nid() != nid, "A localplayer cannot receive 'connect' packet with its NID");
 	check(!g_net->get_player_by_nid(nid), "Player must not exist before '{}' packet", CURR_FN);
 
 	const auto new_player = g_net->add_player_client(nid);
@@ -26,6 +27,7 @@ enet::PacketResult nh::player_client::disconnect(const enet::PacketR& p)
 #ifdef JC_CLIENT
 	const auto player = p.get_net_object<Player>();
 
+	check(g_net->get_local()->get_nid() != player->get_nid(), "A localplayer cannot receive 'connect' packet with its NID");
 	check(player, "Player must exist before '{}' packet", CURR_FN);
 
 	log(YELLOW, "[{}] Player {:x} removed", CURR_FN, player->get_nid());

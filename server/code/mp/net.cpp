@@ -83,7 +83,8 @@ void Net::setup_channels()
 	{
 		switch (auto id = p.get_id())
 		{
-		case CheckPID_NetObjects: return nh::check::net_objects(p);
+		case CheckPID_NetObjects:			return nh::check::net_objects(p);
+		case CheckPID_PlayersStaticInfo:	return nh::check::players_static_info(p);
 		}
 
 		return enet::PacketRes_NotFound;

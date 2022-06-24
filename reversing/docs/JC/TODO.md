@@ -1,1 +1,1 @@
-· Send a packet to a new player who just connected with all other players "static" info such as the nick etc. From there we will properly sync it with events (onNickChange etc).
+· Add packet sending wrappers methods for PlayerClient too.
