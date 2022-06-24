@@ -35,6 +35,7 @@ public:
 	bool is_ready() const { return ready; }
 
 	PlayerClient* get_local() const { return local; }
+	Player* get_localplayer() const { return local->get_player(); }
 
 	ENetHost* get_host() const { return client; }
 	ENetPeer* get_peer() const { return peer; }

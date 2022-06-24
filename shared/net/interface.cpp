@@ -13,8 +13,8 @@ namespace enet
 
 	NetObject* PacketR::get_net_object_impl() const
     {
-		const auto nid = get_int<NID>();
-		const auto type = get_int<uint32_t>();
+		const auto nid = get_uint();
+		const auto type = get_uint();
 
 		return g_net->get_net_object_by_nid(nid);
     }

@@ -27,76 +27,6 @@ namespace enet
 
 	ENetHost* GET_HOST();
 
-	inline void send_packet_broadcast(ENetHost* host, const void* data, size_t size, ENetPacketFlag flags = ENET_PACKET_FLAG_RELIABLE, uint8_t channel = ChannelID_Generic)
-	{
-		if (!host)
-			return;
-
-		const auto packet = enet_packet_create(data, size, flags);
-
-		check(packet, "Net packet could not be created");
-
-		enet_host_broadcast(host, channel, packet);
-	}
-
-	inline bool send_packet(ENetPeer* peer, const void* data, size_t size, ENetPacketFlag flags = ENET_PACKET_FLAG_RELIABLE, uint8_t channel = ChannelID_Generic)
-	{
-		if (!peer)
-			return false;
-
-		const auto packet = enet_packet_create(data, size, flags);
-
-		check(packet, "Net packet could not be created");
-
-		return enet_peer_send(peer, channel, packet) == 0;
-	}
-
-	inline bool send_packet(ENetPeer* peer, const std::string& data, ENetPacketFlag flags = ENET_PACKET_FLAG_RELIABLE, uint8_t channel = ChannelID_Generic)
-	{
-		return send_packet(peer, data.data(), data.length() + 1, flags, channel);
-	}
-
-	template <typename T>
-	inline bool send_packet(ENetPeer* peer, const T& data, ENetPacketFlag flags = ENET_PACKET_FLAG_RELIABLE, uint8_t channel = ChannelID_Generic)
-	{
-		return send_packet(peer, &data, sizeof(data), flags, channel);
-	}
-
-#ifdef JC_CLIENT
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_reliable(uint32_t id, const A&... args)
-	{
-		vec<uint8_t> data;
-
-		serialize(data, id);
-		serialize_params(data, args...);
-
-		send_packet(GET_CLIENT_PEER(), data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
-	}
-#else
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_reliable(ENetPeer* peer, uint32_t id, const A&... args)
-	{
-		vec<uint8_t> data;
-
-		serialize(data, id);
-		serialize_params(data, args...);
-
-		send_packet(peer, data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
-	}
-
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_broadcast_reliable(uint32_t id, const A&... args)
-	{
-		vec<uint8_t> data;
-
-		serialize(data, id);
-		serialize_params(data, args...);
-
-		send_packet_broadcast(GET_HOST(), data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
-	}
-#endif
-
 	/**
 	 * Class used to read a packet
 	 */
@@ -128,7 +58,7 @@ namespace enet
 		{
 			check(!view, "Not supported yet");
 
-			id = get_int<uint32_t>();
+			id = get_uint();
 
 #ifdef JC_SERVER
 			pc = BITCAST(PlayerClient*, e.peer->data);
@@ -144,16 +74,22 @@ namespace enet
 		ENetPeer* get_peer() const { return peer; }
 
 #ifdef JC_SERVER
-		PlayerClient* get_player_client_owner() const { return pc; }
+		PlayerClient* get_pc() const { return pc; }
 #endif
 
 		uint32_t get_id() const { return id; }
 		uint8_t get_channel() const { return channel; }
 
-		template <typename T>
+		template <typename T = int>
 		T get_int() const
 		{
 			return *BITCAST(T*, data + std::exchange(offset, offset + sizeof(T)));
+		}
+
+		template <typename T = uint32_t>
+		T get_uint() const
+		{
+			return get_int<T>();
 		}
 
 		float get_float() const
@@ -161,7 +97,7 @@ namespace enet
 			return get_int<float>();
 		}
 
-		template <typename T>
+		template <typename T = NetObject>
 		T* get_net_object() const
 		{
 			if (const auto net_obj = get_net_object_impl())
@@ -174,7 +110,7 @@ namespace enet
 			return nullptr;
 		}
 
-		template <typename T>
+		template <typename T = std::string>
 		T get_str() const
 		{
 			const auto len = *BITCAST(size_t*, data + std::exchange(offset, offset + sizeof(size_t)));
@@ -197,19 +133,22 @@ namespace enet
 	private:
 		vec<uint8_t> data;
 
-		ENetPacketFlag flags;
-
-		uint32_t id = 0u;
+		ENetPacket* packet = nullptr;
+		
+		uint32_t flags = 0u,
+				 id = 0u;
 
 	public:
-		PacketW(uint32_t id, ENetPacketFlag flags = ENET_PACKET_FLAG_RELIABLE)
-			: id(id)
-			, flags(flags)
+		PacketW(uint32_t id, uint32_t flags = ENET_PACKET_FLAG_RELIABLE) : id(id), flags(flags)
 		{
 			add(id);
 		}
 
-		~PacketW() {}
+		~PacketW()
+		{
+			if (packet->referenceCount == 0)
+				enet_packet_destroy(packet);
+		}
 
 		uint32_t get_id() const { return id; }
 
@@ -218,36 +157,15 @@ namespace enet
 		{
 			serialize_params(data, args...);
 		}
-
-#ifdef JC_CLIENT
-		/**
-		 * This function is used by the client project where
-		 * the peer is always the same, the client -> server one
-		 */
-		void send(uint8_t channel = ChannelID_Generic)
+		
+		void ready()
 		{
-			send_packet(GET_CLIENT_PEER(), data.data(), data.size(), flags, channel);
-		}
-#endif
+			check(!packet, "Internal packet already exists");
 
-		/**
-		 * This function is used by the client and the server
-		 */
-		void send(ENetPeer* peer, uint8_t channel = ChannelID_Generic)
-		{
-			send_packet(peer, data.data(), data.size(), flags, channel);
+			packet = enet_packet_create(data.data(), data.size(), flags);
 		}
 
-#ifdef JC_SERVER
-		/**
-		 * This function is used by the server only to send a packet
-		 * to all clients
-		 */
-		void send_broadcast(uint8_t channel = ChannelID_Generic)
-		{
-			send_packet_broadcast(GET_HOST(), data.data(), data.size(), flags, channel);
-		}
-#endif
+		ENetPacket* get_packet() const { return packet; }
 	};
 
 	using channel_dispatch_t = std::function<PacketResult(const PacketR&)>;
@@ -255,6 +173,24 @@ namespace enet
 	void init();
 	void add_channel_dispatcher(uint8_t id, const channel_dispatch_t& fn);
 	void call_channel_dispatcher(const ENetEvent& id);
+
+	inline bool send_packet(ENetPeer* peer, const void* data, size_t size, uint32_t flags = ENET_PACKET_FLAG_RELIABLE, uint8_t channel = ChannelID_Generic)
+	{
+		check(peer && data && size > 0, "Invalid peer or packet");
+
+		const auto packet = enet_packet_create(data, size, flags);
+
+		check(packet, "Net packet could not be created");
+
+		return enet_peer_send(peer, channel, packet) == 0;
+	}
+
+	inline bool send_packet(ENetPeer* peer, ENetPacket* p, uint8_t channel = ChannelID_Generic)
+	{
+		check(peer && p, "Invalid peer or packet");
+
+		return enet_peer_send(peer, channel, p) == 0;
+	}
 
 	template <typename Fn>
 	inline void dispatch_packets(const Fn& fn, uint32_t timeout = 0)

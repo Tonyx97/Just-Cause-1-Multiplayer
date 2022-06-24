@@ -81,6 +81,9 @@ public:
 	void set_streamer(Player* v) { streamer = v; }
 #endif
 
+	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
+	bool equal(NID _nid) const { return nid == _nid; }
+
 	NID get_nid() const { return nid; }
 
 	PlayerClient* get_player_client() const { return player_client; }

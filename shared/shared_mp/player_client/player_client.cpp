@@ -1,7 +1,7 @@
 #ifndef JC_LOADER
 #include <defs/standard.h>
 
-#include <net/interface.h>
+#include <mp/net.h>
 
 #include "player_client.h"
 
@@ -21,14 +21,20 @@ PlayerClient::PlayerClient(ENetPeer* peer) : peer(peer)
 
 	logt(GREEN, "Player client connected (NID {:x})", get_nid());
 
-	enet::send_broadcast_reliable<ChannelID_PlayerClient>(PlayerClientPID_Connect, player);
+	// the player client is not added yet in the list so it will broadcast
+	// to the rest of players
+
+	g_net->send_broadcast_reliable<ChannelID_PlayerClient>(this, PlayerClientPID_Connect, player);
 }
 #endif
 
 PlayerClient::~PlayerClient()
 {
 #ifdef JC_SERVER
-	enet::send_broadcast_reliable<ChannelID_PlayerClient>(PlayerClientPID_Disconnect, player);
+	// the player client is not added yet in the list so it will broadcast
+	// to the rest of players
+
+	g_net->send_broadcast_reliable<ChannelID_PlayerClient>(this, PlayerClientPID_Disconnect, player);
 
 	if (timed_out)
 		logt(RED, "'{}' disconnected due to timeout (NID {:x})", player->get_nick(), get_nid());

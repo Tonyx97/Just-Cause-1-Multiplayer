@@ -11,7 +11,7 @@ enet::PacketResult nh::player_client::connect(const enet::PacketR& p)
 #ifdef JC_CLIENT
 	DESERIALIZE_NID_AND_TYPE(p);
 
-	check(g_net->get_local()->get_nid() != nid, "A localplayer cannot receive 'connect' packet with its NID");
+	check(g_net->get_local()->get_nid() != nid, "A localplayer cannot receive this packet with its NID");
 	check(!g_net->get_player_by_nid(nid), "Player must not exist before '{}' packet", CURR_FN);
 
 	const auto new_player = g_net->add_player_client(nid);
@@ -43,7 +43,7 @@ enet::PacketResult nh::player_client::nick(const enet::PacketR& p)
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
 	{
-		const auto nick = p.get_str<std::string>();
+		const auto nick = p.get_str();
 
 		player->get_client()->set_nick(nick);
 
@@ -51,7 +51,7 @@ enet::PacketResult nh::player_client::nick(const enet::PacketR& p)
 	}
 #else
 	const auto nick = p.get_str<std::string>();
-	const auto pc = p.get_player_client_owner();
+	const auto pc = p.get_pc();
 
 	pc->set_nick(nick);
 #endif

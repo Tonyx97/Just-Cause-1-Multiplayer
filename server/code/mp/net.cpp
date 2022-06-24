@@ -154,6 +154,6 @@ void Net::send_global_packets()
 
 		//test += 0.05f;
 
-		enet::send_broadcast_reliable(DayCyclePID_SetTime, test);
+		g_net->send_broadcast_reliable(DayCyclePID_SetTime, test);
 	});
 }

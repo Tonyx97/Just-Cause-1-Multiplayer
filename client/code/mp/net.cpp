@@ -48,7 +48,7 @@ bool Net::init(const std::string& ip, const std::string& nick)
 
 	log(GREEN, "Connected");
 
-	enet::send_reliable<ChannelID_Init>(InitPID_Init, nick);
+	send_reliable<ChannelID_Init>(InitPID_Init, nick);
 
 	return (connected = true);
 }

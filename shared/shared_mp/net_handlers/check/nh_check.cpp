@@ -9,7 +9,7 @@
 enet::PacketResult nh::check::net_objects(const enet::PacketR& p)
 {
 #ifdef JC_CLIENT
-	const auto count = p.get_int<int>();
+	const auto count = p.get_int();
 
 	log(YELLOW, "[{}] {}", CURR_FN, count);
 
@@ -46,7 +46,9 @@ enet::PacketResult nh::check::net_objects(const enet::PacketR& p)
 		out_p.add(obj);
 	});
 
-	out_p.send(p.get_peer(), ChannelID_Check);
+	out_p.ready();
+
+	p.get_pc()->send<ChannelID_Check>(out_p);
 #endif
 
 	return enet::PacketRes_Ok;
@@ -55,18 +57,37 @@ enet::PacketResult nh::check::net_objects(const enet::PacketR& p)
 enet::PacketResult nh::check::players_static_info(const enet::PacketR& p)
 {
 #ifdef JC_CLIENT
+	const auto count = p.get_int();
 
-#else
-	/*enet::PacketW out_p(CheckPID_NetObjects);
+	log(YELLOW, "[{}] {}", CURR_FN, count);
 
-	out_p.add(g_net->get_net_objects_count());
-
-	g_net->for_each_net_object([&](NID nid, NetObject* obj)
+	for (int i = 0; i < count; ++i)
 	{
-		out_p.add(obj);
+		if (const auto player = p.get_net_object<Player>())
+		{
+			const auto nick = p.get_str();
+
+			player->set_nick(nick);
+
+			log(PURPLE, "Updated nick for player {:x} -> '{}'", player->get_nid(), nick);
+		}
+	}
+#else
+	enet::PacketW out_p(CheckPID_PlayersStaticInfo);
+
+	out_p.add(g_net->get_player_clients_count());
+
+	g_net->for_each_player_client([&](NID nid, PlayerClient* pc)
+	{
+		const auto player = pc->get_player();
+
+		out_p.add(player);
+		out_p.add(player->get_nick());
 	});
 
-	out_p.send(p.get_peer(), ChannelID_Check);*/
+	out_p.ready();
+
+	p.get_pc()->send<ChannelID_Check>(out_p);
 #endif
 
 	return enet::PacketRes_Ok;

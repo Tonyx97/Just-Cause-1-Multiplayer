@@ -1,1 +1,1 @@
-· Add packet sending wrappers methods for PlayerClient too.
+· Add offset packet writter so we can send packet with dynamic count of items etc.
