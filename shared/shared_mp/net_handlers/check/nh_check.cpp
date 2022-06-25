@@ -30,10 +30,12 @@ enet::PacketResult nh::check::net_objects(const enet::PacketR& p)
 		{
 			const auto new_player = g_net->add_player_client(nid);
 
-			log(YELLOW, "Created new player from net objects check: {:x}", CURR_FN, new_player->get_nid());
+			log(YELLOW, "Created new player from net objects check: {:x}", new_player->get_nid());
+
+			break;
 		}
 		default:
-			log(RED, "Unknown type of net object at '{}'", CURR_FN);
+			log(RED, "Unknown type of net object at '{}' ({})", CURR_FN, type);
 		}
 	}
 #else
@@ -73,21 +75,7 @@ enet::PacketResult nh::check::players_static_info(const enet::PacketR& p)
 		}
 	}
 #else
-	enet::PacketW out_p(CheckPID_PlayersStaticInfo);
-
-	out_p.add(g_net->get_player_clients_count());
-
-	g_net->for_each_player_client([&](NID nid, PlayerClient* pc)
-	{
-		const auto player = pc->get_player();
-
-		out_p.add(player);
-		out_p.add(player->get_nick());
-	});
-
-	out_p.ready();
-
-	p.get_pc()->send<ChannelID_Check>(out_p);
+	g_net->send_players_info();
 #endif
 
 	return enet::PacketRes_Ok;
