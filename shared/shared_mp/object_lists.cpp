@@ -1,4 +1,3 @@
-#ifndef JC_LOADER
 #include <defs/standard.h>
 
 #include "object_lists.h"
@@ -98,4 +97,3 @@ PlayerClient* ObjectLists::get_player_client_by_nid(NID nid)
 	auto it = player_clients.find(nid);
 	return it != player_clients.end() ? it->second : nullptr;
 }
-#endif

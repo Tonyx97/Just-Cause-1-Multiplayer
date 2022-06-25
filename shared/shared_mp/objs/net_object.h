@@ -1,6 +1,6 @@
 #pragma once
 
-#ifndef JC_LOADER
+#include <shared_mp/packets/all.h>
 
 // network id of an object
 //
@@ -88,4 +88,3 @@ public:
 
 	PlayerClient* get_player_client() const { return player_client; }
 };
-#endif

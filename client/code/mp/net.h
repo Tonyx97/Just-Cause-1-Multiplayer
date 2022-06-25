@@ -37,8 +37,8 @@ public:
 	{
 		vec<uint8_t> data;
 
-		enet::serialize(data, id);
-		enet::serialize_params(data, args...);
+		enet::serialize(data, 1u, id);
+		enet::serialize_params(data, 1u, args...);
 		enet::send_packet(enet::GET_CLIENT_PEER(), data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
 	}
 

@@ -1,4 +1,3 @@
-#ifndef JC_LOADER
 #include <defs/standard.h>
 
 #include <net/interface.h>
@@ -19,11 +18,24 @@ Player::Player(PlayerClient* pc) : client(pc)
 #endif
 
 Player::~Player()
-{
+{ 
 }
 
 void Player::set_nick(const std::string& v)
 {
 	static_info.nick = v;
 }
+
+void Player::set_skin(uint32_t v)
+{
+	static_info.skin = v;
+
+#ifdef JC_CLIENT
+
 #endif
+}
+
+uint32_t Player::get_skin() const
+{
+	return static_info.skin;
+}

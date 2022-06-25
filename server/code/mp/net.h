@@ -13,7 +13,6 @@ public:
 	void setup_channels();
 	void tick();
 	void send_global_packets();
-	void send_players_info();
 
 	template <uint8_t channel = ChannelID_Generic>
 	inline void send_broadcast_reliable(enet::PacketW& p, PlayerClient* ignore_pc = nullptr)

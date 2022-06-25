@@ -1,5 +1,7 @@
 #pragma once
 
+using PacketID = uint32_t;
+
 // generic packets
 
 enum GenericPacketID : unsigned int

@@ -1,4 +1,3 @@
-#ifndef JC_LOADER
 #include <defs/standard.h>
 
 #include "interface.h"
@@ -10,6 +9,11 @@
 namespace enet
 {
 	channel_dispatch_t channel_fns[ChannelID_Max] = { nullptr };
+
+	void PacketR::get_data(void* out, size_t out_size) const
+	{
+		memcpy(out, data + std::exchange(offset, offset + out_size), out_size);
+	}
 
 	NetObject* PacketR::get_net_object_impl() const
     {
@@ -59,4 +63,3 @@ void enet::call_channel_dispatcher(const ENetEvent& e)
 	case PacketRes_NotFound: logt(RED, "Unknown packet received, id = '{}', channel = '{}'", p.get_id(), p.get_channel()); return;
 	}
 }
-#endif

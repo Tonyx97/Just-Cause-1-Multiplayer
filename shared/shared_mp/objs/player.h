@@ -1,7 +1,5 @@
 #pragma once
 
-#ifndef JC_LOADER
-
 #include <shared_mp/objs/net_object.h>
 
 class PlayerClient;
@@ -9,13 +7,15 @@ class PlayerClient;
 struct PlayerStaticInfo
 {
 	std::string nick;
+
+	uint32_t skin = 0u;
 };
 
 class Player : public NetObject
 {
 private:
 
-	PlayerStaticInfo static_info;
+	PlayerStaticInfo static_info {};
 
 	PlayerClient* client = nullptr;
 
@@ -32,10 +32,16 @@ public:
 #endif
 	~Player();
 
-	void set_nick(const std::string& v);
+	const PlayerStaticInfo& get_static_info() const { return static_info; }
 
 	PlayerClient* get_client() const { return client; }
 
+	// static info getters/setters
+
+	void set_nick(const std::string& v);
+	void set_skin(uint32_t v);
+
+	uint32_t get_skin() const;
+
 	const std::string& get_nick() const { return static_info.nick; }
 };
-#endif

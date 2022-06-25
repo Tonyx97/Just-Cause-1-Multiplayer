@@ -30,7 +30,7 @@ enet::PacketResult nh::check::net_objects(const enet::PacketR& p)
 		{
 			const auto new_player = g_net->add_player_client(nid);
 
-			log(YELLOW, "Created new player from net objects check: {:x}", new_player->get_nid());
+			log(YELLOW, "[{}] Created new player: {:x}", CURR_FN, new_player->get_nid());
 
 			break;
 		}
@@ -67,15 +67,40 @@ enet::PacketResult nh::check::players_static_info(const enet::PacketR& p)
 	{
 		if (const auto player = p.get_net_object<Player>())
 		{
-			const auto nick = p.get_str();
+			const auto info = p.get_struct<PacketCheck_PlayerStaticInfo>();
 
-			player->set_nick(nick);
+			player->set_nick(*info.nick);
+			player->set_skin(info.skin);
 
-			log(PURPLE, "Updated nick for player {:x} -> '{}'", player->get_nid(), nick);
+			log(PURPLE, "Updated static info for player {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
 		}
 	}
 #else
-	g_net->send_players_info();
+	enet::PacketW _p(CheckPID_PlayersStaticInfo);
+
+	int count = 0;
+
+	g_net->for_each_player_client([&](NID nid, PlayerClient* pc)
+	{
+		if (const auto player = pc->get_player(); pc->is_ready())
+		{
+			const auto& static_info = player->get_static_info();
+
+			PacketCheck_PlayerStaticInfo info;
+
+			info.nick = static_info.nick;
+			info.skin = static_info.skin;
+
+			_p.add(player);
+			_p.add(info);
+
+			++count;
+		}
+	});
+
+	_p.add_begin(count);
+
+	g_net->send_broadcast_reliable<ChannelID_Check>(_p);
 #endif
 
 	return enet::PacketRes_Ok;

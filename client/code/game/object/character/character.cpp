@@ -95,7 +95,7 @@ void Character::set_model(const std::string& name)
 
 	new_info.model = "Characters\\KC_022\\KC_022.lod";
 	// new_info.model = "characters\\paperdolls\\paperdoll_" + name + ".lod";
-	new_info.character_as = "settings\\animationsets\\female_characterai.as";
+	//new_info.character_as = "settings\\animationsets\\female_characterai.as";
 
 	// make sure we patch the weapon belt recreation, because, for some reason, they added
 	// that inside this character info function

@@ -1,4 +1,3 @@
-#ifndef JC_LOADER
 #include <defs/standard.h>
 
 #include <mp/net.h>
@@ -63,4 +62,3 @@ const std::string& PlayerClient::get_nick() const
 {
 	return player->get_nick();
 }
-#endif

@@ -1,7 +1,5 @@
 #pragma once
 
-#ifndef JC_LOADER
-
 class Player;
 
 class PlayerClient
@@ -22,8 +20,8 @@ private:
 	{
 		vec<uint8_t> data;
 
-		enet::serialize(data, id);
-		enet::serialize_params(data, args...);
+		enet::serialize(data, 1u, id);
+		enet::serialize_params(data, 1u, args...);
 		enet::send_packet(peer, data.data(), data.size(), flags, channel);
 	}
 #endif
@@ -74,4 +72,3 @@ public:
 #define DESTROY_PLAYER_CLIENT(pc)			JC_FREE(pc)
 #define DESERIALIZE_NID_AND_TYPE(p)			const auto nid = p.get_uint(); \
 											const auto type = p.get_uint()
-#endif

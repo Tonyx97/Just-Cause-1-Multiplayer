@@ -157,20 +157,3 @@ void Net::send_global_packets()
 		g_net->send_broadcast_reliable(DayCyclePID_SetTime, test);
 	});
 }
-
-void Net::send_players_info()
-{
-	enet::PacketW out_p(CheckPID_PlayersStaticInfo);
-
-	out_p.add(g_net->get_player_clients_count());
-
-	g_net->for_each_player_client([&](NID nid, PlayerClient* pc)
-	{
-		const auto player = pc->get_player();
-
-		out_p.add(player);
-		out_p.add(player->get_nick());
-	});
-
-	send_broadcast_reliable<ChannelID_Check>(out_p);
-}

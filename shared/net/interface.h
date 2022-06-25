@@ -1,7 +1,5 @@
 #pragma once
 
-#ifndef JC_LOADER
-
 #include "channels.h"
 #include "packets.h"
 #include "serializer.h"
@@ -46,6 +44,8 @@ namespace enet
 		bool		   as_view = false;
 
 		NetObject* get_net_object_impl() const;
+
+		void get_data(void* out, size_t out_size) const;
 
 	public:
 		PacketR(const ENetEvent& e, bool view = false)
@@ -95,6 +95,16 @@ namespace enet
 		float get_float() const
 		{
 			return get_int<float>();
+		}
+
+		template <typename T>
+		T get_struct() const
+		{
+			T v;
+
+			get_data(&v, sizeof(v));
+
+			return std::move(v);
 		}
 
 		template <typename T = NetObject>
@@ -153,9 +163,25 @@ namespace enet
 		uint32_t get_id() const { return id; }
 
 		template <typename... A>
-		void add(const A&... args)
+		auto add_begin(const A&... args)
 		{
-			serialize_params(data, args...);
+			return serialize_params(data, 0u, args...);
+		}
+
+		template <typename... A>
+		auto add(const A&... args)
+		{
+			return serialize_params(data, 1u, args...);
+		}
+
+		template <typename T>
+		void replace(auto& it, const T& v)
+		{
+			auto new_it = data.erase(it, it + sizeof(v));
+
+			const auto data_ptr = BITCAST(uint8_t*, &v);
+
+			data.insert(new_it, data_ptr, data_ptr + sizeof(v));
 		}
 		
 		void ready()
@@ -233,4 +259,3 @@ namespace enet
 		return received;
 	}
 }
-#endif

@@ -1,6 +1,5 @@
 #pragma once
 
-#ifndef JC_LOADER
 #include <net/interface.h>
 
 #include <shared_mp/player_client/player_client.h>
@@ -58,4 +57,3 @@ public:
 	Player* get_player_by_nid(NID nid);
 	PlayerClient* get_player_client_by_nid(NID nid);
 };
-#endif
