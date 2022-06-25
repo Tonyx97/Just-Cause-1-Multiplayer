@@ -1,7 +1,8 @@
 #include <defs/standard.h>
 
+#include <game/transform/transform.h>
+
 #include "base.h"
-#include "../transform/transform.h"
 #include "../character/character.h"
 #include "../spawn_point/agent_spawn_point.h"
 #include "../spawn_point/vehicle_spawn_point.h"
@@ -11,28 +12,29 @@ void ObjectBase::init_from_map(object_base_map* map)
 	jc::v_call(this, jc::object_base::vt::INIT_FROM_MAP, map);
 }
 
-void ObjectBase::set_position(const vec3& v)
+void ObjectBase::set_transform(const Transform& transform)
 {
 	switch (util::hash::JENKINS(get_typename()))
 	{
 	case Character::CLASS_ID():
 	{
-		Transform t(v);
-
-		jc::this_call<ptr>(jc::character::fn::SET_TRANSFORM, this, &t);
-
+		jc::this_call<ptr>(jc::character::fn::SET_TRANSFORM, this, &transform);
 		break;
 	}
 	case AgentSpawnPoint::CLASS_ID():
 	case VehicleSpawnPoint::CLASS_ID():
 	{
-		jc::write(v, this, jc::spawn_point::POSITION);
-
+		jc::write(transform, this, jc::spawn_point::TRANSFORM);
 		break;
 	}
 	default:
 		log(RED, "'ObjectBase::{}' not implemented for type '{}'", CURR_FN, get_typename());
 	}
+}
+
+void ObjectBase::set_position(const vec3& v)
+{
+	set_transform(Transform(v));
 }
 
 void ObjectBase::set_model(const std::string& name)

@@ -39,7 +39,8 @@ void dll_thread()
 						if (auto spawn_system = jc::read<SpawnSystem*>(jc::spawn_system::SINGLETON))
 							if (auto game_status = jc::read<GameStatus*>(jc::game_status::SINGLETON))
 								if (auto day_cycle = jc::read<DayCycle*>(jc::day_cycle::SINGLETON))
-									break;
+									if (auto ai_core = jc::read<AiCore*>(jc::ai_core::SINGLETON))
+										break;
 
 		SwitchToThread();
 	} while (true);
@@ -115,9 +116,10 @@ void dll_thread()
 	
 	// hook present
 
-	log(GREEN, "Hooking present...");
+	log(GREEN, "Hooking...");
 
 	g_renderer->hook_present();
+	g_game_status->hook_dispatcher();
 
 	// initialize net
 
@@ -151,6 +153,7 @@ void dll_thread()
 
 	// unhook the present since we cleaned the ui system data
 
+	g_game_status->unhook_dispatcher();
 	g_renderer->unhook_present();
 
 	// destroy the rest of the mod systems

@@ -78,9 +78,6 @@
     <ClCompile Include="code\game\object\character\comps\skeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\object\transform\transform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\game\globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -269,9 +266,6 @@
     <ClInclude Include="code\defs\standard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\math\math.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="code\game\sys\renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -330,9 +324,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\character\comps\skeleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\game\object\transform\transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\globals.h">

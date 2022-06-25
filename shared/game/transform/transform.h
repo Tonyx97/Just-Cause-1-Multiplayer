@@ -1,6 +1,8 @@
 #pragma once
 
-class Transform
+#include <shared_mp/packets/base.h>
+
+class Transform : public PacketBase
 {
 private:
 	mat4 m;
@@ -18,5 +20,7 @@ public:
 
 	const mat4* get_matrix() const { return &m; }
 
+#ifdef JC_CLIENT
 	vec3 rotate_point(vec3 p) const;
+#endif
 };

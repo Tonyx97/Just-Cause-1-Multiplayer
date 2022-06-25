@@ -2,13 +2,21 @@
 
 class Player;
 
+enum PlayerClientState : uint32_t
+{
+	PCState_Connecting,
+	PCState_Initializing,
+	PCState_Initialized,
+	PCState_Loaded,
+};
+
 class PlayerClient
 {
 private:
 
 	Player* player = nullptr;
 
-	bool ready = false;
+	uint32_t state = PCState_Initializing;
 
 #ifdef JC_SERVER
 	ENetPeer* peer = nullptr;
@@ -36,9 +44,11 @@ public:
 	~PlayerClient();
 
 	void set_nick(const std::string& v);
-	void set_ready();
 
-	bool is_ready() const { return ready; }
+	bool is_initialized() const { return get_state() == PCState_Initialized; }
+	bool is_loaded() const { return get_state() == PCState_Loaded; }
+
+	uint32_t get_state() const { return state; }
 
 	NID get_nid() const;
 
@@ -47,6 +57,8 @@ public:
 	const std::string& get_nick() const;
 
 #ifdef JC_SERVER
+	void set_state(uint32_t v, const enet::PacketR* p = nullptr);
+
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_reliable(uint32_t id, const A&... args)
 	{

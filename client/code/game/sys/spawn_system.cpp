@@ -3,11 +3,11 @@
 #include "game_control.h"
 #include "spawn_system.h"
 
+#include <game/transform/transform.h>
 #include <game/object/character/character.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/damageable_object/damageable_object.h>
 #include <game/object/simple_rigid_object/simple_rigid_object.h>
-#include <game/object/transform/transform.h>
 #include <game/object/spawn_point/agent_spawn_point.h>
 #include <game/object/spawn_point/vehicle_spawn_point.h>
 #include <game/object/mounted_gun/mounted_gun.h>
@@ -55,6 +55,16 @@ void SpawnSystem::set_max_character_spawns(int v)
 void SpawnSystem::set_max_vehicle_spawns(int v)
 {
 	jc::write<int16_t>(v, this, jc::spawn_system::MAX_VEHICLE_SPAWNS);
+}
+
+void SpawnSystem::destroy_agent_spawn_point(AgentSpawnPoint* v)
+{
+	if (!v)
+		return;
+
+	using namespace jc::spawn_system::v;
+
+	agent_spawns.erase(std::remove_if(agent_spawns.begin(), agent_spawns.end(), [&](const auto& r) { return r.obj == v; }));
 }
 
 int16_t SpawnSystem::get_max_character_spawns() const

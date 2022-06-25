@@ -174,7 +174,6 @@
     <ClCompile Include="code\game\object\character\character.cpp" />
     <ClCompile Include="code\game\object\character\comps\skeleton.cpp" />
     <ClCompile Include="code\game\object\sound\sound_bank.cpp" />
-    <ClCompile Include="code\game\object\transform\transform.cpp" />
     <ClCompile Include="code\game\object\character\comps\vehicle_controller.cpp" />
     <ClCompile Include="code\game\object\weapon\weapon_belt.cpp" />
     <ClCompile Include="code\game\sys\particle_system.cpp" />
@@ -258,13 +257,11 @@
     <ClInclude Include="code\imgui\imstb_textedit.h" />
     <ClInclude Include="code\imgui\imstb_truetype.h" />
     <ClInclude Include="code\core\keycode.h" />
-    <ClInclude Include="code\math\math.h" />
     <ClInclude Include="code\game\object\weapon\bullet.h" />
     <ClInclude Include="code\game\object\camera\camera.h" />
     <ClInclude Include="code\game\object\character\character.h" />
     <ClInclude Include="code\game\object\character\comps\skeleton.h" />
     <ClInclude Include="code\game\object\sound\sound_bank.h" />
-    <ClInclude Include="code\game\object\transform\transform.h" />
     <ClInclude Include="code\game\object\character\comps\vehicle_controller.h" />
     <ClInclude Include="code\game\object\weapon\weapon_belt.h" />
     <ClInclude Include="code\game\sys\particle_system.h" />

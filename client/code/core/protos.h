@@ -38,6 +38,7 @@ struct vprototype
 class Transform;
 class Character;
 class GameControl;
+class GameStatus;
 
 namespace jc::proto
 {
@@ -45,6 +46,11 @@ namespace jc::proto
 	using game_tick    = prototype<void(__thiscall*)(GameControl*), 0x4F51E0, util::hash::JENKINS("Tick")>;
 	using reset		   = vprototype<int(__stdcall*)(void*, void*), 16, util::hash::JENKINS("Reset")>;
 	using raycast	   = prototype<void*(__thiscall*)(uintptr_t, ray*, int, float, ray_hit_info*, void*, bool, bool), jc::physics::fn::RAYCAST, util::hash::JENKINS("Raycast")>;
+
+	namespace game_status
+	{
+		using dispatch = prototype<bool(__fastcall*)(GameStatus*), 0x497A70, util::hash::JENKINS("GameStatusDispatch")>;
+	}
 
 	// testing
 

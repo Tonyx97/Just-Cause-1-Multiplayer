@@ -1,10 +1,9 @@
 #include <defs/standard.h>
 
+#include <game/transform/transform.h>
 #include <game/sys/game_control.h>
 
 #include "damageable_object.h"
-
-#include "../transform/transform.h"
 
 ref<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::string& model_name, const std::string& pfx_name)
 {

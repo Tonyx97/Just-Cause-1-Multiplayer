@@ -17,6 +17,7 @@ namespace enet
 		PacketRes_Ok,
 		PacketRes_NotFound,
 		PacketRes_NotUsable,
+		PacketRes_BadArgs
 	};
 
 #ifdef JC_CLIENT
@@ -90,6 +91,11 @@ namespace enet
 		T get_uint() const
 		{
 			return get_int<T>();
+		}
+
+		bool get_bool() const
+		{
+			return get_int<bool>();
 		}
 
 		float get_float() const

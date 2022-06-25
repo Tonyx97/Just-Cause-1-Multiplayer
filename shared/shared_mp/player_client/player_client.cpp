@@ -48,10 +48,40 @@ void PlayerClient::set_nick(const std::string& v)
 	player->set_nick(v);
 }
 
-void PlayerClient::set_ready()
+#ifdef JC_SERVER
+void PlayerClient::set_state(uint32_t v, const enet::PacketR* p)
 {
-	ready = true;
+	switch (state = v)
+	{
+	case PCState_Initializing:
+	{
+		set_nick(p->get_str());
+		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_State, state, get_nid());
+
+		logt(YELLOW, "Player {:x} initializing (nick: {})", get_nid(), get_nick());
+
+		break;
+	}
+	case PCState_Initialized:
+	{
+		logt(YELLOW, "Player {:x} initialized", get_nid());
+
+		break;
+	}
+	case PCState_Loaded:
+	{
+		// sync net objects instances when this player loads
+		// and also sync all players static info and spawning
+
+		g_net->sync_net_objects_instances_for_player(this);
+		g_net->sync_players_static_info();
+		g_net->sync_players_spawn();
+
+		break;
+	}
+	}
 }
+#endif
 
 NID PlayerClient::get_nid() const
 {

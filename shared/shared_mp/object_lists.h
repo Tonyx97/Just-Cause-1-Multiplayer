@@ -47,6 +47,13 @@ public:
 			fn(nid, pc);
 	}
 
+	template <typename Fn>
+	void for_each_player(const Fn& fn)
+	{
+		for (const auto& [nid, player] : players)
+			fn(player);
+	}
+
 	size_t get_player_clients_count() const { return player_clients.size(); }
 	size_t get_net_objects_count() const { return net_objects.size(); }
 

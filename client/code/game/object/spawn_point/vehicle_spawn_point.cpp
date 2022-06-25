@@ -1,10 +1,9 @@
 #include <defs/standard.h>
 
+#include <game/transform/transform.h>
 #include <game/sys/game_control.h>
 
 #include "vehicle_spawn_point.h"
-
-#include "../transform/transform.h"
 
 void VehicleSpawnPoint::set_vehicle_type(VehicleType* vehicle_type)
 {

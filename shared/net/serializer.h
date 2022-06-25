@@ -47,26 +47,6 @@ namespace enet
 	template <typename... A>
 	inline void serialize(vec<uint8_t>& buffer, size_t at) {}
 
-	// serialize integral types
-	//
-	template <typename T, typename... A, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-	inline void serialize(vec<uint8_t>& buffer, size_t at, const T& v, const A&... args)
-	{
-		serialize_general_data(buffer, at, &v, sizeof(v));
-
-		serialize(buffer, at, args...);
-	}
-
-	// serialize floating point types
-	//
-	template <typename T, typename... A, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-	inline void serialize(vec<uint8_t>& buffer, size_t at, const T& v, const A&... args)
-	{
-		serialize_general_data(buffer, at, &v, sizeof(v));
-
-		serialize(buffer, at, args...);
-	}
-
 	// serialize std::string
 	//
 	template <typename... A>
@@ -83,6 +63,26 @@ namespace enet
 	inline void serialize(vec<uint8_t>& buffer, size_t at, const std::wstring& v, const A&... args)
 	{
 		serialize_string(buffer, at, v.data(), v.length() * 2u);
+
+		serialize(buffer, at, args...);
+	}
+
+	// serialize integral types
+	//
+	template <typename T, typename... A, std::enable_if_t<std::is_integral_v<T> || std::is_enum_v<T>>* = nullptr>
+	inline void serialize(vec<uint8_t>& buffer, size_t at, const T& v, const A&... args)
+	{
+		serialize_general_data(buffer, at, &v, sizeof(v));
+
+		serialize(buffer, at, args...);
+	}
+
+	// serialize floating point types
+	//
+	template <typename T, typename... A, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+	inline void serialize(vec<uint8_t>& buffer, size_t at, const T& v, const A&... args)
+	{
+		serialize_general_data(buffer, at, &v, sizeof(v));
 
 		serialize(buffer, at, args...);
 	}

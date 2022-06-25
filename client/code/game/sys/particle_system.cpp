@@ -2,7 +2,7 @@
 
 #include "particle_system.h"
 
-#include <game/object/transform/transform.h>
+#include <game/transform/transform.h>
 
 void ParticleSystem::init()
 {

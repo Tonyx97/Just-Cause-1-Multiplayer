@@ -2,7 +2,7 @@
 
 #include "skeleton.h"
 
-#include <game/object/transform/transform.h>
+#include <game/transform/transform.h>
 
 void* SkeletonInstance::get_animator() const
 {

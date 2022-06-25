@@ -13,6 +13,9 @@ public:
 	void setup_channels();
 	void tick();
 	void send_global_packets();
+	void sync_net_objects_instances_for_player(PlayerClient* pc);
+	void sync_players_static_info();
+	void sync_players_spawn();
 
 	template <uint8_t channel = ChannelID_Generic>
 	inline void send_broadcast_reliable(enet::PacketW& p, PlayerClient* ignore_pc = nullptr)

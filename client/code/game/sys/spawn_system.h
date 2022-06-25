@@ -23,6 +23,7 @@ public:
 	void destroy();
 	void set_max_character_spawns(int v);
 	void set_max_vehicle_spawns(int v);
+	void destroy_agent_spawn_point(AgentSpawnPoint* v);
 
 	int16_t get_max_character_spawns() const;
 	int16_t get_max_vehicle_spawns() const;

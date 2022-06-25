@@ -1,8 +1,16 @@
 #include <defs/standard.h>
 
-#include <net/interface.h>
+#include <mp/net.h>
 
 #include "player.h"
+
+#ifdef JC_CLIENT
+#include <game/sys/spawn_system.h>
+#include <game/object/spawn_point/spawn_point.h>
+#include <game/object/character_handle/character_handle.h>
+#include <game/object/character/character.h>
+#else
+#endif
 
 #ifdef JC_CLIENT
 Player::Player(PlayerClient* pc, NID nid) : client(pc)
@@ -18,8 +26,50 @@ Player::Player(PlayerClient* pc) : client(pc)
 #endif
 
 Player::~Player()
-{ 
+{
+#ifdef JC_CLIENT
+	handle->destroy();
+	handle = nullptr;
+#else
+#endif
 }
+
+bool Player::sync_spawn()
+{
+#ifdef JC_CLIENT
+	// create agent spawn point if this player is not a local one
+
+	const auto localplayer = g_net->get_localplayer();
+
+	if (localplayer && !localplayer->equal(this))
+		handle = g_spawn->spawn_character("female1", {});
+
+	log(GREEN, "Sync spawning for player {:x} {}", get_nid(), get_nick());
+#else
+	if (client->is_loaded())
+		g_net->send_broadcast_reliable<ChannelID_Generic>(get_client(), PlayerPID_SyncSpawn, this);
+#endif
+
+	return true;
+}
+
+#ifdef JC_CLIENT
+void Player::set_transform(const Transform& transform)
+{
+	if (!handle)
+		return;
+
+	handle->get_character()->set_transform(transform);
+}
+
+Transform Player::get_transform() const
+{
+	if (!handle)
+		return {};
+
+	return handle->get_character()->get_transform();
+}
+#endif
 
 void Player::set_nick(const std::string& v)
 {
@@ -31,7 +81,6 @@ void Player::set_skin(uint32_t v)
 	static_info.skin = v;
 
 #ifdef JC_CLIENT
-
 #endif
 }
 

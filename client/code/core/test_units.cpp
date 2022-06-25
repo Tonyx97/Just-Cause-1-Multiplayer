@@ -5,9 +5,9 @@
 #include <core/keycode.h>
 #include <core/ui.h>
 
+#include <game/transform/transform.h>
 #include <game/object/character/character.h>
 #include <game/object/character_handle/character_handle.h>
-#include <game/object/transform/transform.h>
 #include <game/object/mounted_gun/mounted_gun.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/resource/ee_resource.h>
@@ -44,12 +44,12 @@ int __fastcall hk_test2(int m, void*, std::string* str)
 void jc::test_units::init()
 {
 	//jc::hooks::hook<jc::proto::dbg::test>(&hk_test);
-	jc::hooks::hook<jc::proto::dbg::test2>(&hk_test2);
+	//jc::hooks::hook<jc::proto::dbg::test2>(&hk_test2);
 }
 
 void jc::test_units::destroy()
 {
-	jc::hooks::unhook<jc::proto::dbg::test2>();
+	//jc::hooks::unhook<jc::proto::dbg::test2>();
 	//jc::hooks::unhook<jc::proto::dbg::test>();
 }
 

@@ -2,9 +2,9 @@
 
 #include "character.h"
 
-#include "../transform/transform.h"
 #include "../weapon/weapon_belt.h"
 
+#include <game/transform/transform.h>
 #include <game/sys/world.h>
 #include <game/sys/physics.h>
 
@@ -25,10 +25,7 @@ namespace jc::character::hook
 				if (skl->get_skeleton_0()->get_animator() == a1 ||
 					skl->get_skeleton_1()->get_animator() == a1)
 				{
-					/*enet::PacketW p(PlayerPID_SetAnim);
-
-					p.add(a4->c_str());
-					p.send();*/
+					//g_net->send_reliable(PlayerPID_SetAnim, *a4);
 				}
 
 		return jc::hooks::call<jc::character::hook::set_animation_internal_t>(a1, a2, a3, a4, a5, a6);

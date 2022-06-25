@@ -38,6 +38,8 @@ private:
 
 	NID nid = INVALID_NID;
 
+	bool spawned = false;
+
 public:
 
 #ifdef JC_SERVER
@@ -46,6 +48,7 @@ public:
 #endif
 
 	virtual uint32_t get_type() const = 0;
+	virtual bool sync_spawn() = 0;
 
 	template <typename T>
 	T* cast() const

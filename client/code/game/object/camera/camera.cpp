@@ -2,9 +2,8 @@
 
 #include "camera.h"
 
+#include <game/transform/transform.h>
 #include <game/sys/renderer.h>
-
-#include <game/object/transform/transform.h>
 
 bool Camera::w2s(const vec3& p, vec2& out)
 {

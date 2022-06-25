@@ -41,6 +41,7 @@ class Physical;
 class ObjectBase
 {
 public:
+	void set_transform(const Transform& transform);
 	void set_position(const vec3& v);
 	void set_model(const std::string& name);
 	void init_from_map(object_base_map* map);

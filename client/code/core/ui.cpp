@@ -283,17 +283,18 @@ void UI::render()
 
 			const auto weapon_belt = local_player_pawn->get_weapon_belt();
 
+			const auto local_pos = local_player_pawn->get_position();
+
 			if (no_clip)
 			{
 				if (g_key->is_key_down(VK_F2))
 				{
-					auto		   root_position = local_player_pawn->get_position();
 					constexpr auto magnitude	 = 3.0001f;
 					const auto [x, y, z]		 = g_camera->get_main_camera()->get_model_forward_vector();
 					vec3 forward_position		 = {};
-					forward_position.x			 = root_position.x + (-x * magnitude);
-					forward_position.y			 = root_position.y + (-y * magnitude);
-					forward_position.z			 = root_position.z + (-z * magnitude);
+					forward_position.x			 = local_pos.x + (-x * magnitude);
+					forward_position.y			 = local_pos.y + (-y * magnitude);
+					forward_position.z			 = local_pos.z + (-z * magnitude);
 
 					local_player_pawn->set_position(forward_position);
 				}
@@ -476,6 +477,7 @@ void UI::render()
 			}
 
 			ImGui::Text("Closest HP ptr: 0x%x", closest_hp_ptr);
+			ImGui::Text("Position: %.2f %.2f %.2f", local_pos.x, local_pos.y, local_pos.z);
 
 			if (closest_weapon)
 				ImGui::Text("Closest Weapon: 0x%x", ptr(closest_weapon));

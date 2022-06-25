@@ -30,6 +30,8 @@
 #include <memory/defs.h>
 #include <memory/memory.h>
 
+#include <math/math.h>
+
 template <typename T>
 using vec = std::vector<T>;
 

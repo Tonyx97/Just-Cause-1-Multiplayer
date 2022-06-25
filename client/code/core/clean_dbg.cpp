@@ -26,6 +26,7 @@ std::atomic_bool g_enable_hash_dump	  = false;
 std::map<std::string, std::pair<uint32_t, ptr>> g_hashes;
 
 constexpr bool ENABLE_DUMPING = false;
+constexpr bool ENABLE_STR_DEBUG = false;
 
 inline std::string get_solution_dir()
 {
@@ -96,31 +97,34 @@ void __stdcall hk_print_error(const char* text, ...)
 		return;
 	}
 
-	log_nl(YELLOW, "[{}] ", _ReturnAddress());
-
-	char out[0x1000] = { 0 };
-
-	va_list args;
-	va_start(args, text);
-	vsprintf_s(out, sizeof(out), text, args);
-	va_end(args);
-
-	std::string text_str(out);
-
-	log_nl(YELLOW, text_str);
-
-	if (ENABLE_DUMPING && _ReturnAddress() == (void*)0x40ec51 && !g_files_dump.contains(text_str))
+	if (ENABLE_STR_DEBUG)
 	{
-		if (text_str.ends_with('\n'))
-			text_str.pop_back();
+		log_nl(YELLOW, "[{}] ", _ReturnAddress());
 
-		g_files_dump.insert(text_str);
-	}
+		char out[0x1000] = { 0 };
 
-	if (text_str.find("key_kane_bikini.ee") != -1)
-	{
-		while (!GetAsyncKeyState(VK_F3))
-			Sleep(100);
+		va_list args;
+		va_start(args, text);
+		vsprintf_s(out, sizeof(out), text, args);
+		va_end(args);
+
+		std::string text_str(out);
+
+		log_nl(YELLOW, text_str);
+
+		if (ENABLE_DUMPING && _ReturnAddress() == (void*)0x40ec51 && !g_files_dump.contains(text_str))
+		{
+			if (text_str.ends_with('\n'))
+				text_str.pop_back();
+
+			g_files_dump.insert(text_str);
+		}
+
+		if (text_str.find("key_kane_bikini.ee") != -1)
+		{
+			while (!GetAsyncKeyState(VK_F3))
+				Sleep(100);
+		}
 	}
 }
 
@@ -164,7 +168,8 @@ int __fastcall hk_create_std_string(std::string* _this, void*, const char* str, 
 
 				if (!g_strings_dump.contains(new_str) && !new_str.starts_with("SPEED ") && !new_str.contains('\n') && !new_str.contains('\r'))
 				{
-					log(GREEN, "New string '{}' from {}", str, _ReturnAddress());
+					if (ENABLE_STR_DEBUG)
+						log(GREEN, "New string '{}' from {}", str, _ReturnAddress());
 
 					g_strings_dump.insert({ new_str, _ReturnAddress() });
 				}

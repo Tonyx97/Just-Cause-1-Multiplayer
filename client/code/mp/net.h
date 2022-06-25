@@ -17,8 +17,9 @@ private:
 
 	int net_stat = 0;
 
+	uint32_t state = PCState_Connecting;
+
 	bool connected = false,
-		 ready = false,
 		 timed_out = false;
 
 	void disconnect();
@@ -27,7 +28,7 @@ public:
 	bool init(const std::string& ip, const std::string& nick);
 	void destroy();
 	void add_local(NID nid);
-	void set_ready();
+	void set_state(uint32_t v, const enet::PacketR* p = nullptr);
 	void setup_channels();
 	void tick();
 	void set_net_stats(int v) { net_stat = v; }
@@ -42,10 +43,11 @@ public:
 		enet::send_packet(enet::GET_CLIENT_PEER(), data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
 	}
 
-	bool is_ready() const { return ready; }
+	bool is_initialized() const { return state == PCState_Initialized; }
+	bool is_loaded() const { return state == PCState_Loaded; }
 
 	PlayerClient* get_local() const { return local; }
-	Player* get_localplayer() const { return local->get_player(); }
+	Player* get_localplayer() const { return local ? local->get_player() : nullptr; }
 
 	ENetHost* get_host() const { return client; }
 	ENetPeer* get_peer() const { return peer; }

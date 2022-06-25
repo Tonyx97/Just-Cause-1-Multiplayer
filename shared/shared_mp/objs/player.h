@@ -2,7 +2,10 @@
 
 #include <shared_mp/objs/net_object.h>
 
+#include <game/transform/transform.h>
+
 class PlayerClient;
+class CharacterHandle;
 
 struct PlayerStaticInfo
 {
@@ -14,6 +17,14 @@ struct PlayerStaticInfo
 class Player : public NetObject
 {
 private:
+
+#ifdef JC_SERVER
+	struct ServerInfo
+	{
+	};
+#endif
+
+	CharacterHandle* handle = nullptr;
 
 	PlayerStaticInfo static_info {};
 
@@ -32,9 +43,17 @@ public:
 #endif
 	~Player();
 
+	bool sync_spawn() override;
+
 	const PlayerStaticInfo& get_static_info() const { return static_info; }
 
 	PlayerClient* get_client() const { return client; }
+
+#ifdef JC_CLIENT
+	void set_transform(const Transform& transform);
+
+	Transform get_transform() const;
+#endif
 
 	// static info getters/setters
 
