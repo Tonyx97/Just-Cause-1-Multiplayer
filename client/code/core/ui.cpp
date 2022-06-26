@@ -5,9 +5,9 @@
 
 #include <game/sys/all.h>
 
+#include <game/transform/transform.h>
 #include <game/object/character/character.h>
 #include <game/object/character/comps/vehicle_controller.h>
-#include <game/object/transform/transform.h>
 #include <game/object/camera/camera.h>
 #include <game/object/weapon/bullet.h>
 #include <game/object/weapon/weapon.h>
@@ -285,6 +285,8 @@ void UI::render()
 
 			const auto local_pos = local_player_pawn->get_position();
 
+			auto local_transform = local_player_pawn->get_transform();
+
 			if (no_clip)
 			{
 				if (g_key->is_key_down(VK_F2))
@@ -477,6 +479,11 @@ void UI::render()
 			}
 
 			ImGui::Text("Closest HP ptr: 0x%x", closest_hp_ptr);
+
+
+			XMMatrixDecompose
+			local_transform;
+
 			ImGui::Text("Position: %.2f %.2f %.2f", local_pos.x, local_pos.y, local_pos.z);
 
 			if (closest_weapon)

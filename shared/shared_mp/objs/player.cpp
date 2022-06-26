@@ -18,6 +18,15 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 	set_nid(nid);
 	set_player_client(pc);
 }
+
+void Player::verify_exec(const std::function<void(Character*)>& fn)
+{
+	if (!handle)
+		return;
+
+	if (const auto character = handle->get_character())
+		fn(character);
+}
 #else
 Player::Player(PlayerClient* pc) : client(pc)
 {
@@ -53,23 +62,23 @@ bool Player::sync_spawn()
 	return true;
 }
 
-#ifdef JC_CLIENT
+// info getters/setters
+
 void Player::set_transform(const Transform& transform)
 {
-	if (!handle)
-		return;
+	info.transform = transform;
 
-	handle->get_character()->set_transform(transform);
+#ifdef JC_CLIENT
+	verify_exec([=](Character* c) { c->set_transform(transform); });
+#endif
 }
 
 Transform Player::get_transform() const
 {
-	if (!handle)
-		return {};
-
-	return handle->get_character()->get_transform();
+	return info.transform;
 }
-#endif
+
+// static info getters/setters
 
 void Player::set_nick(const std::string& v)
 {

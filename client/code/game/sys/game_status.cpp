@@ -18,7 +18,7 @@ bool __fastcall GameStatus::hk_dispatch(GameStatus* gs)
 	case GameStatus_Load: break;
 	case GameStatus_InGame:
 	{
-		if (!g_net->is_loaded())
+		if (g_net->is_initialized() && !g_net->is_loaded())
 			g_net->set_state(PCState_Loaded);
 
 		break;

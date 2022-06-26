@@ -94,7 +94,13 @@ void jc::test_units::test_0()
 	{
 		//handle->destroy();
 
-		g_spawn->spawn_mounted_gun(local_pos);
+		//g_spawn->spawn_mounted_gun(local_pos);
+
+		auto xd = local_t;
+
+		xd.scale(mat4(3.f));
+
+		local_char->set_transform(xd);
 	}
 
 	if (g_key->is_key_down(VK_NUMPAD7))

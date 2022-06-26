@@ -18,11 +18,10 @@ class Player : public NetObject
 {
 private:
 
-#ifdef JC_SERVER
-	struct ServerInfo
+	struct Info
 	{
-	};
-#endif
+		Transform transform;
+	} info {};
 
 	CharacterHandle* handle = nullptr;
 
@@ -38,8 +37,12 @@ public:
 
 #ifdef JC_CLIENT
 	Player(PlayerClient* pc, NID nid);
+
+	void verify_exec(const std::function<void(Character*)>& fn);
 #else
 	Player(PlayerClient* pc);
+
+	void verify_exec(auto fn) {}
 #endif
 	~Player();
 
@@ -49,11 +52,11 @@ public:
 
 	PlayerClient* get_client() const { return client; }
 
-#ifdef JC_CLIENT
+	// info getters/setters
+
 	void set_transform(const Transform& transform);
 
 	Transform get_transform() const;
-#endif
 
 	// static info getters/setters
 
