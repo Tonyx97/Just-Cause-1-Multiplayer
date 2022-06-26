@@ -6,18 +6,18 @@ using _128 = __m128;
 
 // load & stores
 
-#define V4LoadUnaligned(base, offset) _mm_loadu_ps((base) + (offset))
-#define V4StoreUnaligned(value, base, offset) _mm_storeu_ps((base) + (offset), value)
+#define sse_loadu(base, offset) _mm_loadu_ps((base) + (offset))
+#define sse_storeu(value, base, offset) _mm_storeu_ps((base) + (offset), value)
 
 // math functions
 
-#define V4Add(v0, v1) _mm_add_ps((v0), (v1))
-#define V4Mul(v0, v1) _mm_mul_ps((v0), (v1))
-#define V4MulAdd(v0, v1, v2) _mm_add_ps(_mm_mul_ps((v0), (v1)), (v2))
+#define sse_add(v0, v1) _mm_add_ps((v0), (v1))
+#define sse_mul(v0, v1) _mm_mul_ps((v0), (v1))
+#define sse_mul_add(v0, v1, v2) _mm_add_ps(_mm_mul_ps((v0), (v1)), (v2))
 
 // shuffling / permuting / splatting / merging
 
-#define V4Splat(v0, i) _mm_shuffle_ps((v0), (v0), _MM_SHUFFLE(i, i, i, i))
+#define sse_shuffle(v0, i) _mm_shuffle_ps((v0), (v0), _MM_SHUFFLE(i, i, i, i))
 
 #define RESTRICT(x) x* __restrict
 
@@ -74,39 +74,39 @@ namespace jc::math
 		const _128& m22, const _128& m23,
 		_128& rm0, _128& rm1, _128& rm2, _128& rm3)
 	{
-		const _128 m20_X = V4Splat(m20, 0);
-		const _128 m21_X = V4Splat(m21, 0);
-		const _128 m22_X = V4Splat(m22, 0);
-		const _128 m23_X = V4Splat(m23, 0);
-		const _128 rm0_0 = V4Mul(m20_X, m10);
-		const _128 rm1_0 = V4Mul(m21_X, m10);
-		const _128 rm2_0 = V4Mul(m22_X, m10);
-		const _128 rm3_0 = V4Mul(m23_X, m10);
-		const _128 m20_Y = V4Splat(m20, 1);
-		const _128 m21_Y = V4Splat(m21, 1);
-		const _128 m22_Y = V4Splat(m22, 1);
-		const _128 m23_Y = V4Splat(m23, 1);
-		const _128 rm0_1 = V4MulAdd(m20_Y, m11, rm0_0);
-		const _128 rm1_1 = V4MulAdd(m21_Y, m11, rm1_0);
-		const _128 rm2_1 = V4MulAdd(m22_Y, m11, rm2_0);
-		const _128 rm3_1 = V4MulAdd(m23_Y, m11, rm3_0);
-		const _128 m20_Z = V4Splat(m20, 2);
-		const _128 m21_Z = V4Splat(m21, 2);
-		const _128 m22_Z = V4Splat(m22, 2);
-		const _128 m23_Z = V4Splat(m23, 2);
-		const _128 rm0_2 = V4MulAdd(m20_Z, m12, rm0_1);
-		const _128 rm1_2 = V4MulAdd(m21_Z, m12, rm1_1);
-		const _128 rm2_2 = V4MulAdd(m22_Z, m12, rm2_1);
-		const _128 rm3_2 = V4MulAdd(m23_Z, m12, rm3_1);
-		const _128 m20_W = V4Splat(m20, 3);
-		const _128 m21_W = V4Splat(m21, 3);
-		const _128 m22_W = V4Splat(m22, 3);
-		const _128 m23_W = V4Splat(m23, 3);
+		const _128 m20_X = sse_shuffle(m20, 0);
+		const _128 m21_X = sse_shuffle(m21, 0);
+		const _128 m22_X = sse_shuffle(m22, 0);
+		const _128 m23_X = sse_shuffle(m23, 0);
+		const _128 rm0_0 = sse_mul(m20_X, m10);
+		const _128 rm1_0 = sse_mul(m21_X, m10);
+		const _128 rm2_0 = sse_mul(m22_X, m10);
+		const _128 rm3_0 = sse_mul(m23_X, m10);
+		const _128 m20_Y = sse_shuffle(m20, 1);
+		const _128 m21_Y = sse_shuffle(m21, 1);
+		const _128 m22_Y = sse_shuffle(m22, 1);
+		const _128 m23_Y = sse_shuffle(m23, 1);
+		const _128 rm0_1 = sse_mul_add(m20_Y, m11, rm0_0);
+		const _128 rm1_1 = sse_mul_add(m21_Y, m11, rm1_0);
+		const _128 rm2_1 = sse_mul_add(m22_Y, m11, rm2_0);
+		const _128 rm3_1 = sse_mul_add(m23_Y, m11, rm3_0);
+		const _128 m20_Z = sse_shuffle(m20, 2);
+		const _128 m21_Z = sse_shuffle(m21, 2);
+		const _128 m22_Z = sse_shuffle(m22, 2);
+		const _128 m23_Z = sse_shuffle(m23, 2);
+		const _128 rm0_2 = sse_mul_add(m20_Z, m12, rm0_1);
+		const _128 rm1_2 = sse_mul_add(m21_Z, m12, rm1_1);
+		const _128 rm2_2 = sse_mul_add(m22_Z, m12, rm2_1);
+		const _128 rm3_2 = sse_mul_add(m23_Z, m12, rm3_1);
+		const _128 m20_W = sse_shuffle(m20, 3);
+		const _128 m21_W = sse_shuffle(m21, 3);
+		const _128 m22_W = sse_shuffle(m22, 3);
+		const _128 m23_W = sse_shuffle(m23, 3);
 
-		rm0 = V4MulAdd(m20_W, m13, rm0_2);
-		rm1 = V4MulAdd(m21_W, m13, rm1_2);
-		rm2 = V4MulAdd(m22_W, m13, rm2_2);
-		rm3 = V4MulAdd(m23_W, m13, rm3_2);
+		rm0 = sse_mul_add(m20_W, m13, rm0_2);
+		rm1 = sse_mul_add(m21_W, m13, rm1_2);
+		rm2 = sse_mul_add(m22_W, m13, rm2_2);
+		rm3 = sse_mul_add(m23_W, m13, rm3_2);
 	}
 
 	template <typename T>
@@ -117,10 +117,10 @@ namespace jc::math
 		auto m1 = (float*)lhs,
 			m2 = (float*)res;
 
-		V4StoreUnaligned(V4LoadUnaligned(m1, 0x0), m2, 0x0);
-		V4StoreUnaligned(V4LoadUnaligned(m1, 0x4), m2, 0x4);
-		V4StoreUnaligned(V4LoadUnaligned(m1, 0x8), m2, 0x8);
-		V4StoreUnaligned(V4LoadUnaligned(m1, 0xC), m2, 0xC);
+		sse_storeu(sse_loadu(m1, 0x0), m2, 0x0);
+		sse_storeu(sse_loadu(m1, 0x4), m2, 0x4);
+		sse_storeu(sse_loadu(m1, 0x8), m2, 0x8);
+		sse_storeu(sse_loadu(m1, 0xC), m2, 0xC);
 	}
 
 	inline void mat4_mul(RESTRICT(const mat4) lhs, RESTRICT(const mat4) rhs, RESTRICT(mat4) res)
@@ -133,22 +133,22 @@ namespace jc::math
 		_128 rm0, rm1, rm2, rm3;
 
 		mat4_mul_internal(
-			V4LoadUnaligned(m1, 0x0),
-			V4LoadUnaligned(m1, 0x4),
-			V4LoadUnaligned(m1, 0x8),
-			V4LoadUnaligned(m1, 0xC),
-			V4LoadUnaligned(m2, 0x0),
-			V4LoadUnaligned(m2, 0x4),
-			V4LoadUnaligned(m2, 0x8),
-			V4LoadUnaligned(m2, 0xC),
+			sse_loadu(m1, 0x0),
+			sse_loadu(m1, 0x4),
+			sse_loadu(m1, 0x8),
+			sse_loadu(m1, 0xC),
+			sse_loadu(m2, 0x0),
+			sse_loadu(m2, 0x4),
+			sse_loadu(m2, 0x8),
+			sse_loadu(m2, 0xC),
 			rm0, rm1, rm2, rm3);
 
 		float* m = (float*)res;
 
-		V4StoreUnaligned(rm0, m, 0x0);
-		V4StoreUnaligned(rm1, m, 0x4);
-		V4StoreUnaligned(rm2, m, 0x8);
-		V4StoreUnaligned(rm3, m, 0xC);
+		sse_storeu(rm0, m, 0x0);
+		sse_storeu(rm1, m, 0x4);
+		sse_storeu(rm2, m, 0x8);
+		sse_storeu(rm3, m, 0xC);
 	}
 
 	inline void mat4_vec4_mul(RESTRICT(const mat4) lhs, RESTRICT(const vec4) rhs, RESTRICT(vec4) res)
@@ -158,20 +158,20 @@ namespace jc::math
 
 		tvg::prefetch::prefetch(m, v);
 
-		auto vl = V4LoadUnaligned(v, 0);
+		auto vl = sse_loadu(v, 0);
 
-		auto m0 = V4LoadUnaligned(m, 0),
-			 m1 = V4LoadUnaligned(m, 4),
-			 m2 = V4LoadUnaligned(m, 8),
-			 m3 = V4LoadUnaligned(m, 12);
+		auto m0 = sse_loadu(m, 0),
+			 m1 = sse_loadu(m, 4),
+			 m2 = sse_loadu(m, 8),
+			 m3 = sse_loadu(m, 12);
 
-		auto result = V4Mul(V4Splat(vl, 0), m0);
+		auto result = sse_mul(sse_shuffle(vl, 0), m0);
 
-		result = V4MulAdd(V4Splat(vl, 1), m1, result);
-		result = V4MulAdd(V4Splat(vl, 2), m2, result);
-		result = V4MulAdd(V4Splat(vl, 3), m3, result);
+		result = sse_mul_add(sse_shuffle(vl, 1), m1, result);
+		result = sse_mul_add(sse_shuffle(vl, 2), m2, result);
+		result = sse_mul_add(sse_shuffle(vl, 3), m3, result);
 
-		V4StoreUnaligned(result, (float*)res, 0x0);
+		sse_storeu(result, (float*)res, 0x0);
 	}
 }
 
