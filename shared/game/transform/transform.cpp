@@ -6,32 +6,61 @@ Transform::Transform(const vec3& position)
 {
 	m = mat4(1.f);
 
-	*(vec3*)&m._41 = position;
+	m[3] = vec4(position, 1.f);
 }
 
-vec3* Transform::right()
+void Transform::decompose(vec3& t, quat& r, vec3& s) const
 {
-	return REFNO(vec3*, &m._11);
+	t = m[3];
+	s = { glm::length(vec3(m[0])), glm::length(vec3(m[1])), glm::length(vec3(m[2])) };
+	r = glm::quat_cast(mat3(vec3(m[0]) / s.x, vec3(m[1]) / s.y, vec3(m[2]) / s.z));
 }
 
-vec3* Transform::up()
+void Transform::compose(const vec3& t, const quat& r, const vec3& s)
 {
-	return REFNO(vec3*, &m._21);
+	mat4 mat_t = glm::translate(mat4(1.f), t),
+		 mat_r = glm::mat4_cast(r),
+		 mat_s = glm::scale(mat4(1.f), s);
+
+	m = mat_t * mat_r * mat_s;
 }
 
-void Transform::scale(const mat4& v)
+void Transform::interpolate(const Transform& transform, float tf, float rf, float sf)
 {
-	m *= v;
+	vec3 t0, t1, s0, s1;
+	quat r0, r1;
+
+	decompose(t0, r0, s0);
+	transform.decompose(t1, r1, s1);
+
+	r0 = glm::normalize(r0);
+	r1 = glm::normalize(r1);
+
+	const auto interpolated_t = glm::lerp(t0, t1, tf);
+	const auto interpolated_r = glm::normalize(glm::slerp(r0, r1, rf));
+	const auto interpolated_s = glm::lerp(s0, s1, sf);
+
+	compose(interpolated_t, interpolated_r, interpolated_s);
 }
 
-vec3* Transform::forward()
+vec3 Transform::right()
 {
-	return REFNO(vec3*, &m._31);
+	return m[0];
 }
 
-vec3* Transform::position()
+vec3 Transform::up()
 {
-	return REFNO(vec3*, &m._41);
+	return m[1];
+}
+
+vec3 Transform::forward()
+{
+	return m[2];
+}
+
+vec3 Transform::position()
+{
+	return m[3];
 }
 
 #ifdef JC_CLIENT

@@ -19,6 +19,28 @@ namespace jc::hk_world
 	static constexpr uint32_t GRAVITY = 0xE0; // vec4
 }
 
+struct ray
+{
+	vec3 origin,
+		 direction;
+
+	ray(const vec3& origin, const vec3& direction)
+		: origin(origin)
+		, direction(glm::normalize(direction))
+	{
+	}
+};
+
+struct ray_hit_info
+{
+	void* object = nullptr,
+		* unk = nullptr;
+
+	vec3 normal;
+
+	float distance_factor;
+};
+
 struct hkWorld
 {
 	void set_gravity(const vec4& v);

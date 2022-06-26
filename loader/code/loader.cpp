@@ -1,4 +1,4 @@
-#include <defs/standard.h>
+#include "defs/standard.h"
 
 uint32_t get_pid(const wchar_t* name)
 {

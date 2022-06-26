@@ -184,7 +184,7 @@ vec3 Character::get_bone_position(BoneID index) const
 	if (!skeleton->get_bone_transform(index, bone_transform))
 		return {};
 
-	return get_transform().rotate_point(*bone_transform.position());
+	return get_transform().rotate_point(bone_transform.position());
 }
 
 vec3 Character::get_head_bone_position()

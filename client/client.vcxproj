@@ -192,8 +192,6 @@
     <ClInclude Include="code\core\clean_dbg.h" />
     <ClInclude Include="code\core\patching.h" />
     <ClInclude Include="code\core\test_units.h" />
-    <ClInclude Include="code\defs\enet.h" />
-    <ClInclude Include="code\defs\global_types.h" />
     <ClInclude Include="code\game\object\action_point_owner\action_point_owner.h" />
     <ClInclude Include="code\game\object\alive_object\alive_object.h" />
     <ClInclude Include="code\game\object\exported_entity\exported_entity.h" />
@@ -236,7 +234,6 @@
     <ClInclude Include="code\game\sys\all.h" />
     <ClInclude Include="code\game\sys\ammo_manager.h" />
     <ClInclude Include="code\game\sys\camera_manager.h" />
-    <ClInclude Include="code\defs\standard.h" />
     <ClInclude Include="code\game\globals.h" />
     <ClInclude Include="code\core\hooks.h" />
     <ClInclude Include="code\core\protos.h" />
@@ -272,7 +269,6 @@
     <ClInclude Include="code\stl\string.h" />
     <ClInclude Include="code\stl\maps.h" />
     <ClInclude Include="code\stl\vec.h" />
-    <ClInclude Include="code\defs\libs.h" />
     <ClInclude Include="code\game\sys\day_cycle.h" />
     <ClInclude Include="code\game\sys\time_system.h" />
     <ClInclude Include="code\core\ui.h" />

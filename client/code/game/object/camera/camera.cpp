@@ -52,43 +52,43 @@ mat4 Camera::get_proj_matrix() const
 
 vec3 Camera::get_model_right_vector() const
 {
-	return *jc::read<Transform>(this, jc::camera::MODEL_MATRIX).right();
+	return jc::read<Transform>(this, jc::camera::MODEL_MATRIX).right();
 }
 
 vec3 Camera::get_model_up_vector() const
 {
-	return *jc::read<Transform>(this, jc::camera::MODEL_MATRIX).up();
+	return jc::read<Transform>(this, jc::camera::MODEL_MATRIX).up();
 }
 
 vec3 Camera::get_model_forward_vector() const
 {
-	return *jc::read<Transform>(this, jc::camera::MODEL_MATRIX).forward();
+	return jc::read<Transform>(this, jc::camera::MODEL_MATRIX).forward();
 }
 
 vec3 Camera::get_view_right_vector() const
 {
-	return *jc::read<Transform>(this, jc::camera::VIEW_MATRIX).right();
+	return jc::read<Transform>(this, jc::camera::VIEW_MATRIX).right();
 }
 
 vec3 Camera::get_view_up_vector() const
 {
-	return *jc::read<Transform>(this, jc::camera::VIEW_MATRIX).up();
+	return jc::read<Transform>(this, jc::camera::VIEW_MATRIX).up();
 }
 
 vec3 Camera::get_view_forward_vector() const
 {
-	return *jc::read<Transform>(this, jc::camera::VIEW_MATRIX).forward();
+	return jc::read<Transform>(this, jc::camera::VIEW_MATRIX).forward();
 }
 
 vec3 Camera::get_proj_right_vector() const
 {
-	return *jc::read<Transform>(this, jc::camera::VIEW_MATRIX).right();
+	return jc::read<Transform>(this, jc::camera::VIEW_MATRIX).right();
 }
 vec3 Camera::get_proj_up_vector() const
 {
-	return *jc::read<Transform>(this, jc::camera::VIEW_MATRIX).up();
+	return jc::read<Transform>(this, jc::camera::VIEW_MATRIX).up();
 }
 vec3 Camera::get_proj_forward_vector() const
 {
-	return *jc::read<Transform>(this, jc::camera::VIEW_MATRIX).forward();
+	return jc::read<Transform>(this, jc::camera::VIEW_MATRIX).forward();
 }

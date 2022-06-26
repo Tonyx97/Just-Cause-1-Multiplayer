@@ -1,5 +1,7 @@
 #pragma once
 
+#include <defs/glm.h>
+
 using _128 = __m128;
 
 // load & stores
@@ -18,6 +20,33 @@ using _128 = __m128;
 #define V4Splat(v0, i) _mm_shuffle_ps((v0), (v0), _MM_SHUFFLE(i, i, i, i))
 
 #define RESTRICT(x) x* __restrict
+
+using mat3 = glm::mat3;
+using quat = glm::quat;
+using vec4 = glm::vec4;
+using vec3 = glm::vec3;
+using vec2 = glm::vec2;
+using vec1 = glm::vec1;
+using ivec4 = glm::i32vec4;
+using ivec3 = glm::i32vec3;
+using ivec2 = glm::i32vec2;
+using ivec1 = glm::i32vec1;
+
+/**
+* Matrix 4x4 overload from GLM to use better SSE
+* operations such as multiplication.
+*/
+struct mat4 : public glm::mat4
+{
+	using glm::mat4::mat4;
+
+	mat4(const glm::mat4& v);
+
+	vec4 operator * (const glm::vec4& v) const;
+
+	mat4& operator = (const glm::mat4& v);
+	mat4 operator * (const mat4& m) const;
+};
 
 namespace tvg::prefetch
 {
@@ -38,160 +67,6 @@ namespace tvg::prefetch
 
 namespace jc::math
 {
-	struct vec2
-	{
-		float x = 0.f,
-			  y = 0.f;
-	};
-
-	struct vec3
-	{
-		float x = 0.f,
-			  y = 0.f,
-			  z = 0.f;
-
-		vec3() {}
-
-		vec3(float v)
-			: x(v)
-			, y(v)
-			, z(v)
-		{
-		}
-
-		vec3(float x, float y, float z)
-			: x(x)
-			, y(y)
-			, z(z)
-		{
-		}
-
-		bool is_zero() const
-		{
-			return x == 0.f && y == 0.f && z == 0.f;
-		}
-
-		float length() const
-		{
-			return std::sqrtf(x * x + y * y + z * z);
-		}
-
-		float distance(const vec3& v) const
-		{
-			return std::sqrtf((x - v.x) * (x - v.x) + (y - v.y) * (y - v.y) + (z - v.z) * (z - v.z));
-		}
-
-		vec3& operator/=(float v)
-		{
-			x /= v;
-			y /= v;
-			z /= v;
-			return *this;
-		}
-
-		vec3 operator/(float v) const
-		{
-			return vec3(x / v, y / v, z / v);
-		}
-
-		vec3 operator-(const vec3& v) const
-		{
-			return vec3(x - v.x, y - v.y, z - v.z);
-		}
-
-		vec3 operator+(const vec3& v) const
-		{
-			return vec3(x + v.x, y + v.y, z + v.z);
-		}
-
-		vec3 operator*(float v) const
-		{
-			return vec3(x * v, y * v, z * v);
-		}
-
-		float operator*(const vec3& v) const
-		{
-			return x * v.x + y * v.y + z * v.z;
-		}
-
-		vec3& normalize()
-		{
-			*this /= length();
-			return *this;
-		}
-
-		vec3 normalize() const
-		{
-			return *this / length();
-		}
-	};
-
-	struct vec4
-	{
-		float x = 0.f,
-			  y = 0.f,
-			  z = 0.f,
-			  w = 0.f;
-	};
-
-	struct mat4
-	{
-		union
-		{
-			struct
-			{
-				float _11, _12, _13, _14;
-				float _21, _22, _23, _24;
-				float _31, _32, _33, _34;
-				float _41, _42, _43, _44;
-			};
-
-			float m[4][4];
-		};
-
-		mat4()
-		{
-			memset(m, 0, sizeof(m));
-		}
-
-		mat4(float v)
-		{
-			memset(m, 0, sizeof(m));
-
-			for (int i = 0; i < 3; ++i)
-				m[i][i] = v;
-
-			m[3][3] = 1.f;
-		}
-
-		vec4 operator*(const vec4& v) const;
-
-		mat4  operator*(const mat4& m) const;
-		mat4& operator*=(const mat4& m);
-	};
-
-	struct ray
-	{
-		vec3 origin,
-			direction;
-
-		ray(const vec3& origin, const vec3& direction)
-			: origin(origin)
-			, direction(direction.normalize())
-		{
-		}
-	};
-
-	struct ray_hit_info
-	{
-		void *object = nullptr,
-			 *unk	 = nullptr;
-
-		vec3 normal;
-
-		float distance_factor;
-	};
-
 	inline void mat4_mul_internal(
 		const _128& m10, const _128& m11,
 		const _128& m12, const _128& m13,
@@ -232,6 +107,20 @@ namespace jc::math
 		rm1 = V4MulAdd(m21_W, m13, rm1_2);
 		rm2 = V4MulAdd(m22_W, m13, rm2_2);
 		rm3 = V4MulAdd(m23_W, m13, rm3_2);
+	}
+
+	template <typename T>
+	inline void mat4_copy(RESTRICT(const T) lhs, RESTRICT(mat4) res)
+	{
+		static_assert(std::is_same_v<T, glm::mat4> || std::is_same_v<T, mat4>, "Invalid instance type");
+
+		auto m1 = (float*)lhs,
+			m2 = (float*)res;
+
+		V4StoreUnaligned(V4LoadUnaligned(m1, 0x0), m2, 0x0);
+		V4StoreUnaligned(V4LoadUnaligned(m1, 0x4), m2, 0x4);
+		V4StoreUnaligned(V4LoadUnaligned(m1, 0x8), m2, 0x8);
+		V4StoreUnaligned(V4LoadUnaligned(m1, 0xC), m2, 0xC);
 	}
 
 	inline void mat4_mul(RESTRICT(const mat4) lhs, RESTRICT(const mat4) rhs, RESTRICT(mat4) res)
@@ -284,33 +173,36 @@ namespace jc::math
 
 		V4StoreUnaligned(result, (float*)res, 0x0);
 	}
-
-	inline vec4 mat4::operator*(const vec4& v) const
-	{
-		vec4 out;
-
-		mat4_vec4_mul(this, &v, &out);
-
-		return out;
-	}
-
-	inline mat4 mat4::operator*(const mat4& m) const
-	{
-		mat4 out;
-
-		mat4_mul(this, &m, &out);
-
-		return out;
-	}
-
-	inline mat4& mat4::operator*=(const mat4& m)
-	{
-		mat4 out;
-
-		mat4_mul(this, &m, &out);
-
-		return (*this = out);
-	}
 }
 
 using namespace jc::math;
+
+inline mat4::mat4(const glm::mat4& v)
+{
+	*this = v;
+}
+
+inline vec4 mat4::operator * (const vec4& v) const
+{
+	vec4 out;
+
+	jc::math::mat4_vec4_mul(this, &v, &out);
+
+	return out;
+}
+
+inline mat4& mat4::operator=(const glm::mat4& v)
+{
+	jc::math::mat4_copy(&v, this);
+
+	return *this;
+}
+
+inline mat4 mat4::operator * (const mat4& m) const
+{
+	auto out = *this;
+
+	jc::math::mat4_mul(this, &m, &out);
+
+	return out;
+}

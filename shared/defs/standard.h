@@ -6,19 +6,21 @@
 #include <tlhelp32.h>
 
 #include <filesystem>
+#include <concepts>
 #include <fstream>
 #include <functional>
 #include <future>
 #include <intrin.h>
 #include <map>
-#include <concepts>
 #include <mutex>
+#include <deque>
 #include <numbers>
 #include <regex>
 #include <set>
 #include <source_location>
 #include <stdint.h>
 #include <thread>
+#include <chrono>
 #include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
@@ -31,6 +33,21 @@
 #include <memory/memory.h>
 
 #include <math/math.h>
+
+#ifdef JC_CLIENT
+#include <d3dx9math.h>
+
+#include <MinHook.h>
+
+#include <stl/ref.h>
+#include <stl/vec.h>
+#include <stl/maps.h>
+#include <stl/string.h>
+
+#include <core/hooks.h>
+#include <core/patching.h>
+#elif defined(JC_SERVER)
+#endif
 
 template <typename T>
 using vec = std::vector<T>;

@@ -155,9 +155,6 @@
     <ClCompile Include="code\mp\net.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="code\defs\enet.h" />
-    <ClInclude Include="code\defs\libs.h" />
-    <ClInclude Include="code\defs\standard.h" />
     <ClInclude Include="code\mp\net.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

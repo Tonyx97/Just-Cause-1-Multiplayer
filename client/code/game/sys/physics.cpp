@@ -24,7 +24,7 @@ void Physics::destroy()
 
 void Physics::create_force_pulse(const vec3& position, float radius, float force, float damage_multiplier)
 {
-	ForcePulse pulse {};
+	ForcePulse pulse;
 
 	pulse.set_position(position);
 	pulse.set_radius(vec3(radius));
@@ -48,7 +48,7 @@ bool Physics::raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_in
 		this,
 		&r,
 		0,
-		direction.length(),
+		glm::length(direction),
 		&hit_info,
 		buffer,
 		unk1,

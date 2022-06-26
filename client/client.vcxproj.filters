@@ -260,12 +260,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="code\defs\libs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\defs\standard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="code\game\sys\renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -437,9 +431,6 @@
     <ClInclude Include="code\stl\string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\defs\global_types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="code\game\object\spawn_point\vehicle_spawn_point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -495,9 +486,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\mp\net.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\defs\enet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\mp\chat\chat.h">

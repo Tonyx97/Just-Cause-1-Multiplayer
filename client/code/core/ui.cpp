@@ -12,6 +12,7 @@
 #include <game/object/weapon/bullet.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/weapon/weapon_belt.h>
+#include <game/object/character_handle/character_handle.h>
 #include <game/object/spawn_point/agent_spawn_point.h>
 #include <game/object/spawn_point/vehicle_spawn_point.h>
 
@@ -292,11 +293,11 @@ void UI::render()
 				if (g_key->is_key_down(VK_F2))
 				{
 					constexpr auto magnitude	 = 3.0001f;
-					const auto [x, y, z]		 = g_camera->get_main_camera()->get_model_forward_vector();
+					const auto fp		 = g_camera->get_main_camera()->get_model_forward_vector();
 					vec3 forward_position		 = {};
-					forward_position.x			 = local_pos.x + (-x * magnitude);
-					forward_position.y			 = local_pos.y + (-y * magnitude);
-					forward_position.z			 = local_pos.z + (-z * magnitude);
+					forward_position.x			 = local_pos.x + (-fp.x * magnitude);
+					forward_position.y			 = local_pos.y + (-fp.y * magnitude);
+					forward_position.z			 = local_pos.z + (-fp.z * magnitude);
 
 					local_player_pawn->set_position(forward_position);
 				}
@@ -311,25 +312,25 @@ void UI::render()
 
 				if (show_grip)
 				{
-					if (vec2 out_sp; camera->w2s(*weapon->get_grip_transform()->position(), out_sp))
+					if (vec2 out_sp; camera->w2s(weapon->get_grip_transform()->position(), out_sp))
 						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFFFF, 30, 2.f);
 				}
 
 				if (show_last_muzzle)
 				{
-					if (vec2 out_sp; camera->w2s(*weapon->get_last_muzzle_transform()->position(), out_sp))
+					if (vec2 out_sp; camera->w2s(weapon->get_last_muzzle_transform()->position(), out_sp))
 						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFF00, 30, 2.f);
 				}
 
 				if (show_muzzle)
 				{
-					if (vec2 out_sp; camera->w2s(*weapon->get_muzzle_transform()->position(), out_sp))
+					if (vec2 out_sp; camera->w2s(weapon->get_muzzle_transform()->position(), out_sp))
 						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFF00FF, 30, 2.f);
 				}
 
 				if (show_last_grip)
 				{
-					if (vec2 out_sp; camera->w2s(*weapon->get_last_ejector_transform()->position(), out_sp))
+					if (vec2 out_sp; camera->w2s(weapon->get_last_ejector_transform()->position(), out_sp))
 						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFF00FFFF, 30, 2.f);
 				}
 			}
@@ -338,7 +339,7 @@ void UI::render()
 			{
 				ImGui::Text("VehicleController: 0x%x", vehicle_controller);
 
-				if (vec2 out_sp; camera->w2s(*vehicle_controller->get_transform()->position(), out_sp))
+				if (vec2 out_sp; camera->w2s(vehicle_controller->get_transform()->position(), out_sp))
 					v_list->AddCircle({ out_sp.x, out_sp.y }, 20.f, 0xFFFFFFFF, 30, 5.f);
 
 				if (const auto vehicle = vehicle_controller->get_vehicle())
@@ -380,7 +381,7 @@ void UI::render()
 				if (hit_info.object)
 					is_visible = true;
 
-				const float distance = local_player_pawn->get_position().distance(pawn_position);
+				const float distance = glm::distance(local_player_pawn->get_position(), pawn_position);
 
 				/*if (g_key->is_key_pressed(VK_MULTIPLY))
 					pawn->set_animation(R"(Models\Characters\Animations\Special\plant_bomb.anim)", 0.1f);*/
@@ -401,7 +402,7 @@ void UI::render()
 				}
 				if (show_velocity)
 				{
-					v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.1f}", pawn->get_velocity().length()).c_str());
+					v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.1f}", glm::length(pawn->get_velocity())).c_str());
 					pad += 1;
 				}
 				if (show_distance)
@@ -461,11 +462,11 @@ void UI::render()
 
 				if (show_view_direction)
 				{
-					const auto [x, y, z]   = pawn->get_view_direction();
+					const auto fp = pawn->get_view_direction();
 					vec3 view_dir_position = {};
-					view_dir_position.x	   = pawn_head_position.x + x * 1.5f;
-					view_dir_position.y	   = pawn_head_position.y + y * 1.5f;
-					view_dir_position.z	   = pawn_head_position.z + z * 1.5f;
+					view_dir_position.x	   = pawn_head_position.x + fp.x * 1.5f;
+					view_dir_position.y	   = pawn_head_position.y + fp.y * 1.5f;
+					view_dir_position.z	   = pawn_head_position.z + fp.z * 1.5f;
 
 					vec2 sp_view_dir;
 
@@ -478,16 +479,41 @@ void UI::render()
 				}
 			}
 
+			ImGui::Text("------------------");
 			ImGui::Text("Closest HP ptr: 0x%x", closest_hp_ptr);
-
-
-			XMMatrixDecompose
-			local_transform;
-
-			ImGui::Text("Position: %.2f %.2f %.2f", local_pos.x, local_pos.y, local_pos.z);
 
 			if (closest_weapon)
 				ImGui::Text("Closest Weapon: 0x%x", ptr(closest_weapon));
+			ImGui::Text("------------------");
+
+			vec3 lt;
+			quat lr;
+			vec3 ls;
+
+			{
+				local_transform.decompose(lt, lr, ls);
+
+				ImGui::Text("Position: %.2f %.2f %.2f", lt.x, lt.y, lt.z);
+				ImGui::Text("Rotation: %.2f %.2f %.2f %.2f", lr.w, lr.x, lr.y, lr.z);
+				ImGui::Text("Scale: %.2f %.2f %.2f", ls.x, ls.y, ls.z);
+			}
+
+			static Character* cc = nullptr;
+
+			if (g_key->is_key_pressed(VK_F6))
+			{
+				if (!cc)
+					cc = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position())->get_character();
+			}
+
+			if (cc)
+			{
+				auto previous_t = cc->get_transform();
+
+				previous_t.interpolate(local_transform, 0.2f, 0.05f);
+
+				cc->set_transform(previous_t);
+			}
 		}
 	}
 	ImGui::End();
