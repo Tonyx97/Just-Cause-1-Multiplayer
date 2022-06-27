@@ -25,7 +25,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)net\interface.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\all.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\chat\nh_chat.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\check\nh_check.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\generic\day_cycle\nh_day_cycle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\generic\player\nh_player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\player_client\nh_player_client.h" />
@@ -47,7 +46,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)game\transform\transform.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)net\interface.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\chat\nh_chat.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\check\nh_check.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\generic\day_cycle\nh_day_cycle.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\generic\player\nh_player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\player_client\nh_player_client.cpp" />

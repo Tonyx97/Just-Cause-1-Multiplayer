@@ -48,7 +48,32 @@ public:
 #endif
 
 	virtual uint32_t get_type() const = 0;
-	virtual bool sync_spawn() = 0;
+	virtual bool spawn() = 0;
+
+#ifdef JC_CLIENT
+	void set_nid(NID v) { nid = v; }
+#else
+	void set_streamer(Player* v) { streamer = v; }
+#endif
+
+	void set_spawned(bool v) { spawned = v; }
+
+	void set_player_client(PlayerClient* pc)
+	{
+		check(get_type() == NetObject_Player, "NetObject must be a player");
+
+		player_client = pc;
+	}
+
+	bool is_spawned() const { return spawned; }
+	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
+	bool equal(NID _nid) const { return nid == _nid; }
+
+	NID get_nid() const { return nid; }
+
+	Player* get_streamer() const { return streamer; }
+
+	PlayerClient* get_player_client() const { return player_client; }
 
 	template <typename T>
 	T* cast() const
@@ -68,26 +93,4 @@ public:
 
 		return casted;
 	}
-
-	Player* get_streamer() const { return streamer; }
-
-	void set_player_client(PlayerClient* pc)
-	{
-		check(get_type() == NetObject_Player, "NetObject must be a player");
-
-		player_client = pc;
-	}
-
-#ifdef JC_CLIENT
-	void set_nid(NID v) { nid = v; }
-#else
-	void set_streamer(Player* v) { streamer = v; }
-#endif
-
-	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
-	bool equal(NID _nid) const { return nid == _nid; }
-
-	NID get_nid() const { return nid; }
-
-	PlayerClient* get_player_client() const { return player_client; }
 };

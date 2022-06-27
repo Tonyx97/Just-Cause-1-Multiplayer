@@ -43,20 +43,30 @@ Player::~Player()
 #endif
 }
 
-bool Player::sync_spawn()
+bool Player::spawn()
 {
+	// if it's already spawned then do nothing
+
+	if (is_spawned())
+		return false;
+
 #ifdef JC_CLIENT
 	// create agent spawn point if this player is not a local one
 
 	const auto localplayer = g_net->get_localplayer();
 
 	if (localplayer && !localplayer->equal(this))
+	{
 		handle = g_spawn->spawn_character("female1", {});
+
+		set_spawned(true);
+	}
 
 	log(GREEN, "Sync spawning for player {:x} {}", get_nid(), get_nick());
 #else
-	if (client->is_loaded())
-		g_net->send_broadcast_reliable<ChannelID_Generic>(get_client(), PlayerPID_SyncSpawn, this);
+	g_net->send_broadcast_reliable<ChannelID_Generic>(get_client(), PlayerPID_Spawn, this);
+
+	set_spawned(true);
 #endif
 
 	return true;
@@ -69,7 +79,7 @@ void Player::set_transform(const Transform& transform)
 	info.transform = transform;
 
 #ifdef JC_CLIENT
-	verify_exec([=](Character* c) { c->set_transform(transform); });
+	verify_exec([&](Character* c) { c->set_transform(transform); });
 #endif
 }
 

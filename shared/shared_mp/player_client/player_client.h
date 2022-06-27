@@ -2,21 +2,14 @@
 
 class Player;
 
-enum PlayerClientState : uint32_t
-{
-	PCState_Connecting,
-	PCState_Initializing,
-	PCState_Initialized,
-	PCState_Loaded,
-};
-
 class PlayerClient
 {
 private:
 
 	Player* player = nullptr;
 
-	uint32_t state = PCState_Initializing;
+	bool initialized = false,
+		 joined = false;
 
 #ifdef JC_SERVER
 	ENetPeer* peer = nullptr;
@@ -43,12 +36,17 @@ public:
 #endif
 	~PlayerClient();
 
+	/**
+	* syncs everything we need for this player, we also sync stuff from this
+	* player to other players so they know about the existence and data of the player
+	*/
+	void startup_sync();
+	void set_initialized(bool v);
+	void set_joined(bool v);
 	void set_nick(const std::string& v);
 
-	bool is_initialized() const { return get_state() == PCState_Initialized; }
-	bool is_loaded() const { return get_state() == PCState_Loaded; }
-
-	uint32_t get_state() const { return state; }
+	bool is_initialized() const { return initialized; }
+	bool is_joined() const { return joined; }
 
 	NID get_nid() const;
 
@@ -57,8 +55,6 @@ public:
 	const std::string& get_nick() const;
 
 #ifdef JC_SERVER
-	void set_state(uint32_t v, const enet::PacketR* p = nullptr);
-
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_reliable(uint32_t id, const A&... args)
 	{
@@ -66,8 +62,11 @@ public:
 	}
 
 	template <uint8_t channel = ChannelID_Generic>
-	inline void send(const enet::PacketW& p)
+	inline void send(enet::PacketW& p, bool make_ready = true)
 	{
+		if (make_ready)
+			p.ready();
+
 		enet::send_packet(peer, p.get_packet(), channel);
 	}
 

@@ -57,7 +57,7 @@ namespace enet
 			, channel(e.channelID)
 			, as_view(view)
 		{
-			check(!view, "Not supported yet");
+			::check(!view, "Not supported yet");
 
 			id = get_uint();
 
@@ -70,6 +70,12 @@ namespace enet
 		{
 			if (!as_view)
 				enet_packet_destroy(packet);
+		}
+
+		template <typename T>
+		void skip() const
+		{
+			offset += sizeof(T);
 		}
 
 		ENetPeer* get_peer() const { return peer; }

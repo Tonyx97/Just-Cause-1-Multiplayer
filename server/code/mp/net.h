@@ -13,9 +13,6 @@ public:
 	void setup_channels();
 	void tick();
 	void send_global_packets();
-	void sync_net_objects_instances_for_player(PlayerClient* pc);
-	void sync_players_static_info();
-	void sync_players_spawn();
 
 	template <uint8_t channel = ChannelID_Generic>
 	inline void send_broadcast_reliable(enet::PacketW& p, PlayerClient* ignore_pc = nullptr)
@@ -25,7 +22,19 @@ public:
 		for_each_player_client([&](NID, PlayerClient* pc)
 		{
 			if (pc != ignore_pc)
-				pc->send<channel>(p);
+				pc->send<channel>(p, false);
+		});
+	}
+
+	template <uint8_t channel = ChannelID_Generic>
+	inline void send_broadcast_joined_reliable(enet::PacketW& p, PlayerClient* ignore_pc = nullptr)
+	{
+		p.ready();
+
+		for_each_joined_player_client([&](NID, PlayerClient* pc)
+		{
+			if (pc != ignore_pc)
+				pc->send<channel>(p, false);
 		});
 	}
 
@@ -37,6 +46,16 @@ public:
 		p.add(args...);
 
 		send_broadcast_reliable<channel>(p, ignore_pc);
+	}
+
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_broadcast_joined_reliable(PlayerClient* ignore_pc, uint32_t id, const A&... args)
+	{
+		enet::PacketW p(id);
+
+		p.add(args...);
+
+		send_broadcast_joined_reliable<channel>(p, ignore_pc);
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>

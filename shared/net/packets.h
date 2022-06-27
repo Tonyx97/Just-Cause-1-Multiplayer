@@ -6,9 +6,10 @@ using PacketID = uint32_t;
 
 enum PlayerClientPacketID : unsigned int
 {
-	PlayerClientPID_State,					// contains a lot of initialization logic depending on the state
-	PlayerClientPID_Connect,
-	PlayerClientPID_Disconnect,
+	PlayerClientPID_Init,
+	PlayerClientPID_Join,
+	PlayerClientPID_Quit,
+	PlayerClientPID_SyncInstances,
 	PlayerClientPID_Nick,
 	PlayerClientPID_Max
 };
@@ -17,8 +18,7 @@ enum PlayerClientPacketID : unsigned int
 
 enum CheckPacketID : unsigned int
 {
-	CheckPID_NetObjects,					// sync the instances for all net objects (single or broadcast)
-	CheckPID_PlayersStaticInfo,				// sync players static info (single or broadcast)
+	CheckPID_NetObjects,					// sync the instances for all net objects
 };
 
 // chat packets
@@ -37,7 +37,7 @@ enum GenericPacketID : unsigned int
 
 enum PlayerPacketID : unsigned int
 {
-	PlayerPID_SyncSpawn = GenericPID_Max,
+	PlayerPID_Spawn = GenericPID_Max,
 	PlayerPID_Transform,
 	PlayerPID_SetAnim,
 	PlayerPID_Max

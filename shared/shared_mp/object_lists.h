@@ -48,6 +48,14 @@ public:
 	}
 
 	template <typename Fn>
+	void for_each_joined_player_client(const Fn& fn)
+	{
+		for (const auto& [nid, pc] : player_clients)
+			if (pc->is_joined())
+				fn(nid, pc);
+	}
+
+	template <typename Fn>
 	void for_each_player(const Fn& fn)
 	{
 		for (const auto& [nid, player] : players)

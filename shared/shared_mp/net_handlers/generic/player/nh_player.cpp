@@ -6,11 +6,13 @@
 
 #include <shared_mp/player_client/player_client.h>
 
-enet::PacketResult nh::player::sync_spawn(const enet::PacketR& p)
+enet::PacketResult nh::player::spawn(const enet::PacketR& p)
 {
 #ifdef JC_CLIENT
-	if (const auto player = p.get_net_object<Player>())
-		player->sync_spawn();
+	// todojc
+
+	/*if (const auto player = p.get_net_object<Player>())
+		player->spawn();*/
 #else
 	// maybe we need this at some point (receive spawn packet from client)
 #endif

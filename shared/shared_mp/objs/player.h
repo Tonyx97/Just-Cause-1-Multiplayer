@@ -46,7 +46,7 @@ public:
 #endif
 	~Player();
 
-	bool sync_spawn() override;
+	bool spawn() override;
 
 	const PlayerStaticInfo& get_static_info() const { return static_info; }
 

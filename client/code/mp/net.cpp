@@ -48,7 +48,9 @@ bool Net::init(const std::string& ip, const std::string& nick)
 		return logb(RED, "Connection failed");
 	}
 
-	set_state(PCState_Connecting);
+	// packet to initialize the client in the server
+
+	send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Init, nick);
 
 	log(GREEN, "Connected");
 
@@ -111,42 +113,20 @@ void Net::add_local(NID nid)
 	local->set_nick(nick);
 }
 
-void Net::set_state(uint32_t v, const enet::PacketR* p)
+void Net::set_initialized(bool v)
 {
-	switch (state = v)
-	{
-	case PCState_Connecting:
-	{
-		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_State, PCState_Initializing, nick);
-		break;
-	}
-	case PCState_Initializing:
-	{
-		add_local(p->get_uint());
-		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_State, PCState_Initialized);
+	initialized = v;
+}
 
-		log(GREEN, "Init packet received (NID: {:x})", get_local()->get_nid());
-		log(GREEN, "Localplayer PC: {} ({})", (void*)get_local(), get_localplayer()->get_nick());
-		log(GREEN, "Localplayer: {}", (void*)get_localplayer());
+void Net::set_joined(bool v)
+{
+	if (!is_initialized())
+		return;
 
-		break;
-	}
-	case PCState_Initialized: break;
-	case PCState_Loaded:
-	{
-		// ask the server to check for net objects and create the proper instances locally,
-		// also make sure we retrieve the static info for players too
+	joined = v;
 
-		send_reliable<ChannelID_Check>(CheckPID_NetObjects);
-		send_reliable<ChannelID_Check>(CheckPID_PlayersStaticInfo);
-
-		// let the server know our game status (either loaded or unloaded)
-
-		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_State, PCState_Loaded);
-
-		break;
-	}
-	}
+	if (joined)
+		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Join);
 }
 
 void Net::setup_channels()
@@ -157,23 +137,11 @@ void Net::setup_channels()
 	{
 		switch (auto id = p.get_id())
 		{
-		case PlayerClientPID_State:			return nh::player_client::state(p);
-		case PlayerClientPID_Connect:		return nh::player_client::connect(p);
-		case PlayerClientPID_Disconnect:	return nh::player_client::disconnect(p);
-		case PlayerClientPID_Nick:			return nh::player_client::nick(p);
-		}
-
-		return enet::PacketRes_NotFound;
-	});
-
-	// check dispatcher
-
-	enet::add_channel_dispatcher(ChannelID_Check, [&](const enet::PacketR& p)
-	{
-		switch (auto id = p.get_id())
-		{
-		case CheckPID_NetObjects:			return nh::check::net_objects(p);
-		case CheckPID_PlayersStaticInfo:	return nh::check::players_static_info(p);
+		case PlayerClientPID_Init:				return nh::player_client::init(p);
+		case PlayerClientPID_Join:				return nh::player_client::join(p);
+		case PlayerClientPID_Quit:				return nh::player_client::quit(p);
+		case PlayerClientPID_SyncInstances:		return nh::player_client::sync_instances(p);
+		case PlayerClientPID_Nick:				return nh::player_client::nick(p);
 		}
 
 		return enet::PacketRes_NotFound;
@@ -207,7 +175,7 @@ void Net::setup_channels()
 
 		switch (auto id = p.get_id())
 		{
-		case PlayerPID_SyncSpawn:		return nh::player::sync_spawn(p);
+		case PlayerPID_Spawn:			return nh::player::spawn(p);
 		case PlayerPID_Transform:		return nh::player::transform(p);
 		case PlayerPID_SetAnim:			return nh::player::set_anim(p);
 		case DayCyclePID_SetTime:		return nh::day_cycle::dispatch(p);
@@ -243,6 +211,8 @@ void Net::tick()
 		}
 		}
 	});
+
+	// todojc - debug
 
 	if (auto local_char = g_world->get_localplayer_character())
 		send_reliable(PlayerPID_Transform, local_char->get_transform());
