@@ -258,6 +258,9 @@
     <ClCompile Include="code\mp\sync_hooks\sync_hooks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\game\object\agent_type\npc_variant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\game\sys\renderer.h">
@@ -513,6 +516,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\mp\sync_hooks\sync_hooks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\agent_type\npc_variant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

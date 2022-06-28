@@ -97,33 +97,18 @@ void jc::test_units::test_0()
 		//g_spawn->spawn_mounted_gun(local_pos);
 	}
 
-	if (g_key->is_key_down(VK_NUMPAD7))
+	if (g_key->is_key_pressed(VK_NUMPAD7))
 	{
-		if (g_rsrc_streamer->can_add_resource())
-		{
-			auto ee_resource = ExportedEntityResource::CREATE();
+		static int id = 0;
 
-			ee_resource->push("KEY_Kane_Bikini.ee");
+		local_char->set_model(id++);
 
-			if (g_rsrc_streamer->all_queues_empty())
-			{
-				while (!ee_resource->is_loaded())
-				{
-					log(GREEN, "[loading]");
-
-					g_rsrc_streamer->dispatch();
-
-					ee_resource->check();
-				}
-
-				local_char->set_model("female1");
-			}
-		}
+		if (id >= 64)
+			id = 0;
 	}
 
 	if (g_key->is_key_down(VK_NUMPAD1))
 	{
-		local_char->set_model("female1");
 	}
 
 	static ptr anim_ptr = 0;

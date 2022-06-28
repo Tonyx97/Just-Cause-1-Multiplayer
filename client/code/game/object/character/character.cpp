@@ -7,12 +7,17 @@
 #include <game/transform/transform.h>
 #include <game/sys/world.h>
 #include <game/sys/physics.h>
+#include <game/sys/resource_streamer.h>
 
 #include <havok/character_proxy.h>
 #include <havok/motion_state.h>
 #include <havok/simple_shape_phantom.h>
 
 #include <mp/net.h>
+
+#include "../exported_entity/exported_entity.h"
+#include "../resource/ee_resource.h"
+#include "../agent_type/npc_variant.h"
 
 // hooks
 
@@ -51,6 +56,8 @@ void Character::SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai)
 	else jc::write(v, jc::character::g::PLAYER_PUNCH_DAMAGE);
 }
 
+// character
+
 void Character::rebuild_skeleton()
 {
 	const auto skeleton = get_skeleton();
@@ -58,8 +65,6 @@ void Character::rebuild_skeleton()
 	jc::this_call<ptr>(jc::character::fn::DESTROY_SKELETON, skeleton);
 	jc::this_call<ptr>(jc::character::fn::CREATE_SKELETON, skeleton);
 }
-
-// character
 
 void Character::set_grenades_ammo(int32_t v)
 {
@@ -76,30 +81,62 @@ void Character::set_grenade_timeout(float v)
 	jc::write(v, this, jc::character::GRENADE_TIMEOUT);
 }
 
-void Character::set_model(const std::string& name)
+void Character::set_model(uint32_t id)
 {
 	// Avalanche bois forgot to recreate the skeleton when setting the character info
 	// so we have to do it ourselves
 
 	rebuild_skeleton();
 
-	// get current info and set the new model
+	g_rsrc_streamer->request_exported_entity(id, [&](ExportedEntityResource* eer)
+	{
+		if (object_base_map* map = nullptr; eer->get_exported_entity()->load_class_properties(map) && map)
+		{
+			// let's try to get the model name from the map
+			// we will try to get the normal model first, if it fails
+			// the only choice we have is to check for PD model which seems
+			// to be some kind of model for special characters/agents
 
-	auto new_info = *get_info();
+			jc::stl::string model;
 
-	// available models for characters:
-	// female1, female2, male1, male2, male3, male4 and male5
+			bool use_npc_variant = false;
 
-	new_info.model = "Characters\\KC_022\\KC_022.lod";
-	// new_info.model = "characters\\paperdolls\\paperdoll_" + name + ".lod";
-	//new_info.character_as = "settings\\animationsets\\female_characterai.as";
+			if (!(use_npc_variant = map->find_string(HASH_MODEL, model)))
+				if (!map->find_string(HASH_PD_MODEL, model))
+					return;
 
-	// make sure we patch the weapon belt recreation, because, for some reason, they added
-	// that inside this character info function
+			// get current info and set the new model
 
-	scoped_patch<8> sp(jc::g::patch::AVOID_WEAPON_BELT_RECREATION_WHILE_CHAR_INIT.address, { 0xE9, 0x8C, 0x0, 0x0, 0x0, 0x90, 0x90, 0x90 });
+			auto new_info = *get_info();
 
-	jc::v_call<ptr>(this, jc::alive_object::vt::INITIALIZE_MODELS, &new_info);
+			new_info.model = model.c_str();
+
+			// make sure we patch/skip the weapon belt recreation, because, for some reason, they added
+			// that inside this character info function
+
+			scoped_patch<8> sp(jc::g::patch::AVOID_WEAPON_BELT_RECREATION_WHILE_CHAR_INIT.address, { 0xE9, 0x8C, 0x0, 0x0, 0x0, 0x90, 0x90, 0x90 });
+
+			jc::v_call<ptr>(this, jc::alive_object::vt::INITIALIZE_MODELS, &new_info);
+
+			// if we need to use npc variant then create one
+			// initialize it using the agent type map
+			// and set it to this character
+
+			if (use_npc_variant)
+			{
+				auto npc_variant = NPCVariant::CREATE();
+
+				npc_variant->init_from_map(map);
+
+				set_npc_variant(*npc_variant);
+			}
+		}
+	});
+}
+
+void Character::set_npc_variant(NPCVariant* v)
+{
+	jc::this_call<bool>(jc::character::fn::SET_NPC_VARIANT, this, v);
 }
 
 void Character::set_flag(uint32_t mask)
