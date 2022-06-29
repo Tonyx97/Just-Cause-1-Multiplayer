@@ -521,5 +521,8 @@
     <ClInclude Include="code\game\object\agent_type\npc_variant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="code\game\object\vars\exported_entities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

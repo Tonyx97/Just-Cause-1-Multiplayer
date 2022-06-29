@@ -97,13 +97,13 @@ void jc::test_units::test_0()
 		//g_spawn->spawn_mounted_gun(local_pos);
 	}
 
-	if (g_key->is_key_pressed(VK_NUMPAD7))
+	if (g_key->is_key_down(VK_NUMPAD7))
 	{
 		static int id = 0;
 
 		local_char->set_model(id++);
 
-		if (id >= 64)
+		if (id >= jc::vars::exported_entities.size())
 			id = 0;
 	}
 

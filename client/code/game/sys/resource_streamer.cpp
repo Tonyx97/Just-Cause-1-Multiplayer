@@ -38,10 +38,8 @@ bool ResourceStreamer::all_queues_empty() const
 
 bool ResourceStreamer::request_exported_entity(uint32_t id, const ee_resource_callback_t& callback, bool now)
 {
-	using namespace jc::ee_resource::vars;
-
-	auto it = exported_entities.find(id);
-	if (it == exported_entities.end())
+	auto it = jc::vars::exported_entities.find(id);
+	if (it == jc::vars::exported_entities.end())
 		return false;
 
 	const auto& ee_name = it->second;
