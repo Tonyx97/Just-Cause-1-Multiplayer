@@ -75,7 +75,7 @@ namespace jc::proto
 			using find_string4	  = prototype<bool(__cdecl*)(ptr, uint32_t, ptr*, ptr*, std::string*), 0x987D20, util::hash::JENKINS("FindString4")>;
 		}
 
-		using test = prototype<bool(__thiscall*)(int, int), 0x48C850, util::hash::JENKINS("test")>;
+		using test = prototype<bool(__thiscall*)(int, int), 0x816660, util::hash::JENKINS("test")>;
 		using test2	= prototype<int(__thiscall*)(int, std::string*), 0x5C0CE0, util::hash::JENKINS("test2")>;
 		// using test3 = prototype<int(__cdecl*)(int, ptr, ptr*, ptr*, std::string*), 0x987D20, utils::hash::JENKINS("test3")>;
 		//  using LoadAsset = prototype<int(__thiscall*)(int, std::string*, int, const char*, int), 0x5C2DC0, utils::hash::JENKINS("test")>;

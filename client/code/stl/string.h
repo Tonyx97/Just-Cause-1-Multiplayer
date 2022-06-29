@@ -42,6 +42,11 @@ namespace jc::stl
 			return length < 0x10 ? std::as_const(data) : jc::read<char*>(data);
 		}
 
+		void append(const char* str)
+		{
+			*this = str;
+		}
+
 		string& operator=(const char* str)
 		{
 			string right(str);
