@@ -37,13 +37,13 @@ void ObjectBase::set_position(const vec3& v)
 	set_transform(Transform(v));
 }
 
-void ObjectBase::set_model(const std::string& name)
+void ObjectBase::set_model(uint32_t id)
 {
 	switch (util::hash::JENKINS(get_typename()))
 	{
 	case Character::CLASS_ID():
 	{
-		BITCAST(Character*, this)->set_model(name);
+		BITCAST(Character*, this)->set_model(id);
 
 		break;
 	}

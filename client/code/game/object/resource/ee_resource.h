@@ -2,6 +2,8 @@
 
 #include "resource.h"
 
+#include "../vars/exported_entities.h"
+
 namespace jc::ee_resource
 {
 	static constexpr uint32_t EXPORTED_ENTITY_RESOURCE = 0x118;
@@ -10,12 +12,12 @@ namespace jc::ee_resource
 
 	namespace fn
 	{
-		static constexpr uint32_t SETUP				= 0x761700;
-		static constexpr uint32_t SET_FLAG			= 0x5C23C0;
-		static constexpr uint32_t CHECK				= 0x5C17B0;
-		static constexpr uint32_t FINISH_LOAD		= 0x7618A0;
-		static constexpr uint32_t MARK_AS_LOADED	= 0x761840;
-		static constexpr uint32_t LOADING_ERROR		= 0x761880;
+		static constexpr uint32_t SETUP					= 0x761700;
+		static constexpr uint32_t SET_FLAG				= 0x5C23C0;
+		static constexpr uint32_t CHECK					= 0x5C17B0;
+		static constexpr uint32_t FINISH_LOAD			= 0x7618A0;
+		static constexpr uint32_t MARK_AS_LOADED		= 0x761840;
+		static constexpr uint32_t LOADING_ERROR			= 0x761880;
 	}
 }
 

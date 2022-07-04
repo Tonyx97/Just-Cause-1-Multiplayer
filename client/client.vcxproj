@@ -111,6 +111,7 @@
     <ClCompile Include="code\core\clean_dbg.cpp" />
     <ClCompile Include="code\core\test_units.cpp" />
     <ClCompile Include="code\game\object\action_point_owner\action_point_owner.cpp" />
+    <ClCompile Include="code\game\object\agent_type\npc_variant.cpp" />
     <ClCompile Include="code\game\object\alive_object\alive_object.cpp" />
     <ClCompile Include="code\game\object\exported_entity\exported_entity.cpp" />
     <ClCompile Include="code\game\object\mounted_gun\mounted_gun.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="code\core\patching.h" />
     <ClInclude Include="code\core\test_units.h" />
     <ClInclude Include="code\game\object\action_point_owner\action_point_owner.h" />
+    <ClInclude Include="code\game\object\agent_type\npc_variant.h" />
     <ClInclude Include="code\game\object\alive_object\alive_object.h" />
     <ClInclude Include="code\game\object\exported_entity\exported_entity.h" />
     <ClInclude Include="code\game\object\mounted_gun\mounted_gun.h" />
@@ -206,6 +208,7 @@
     <ClInclude Include="code\game\object\base\comps\model.h" />
     <ClInclude Include="code\game\object\base\base.h" />
     <ClInclude Include="code\game\object\spawn_point\object_spawn_point.h" />
+    <ClInclude Include="code\game\object\vars\exported_entities.h" />
     <ClInclude Include="code\game\object\vehicle\airplane.h" />
     <ClInclude Include="code\game\object\vehicle\air_vehicle.h" />
     <ClInclude Include="code\game\object\vehicle\boat.h" />

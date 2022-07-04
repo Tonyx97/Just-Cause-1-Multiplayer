@@ -15,17 +15,24 @@ namespace jc::resource_streamer
 	}
 }
 
+class Resource;
+class ExportedEntityResource;
+
+using resource_callback_t = std::function<void(Resource*)>;
+using ee_resource_callback_t = std::function<void(ExportedEntityResource*)>;
+
 class ResourceStreamer
 {
 public:
 
 	void init();
 	void destroy();
-
+	
 	bool dispatch(uint32_t ms = 0);
 	bool is_blocked() const;
 	bool can_add_resource() const;
 	bool all_queues_empty() const;
+	bool request_exported_entity(uint32_t id, const ee_resource_callback_t& callback, bool now = true);
 
 	std::deque<void*>* get_pending_queue() const;
 	std::deque<void*>* get_loading_queue() const;

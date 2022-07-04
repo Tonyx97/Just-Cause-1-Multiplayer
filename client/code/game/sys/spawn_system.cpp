@@ -81,7 +81,7 @@ CharacterHandle* SpawnSystem::spawn_character(const std::string& model_name, con
 {
 	CharacterInfo info {};
 
-	info.x					= 0.f;
+	info.is_female			= 0;
 	info.y					= 0.4f;
 	info.z					= 1;
 	info.w					= 50.f;

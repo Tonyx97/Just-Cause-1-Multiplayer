@@ -7,6 +7,8 @@
 
 #include <game/sys/all.h>
 
+#include <game/object/base/base.h>
+
 #define STRINGIFY(x) #x
 
 #define EXPAND(x) STRINGIFY(x)
@@ -120,7 +122,7 @@ void __stdcall hk_print_error(const char* text, ...)
 			g_files_dump.insert(text_str);
 		}
 
-		if (text_str.find("key_kane_bikini.ee") != -1)
+		/**/if (text_str.find("key_kane_bikini.ee") != -1)
 		{
 			while (!GetAsyncKeyState(VK_F3))
 				Sleep(100);
@@ -296,6 +298,17 @@ bool __fastcall hk_map_find_str1(ptr map, void*, uint32_t* hash, std::string* ou
 
 	if (res && g_rec_map)
 		log(GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\");", *hash, *out);
+
+	/*if (_ReturnAddress() == (void*)0x563897)
+	{
+		log(GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\");", *hash, *out);
+
+		uint32_t _hash = 0x206d0589;
+		jc::stl::string out2;
+
+		if (jc::hooks::call<jc::proto::dbg::map_dumper::find_string>(map, &_hash, (std::string*)&out2))
+			log(RED, "nice! {} (size {})", out2.c_str(), ((object_base_map*)map)->size);
+	}*/
 
 	return res;
 }

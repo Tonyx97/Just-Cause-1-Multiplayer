@@ -11,6 +11,7 @@
 #include <game/object/mounted_gun/mounted_gun.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/resource/ee_resource.h>
+#include <game/object/agent_type/npc_variant.h>
 #include <game/sys/all.h>
 
 /*
@@ -26,9 +27,10 @@ bool __fastcall hk_test(int a1, void*, int key)
 {
 	auto res = jc::hooks::call<jc::proto::dbg::test>(a1, key);
 
-	//if (key == 0x5c)
-	//if (res)
-		//log(GREEN, "[1 - {:x}] {:x} -> {}", ptr(_ReturnAddress()), key, res);
+	log(WHITE, "--------------------------");
+	for (int i = 0xC; i < 0x530; i += 0x1C)
+		log(GREEN, "{:x} -> {}", i, ((std::string*)(a1 + i))->c_str());
+	log(WHITE, "--------------------------");
 	
 	return res;
 }
@@ -43,14 +45,14 @@ int __fastcall hk_test2(int m, void*, std::string* str)
 
 void jc::test_units::init()
 {
-	//jc::hooks::hook<jc::proto::dbg::test>(&hk_test);
+	jc::hooks::hook<jc::proto::dbg::test>(&hk_test);
 	//jc::hooks::hook<jc::proto::dbg::test2>(&hk_test2);
 }
 
 void jc::test_units::destroy()
 {
 	//jc::hooks::unhook<jc::proto::dbg::test2>();
-	//jc::hooks::unhook<jc::proto::dbg::test>();
+	jc::hooks::unhook<jc::proto::dbg::test>();
 }
 
 void jc::test_units::test_0()
@@ -97,33 +99,37 @@ void jc::test_units::test_0()
 		//g_spawn->spawn_mounted_gun(local_pos);
 	}
 
-	if (g_key->is_key_down(VK_NUMPAD7))
+	if (g_key->is_key_pressed(VK_NUMPAD7))
 	{
-		if (g_rsrc_streamer->can_add_resource())
-		{
-			auto ee_resource = ExportedEntityResource::CREATE();
+		static int id = 0;
 
-			ee_resource->push("KEY_Kane_Bikini.ee");
+		local_char->set_model(id++);
 
-			if (g_rsrc_streamer->all_queues_empty())
-			{
-				while (!ee_resource->is_loaded())
-				{
-					log(GREEN, "[loading]");
-
-					g_rsrc_streamer->dispatch();
-
-					ee_resource->check();
-				}
-
-				local_char->set_model("female1");
-			}
-		}
+		if (id >= jc::vars::exported_entities.size())
+			id = 0;
 	}
 
-	if (g_key->is_key_down(VK_NUMPAD1))
+	if (g_key->is_key_pressed(VK_NUMPAD1))
 	{
-		local_char->set_model("female1");
+		auto variant = NPCVariant::CREATE();
+
+		log(RED, "nice 1 {:x}", ptr(*variant));
+
+		*(jc::stl::string*)(ptr(*variant) + 0xEC) = jc::stl::string("characters\\paperdolls\\PROP_policehat.lod");
+		*(jc::stl::string*)(ptr(*variant) + 0x15C) = jc::stl::string("characters\\paperdolls\\prop_bottle.lod");
+		*(jc::stl::string*)(ptr(*variant) + 0x38C) = "attach_right";
+		*(jc::stl::string*)(ptr(*variant) + 0x3A8) = "attach_left";
+		//*(jc::stl::string*)(ptr(*variant) + 0x3A8) = "head";
+		//*(jc::stl::string*)(ptr(*variant) + 0x3C4) = "spine_1";
+		//*(jc::stl::string*)(ptr(*variant) + 0x3E0) = "spine_2";
+		//*(jc::stl::string*)(ptr(*variant) + 0x3FC) = "pelvis";
+		//*(jc::stl::string*)(ptr(*variant) + 0x418) = "characters\\kc_007\\kc_007.lod";
+		//*(jc::stl::string*)(ptr(*variant) + 0x434) = "ezperansa_bag_hide";
+		//*(jc::stl::string*)(ptr(*variant) + 0x4C0) = "ezperansa_bag_show";
+
+		log(RED, "nice 2");
+
+		local_char->set_npc_variant(*variant);
 	}
 
 	static ptr anim_ptr = 0;
@@ -155,7 +161,8 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		std::string anim_name = R"(dance_hooker_NPC_2.anim)";
+		std::string anim_name = R"(std_drink_rum_NPC.anim)";
+		//std::string anim_name = R"(dance_hooker_NPC_2.anim)";
 
 		/*ptr temp = 0;
 

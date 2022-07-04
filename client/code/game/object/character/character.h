@@ -23,6 +23,7 @@ namespace jc::character
 	{
 		static constexpr uint32_t SET_ANIMATION				= 0x5A1BE0;
 		static constexpr uint32_t SET_TRANSFORM				= 0x58F190;
+		static constexpr uint32_t SET_NPC_VARIANT			= 0x58CA20;
 		static constexpr uint32_t GET_HEAD_BONE_POSITION	= 0x58F610;
 		static constexpr uint32_t GET_PELVIS_BONE_POSITION	= 0x58F5A0;
 		static constexpr uint32_t GET_STOMACH_BONE_POSITION = 0x58F530;
@@ -32,6 +33,7 @@ namespace jc::character
 		static constexpr uint32_t DESTROY_SKELETON			= 0x648990;
 		static constexpr uint32_t CREATE_SKELETON			= 0x648430;
 		static constexpr uint32_t CAN_BE_DESTROYED			= 0x595F10;
+		
 	}
 
 	namespace g
@@ -56,10 +58,12 @@ class WeaponBelt;
 class VehicleController;
 class hkCharacterProxy;
 class StanceController;
+class NPCVariant;
 
 struct CharacterInfo
 {
-	float x, y;
+	int is_female;
+	float y;
 	int	  z;
 	float w;
 
@@ -87,7 +91,8 @@ public:
 	void set_grenades_ammo(int32_t v);
 	void set_animation(const std::string& name, float speed, bool unk0 = false, bool unk1 = false);
 	void set_grenade_timeout(float v);
-	void set_model(const std::string& name);
+	void set_model(uint32_t id);
+	void set_npc_variant(NPCVariant* v);
 	void set_flag(uint32_t mask);
 	void remove_flag(uint32_t mask);
 
