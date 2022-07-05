@@ -45,14 +45,14 @@ int __fastcall hk_test2(int m, void*, std::string* str)
 
 void jc::test_units::init()
 {
-	jc::hooks::hook<jc::proto::dbg::test>(&hk_test);
+	//jc::hooks::hook<jc::proto::dbg::test>(&hk_test);
 	//jc::hooks::hook<jc::proto::dbg::test2>(&hk_test2);
 }
 
 void jc::test_units::destroy()
 {
 	//jc::hooks::unhook<jc::proto::dbg::test2>();
-	jc::hooks::unhook<jc::proto::dbg::test>();
+	//jc::hooks::unhook<jc::proto::dbg::test>();
 }
 
 void jc::test_units::test_0()
@@ -99,14 +99,54 @@ void jc::test_units::test_0()
 		//g_spawn->spawn_mounted_gun(local_pos);
 	}
 
+	struct Ladder
+	{
+		static constexpr auto CLASS_NAME() { return "CLadder"; }
+		static constexpr auto CLASS_ID() { return util::hash::JENKINS(CLASS_NAME()); }
+	};
+
+	static std::vector<ref<Ladder>> ladders;
+
 	if (g_key->is_key_pressed(VK_NUMPAD7))
 	{
-		static int id = 0;
+		/*static int id = 0;
 
 		local_char->set_model(id++);
 
 		if (id >= jc::vars::exported_entities.size())
-			id = 0;
+			id = 0;*/
+
+		if (auto r = g_game_control->create_object<Ladder>())
+		{
+			object_base_map map {};
+
+			mat4 m2{
+				0.f, 0.f, 0.f, 0.f,
+				0.f, 11.f, 0.f, 0.f,
+				0.f, 0.f, 0.f, 0.f,
+				0.f, 0.f, 0.f, 0.f };
+
+			vec3 v{ -1.00f, 0.f, 0.f};
+
+			map.insert<ValueType_Bool>(0x525a07d4, false);
+			map.insert<ValueType_Float>(0x14936868, 0.6f);
+			map.insert<ValueType_Mat4>(0xacaefb1, &local_t);
+			map.insert<ValueType_Mat4>(0x526d67dc, &m2);
+			map.insert<ValueType_Bool>(0x2c9331bd, true);
+			map.insert<ValueType_String>(0x5b982501, "models\\building_blocks\\general\\general_ladder_10m.pfx");
+			map.insert<ValueType_String>(0xEA402ACF, "models\\building_blocks\\general\\general_ladder_10m.lod");
+			map.insert<ValueType_String>(0xb8fbd88e, "CLadder1");
+			map.insert<ValueType_String>(0xef911d14, "CLadder");
+			map.insert<ValueType_Vec3>(0xc2292175, &v);
+
+			log(RED, "1 {:x}", ptr(*r));
+
+			((ObjectBase*)r.obj)->init_from_map(&map);
+
+			//g_game_control->enable_object(r);
+
+			ladders.push_back(std::move(r));
+		}
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD1))

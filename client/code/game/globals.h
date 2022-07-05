@@ -15,6 +15,7 @@ namespace jc::g
 		namespace fn
 		{
 			static constexpr uint32_t ROTATE_POINT_BY_MATRIX = 0x412E00;
+			static constexpr uint32_t FLOAT_TO_INT16 = 0x45C650;
 		}
 	}
 
@@ -37,9 +38,15 @@ namespace jc::game
 		return BITCAST(T*, malloc_internal(size));
 	}
 
-	inline float int16_to_float(int16_t v)
+	inline float i16_to_float(int16_t v)
 	{
 		const auto i = read<int>(0xA1EAA0, 3 * v) << 8;
 		return *BITCAST(float*, &i);
+	}
+
+	inline float float_to_i16(float v)
+	{
+		int16_t out;
+		return *jc::this_call<int16_t*>(jc::g::math::fn::FLOAT_TO_INT16, &out, v);
 	}
 }

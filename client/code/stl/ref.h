@@ -84,8 +84,6 @@ struct ref
 
 	void dec()
 	{
-		log(CYAN, "{} {} {}", counter->uses, counter->weaks, counter->unk1);
-
 		bool destroyed = counter->uses == 1;
 
 		jc::this_call(jc::reference::fn::DEC_REF, counter);

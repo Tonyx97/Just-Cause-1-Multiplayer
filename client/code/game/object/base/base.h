@@ -69,10 +69,33 @@ struct object_base_map : public jc::map<object_base_map, uint32_t>
 			{
 				auto type = jc::read<int>(n->data);
 
-				//log(GREEN, "{:x} {} -> string {}", n->hash, jc::read<int>(_data), _data + 4);
+				switch (type)
+				{
+				case ValueType_Bool:	log(GREEN, "{} 0x{:x} -> bool/int {}", type, n->hash, *(bool*)(ptr(n->data) + 4)); break;
+				case ValueType_Float:	log(GREEN, "{} 0x{:x} -> float/int16 {}", type, n->hash, *(float*)(ptr(n->data) + 4)); break;
+				case ValueType_String:	log(GREEN, "{} 0x{:x} -> string {}", type, n->hash, (const char*)(*(ptr*)(ptr(n->data) + 4))); break;
+				case ValueType_Vec3:
+				{
+					vec3 v = **(vec3**)(ptr(n->data) + 4);
 
-				if (type == ValueType_String)
-					log(GREEN, "{:x} {} -> string {}", n->hash, type, (const char*)(*(ptr*)(ptr(n->data) + 4)));
+					log(GREEN, "{} 0x{:x} -> vec3 {{ {:.2f}f, {:.2f}f, {:.2f}f }}", type, n->hash, v.x, v.y, v.z);
+					
+					break;
+				}
+				case ValueType_Mat4:
+				{
+					mat4 v = **(mat4**)(ptr(n->data) + 4);
+
+					log(GREEN, R"({} 0x{:x} -> mat4 {{ {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f }})", type, n->hash, v[0][0], v[0][1], v[0][2], v[0][3]
+																						, v[1][0], v[1][1], v[1][2], v[1][3]
+																						, v[2][0], v[2][1], v[2][2], v[2][3]
+																						, v[3][0], v[3][1], v[3][2], v[3][3]);
+					
+					break;
+				}
+				default:
+					log(RED, "Unknown map entry with type {}", type);
+				}
 			}
 
 			if (!n->is_leaf)

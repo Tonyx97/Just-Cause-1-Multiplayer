@@ -7,8 +7,8 @@ namespace jc::game_control
 
 	namespace fn
 	{
-		static constexpr uint32_t ALLOCATE_OBJECT = 0x4EE350;
-		static constexpr uint32_t ENABLE_OBJECT	  = 0x4EE480;
+		static constexpr uint32_t CREATE_OBJECT		= 0x4EE350;
+		static constexpr uint32_t ENABLE_OBJECT		= 0x4EE480;
 	}
 }
 
@@ -25,7 +25,7 @@ public:
 
 		const std::string class_name = T::CLASS_NAME();
 
-		jc::this_call(jc::game_control::fn::ALLOCATE_OBJECT, this, &r, &class_name, true);
+		jc::this_call(jc::game_control::fn::CREATE_OBJECT, this, &r, &class_name, true);
 
 		return r;
 	}

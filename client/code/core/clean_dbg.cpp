@@ -23,12 +23,13 @@ std::set<std::string>		 g_files_dump;
 std::mutex		 g_string_dump_lock;
 std::mutex		 g_hash_dump_lock;
 std::atomic_bool g_enable_string_dump = false;
-std::atomic_bool g_enable_hash_dump	  = false;
+std::atomic_bool g_enable_hash_dump = false;
 
 std::map<std::string, std::pair<uint32_t, ptr>> g_hashes;
 
 constexpr bool ENABLE_DUMPING = false;
 constexpr bool ENABLE_STR_DEBUG = false;
+constexpr bool ENABLE_MAP_DEBUG = false;
 
 inline std::string get_solution_dir()
 {
@@ -201,21 +202,29 @@ void* __fastcall hk_raycast(uintptr_t _this, void*, ray* r, int a1, float distan
 
 bool g_rec_map = false;
 
-int __fastcall hk_casp_vcall6(ptr casp, void*, ptr map)
+void __fastcall hk_casp_vcall6(ptr casp, void*, ptr map)
 {
-	//g_rec_map = true;
+	g_rec_map = ENABLE_MAP_DEBUG;
 
-	if (g_rec_map)
+	//if (g_rec_map)
+	//	log(WHITE, "------------------ {:x} --------------------------", casp);
+
+	{
+		log(WHITE, "------------------ {:x} --------------------------", casp);
+
+		object_base_map* _map = (object_base_map*)map;
+
+		_map->walk();
+
 		log(WHITE, "---------------------------------------------------");
+	}
 
-	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::vcall6_obj_init>(casp, map);
+	jc::hooks::call<jc::proto::dbg::map_dumper::vcall6_obj_init>(casp, map);
 
-	if (g_rec_map)
-		log(WHITE, "---------------------------------------------------");
+	//if (g_rec_map)
+	//	log(WHITE, "---------------------------------------------------");
 
-	//g_rec_map = false;
-
-	return res;
+	g_rec_map = false;
 }
 
 bool __fastcall hk_map_find_bool(ptr map, void*, uint32_t* hash, bool* out)
@@ -233,7 +242,7 @@ bool __fastcall hk_map_find_int16(ptr map, void*, uint32_t* hash, int16_t* out)
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_int16>(map, hash, out);
 
 	if (res && g_rec_map)
-		log(GREEN, "map.insert<ValueType_Float>(0x{:x}, {:.2f}f);", *hash, jc::game::int16_to_float(*out));
+		log(GREEN, "map.insert<ValueType_Float>(0x{:x}, {:.2f}f);", *hash, jc::game::i16_to_float(*out));
 
 	return res;
 }
@@ -263,7 +272,17 @@ bool __fastcall hk_map_find_vec3(ptr map, void*, uint32_t* hash, vec3* out)
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_vec3>(map, hash, out);
 
 	if (res && g_rec_map)
-		log(GREEN, "map.insert<ValueType_Vec3>(0x{:x}, .); // {{ {}, {}, {} }}", *hash, out->x, out->y, out->z);
+		log(GREEN, "map.insert<ValueType_Vec3>(0x{:x}, vec3 {{ {}, {}, {} }});", *hash, out->x, out->y, out->z);
+
+	return res;
+}
+
+bool __fastcall hk_map_find_vec3i16(ptr map, void*, uint32_t* hash, u16vec3* out)
+{
+	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_vec3u16>(map, hash, out);
+
+	if (res && g_rec_map)
+		log(GREEN, "map.insert<ValueType_Vec3>(0x{:x}, vec3 {{ {}, {}, {} }});", *hash, jc::game::i16_to_float(out->x), jc::game::i16_to_float(out->y), jc::game::i16_to_float(out->z));
 
 	return res;
 }
@@ -274,7 +293,7 @@ bool __fastcall hk_map_find_mat4(ptr map, void*, uint32_t* hash, mat4* out)
 
 	if (res && g_rec_map)
 	{
-		/*auto m = *out;
+		auto m = *out;
 
 		log(GREEN, "float mat_data[16] = {{");
 
@@ -284,9 +303,9 @@ bool __fastcall hk_map_find_mat4(ptr map, void*, uint32_t* hash, mat4* out)
 		log(GREEN, "}};");
 
 		log(GREEN, "mat4 mat = *(mat4*)mat_data;");
-		log(GREEN, "map.insert<ValueType_Mat4>(0x{:x}, &mat);", *hash);*/
+		log(GREEN, "map.insert<ValueType_Mat4>(0x{:x}, &mat);", *hash);
 
-		log(GREEN, "map.insert<ValueType_Mat4>(0x{:x}, .); // put your matrix here", *hash);
+		//log(GREEN, "map.insert<ValueType_Mat4>(0x{:x}, .); // put your matrix here", *hash);
 	}
 
 	return res;
@@ -343,6 +362,30 @@ bool __cdecl hk_map_find_str4(ptr map, uint32_t hash, ptr* idk, ptr* out, std::s
 	return res;
 }
 
+mat4* __fastcall hk_map_get_mat4(ptr map, void*, uint32_t* hash)
+{
+	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::get_mat4>(map, hash);
+
+	if (res && g_rec_map)
+	{
+		auto m = *res;
+
+		log(GREEN, "float mat_data[16] = {{");
+
+		for (int i = 0; i < 16; ++i)
+			log(GREEN, "{:.1f}f, ", *(float*)(ptr(res) + i * 0x4));
+
+		log(GREEN, "}};");
+
+		log(GREEN, "mat4 mat = *(mat4*)mat_data;");
+		log(GREEN, "map.insert<ValueType_Mat4>(0x{:x}, &mat);", *hash);
+
+		//log(GREEN, "map.insert<ValueType_Mat4>(0x{:x}, .); // put your matrix here", *hash);
+	}
+
+	return res;
+}
+
 void jc::clean_dbg::init()
 {
 	if (ENABLE_DUMPING)
@@ -373,11 +416,14 @@ void jc::clean_dbg::init()
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_int>(&hk_map_find_int);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_float>(&hk_map_find_float);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_vec3>(&hk_map_find_vec3);
+	jc::hooks::hook<jc::proto::dbg::map_dumper::find_vec3u16>(&hk_map_find_vec3i16);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_mat4>(&hk_map_find_mat4);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_string>(&hk_map_find_str1);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_string2>(&hk_map_find_str2);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_string3>(&hk_map_find_str3);
 	jc::hooks::hook<jc::proto::dbg::map_dumper::find_string4>(&hk_map_find_str4);
+
+	jc::hooks::hook<jc::proto::dbg::map_dumper::get_mat4>(&hk_map_get_mat4);
 
 	// string dumper
 
@@ -477,11 +523,13 @@ void jc::clean_dbg::destroy()
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_int>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_float>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_vec3>();
+	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_vec3u16>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_string>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_string2>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_string3>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_string4>();
 	jc::hooks::unhook<jc::proto::dbg::map_dumper::find_mat4>();
+	jc::hooks::unhook<jc::proto::dbg::map_dumper::get_mat4>();
 
 	// string dumper
 

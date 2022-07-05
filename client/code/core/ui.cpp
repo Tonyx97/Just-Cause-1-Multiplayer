@@ -116,7 +116,7 @@ void UI::init()
 
 	initialized = true;
 
-	log(RED, "[{:x}] created UI", GetCurrentThreadId());
+	log(GREEN, "Created UI in thread 0x{:x}", GetCurrentThreadId());
 }
 
 void UI::destroy()
