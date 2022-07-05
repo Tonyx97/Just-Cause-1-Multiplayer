@@ -53,7 +53,11 @@ bool ResourceStreamer::request_exported_entity(uint32_t id, const ee_resource_ca
 	bool ok = false;
 
 	check(now, "Deferred exported entity request not supported yet"); // todojc - add task system to handle this case
- 
+
+	// we have to make sure all queues are empty because other parts of the code might be loading stuff
+	// and we would stall that resource loading with this loop (happens with other loops like this 
+	// inside the actual game)
+	
 	if (all_queues_empty())
 	{
 		while (!ee_resource->is_loaded())

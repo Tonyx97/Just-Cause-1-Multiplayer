@@ -115,8 +115,8 @@ void jc::test_units::test_0()
 
 		log(RED, "nice 1 {:x}", ptr(*variant));
 
-		*(jc::stl::string*)(ptr(*variant) + 0xEC) = jc::stl::string("characters\\paperdolls\\PROP_policehat.lod");
-		*(jc::stl::string*)(ptr(*variant) + 0x15C) = jc::stl::string("characters\\paperdolls\\prop_bottle.lod");
+		*(jc::stl::string*)(ptr(*variant) + 0xEC) = "characters\\paperdolls\\PROP_policehat.lod";
+		*(jc::stl::string*)(ptr(*variant) + 0x15C) = "characters\\paperdolls\\prop_bottle.lod";
 		*(jc::stl::string*)(ptr(*variant) + 0x38C) = "attach_right";
 		*(jc::stl::string*)(ptr(*variant) + 0x3A8) = "attach_left";
 		//*(jc::stl::string*)(ptr(*variant) + 0x3A8) = "head";
