@@ -1,0 +1,2565 @@
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 5206.50f, 1068.77f, -1104.17f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_blueprint {4B0A9063-AAD8-4F27-9872-716802BA71C6}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Blueprint)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blueprint.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8473480 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 173.35f, 212.71f, -8069.42f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_weaponpart {008A624C-F581-419F-AA92-67CF8F59FFCF}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(WeaponPart)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_partbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8473908 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -2576.03f, 82.17f, -1153.09f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_blueprint {6ADF0E85-03A2-4DF6-A5E2-44B2FA6E3E4A}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Blueprint)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blueprint.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8473ae0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 3170.01f, 302.56f, 8551.97f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_blueprint {003AFB60-C90D-4E2A-9C41-95D367DA81AE}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Blueprint)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blueprint.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8475310 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -3413.65f, 900.26f, -8260.63f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_weaponpart {50F073EA-A275-4404-A5D0-360FE847DC7B}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(WeaponPart)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_partbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8475798 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 758.34f, 114.12f, 4710.46f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_weaponpart {716E6DCB-A99F-439E-94AA-5AA3A758BEDA}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(WeaponPart)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_partbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8475970 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2648.12f, 190.36f, 8797.56f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment {56616B22-998D-42EB-BFF3-178F0F54F494}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8475e28 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2380.66f, 290.71f, 7687.70f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment {ABBC5EA0-133F-42AA-986F-B834524F884D}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8477908 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -12339.44f, 342.75f, -10168.67f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_dogtag {4C913E77-E3A1-4B88-990E-E2A4B1644065}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Dogtag)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blackbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8477dc8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -2112.22f, 557.52f, -2497.00f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_dogtag {E8CC6E12-0831-4348-A33D-359ED24263A2}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Dogtag)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blackbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84781b8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 38.77f, 464.09f, 2972.66f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_dogtag {CE53BCF5-3F04-40F6-97E3-9C23363E0711}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Dogtag)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blackbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 847afd0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -1384.89f, 67.72f, 4994.13f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_dogtag {69F882E5-C83D-4970-9B89-E2AADE940D22}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Dogtag)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blackbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 847b1a8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -519.80f, 215.43f, 11535.06f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_dogtag {7EE886A4-3A9D-4CBF-A2CA-11BF51477120}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Dogtag)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blackbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 847b638 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 9264.73f, 128.19f, -10946.20f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_dogtag {8F38EFF6-D217-4543-99FA-47951F293D0B}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Dogtag)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blackbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 847bb58 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 11842.99f, 257.16f, -13437.34f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_dogtag {BA08768C-3654-4DB6-8112-3ECC8745804D}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Dogtag)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blackbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 847cce8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -2628.78f, 75.52f, -3867.24f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_dogtag {8DD10349-E6DF-413A-BAB4-52567604C530}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Dogtag)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blackbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 847d170 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -6544.43f, 358.84f, -2089.27f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_dogtag {0C0C9BE3-03EE-4D66-8DD7-B9CAFC50361A}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Dogtag)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blackbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 847d5f8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 13187.03f, 71.31f, -11695.11f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate {A9CA7BD0-B2E0-48B9-A459-63C906651F95}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8485598 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 13400.45f, 69.69f, -11705.40f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate {31ECCE6C-6549-48B5-A947-1F4331D2E4FF}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84858e0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 12736.03f, 72.31f, -12736.00f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate {86DE8763-2791-4E9C-BA7A-33D0A42C1057}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8485d58 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 12956.00f, 70.81f, -12801.04f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate {B5DD50EB-3A85-4E3D-A94A-E1951E6AF5A2}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8485f30 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 12816.04f, 71.25f, -13272.01f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate {312A80BD-6F1E-4861-97F6-24450D6C348F}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8487ba8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10650.35f, 71.19f, -14092.66f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate {8FACCD6D-760D-4B08-95CC-9F3F84CF97FF}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8487d80 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10063.62f, 70.43f, -13540.33f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate {329694DC-CE3F-4418-A8ED-E010B506737E}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8488138 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10386.69f, 71.60f, -13285.58f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate {17C609CB-50F9-4B40-B143-B83A14BE0E8A}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 848aff8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 11008.17f, 74.34f, -11627.08f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate {23D29EB5-C9A9-417F-A7B2-D9CC6DC2CB03}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 848b450 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 11100.12f, 71.80f, -10594.61f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate {291AD210-8EE5-47C0-B3AF-653A91D3027A}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 848b928 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -76.88f, 1392.15f, -4386.11f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack prestige2_rioja {2019EBAD-C53B-4024-A983-83FA260E6AEE}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 848ee08 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -143.42f, 1750.33f, -4919.25f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_blueprint {931E5184-6EF7-45FF-A13A-BAAD1713D5C6}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Blueprint)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blueprint.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84959f8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10437.27f, 100.56f, -14426.73f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack2 {31DED066-F3FF-4C96-9F5F-31C4D7E80080}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8497bb0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10521.67f, 115.94f, -14535.53f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack2 {05E093BE-C940-420D-8582-BDACCB3550E4}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8497ff8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10501.79f, 113.80f, -14562.62f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack2 {AAC2DAD3-21F6-4353-8C4C-E2A1C062576A}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84984b0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10511.86f, 99.82f, -14651.18f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack2 {EB0F03B7-7B1B-4B10-B61F-C73B682F49AD}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 849bf30 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10418.60f, 100.08f, -14505.61f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack2 {EEB6F32E-32FA-47A7-8564-8BDAA721F490}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 849c3c8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10455.01f, 105.85f, -14672.52f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack2 {1ED88480-4318-4461-A4D8-1DC95CB7DBDC}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 849c788 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10354.15f, 99.64f, -14694.50f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack2 {D933612D-BA1F-4AEC-B324-CA0837DAA8D9}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 849e388 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10354.06f, 107.56f, -14538.74f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack2 {7ED81291-F6AE-4A1C-842F-54B342E4C7DA}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 849e800 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10281.92f, 99.99f, -14469.21f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack2 {CAC3715F-AB46-4FB8-BFBF-B7CFC2224D0A}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 849f0f8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10277.98f, 134.43f, -14563.93f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack2 {850BB07C-276C-4CF7-8C89-F7575AC3843B}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a20b8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10991.12f, 215.42f, -12897.90f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate2 prestige1_guerilla {0E8B3D1F-BCBE-41FC-AC15-3731A963A52A}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a2bb0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 11066.28f, 212.28f, -12979.31f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate2 prestige1_guerilla {A4DAED40-4466-40E1-BA86-4CC51B39B7BE}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a3eb8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 11034.99f, 212.39f, -12816.89f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate2 prestige1_guerilla {AB3BB6AB-EF0D-417E-8555-ADFB94C0A81D}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a4338 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 11152.07f, 212.39f, -12862.01f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate2 prestige1_guerilla {E8A0D6D9-75A0-412F-A8A1-C6B96B8DE632}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a47f0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 10976.50f, 212.39f, -13103.08f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_supplycrate2 prestige1_guerilla {989CCA82-1040-49E0-928E-61332F49B33E}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(SupplyCrate)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_scopebox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8495120 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2664.76f, 190.36f, 8746.73f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment {503C7A38-84DB-4198-AE53-BCBC2FF7BC5A}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a6638 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2707.50f, 120.37f, 9094.45f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment {80AD47C4-F32C-4240-B6B0-E13176102B53}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a6a50 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2374.96f, 106.75f, 9107.45f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment {FE0ACEFC-4BEA-4882-9FE5-BFBB8947944A}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a7c38 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2211.89f, 80.29f, 9618.06f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment {4083066C-9978-4381-88D3-785085432042}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a80b0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2610.09f, 80.22f, 7607.35f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment {4B278239-E9E1-4193-8099-986C3A433C29}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a8538 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2801.05f, 90.15f, 6949.35f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment {52F9AEDB-A31C-4646-B708-D88C924E353A}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a8710 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2334.73f, 81.40f, 7044.65f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment {F1F94D9F-9E23-45F3-AF13-776B4AEBA34D}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84ab868 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 1703.10f, 90.44f, 7250.73f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment {48C72B68-3737-4BB7-9DAF-32D8F7CB012F}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84ac108 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 26.85f, 1370.58f, -4568.59f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack prestige2_rioja {9E81EA8A-73E9-4F35-B6C0-6A99D024750E}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84adca0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 547.34f, 1452.36f, -4405.20f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack prestige2_rioja {77EEA3CD-5CDC-4A71-8B61-884FB837F43C}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84ae460 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -483.55f, 1365.87f, -4345.95f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack prestige2_rioja {CE6F135C-496F-4946-A28B-DC1D845353AF}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84ae8e8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -292.83f, 1424.94f, -4171.04f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack prestige2_rioja {4A0F2403-5D76-4B44-9A9F-D3816A1CC00D}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84aeac0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -958.79f, 1159.40f, -4554.36f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack prestige2_rioja {D9F850E0-9B1E-4B80-B3F6-4C26D935AEFC}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84afec0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -142.84f, 1382.73f, -4481.37f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack prestige2_rioja {FD73A238-5588-44C9-9AE9-CDDC2F555D65}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84b0330 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 398.47f, 1582.20f, -3896.99f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack prestige2_rioja {47C34835-6BAA-4583-ADD8-9B5EA92A7B8A}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84b2350 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 982.74f, 59.13f, -7905.78f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment2 {049DFCE5-3AC5-464E-AC01-397B96D90BAA}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84b26a0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -2181.59f, 66.98f, -6943.69f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment2 {CC67BB0D-C899-4EAA-AE89-3B624A1020BA}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84b2b70 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -1106.67f, 61.10f, -7410.20f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment2 {4B6A6B17-727F-4AEC-AD9C-E2695A9A4633}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84b6228 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 150.70f, 62.22f, -7618.03f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment2 {BA2609D7-F7CE-4565-A5F7-57429EF6E804}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84b6680 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -3982.98f, 66.40f, -5702.49f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment2 {232F3EB3-0304-445A-A7F0-5D2E67574B45}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84b6a68 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -3568.85f, 66.06f, -5159.90f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment2 {81E619D8-4E83-43AF-AAFD-2A113E7D8159}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84b8450 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -2891.64f, 65.83f, -3919.43f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment2 {F0808392-9F87-43E5-A403-FA872740039E}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84b86a0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2565.18f, 69.50f, -2053.74f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment2 {4A1C102D-737E-4FC8-888D-10B5B07B7193}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84b8b48 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2946.08f, 66.71f, -3461.30f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment2 {BF6D24C7-4E40-4462-9762-09DBA3B7BBEF}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84b8f48 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 4272.16f, 65.61f, -5789.44f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_equipment2 {BCB3CE67-ED53-4681-8960-D0064E40AEC5}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Equipment)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\rifle_infraredbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84bb410 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 4351.30f, 71.07f, -4215.23f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {C1B41A6F-D869-4A33-8563-456ACD21843B}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a5ef8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 3336.76f, 71.30f, -3660.33f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {0167CC70-197D-4AF4-987D-FBD7E0D9305A}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84a6238 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 3059.74f, 73.73f, -3151.32f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {8869E2D2-C113-4361-9F64-A5A380551EE1}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84c48f0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2627.10f, 71.25f, -1872.94f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {6AAECEFC-BCF4-418E-A3C2-02894138DFBB}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84c4e78 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2862.78f, 70.17f, -1083.45f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {D8B1180C-0FAF-4043-86BC-207837DCC2AA}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84c5630 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2442.15f, 71.56f, 825.32f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {E10BBF76-6D8F-43B0-9DB8-9D6F5122228A}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84c6b78 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 2777.94f, 70.37f, 531.00f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"( cm_pickup_cocapack3 prestige1_rioja {11CAF7A1-2DD1-4171-98C3-7113A008B74F}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84c6d50 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 3718.03f, 70.29f, 1142.68f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {A1CDDF34-EECF-412B-921E-56FC83FC61E6}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84c71a8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 4222.58f, 72.31f, 1846.78f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {CF7637D4-9BBC-4329-905F-3FF05765AB58}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84c75c8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 5644.43f, 73.24f, 1917.90f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {5E0D3899-8E5B-4041-9C61-309A9CA0A07A}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84c83f0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 6958.82f, 71.37f, 1378.41f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {C2A60447-A835-4C8C-9320-1F92364FC7C2}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84c87c8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 7913.59f, 72.21f, 254.59f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {8FFED3EC-BAEC-448A-93A1-9AD78997518E}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84c8ff0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 7671.76f, 71.75f, -1167.05f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {EE8E1CA8-1706-4372-91EC-1349C70E4002}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84cb2f8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 7969.94f, 71.97f, -2149.64f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {298469A4-4262-4417-820C-1D8E4B14DD58}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84cb780 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 7726.82f, 71.11f, -3163.38f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_cocapack3 prestige1_rioja {DEDDDCAC-7261-4B3C-B483-0F0BD3594718}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CocaPack)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\coca_pakage_box.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84cbc18 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 9028.72f, 72.57f, -7851.25f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs {E0765A45-731E-4AEA-B4CF-4468C3E13545}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84ce530 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 8973.58f, 72.56f, -8410.16f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs {77C0FF8E-6F12-4D76-BCA2-8921E670B019}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84ce9e8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 9183.55f, 72.56f, -8823.90f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs {B429C5B4-E099-40E0-AD14-D6D303310350}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84ceea0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 9408.59f, 72.44f, -9051.28f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs {A45E1A36-B25D-4DF5-BD13-35DB990DFDFD}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84d4e38 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 9710.00f, 72.38f, -8732.90f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs {DCCE3698-06B1-4AE3-B82C-110EBBB45732}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84d52f0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 5229.02f, 1036.42f, -1102.43f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs2 {8D42AED0-C28C-4CC1-B884-8D4CF3260D3C}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84d5778 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 5121.04f, 1030.43f, -1102.54f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs2 {CE5E40B6-7924-42E7-9BBA-08B649B500CD}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84d6c68 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 5206.10f, 1031.02f, -1190.93f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs2 {C2A80206-5875-423A-BFCD-D55F259BA3AD}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84d7080 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 5201.70f, 1037.55f, -1126.29f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs2 {949011B8-0AE1-4B2F-9EC5-0999D69980DD}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84d7548 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 5184.48f, 1037.63f, -1100.75f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs2 {039ADC95-3492-4AEF-A3DC-71BAFC32FE45}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84d79d0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 6736.47f, 180.81f, -11295.72f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs3 {F736BEBF-C0CC-429C-8A3D-E27BBBF2D98B}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84dc318 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 6662.08f, 180.68f, -11174.62f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs3 {1264F78E-7246-4B21-97C7-7D8CD8E85872}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84dc7a0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 6980.57f, 188.63f, -11026.96f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs3 {1042EBB2-81D1-47A8-9C98-1D95E5E8A87D}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84dcbf8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 6873.09f, 168.28f, -10905.13f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs3 {0A8096DF-BF97-4678-B3ED-91AE938C71B7}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84e1740 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 7036.38f, 168.50f, -11106.84f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_interrogationdrugs3 {5DE22142-AFB8-415F-A843-28F8CE80EB04}::pickup)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Interrogation Drugs)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\interogation_drugs.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 84e1dd0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, -6349.41f, 212.37f, 6449.67f, 1.00f };
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x1fbcf81c, R"(cm_pickup_dogtag {7BACCC18-6F57-41FD-8B03-C3DFB98E6527}::pickup prestige1_guerilla)"); // string
+map.insert<ValueType_Int>(0x43f66557, 0); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(Dogtag)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 4); // int
+map.insert<ValueType_String>(0xc4c33843, R"(building_blocks\general\blackbox.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 86571c8 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 0.98f, 0.00f, 0.20f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, -0.20f, 0.00f, 0.98f, 0.00f, 3398.58f, 179.98f, 9000.20f, 1.00f };
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_String>(0x27a0c2a4, R"(PU_01)"); // string
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x3d82d7e, R"(weapons\weap_040.lod)"); // string
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Int>(0x43f66557, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_String>(0xc4c33843, R"(weapons\weap_040.lod)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 1); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CItemPickup1)"); // string
+map.insert<ValueType_Float>(0xce44e7b2, 30.00f); // float
+map.insert<ValueType_Int>(0xc6fc5f96, 0); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xec164522, R"(Timed Explosive)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 8657520 --------------------------
+object_base_map map {};
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x27a0c2a4, R"(PU_03)"); // string
+map.insert<ValueType_Int>(0x43f66557, 1); // int
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 0); // int
+map.insert<ValueType_Int>(0xc6fc5f96, 0); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CItemPickup1)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 1); // int
+map.insert<ValueType_String>(0xc4c33843, R"(weapons\weap_042.lod)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Float>(0xce44e7b2, 30.00f); // float
+map.insert<ValueType_String>(0xec164522, R"(Remote Trigger)"); // string
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+---------------------------------------------------
+------------------ 86580b0 --------------------------
+object_base_map map {};
+const auto m0 = mat4 { 0.98f, 0.00f, 0.20f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, -0.20f, 0.00f, 0.98f, 0.00f, 3400.12f, 179.98f, 8998.84f, 1.00f };
+map.insert<ValueType_Int>(0x525a07d4, 0); // int
+map.insert<ValueType_Int>(0x6261032, 1); // int
+map.insert<ValueType_String>(0x3d82d7e, R"(weapons\weap_041.lod)"); // string
+map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+map.insert<ValueType_Int>(0x42f184ea, 1); // int
+map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+map.insert<ValueType_Int>(0x43f66557, 1); // int
+map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+map.insert<ValueType_Int>(0x773aff1c, 1); // int
+map.insert<ValueType_Int>(0x7580ba87, 0); // int
+map.insert<ValueType_Int>(0x9098c79d, 0); // int
+map.insert<ValueType_String>(0xc4c33843, R"(weapons\weap_041.lod)"); // string
+map.insert<ValueType_Int>(0xaae1437b, 1); // int
+map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+map.insert<ValueType_String>(0xb8fbd88e, R"(CItemPickup1)"); // string
+map.insert<ValueType_Float>(0xce44e7b2, 30.00f); // float
+map.insert<ValueType_Int>(0xc6fc5f96, 0); // int
+map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+map.insert<ValueType_String>(0xec164522, R"(Triggered Explosive)"); // string
+map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string

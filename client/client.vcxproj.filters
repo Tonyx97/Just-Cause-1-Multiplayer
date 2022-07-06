@@ -261,6 +261,12 @@
     <ClCompile Include="code\game\object\agent_type\npc_variant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\game\object\ladder\ladder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\game\object\item_pickup\item_pickup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\game\sys\renderer.h">
@@ -522,6 +528,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\vars\exported_entities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\ladder\ladder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\item_pickup\item_pickup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

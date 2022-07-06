@@ -4,6 +4,9 @@
 static_assert("map_base.h must be defined");
 #endif
 
+#define IMPL_OBJECT_TYPE_ID(x) static constexpr auto CLASS_NAME() { return x; } \
+							   static constexpr auto CLASS_ID() { return util::hash::JENKINS(CLASS_NAME()); }
+
 namespace jc::object_base
 {
 	namespace vt
@@ -63,38 +66,41 @@ struct object_base_map : public jc::map<object_base_map, uint32_t>
 		Node* first = jc::read<Node*>(this, 0x4);
 		Node* root = jc::read<Node*>(first, 0x4);
 
+		log(GREEN, "object_base_map map {{}};");
+
+		std::vector<vec3> vec3s;
+		std::vector<mat4> mat4s;
+
+		std::vector<std::string> inserts;
+
 		std::function<void(Node*)> walk_tree = [&](Node* n)
 		{
 			if (n->hash != first->hash)
 			{
 				auto type = jc::read<int>(n->data);
-
+				
 				switch (type)
 				{
-				case ValueType_Bool:	log(GREEN, "{} 0x{:x} -> bool/int {}", type, n->hash, *(bool*)(ptr(n->data) + 4)); break;
-				case ValueType_Float:	log(GREEN, "{} 0x{:x} -> float/int16 {}", type, n->hash, *(float*)(ptr(n->data) + 4)); break;
-				case ValueType_String:	log(GREEN, "{} 0x{:x} -> string {}", type, n->hash, (const char*)(*(ptr*)(ptr(n->data) + 4))); break;
+				case ValueType_Int:		inserts.push_back(FORMATV("map.insert<ValueType_Int>(0x{:x}, {}); // int", n->hash, *(int*)(ptr(n->data) + 4))); break;
+				case ValueType_Float:	inserts.push_back(FORMATV("map.insert<ValueType_Float>(0x{:x}, {:.2f}f); // float", n->hash, *(float*)(ptr(n->data) + 4))); break;
+				case ValueType_String:	inserts.push_back(FORMATV("map.insert<ValueType_String>(0x{:x}, R\"({})\"); // string", n->hash, (const char*)(*(ptr*)(ptr(n->data) + 4)))); break;
 				case ValueType_Vec3:
 				{
-					vec3 v = **(vec3**)(ptr(n->data) + 4);
+					vec3s.push_back(**(vec3**)(ptr(n->data) + 4));
 
-					log(GREEN, "{} 0x{:x} -> vec3 {{ {:.2f}f, {:.2f}f, {:.2f}f }}", type, n->hash, v.x, v.y, v.z);
+					inserts.push_back(FORMATV("map.insert<ValueType_Vec3>(0x{:x}, &v{}); // vec3", n->hash, vec3s.size() - 1u));
 					
 					break;
 				}
 				case ValueType_Mat4:
 				{
-					mat4 v = **(mat4**)(ptr(n->data) + 4);
+					mat4s.push_back(**(mat4**)(ptr(n->data) + 4));
+					inserts.push_back(FORMATV("map.insert<ValueType_Mat4>(0x{:x}, &m{}); // mat4", n->hash, mat4s.size() - 1u));
 
-					log(GREEN, R"({} 0x{:x} -> mat4 {{ {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f }})", type, n->hash, v[0][0], v[0][1], v[0][2], v[0][3]
-																						, v[1][0], v[1][1], v[1][2], v[1][3]
-																						, v[2][0], v[2][1], v[2][2], v[2][3]
-																						, v[3][0], v[3][1], v[3][2], v[3][3]);
-					
 					break;
 				}
 				default:
-					log(RED, "Unknown map entry with type {}", type);
+					log(RED, "// Unknown map entry with type {}", type);
 				}
 			}
 
@@ -106,6 +112,18 @@ struct object_base_map : public jc::map<object_base_map, uint32_t>
 		};
 
 		walk_tree(root);
+
+		for (int i = 0; const auto & v : mat4s)
+			log(GREEN, "const auto m{} = mat4 {{ {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f }};", i++, v[0][0], v[0][1], v[0][2], v[0][3]
+				, v[1][0], v[1][1], v[1][2], v[1][3]
+				, v[2][0], v[2][1], v[2][2], v[2][3]
+				, v[3][0], v[3][1], v[3][2], v[3][3]);
+
+		for (int i = 0; const auto & v : vec3s)
+			log(GREEN, "const auto v{} = vec3 {{ {:.2f}f, {:.2f}f, {:.2f}f }};", i++, v.x, v.y, v.z);
+
+		for (const auto& v : inserts)
+			log(GREEN, "{}", v);
 	}
 };
 

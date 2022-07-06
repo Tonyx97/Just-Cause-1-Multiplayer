@@ -12,4 +12,6 @@ namespace jc::sea_vehicle
 class SeaVehicle : public Vehicle
 {
 public:
+
+	IMPL_OBJECT_TYPE_ID("CSeaVehicle");
 };

@@ -12,4 +12,6 @@ namespace jc::car
 class Car : public LandVehicle
 {
 public:
+
+	IMPL_OBJECT_TYPE_ID("CCar");
 };

@@ -14,6 +14,7 @@ class DamageableObject;
 class AgentSpawnPoint;
 class VehicleSpawnPoint;
 class MountedGun;
+class Ladder;
 
 class SpawnSystem
 {
@@ -34,6 +35,7 @@ public:
 	AgentSpawnPoint*   create_agent_spawn_point(const vec3& position);
 	VehicleSpawnPoint* create_vehicle_spawn_point(const vec3& position);
 	MountedGun*		   spawn_mounted_gun(const vec3& position);
+	Ladder*			   spawn_ladder(const vec3& position, const std::string& model, float length = 10.f);
 };
 
 inline SpawnSystem* g_spawn = nullptr;

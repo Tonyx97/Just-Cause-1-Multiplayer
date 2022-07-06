@@ -12,8 +12,7 @@ class MountedGun : public ActionPointOwner
 {
 public:
 
-	static constexpr auto CLASS_NAME() { return "CMountedGun"; }
-	static constexpr auto CLASS_ID() { return util::hash::JENKINS(CLASS_NAME()); }
+	IMPL_OBJECT_TYPE_ID("CMountedGun");
 
 	bool is_begin_used() const;
 };

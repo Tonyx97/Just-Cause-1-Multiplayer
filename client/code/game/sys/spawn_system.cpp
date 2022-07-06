@@ -11,6 +11,7 @@
 #include <game/object/spawn_point/agent_spawn_point.h>
 #include <game/object/spawn_point/vehicle_spawn_point.h>
 #include <game/object/mounted_gun/mounted_gun.h>
+#include <game/object/ladder/ladder.h>
 
 namespace jc::spawn_system
 {
@@ -21,6 +22,7 @@ namespace jc::spawn_system
 		vec<ref<AgentSpawnPoint>>	agent_spawns;
 		vec<ref<VehicleSpawnPoint>> vehicle_spawns;
 		vec<ref<MountedGun>>		mounted_guns;
+		vec<ref<Ladder>>			ladders;
 	}
 }
 
@@ -255,6 +257,47 @@ MountedGun* SpawnSystem::spawn_mounted_gun(const vec3& position)
 		jc::spawn_system::v::mounted_guns.push_back(std::move(rf));
 
 		return mounted_gun;
+	}
+
+	return nullptr;
+}
+
+Ladder* SpawnSystem::spawn_ladder(const vec3& position, const std::string& model, float length)
+{
+	if (auto rf = g_game_control->create_object<Ladder>())
+	{
+		object_base_map map {};
+
+		mat4 info
+		{
+			0.f, 0.f, 0.f, 0.f,
+			0.f, length, 0.f, 0.f,
+			0.f, 0.f, 0.f, 0.f,
+			0.f, 0.f, 0.f, 0.f
+		};
+
+		Transform transform(position);
+
+		vec3 offset { -1.f, 0.f, 0.f };
+
+		map.insert<ValueType_Bool>(0x525a07d4, false);
+		map.insert<ValueType_Float>(0x14936868, 0.6f);
+		map.insert<ValueType_Mat4>(0xacaefb1, &transform.get_matrix());
+		map.insert<ValueType_Mat4>(0x526d67dc, &info);
+		map.insert<ValueType_Bool>(0x2c9331bd, true);
+		map.insert<ValueType_String>(0x5b982501, (model + ".pfx").c_str());
+		map.insert<ValueType_String>(0xea402acf, (model + ".lod").c_str());
+		map.insert<ValueType_String>(0xb8fbd88e, "CLadder1");
+		map.insert<ValueType_String>(0xef911d14, "CLadder");
+		map.insert<ValueType_Vec3>(0xc2292175, &offset);
+
+		const auto ladder = *rf;
+
+		ladder->init_from_map(&map);
+
+		jc::spawn_system::v::ladders.push_back(std::move(rf));
+
+		return ladder;
 	}
 
 	return nullptr;

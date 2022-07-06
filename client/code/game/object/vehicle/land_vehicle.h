@@ -12,4 +12,6 @@ namespace jc::land_vehicle
 class LandVehicle : public Vehicle
 {
 public:
+
+	IMPL_OBJECT_TYPE_ID("CLandVehicle");
 };

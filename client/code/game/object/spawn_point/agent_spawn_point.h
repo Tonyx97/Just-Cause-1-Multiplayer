@@ -16,8 +16,8 @@ public:
 class AgentSpawnPoint : public SpawnPoint
 {
 public:
-	static constexpr auto CLASS_NAME() { return "CAgentSpawnPoint"; }
-	static constexpr auto CLASS_ID() { return util::hash::JENKINS(CLASS_NAME()); }
+
+	IMPL_OBJECT_TYPE_ID("CAgentSpawnPoint");
 
 	void create_agent_type();
 	void set_preset_name(const char* preset_name);

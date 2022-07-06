@@ -12,4 +12,6 @@ namespace jc::vehicle
 class Vehicle : public ActionPointOwner
 {
 public:
+
+	IMPL_OBJECT_TYPE_ID("CVehicle");
 };

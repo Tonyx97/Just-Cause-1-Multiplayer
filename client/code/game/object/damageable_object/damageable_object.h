@@ -15,8 +15,8 @@ namespace jc::damageable_obj
 class DamageableObject : public AliveObject
 {
 public:
-	static constexpr auto CLASS_NAME() { return "CDamageableObject"; }
-	static constexpr auto CLASS_ID() { return util::hash::JENKINS(CLASS_NAME()); }
+
+	IMPL_OBJECT_TYPE_ID("CDamageableObject");
 
 	static ref<DamageableObject> CREATE(Transform* transform, const std::string& model_name, const std::string& pfx_name);
 };

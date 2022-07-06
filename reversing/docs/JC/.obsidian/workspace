@@ -9,7 +9,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "tony_daily/05-07-2022.md",
+            "file": "tony_daily/06-07-2022.md",
             "mode": "source",
             "source": false
           }
@@ -40,7 +40,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "NPCVariant_VTable",
+                "query": "D860F8",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -49,7 +49,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -69,7 +70,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "tony_daily/05-07-2022.md",
+                "file": "tony_daily/06-07-2022.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -89,15 +90,15 @@
   },
   "active": "b4a0aa1ca47b9ceb",
   "lastOpenFiles": [
+    "tony_daily/06-07-2022.md",
     "tony_daily/05-07-2022.md",
-    "tony_daily/13-06-2022.md",
+    "tony_daily/06-06-2022.md",
+    "tony_daily/19-06-2022.md",
     "tony_daily/21-06-2022.md",
     "tony_daily/22-05-2022 (merged).md",
-    "tony_daily/05-06-2022.md",
-    "tony_daily/07-06-2022.md",
-    "tony_daily/06-06-2022.md",
-    "tony_daily/28-06-2022.md",
+    "tony_daily/26-05-2022 (merged).md",
+    "tony_daily/27-05-2022 (merged).md",
     "tony_daily/29-06-2022.md",
-    "tony_daily/31-05-2022.md"
+    "tony_daily/28-06-2022.md"
   ]
 }

@@ -29,6 +29,7 @@ enum eColor : unsigned short
 };
 
 #define FORMAT(t, a) std::vformat(t, std::make_format_args(a...))
+#define FORMATV(t, ...) std::vformat(t, std::make_format_args(__VA_ARGS__))
 
 namespace jc::prof
 {

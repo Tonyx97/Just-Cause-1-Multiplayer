@@ -12,4 +12,6 @@ namespace jc::boat
 class Boat : public SeaVehicle
 {
 public:
+
+	IMPL_OBJECT_TYPE_ID("CBoat");
 };

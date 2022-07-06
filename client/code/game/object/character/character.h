@@ -83,8 +83,8 @@ private:
 	void rebuild_skeleton();
 
 public:
-	static constexpr auto CLASS_NAME() { return "CCharacter"; }
-	static constexpr auto CLASS_ID() { return util::hash::JENKINS(CLASS_NAME()); }
+
+	IMPL_OBJECT_TYPE_ID("CCharacter");
 
 	static void SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai = false);
 

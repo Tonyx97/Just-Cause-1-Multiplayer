@@ -44,7 +44,7 @@ namespace jc::game
 		return *BITCAST(float*, &i);
 	}
 
-	inline float float_to_i16(float v)
+	inline int16_t float_to_i16(float v)
 	{
 		int16_t out;
 		return *jc::this_call<int16_t*>(jc::g::math::fn::FLOAT_TO_INT16, &out, v);

@@ -12,4 +12,6 @@ namespace jc::helicopter
 class Helicopter : public AirVehicle
 {
 public:
+
+	IMPL_OBJECT_TYPE_ID("CCar");
 };

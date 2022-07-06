@@ -12,4 +12,6 @@ namespace jc::submarine
 class Submarine : public SeaVehicle
 {
 public:
+
+	IMPL_OBJECT_TYPE_ID("CSubmarine");
 };

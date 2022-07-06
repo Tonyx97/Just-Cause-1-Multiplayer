@@ -15,8 +15,8 @@ public:
 class VehicleSpawnPoint : public ObjectSpawnPoint
 {
 public:
-	static constexpr auto CLASS_NAME() { return "CVehicleSpawnPoint"; }
-	static constexpr auto CLASS_ID() { return util::hash::JENKINS(CLASS_NAME()); }
+
+	IMPL_OBJECT_TYPE_ID("CVehicleSpawnPoint");
 
 	void set_vehicle_type(VehicleType* vehicle_type);
 

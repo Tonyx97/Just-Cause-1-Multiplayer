@@ -12,4 +12,6 @@ namespace jc::motorbike
 class MotorBike : public LandVehicle
 {
 public:
+
+	IMPL_OBJECT_TYPE_ID("CMotorBike");
 };

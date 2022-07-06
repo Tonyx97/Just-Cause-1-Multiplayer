@@ -62,7 +62,7 @@ namespace jc::proto
 
 		namespace map_dumper
 		{
-			using vcall6_obj_init = prototype<void(__thiscall*)(ptr, ptr), 0x7A9150, util::hash::JENKINS("vcall6_obj_init")>;
+			using vcall6_obj_init = prototype<void(__thiscall*)(ptr, ptr), 0x778840, util::hash::JENKINS("vcall6_obj_init")>;
 			using find_int		  = prototype<bool(__thiscall*)(ptr, uint32_t*, int*), 0x46AEF0, util::hash::JENKINS("FindInt")>;
 			using find_bool		  = prototype<bool(__thiscall*)(ptr, uint32_t*, bool*), 0x46AF70, util::hash::JENKINS("FindBool")>;
 			using find_int16	  = prototype<bool(__thiscall*)(ptr, uint32_t*, int16_t*), 0x4C0030, util::hash::JENKINS("FindInt16")>;

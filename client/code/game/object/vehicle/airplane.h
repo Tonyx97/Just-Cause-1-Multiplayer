@@ -12,4 +12,6 @@ namespace jc::air_plane
 class AirPlane : public AirVehicle
 {
 public:
+
+	IMPL_OBJECT_TYPE_ID("CAirPlane");
 };

@@ -9,6 +9,7 @@
 #include <game/object/character/character.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/mounted_gun/mounted_gun.h>
+#include <game/object/item_pickup/item_pickup.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/resource/ee_resource.h>
 #include <game/object/agent_type/npc_variant.h>
@@ -90,22 +91,54 @@ void jc::test_units::test_0()
 		//log(RED, "handle {} (char {})", (void*)handle, (void*)handle->get_character());
 	}
 
-	static std::vector<ref<MountedGun>> temp_holder;
+	static std::vector<ref<ItemPickup>> pickups;
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		//handle->destroy();
+		//g_spawn->spawn_ladder(local_pos, "rifle_infraredbox");
 
-		//g_spawn->spawn_mounted_gun(local_pos);
+		if (auto r = g_game_control->create_object<ItemPickup>())
+		{
+			object_base_map map{};
+
+			auto m0 = local_t.get_matrix();
+
+			m0 = glm::translate(m0, vec3(5.f, 0.f, 0.f));
+
+			map.insert<ValueType_Int>(0x525a07d4, 0); // int
+			map.insert<ValueType_String>(0x27a0c2a4, R"(PU_01)"); // string
+			map.insert<ValueType_Int>(0x6261032, 1); // int
+			//map.insert<ValueType_String>(0x3d82d7e, R"(weapons\weap_041.lod)"); // string
+			map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
+			map.insert<ValueType_Int>(0x42f184ea, 1); // int
+			map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+			map.insert<ValueType_Int>(0x43f66557, 1); // int
+			map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+			map.insert<ValueType_Int>(0x773aff1c, 1); // int
+			map.insert<ValueType_Int>(0x7580ba87, 0); // int
+			map.insert<ValueType_Int>(0x9098c79d, 0); // int
+			//map.insert<ValueType_String>(0xc4c33843, R"(weapons\weap_041.lod)"); // string
+			map.insert<ValueType_Int>(0xaae1437b, 1); // int
+			map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+			map.insert<ValueType_String>(0xb8fbd88e, R"(CItemPickup1)"); // string
+			map.insert<ValueType_Float>(0xce44e7b2, 30.00f); // float
+			map.insert<ValueType_Int>(0xc6fc5f96, 0); // int
+			map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
+			map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
+			map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+			map.insert<ValueType_String>(0xec164522, R"(Grenade Launcher)"); // string
+			map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
+
+			r->init_from_map(&map);
+			r->set_respawn_time(0.f);
+
+			g_game_control->enable_object(r);
+
+			log(GREEN, "Nice {:x}", ptr(r.obj));
+
+			pickups.push_back(std::move(r));
+		}
 	}
-
-	struct Ladder
-	{
-		static constexpr auto CLASS_NAME() { return "CLadder"; }
-		static constexpr auto CLASS_ID() { return util::hash::JENKINS(CLASS_NAME()); }
-	};
-
-	static std::vector<ref<Ladder>> ladders;
 
 	if (g_key->is_key_pressed(VK_NUMPAD7))
 	{
@@ -116,37 +149,7 @@ void jc::test_units::test_0()
 		if (id >= jc::vars::exported_entities.size())
 			id = 0;*/
 
-		if (auto r = g_game_control->create_object<Ladder>())
-		{
-			object_base_map map {};
-
-			mat4 m2{
-				0.f, 0.f, 0.f, 0.f,
-				0.f, 11.f, 0.f, 0.f,
-				0.f, 0.f, 0.f, 0.f,
-				0.f, 0.f, 0.f, 0.f };
-
-			vec3 v{ -1.00f, 0.f, 0.f};
-
-			map.insert<ValueType_Bool>(0x525a07d4, false);
-			map.insert<ValueType_Float>(0x14936868, 0.6f);
-			map.insert<ValueType_Mat4>(0xacaefb1, &local_t);
-			map.insert<ValueType_Mat4>(0x526d67dc, &m2);
-			map.insert<ValueType_Bool>(0x2c9331bd, true);
-			map.insert<ValueType_String>(0x5b982501, "models\\building_blocks\\general\\general_ladder_10m.pfx");
-			map.insert<ValueType_String>(0xEA402ACF, "models\\building_blocks\\general\\general_ladder_10m.lod");
-			map.insert<ValueType_String>(0xb8fbd88e, "CLadder1");
-			map.insert<ValueType_String>(0xef911d14, "CLadder");
-			map.insert<ValueType_Vec3>(0xc2292175, &v);
-
-			log(RED, "1 {:x}", ptr(*r));
-
-			((ObjectBase*)r.obj)->init_from_map(&map);
-
-			//g_game_control->enable_object(r);
-
-			ladders.push_back(std::move(r));
-		}
+		local_char->set_model(7);
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD1))
@@ -155,10 +158,10 @@ void jc::test_units::test_0()
 
 		log(RED, "nice 1 {:x}", ptr(*variant));
 
-		*(jc::stl::string*)(ptr(*variant) + 0xEC) = "characters\\paperdolls\\PROP_policehat.lod";
-		*(jc::stl::string*)(ptr(*variant) + 0x15C) = "characters\\paperdolls\\prop_bottle.lod";
-		*(jc::stl::string*)(ptr(*variant) + 0x38C) = "attach_right";
-		*(jc::stl::string*)(ptr(*variant) + 0x3A8) = "attach_left";
+		*(jc::stl::string*)(ptr(*variant) + 0xEC) = "characters\\paperdolls\\prop_bottle.lod";
+		//*(jc::stl::string*)(ptr(*variant) + 0x15C) = "characters\\paperdolls\\PROP_policehat.lod";
+		*(jc::stl::string*)(ptr(*variant) + 0x38C) = "attach_left";
+		//*(jc::stl::string*)(ptr(*variant) + 0x3A8) = "attach_right";
 		//*(jc::stl::string*)(ptr(*variant) + 0x3A8) = "head";
 		//*(jc::stl::string*)(ptr(*variant) + 0x3C4) = "spine_1";
 		//*(jc::stl::string*)(ptr(*variant) + 0x3E0) = "spine_2";
