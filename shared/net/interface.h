@@ -10,7 +10,7 @@ namespace enet
 {
 	static constexpr uint32_t GAME_PORT	   = 19971;
 	static constexpr uint32_t MAX_PLAYERS  = 128;
-	static constexpr uint32_t PEER_TIMEOUT = 120 * 1000;
+	static constexpr uint32_t PEER_TIMEOUT = 120 * 1000 * 1000;
 
 	enum PacketResult
 	{

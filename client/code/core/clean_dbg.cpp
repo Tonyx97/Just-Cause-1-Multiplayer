@@ -8,6 +8,7 @@
 #include <game/sys/all.h>
 
 #include <game/object/base/base.h>
+#include <game/object/item_pickup/item_pickup.h>
 
 #define STRINGIFY(x) #x
 

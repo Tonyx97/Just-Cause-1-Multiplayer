@@ -3,6 +3,8 @@
 #include "weapon_belt.h"
 #include "weapon.h"
 
+#include <game/sys/weapon_system.h>
+
 void WeaponBelt::set_slot_ammo(WeaponSlot slot, int32_t v)
 {
 	if (slot >= WeaponSlot_A && slot <= WeaponSlot_H)

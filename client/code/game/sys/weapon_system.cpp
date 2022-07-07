@@ -2,9 +2,9 @@
 
 #include "weapon_system.h"
 
-int WeaponTemplate::get_id() const
+uint32_t WeaponTemplate::get_id() const
 {
-	return jc::read<int>(this, jc::weapon_system::weapon_template::ID);
+	return jc::read<uint32_t>(this, jc::weapon_system::weapon_template::ID);
 }
 
 std::string WeaponTemplate::get_model() const
@@ -32,12 +32,16 @@ void WeaponSystem::destroy()
 
 void WeaponSystem::dump()
 {
+	// enum
+
 	log(RED, "enum WeaponID");
 	log(RED, "{{");
 	log(GREEN, "Weapon_None,");
 
-	for_each_weapon_template([](int, WeaponTemplate* t)
-		{
+	std::unordered_map<uint32_t, std::string> fixed_names;
+
+	for_each_weapon_template([&](int, WeaponTemplate* t)
+	{
 		auto name = t->get_type_name();
 		auto id = t->get_id();
 
@@ -46,7 +50,41 @@ void WeaponSystem::dump()
 		std::erase(name, '(');
 		std::erase(name, ')');
 
-		log(GREEN, "Weapon_{} = {}, // {}", name, id, t->get_name()); });
+		fixed_names.insert({ id, "Weapon_" + name });
+
+		log(GREEN, "Weapon_{} = {}, // {} | {}", name, id, t->get_name(), t->get_type_name());
+	});
+
+	log(RED, "}};");
+
+	// weapons id to type name
+
+	log(RED, "inline const std::unordered_map<uint32_t, std::string> weapons_id_to_type_name =");
+	log(RED, "{{");
+
+	for_each_weapon_template([&](int, WeaponTemplate* t)
+	{
+		auto name = t->get_type_name();
+		auto id = t->get_id();
+
+		log(GREEN, "{{ {}, R\"{}\" }},", fixed_names[id], name);
+	});
+
+	log(RED, "}};");
+
+	// weapons id to model name
+
+	log(RED, "inline const std::unordered_map<uint32_t, std::string> weapons_id_to_model_name =");
+	log(RED, "{{");
+
+	for_each_weapon_template([&](int, WeaponTemplate* t)
+	{
+		auto name = t->get_model();
+		auto id = t->get_id();
+
+		if (!name.empty())
+			log(GREEN, "{{ {}, R\"({})\" }},", fixed_names[id], name);
+	});
 
 	log(RED, "}};");
 }
@@ -62,6 +100,19 @@ int WeaponSystem::for_each_weapon_template(const weapon_template_iteration_t& fn
 
 	return count;
 }
+
+std::string WeaponSystem::get_weapon_typename(uint32_t id)
+{
+	auto it = jc::vars::weapons_id_to_type_name.find(id);
+	return it != jc::vars::weapons_id_to_type_name.end() ? it->second : "INVALID";
+}
+
+std::string WeaponSystem::get_weapon_model(uint32_t id)
+{
+	auto it = jc::vars::weapons_id_to_model_name.find(id);
+	return it != jc::vars::weapons_id_to_model_name.end() ? it->second : "INVALID";
+}
+
 /*
 sptr<Weapon> WeaponSystem::create_weapon_instance(const std::string& name)
 {

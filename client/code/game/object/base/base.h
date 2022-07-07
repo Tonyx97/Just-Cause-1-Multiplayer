@@ -40,6 +40,8 @@ struct object_base_map : public jc::map<object_base_map, uint32_t>
 	{
 		if constexpr (std::is_integral_v<T>)
 			this->insert_impl(key, std::make_pair(TYPE, static_cast<int32_t>(value)));
+		else if constexpr (std::is_same_v<T, std::string>)
+			this->insert_impl(key, std::make_pair(TYPE, value.c_str()));
 		else
 			this->insert_impl(key, std::make_pair(TYPE, value));
 	}

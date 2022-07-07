@@ -89,6 +89,8 @@ void jc::test_units::test_0()
 		//handle = g_spawn->spawn_character("female1", local_pos + vec3(2.f, 0.f, 0.f), Weapon_Pistol);
 
 		//log(RED, "handle {} (char {})", (void*)handle, (void*)handle->get_character());
+
+		jc::this_call(0x60E110, local_char->get_weapon_belt(), &local_t);
 	}
 
 	static std::vector<ref<ItemPickup>> pickups;
@@ -106,9 +108,8 @@ void jc::test_units::test_0()
 			m0 = glm::translate(m0, vec3(5.f, 0.f, 0.f));
 
 			map.insert<ValueType_Int>(0x525a07d4, 0); // int
-			map.insert<ValueType_String>(0x27a0c2a4, R"(PU_01)"); // string
 			map.insert<ValueType_Int>(0x6261032, 1); // int
-			//map.insert<ValueType_String>(0x3d82d7e, R"(weapons\weap_041.lod)"); // string
+			map.insert<ValueType_String>(0x3d82d7e, R"(weapons\weap_041.lod)"); // string
 			map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
 			map.insert<ValueType_Int>(0x42f184ea, 1); // int
 			map.insert<ValueType_Int>(0x3f554d9b, 0); // int
@@ -117,7 +118,7 @@ void jc::test_units::test_0()
 			map.insert<ValueType_Int>(0x773aff1c, 1); // int
 			map.insert<ValueType_Int>(0x7580ba87, 0); // int
 			map.insert<ValueType_Int>(0x9098c79d, 0); // int
-			//map.insert<ValueType_String>(0xc4c33843, R"(weapons\weap_041.lod)"); // string
+			map.insert<ValueType_String>(0xc4c33843, R"(weapons\weap_041.lod)"); // string
 			map.insert<ValueType_Int>(0xaae1437b, 1); // int
 			map.insert<ValueType_Int>(0x9e3d7878, 0); // int
 			map.insert<ValueType_String>(0xb8fbd88e, R"(CItemPickup1)"); // string
@@ -126,13 +127,11 @@ void jc::test_units::test_0()
 			map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
 			map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
 			map.insert<ValueType_Int>(0xee2cc81d, 1); // int
-			map.insert<ValueType_String>(0xec164522, R"(Grenade Launcher)"); // string
+			map.insert<ValueType_String>(0xec164522, R"(Triggered Explosive)"); // string
 			map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
 
 			r->init_from_map(&map);
 			r->set_respawn_time(0.f);
-
-			g_game_control->enable_object(r);
 
 			log(GREEN, "Nice {:x}", ptr(r.obj));
 

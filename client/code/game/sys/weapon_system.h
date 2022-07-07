@@ -1,5 +1,7 @@
 #pragma once
 
+#include <game/object/vars/weapons.h>
+
 namespace jc::weapon_system
 {
 	static constexpr uint32_t SINGLETON = 0xD84F98; // WeaponSystem*
@@ -23,9 +25,8 @@ namespace jc::weapon_system
 
 class WeaponTemplate
 {
-private:
 public:
-	int get_id() const;
+	uint32_t get_id() const;
 
 	std::string get_model() const;
 	std::string get_type_name() const;
@@ -36,8 +37,6 @@ using weapon_template_iteration_t = std::function<void(int, WeaponTemplate*)>;
 
 class Weapon;
 
-enum WeaponID;
-
 class WeaponSystem
 {
 public:
@@ -46,6 +45,9 @@ public:
 	void dump();
 
 	int for_each_weapon_template(const weapon_template_iteration_t& fn);
+
+	std::string get_weapon_typename(uint32_t id);
+	std::string get_weapon_model(uint32_t id);
 
 	//sptr<Weapon> create_weapon_instance(const std::string& name);
 	//sptr<Weapon> create_weapon_instance(WeaponID id);

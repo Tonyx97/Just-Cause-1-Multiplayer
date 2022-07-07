@@ -381,6 +381,11 @@ void UI::render()
 				if (hit_info.object)
 					is_visible = true;
 
+				const auto pawn_transform = pawn->get_transform();
+
+				if (g_key->is_key_pressed(VK_F3))
+					jc::this_call(0x60E110, pawn->get_weapon_belt(), &pawn_transform);
+
 				const float distance = glm::distance(local_player_pawn->get_position(), pawn_position);
 
 				/*if (g_key->is_key_pressed(VK_MULTIPLY))

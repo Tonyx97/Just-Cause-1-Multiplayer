@@ -536,5 +536,8 @@
     <ClInclude Include="code\game\object\item_pickup\item_pickup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="code\game\object\vars\weapons.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
