@@ -293,13 +293,11 @@ Ladder* SpawnSystem::spawn_ladder(const vec3& position, const std::string& model
 		map.insert<ValueType_String>(0xef911d14, "CLadder");
 		map.insert<ValueType_Vec3>(0xc2292175, &offset);
 
-		const auto ladder = *rf;
-
-		ladder->init_from_map(&map);
+		rf->init_from_map(&map);
 
 		jc::spawn_system::v::ladders.push_back(std::move(rf));
 
-		return ladder;
+		return *rf;
 	}
 
 	return nullptr;
@@ -307,7 +305,7 @@ Ladder* SpawnSystem::spawn_ladder(const vec3& position, const std::string& model
 
 ItemPickup* SpawnSystem::spawn_item_pickup(const vec3& position, uint32_t type, const std::string& model)
 {
-	if (auto r = g_game_control->create_object<ItemPickup>())
+	if (auto rf = g_game_control->create_object<ItemPickup>())
 	{
 		object_base_map map {};
 
@@ -333,10 +331,12 @@ ItemPickup* SpawnSystem::spawn_item_pickup(const vec3& position, uint32_t type, 
 		map.insert<ValueType_String>(0xdb33b0ba, "Item"); // string
 		map.insert<ValueType_String>(0xef911d14, "CItemPickup"); // string
 
-		r->init_from_map(&map);
-		r->set_respawn_time(0.f);
+		rf->init_from_map(&map);
+		rf->set_respawn_time(0.f);
 
-		jc::spawn_system::v::item_pickups.push_back(std::move(r));
+		jc::spawn_system::v::item_pickups.push_back(std::move(rf));
+
+		return *rf;
 	}
 
 	return nullptr;
