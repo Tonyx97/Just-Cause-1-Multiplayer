@@ -9,7 +9,7 @@
 #include <game/object/character/character.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/mounted_gun/mounted_gun.h>
-#include <game/object/item_pickup/item_pickup.h>
+#include <game/object/item/item_pickup.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/resource/ee_resource.h>
 #include <game/object/agent_type/npc_variant.h>
@@ -99,44 +99,7 @@ void jc::test_units::test_0()
 	{
 		//g_spawn->spawn_ladder(local_pos, "rifle_infraredbox");
 
-		if (auto r = g_game_control->create_object<ItemPickup>())
-		{
-			object_base_map map{};
-
-			auto m0 = local_t.get_matrix();
-
-			m0 = glm::translate(m0, vec3(5.f, 0.f, 0.f));
-
-			map.insert<ValueType_Int>(0x525a07d4, 0); // int
-			map.insert<ValueType_Int>(0x6261032, 1); // int
-			map.insert<ValueType_String>(0x3d82d7e, R"(weapons\weap_041.lod)"); // string
-			map.insert<ValueType_Mat4>(0xacaefb1, &m0); // mat4
-			map.insert<ValueType_Int>(0x42f184ea, 1); // int
-			map.insert<ValueType_Int>(0x3f554d9b, 0); // int
-			map.insert<ValueType_Int>(0x43f66557, 1); // int
-			map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
-			map.insert<ValueType_Int>(0x773aff1c, 1); // int
-			map.insert<ValueType_Int>(0x7580ba87, 0); // int
-			map.insert<ValueType_Int>(0x9098c79d, 0); // int
-			map.insert<ValueType_String>(0xc4c33843, R"(weapons\weap_041.lod)"); // string
-			map.insert<ValueType_Int>(0xaae1437b, 1); // int
-			map.insert<ValueType_Int>(0x9e3d7878, 0); // int
-			map.insert<ValueType_String>(0xb8fbd88e, R"(CItemPickup1)"); // string
-			map.insert<ValueType_Float>(0xce44e7b2, 30.00f); // float
-			map.insert<ValueType_Int>(0xc6fc5f96, 0); // int
-			map.insert<ValueType_String>(0xdb33b0ba, R"(Item)"); // string
-			map.insert<ValueType_Float>(0xd6c4e1ec, 0.00f); // float
-			map.insert<ValueType_Int>(0xee2cc81d, 1); // int
-			map.insert<ValueType_String>(0xec164522, R"(Triggered Explosive)"); // string
-			map.insert<ValueType_String>(0xef911d14, R"(CItemPickup)"); // string
-
-			r->init_from_map(&map);
-			r->set_respawn_time(0.f);
-
-			log(GREEN, "Nice {:x}", ptr(r.obj));
-
-			pickups.push_back(std::move(r));
-		}
+		g_spawn->spawn_item_pickup(local_pos + vec3(3.f, 0.f, 0.f), ItemType_Health, "building_blocks\\general\\interogation_drugs.lod");
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD7))

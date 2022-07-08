@@ -264,7 +264,7 @@
     <ClCompile Include="code\game\object\ladder\ladder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\object\item_pickup\item_pickup.cpp">
+    <ClCompile Include="code\game\object\item\item_pickup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -533,7 +533,7 @@
     <ClInclude Include="code\game\object\ladder\ladder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\object\item_pickup\item_pickup.h">
+    <ClInclude Include="code\game\object\item\item_pickup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\vars\weapons.h">

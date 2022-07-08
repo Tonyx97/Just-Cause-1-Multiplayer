@@ -12,6 +12,7 @@
 #include <game/object/spawn_point/vehicle_spawn_point.h>
 #include <game/object/mounted_gun/mounted_gun.h>
 #include <game/object/ladder/ladder.h>
+#include <game/object/item/item_pickup.h>
 
 namespace jc::spawn_system
 {
@@ -23,6 +24,7 @@ namespace jc::spawn_system
 		vec<ref<VehicleSpawnPoint>> vehicle_spawns;
 		vec<ref<MountedGun>>		mounted_guns;
 		vec<ref<Ladder>>			ladders;
+		vec<ref<ItemPickup>>		item_pickups;
 	}
 }
 
@@ -298,6 +300,43 @@ Ladder* SpawnSystem::spawn_ladder(const vec3& position, const std::string& model
 		jc::spawn_system::v::ladders.push_back(std::move(rf));
 
 		return ladder;
+	}
+
+	return nullptr;
+}
+
+ItemPickup* SpawnSystem::spawn_item_pickup(const vec3& position, uint32_t type, const std::string& model)
+{
+	if (auto r = g_game_control->create_object<ItemPickup>())
+	{
+		object_base_map map {};
+
+		Transform transform(position);
+
+		map.insert<ValueType_Int>(0x7580ba87, 0); // int
+		map.insert<ValueType_Int>(0x3f554d9b, 0); // int
+		map.insert<ValueType_Mat4>(0xacaefb1, &transform); // mat4
+		map.insert<ValueType_Int>(0x6261032, 1); // int
+		map.insert<ValueType_Int>(0x43f66557, 0); // int
+		map.insert<ValueType_Int>(0x42f184ea, 1); // int
+		map.insert<ValueType_Int>(0x525a07d4, 0); // int
+		map.insert<ValueType_Int>(0x9e3d7878, 0); // int
+		map.insert<ValueType_Int>(0x9098c79d, 0); // int
+		map.insert<ValueType_Int>(0x9a9d9a7f, 1); // int
+		map.insert<ValueType_Int>(0xc6fc5f96, 1); // int
+		//map.insert<ValueType_String>(0xb8fbd88e, R"(Dogtag)"); // string
+		map.insert<ValueType_Int>(0xaae1437b, type); // int
+		map.insert<ValueType_String>(0xc4c33843, model); // string
+		map.insert<ValueType_Float>(0xd6c4e1ec, 0.f); // float
+		map.insert<ValueType_Float>(0xce44e7b2, 0.f); // float
+		map.insert<ValueType_Int>(0xee2cc81d, 1); // int
+		map.insert<ValueType_String>(0xdb33b0ba, "Item"); // string
+		map.insert<ValueType_String>(0xef911d14, "CItemPickup"); // string
+
+		r->init_from_map(&map);
+		r->set_respawn_time(0.f);
+
+		jc::spawn_system::v::item_pickups.push_back(std::move(r));
 	}
 
 	return nullptr;
