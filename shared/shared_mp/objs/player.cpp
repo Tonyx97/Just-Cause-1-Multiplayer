@@ -46,8 +46,8 @@ Player::Player(PlayerClient* pc) : client(pc)
 Player::~Player()
 {
 #ifdef JC_CLIENT
-	handle->destroy();
-	handle = nullptr;
+	if (const auto old_handle = std::exchange(handle, nullptr))
+		handle->destroy();
 #else
 #endif
 }

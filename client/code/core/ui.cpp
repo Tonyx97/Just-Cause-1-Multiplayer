@@ -507,14 +507,14 @@ void UI::render()
 
 			if (g_key->is_key_pressed(VK_F6))
 			{
-				if (!cc)
+				//if (!cc)
 				{
-					cc = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position())->get_character();
-					cc->set_model(126);
+					cc = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position(), Weapon_Master_Signature_Gun)->get_character();
+					//cc->set_model(126);
 				}
-				else
+				//else
 				{
-					cc->respawn();
+					//cc->respawn();
 				}
 
 				log(RED, "{:x}", ptr(cc));

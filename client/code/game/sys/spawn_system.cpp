@@ -19,6 +19,7 @@ namespace jc::spawn_system
 {
 	namespace v
 	{
+		vec<CharacterHandle*>		character_handles;
 		vec<ref<SimpleRigidObject>> simple_rigid_objects;
 		vec<ref<DamageableObject>>	damageables;
 		vec<ref<AgentSpawnPoint>>	agent_spawns;
@@ -36,6 +37,14 @@ namespace jc::spawn_system
 
 			return item;
 		}
+
+		template <typename T>
+		T* add_item_nr(auto& container, T* r)
+		{
+			container.push_back(r);
+
+			return r;
+		}
 	}
 }
 
@@ -51,6 +60,10 @@ void SpawnSystem::destroy()
 {
 	// clear our containers
 
+	for (auto handle : character_handles)
+		handle->destroy();
+
+	character_handles.clear();
 	simple_rigid_objects.clear();
 	damageables.clear();
 	agent_spawns.clear();
@@ -109,7 +122,10 @@ CharacterHandle* SpawnSystem::spawn_character(const std::string& model_name, con
 
 	Transform transform(position);
 
-	return CharacterHandle::GET_FREE_HANDLE()->create(&info, &transform, weapon_id);
+	if (const auto handle = CharacterHandle::GET_FREE_HANDLE()->create(&info, &transform, weapon_id))
+		return add_item_nr(character_handles, handle);
+
+	return nullptr;
 }
 
 SimpleRigidObject* SpawnSystem::spawn_simple_rigid_object(const vec3& position, const std::string& model_name, const std::string& pfx_name)

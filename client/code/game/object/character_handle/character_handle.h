@@ -34,4 +34,5 @@ public:
 	CharacterHandle* create(CharacterInfo* info, Transform* transform, int weapon_id);
 
 	Character* get_character() const;
+	Character* get_character_unsafe() const;
 };
