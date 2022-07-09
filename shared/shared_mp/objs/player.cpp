@@ -17,6 +17,15 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 {
 	set_nid(nid);
 	set_player_client(pc);
+
+	const auto localplayer = g_net->get_localplayer();
+
+	if (localplayer && !localplayer->equal(this))
+	{
+		handle = g_spawn->spawn_character("female1", { 0.f, 0.f, 0.f });
+		
+		set_spawned(true);
+	}
 }
 
 void Player::verify_exec(const std::function<void(Character*)>& fn)
@@ -52,15 +61,6 @@ bool Player::spawn()
 
 #ifdef JC_CLIENT
 	// create agent spawn point if this player is not a local one
-
-	const auto localplayer = g_net->get_localplayer();
-
-	if (localplayer && !localplayer->equal(this))
-	{
-		handle = g_spawn->spawn_character("female1", {});
-
-		set_spawned(true);
-	}
 
 	log(GREEN, "Sync spawning for player {:x} {}", get_nid(), get_nick());
 #else

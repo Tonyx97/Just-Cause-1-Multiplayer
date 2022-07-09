@@ -22,6 +22,11 @@ void CharacterHandle::destroy()
 	get_character()->remove_flag(1 << 6);
 }
 
+void CharacterHandle::respawn()
+{
+	get_character()->respawn();
+}
+
 bool CharacterHandle::is_looking_at_any_npc() const
 {
 	return jc::read<bool>(this, jc::character_handle::LOOKING_AT_ANY_NPC);
@@ -48,5 +53,9 @@ CharacterHandle* CharacterHandle::create(CharacterInfo* info, Transform* transfo
 
 Character* CharacterHandle::get_character() const
 {
-	return jc::read<Character*>(this, jc::character_handle::CHARACTER);
+	const auto character = jc::read<Character*>(this, jc::character_handle::CHARACTER);
+
+	check(character, "Character handle must have a valid character");
+
+	return character;
 }

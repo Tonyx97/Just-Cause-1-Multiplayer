@@ -512,18 +512,22 @@ void UI::render()
 					cc = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position())->get_character();
 					cc->set_model(126);
 				}
+				else
+				{
+					cc->respawn();
+				}
 
 				log(RED, "{:x}", ptr(cc));
 			}
 
-			if (cc)
+			/*if (cc)
 			{
 				auto previous_t = cc->get_transform();
 
 				previous_t.interpolate(local_transform, 0.2f, 0.05f);
 
 				cc->set_transform(previous_t);
-			}
+			}*/
 		}
 	}
 	ImGui::End();
@@ -646,7 +650,8 @@ void UI::build_debug()
 			}
 			else
 			{
-				spawn_point->spawn_internal();
+				//spawn_point->set_position(g_world->get_localplayer_character()->get_position());
+				spawn_point->spawn();
 			}
 		}
 		if (ImGui::Button("Spawn vehicle"))

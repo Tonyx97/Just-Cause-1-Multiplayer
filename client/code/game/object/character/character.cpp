@@ -66,6 +66,11 @@ void Character::rebuild_skeleton()
 	jc::this_call<ptr>(jc::character::fn::CREATE_SKELETON, skeleton);
 }
 
+void Character::respawn()
+{
+	jc::this_call<ptr>(jc::character::fn::RESPAWN, this, 1.f);
+}
+
 void Character::set_grenades_ammo(int32_t v)
 {
 	jc::write(v, this, jc::character::GRENADES_AMMO);

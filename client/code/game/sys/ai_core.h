@@ -15,16 +15,21 @@ namespace jc::ai_core
 
 class CharacterHandle;
 
+struct CharacterHandleEntry
+{
+	union
+	{
+		CharacterHandle* handle;
+
+		int index;
+	};
+
+	uint32_t id;
+};
+
 class AiCore
 {
 public:
-
-	struct InsertionValue
-	{
-		int index;
-
-		uint32_t id;
-	};
 
 	void init();
 	void destroy();

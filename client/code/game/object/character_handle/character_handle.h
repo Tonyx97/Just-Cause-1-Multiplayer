@@ -27,6 +27,7 @@ public:
 	static CharacterHandle* GET_FREE_HANDLE();
 
 	void destroy();
+	void respawn();
 
 	bool is_looking_at_any_npc() const;
 

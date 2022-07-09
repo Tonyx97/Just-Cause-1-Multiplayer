@@ -34,6 +34,7 @@ namespace jc::character
 		static constexpr uint32_t DESTROY_SKELETON			= 0x648990;
 		static constexpr uint32_t CREATE_SKELETON			= 0x648430;
 		static constexpr uint32_t CAN_BE_DESTROYED			= 0x595F10;
+		static constexpr uint32_t RESPAWN					= 0x598420;
 		
 	}
 
@@ -89,6 +90,7 @@ public:
 
 	static void SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai = false);
 
+	void respawn();
 	void set_grenades_ammo(int32_t v);
 	void set_animation(const std::string& name, float speed, bool unk0 = false, bool unk1 = false);
 	void set_grenade_timeout(float v);

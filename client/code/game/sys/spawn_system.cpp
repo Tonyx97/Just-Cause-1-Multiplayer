@@ -172,8 +172,6 @@ AgentSpawnPoint* SpawnSystem::create_agent_spawn_point(const vec3& position)
 		rf->init_from_map(&map);
 		rf->set_position(position);
 
-		g_game_control->enable_object(rf);
-
 		return add_item(agent_spawns, rf);
 	}
 
@@ -211,8 +209,6 @@ VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
 		rf->init_from_map(&map);
 		rf->set_position(position);
 		rf->set_faction(VehicleSpawnPoint::BlackHand);
-
-		g_game_control->enable_object(rf);
 
 		return add_item(vehicle_spawns, rf);
 	}
