@@ -298,7 +298,8 @@ ItemPickup* SpawnSystem::spawn_general_item_pickup(const vec3& position, uint32_
 {
 	if (auto rf = g_game_control->create_object<ItemPickup>())
 	{
-		rf->setup(position, type, Weapon_None, model, description);
+		if (!rf->setup(position, Weapon_None, model, description))
+			return nullptr;
 
 		return add_item(item_pickups, rf);
 	}
