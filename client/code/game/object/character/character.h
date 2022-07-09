@@ -18,6 +18,7 @@ namespace jc::character
 	static constexpr uint32_t GRENADE_TIMEOUT	 = 0x914; // float
 	static constexpr uint32_t GRENADE_TIME		 = 0x918; // float
 	static constexpr uint32_t INFO				 = 0x924; // CharacterInfo*
+	static constexpr uint32_t ROLL_CLAMP		 = 0xA34; // float
 
 	namespace fn
 	{
@@ -95,20 +96,22 @@ public:
 	void set_npc_variant(NPCVariant* v);
 	void set_flag(uint32_t mask);
 	void remove_flag(uint32_t mask);
+	void set_roll_clamp_enabled(bool v);
 
-	bool has_flag(uint32_t mask);
+	bool has_flag(uint32_t mask) const;
 
-	int32_t get_grenades_ammo();
+	int32_t get_grenades_ammo() const;
 
-	uint32_t get_flags();
+	uint32_t get_flags() const;
 
-	float get_grenade_timeout();
-	float get_grenade_time();
-	float get_death_time();
+	float get_grenade_timeout() const;
+	float get_grenade_time() const;
+	float get_death_time() const;
+	float get_roll_clamp() const;
 
 	WeaponBelt* get_weapon_belt() const;
 
-	VehicleController* get_vehicle_controller();
+	VehicleController* get_vehicle_controller() const;
 
 	Skeleton* get_skeleton() const;
 

@@ -23,9 +23,15 @@ namespace jc::object_base
 
 enum Hash : uint32_t
 {
-	HASH_CLASS				= 0xEF911D14,
-	HASH_MODEL				= 0xDFE26313,
-	HASH_PD_MODEL			= 0x206D0589,
+	HASH_CLASS				= 0xef911d14,
+	HASH_MODEL				= 0xdfe26313,
+	HASH_PD_MODEL			= 0x206d0589,
+	HASH_DESCRIPTION		= 0xb8fbd88e,
+	HASH_TRANSFORM			= 0xacaefb1,
+	HASH_SPAWN_DISTANCE		= 0xd2f9579a,
+	HASH_RELATIVE			= 0x773aff1c,
+	HASH_MAX_HEALTH			= 0xe1f06be0,
+	HASH_KEY_OBJECT			= 0x69a3a614,
 };
 
 struct object_base_map : public jc::map<object_base_map, uint32_t>

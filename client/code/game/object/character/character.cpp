@@ -149,34 +149,44 @@ void Character::remove_flag(uint32_t mask)
 	jc::write(get_flags() & ~mask, this, jc::character::FLAGS);
 }
 
-bool Character::has_flag(uint32_t mask)
+void Character::set_roll_clamp_enabled(bool v)
+{
+	jc::write(v ? 0.f : 1.f, this, jc::character::ROLL_CLAMP);
+}
+
+bool Character::has_flag(uint32_t mask) const
 {
 	return get_flags() & mask;
 }
 
-int32_t Character::get_grenades_ammo()
+int32_t Character::get_grenades_ammo() const
 {
 	return jc::read<int32_t>(this, jc::character::GRENADES_AMMO);
 }
 
-uint32_t Character::get_flags()
+uint32_t Character::get_flags() const
 {
 	return jc::read<uint32_t>(this, jc::character::FLAGS);
 }
 
-float Character::get_grenade_timeout()
+float Character::get_grenade_timeout() const
 {
 	return jc::read<float>(this, jc::character::GRENADE_TIMEOUT);
 }
 
-float Character::get_grenade_time()
+float Character::get_grenade_time() const
 {
 	return jc::read<float>(this, jc::character::GRENADE_TIME);
 }
 
-float Character::get_death_time()
+float Character::get_death_time() const
 {
 	return jc::read<float>(this, jc::character::DEATH_TIME);
+}
+
+float Character::get_roll_clamp() const
+{
+	return jc::read<float>(this, jc::character::ROLL_CLAMP);
 }
 
 WeaponBelt* Character::get_weapon_belt() const
@@ -184,7 +194,7 @@ WeaponBelt* Character::get_weapon_belt() const
 	return jc::read<WeaponBelt*>(this, jc::character::WEAPON_BELT);
 }
 
-VehicleController* Character::get_vehicle_controller()
+VehicleController* Character::get_vehicle_controller() const
 {
 	return jc::read<VehicleController*>(this, jc::character::VEHICLE_CONTROLLER);
 }

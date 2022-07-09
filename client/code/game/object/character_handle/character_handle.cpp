@@ -33,6 +33,14 @@ CharacterHandle* CharacterHandle::create(CharacterInfo* info, Transform* transfo
 
 	jc::this_call<CharacterHandle*>(jc::character_handle::fn::CREATE_CHARACTER, this, info, transform, weapon_id, &xml_file, nullptr, nullptr);
 
+	const auto character = get_character();
+
+	check(character, "Character could not be created");
+
+	// disable roll clamp by default
+
+	character->set_roll_clamp_enabled(false);
+
 	g_ai->insert_character_handle(this);
 
 	return this;

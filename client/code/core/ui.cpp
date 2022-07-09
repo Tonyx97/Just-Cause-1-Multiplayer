@@ -508,7 +508,12 @@ void UI::render()
 			if (g_key->is_key_pressed(VK_F6))
 			{
 				if (!cc)
+				{
 					cc = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position())->get_character();
+					cc->set_model(126);
+				}
+
+				log(RED, "{:x}", ptr(cc));
 			}
 
 			if (cc)
