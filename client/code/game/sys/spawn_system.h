@@ -37,7 +37,8 @@ public:
 	VehicleSpawnPoint* create_vehicle_spawn_point(const vec3& position);
 	MountedGun*		   spawn_mounted_gun(const vec3& position);
 	Ladder*			   spawn_ladder(const vec3& position, const std::string& model, float length = 10.f);
-	ItemPickup*		   spawn_item_pickup(const vec3& position, uint32_t type, const std::string& model);
+	ItemPickup*		   spawn_general_item_pickup(const vec3& position, uint32_t type, const std::string& model, const std::string& description = {});
+	ItemPickup*		   spawn_weapon_item_pickup(const vec3& position, uint32_t weapon_id, const std::string& description = {});
 };
 
 inline SpawnSystem* g_spawn = nullptr;

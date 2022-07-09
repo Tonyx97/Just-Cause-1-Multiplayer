@@ -114,8 +114,6 @@ namespace jc::vars
 		{ Weapon_Pistol, R"(Weapons\WEAP_026_lod4.rbm)" },
 		{ Weapon_Assault_Rifle, R"(Weapons\WEAP_006_lod4.rbm)" },
 		{ Weapon_Shotgun_pump_action, R"(Weapons\WEAP_009_lod4.rbm)" },
-		{ Weapon_M60, R"(Weapons\m60.rbm)" },
-		{ Weapon_Mounted_M60, R"(Weapons\weap_011_lod4.rbm)" },
 		{ Weapon_Rocket_Launcher, R"(Weapons\WEAP_014_lod4.rbm)" },
 		{ Weapon_Signature_Gun, R"(Weapons\WEAP_001_lod4.rbm)" },
 		{ Weapon_Master_Signature_Gun, R"(Weapons\WEAP_001_lod4.rbm)" },
@@ -132,11 +130,9 @@ namespace jc::vars
 		{ Weapon_Assault_Rifle_heavy, R"(Weapons\WEAP_013_lod4.rbm)" },
 		{ Weapon_Assault_Rifle_high_tech, R"(Weapons\WEAP_007_lod4.rbm)" },
 		{ Weapon_Shotgun_automatic, R"(Weapons\WEAP_010_lod4.rbm)" },
-		{ Weapon_Boat_Gun, R"(Weapons\WEAP_SEVE_002\SEVE_002_gun_lod4.rbm)" },
-		{ Weapon_Sheldons_M60, R"(Weapons\weap_011_lod4.rbm)" },
 		{ Weapon_Grapplinghook, R"(Weapons\WEAP_000_lod4.rbm)" },
-		{ Weapon_Boat_cannon, R"(Vehicles\sea_vehicles\SEVE_008\SEVE_008_barrel_lod1.rbm)" },
-		{ Weapon_Mounted_GL, R"(Weapons\weap_024_lod4.rbm)" },
+		{ Weapon_Timed_Explosive, R"(weapons\weap_040.lod)" },
+		{ Weapon_Triggered_Explosive, R"(weapons\weap_041.lod)" },
 		{ Weapon_Remote_Trigger, R"(Weapons\WEAP_042.rbm)" },
 	};
 }

@@ -19,6 +19,9 @@ namespace jc::hooks
 		return (MH_Initialize() == MH_OK);
 	}
 
+	void hook_all();
+	void unhook_all();
+
 	inline bool destroy()
 	{
 		log(YELLOW, "Waiting for {} signals", signals.load());

@@ -2,6 +2,7 @@
 
 #include <codecvt>
 #include <functional>
+#include <random>
 
 namespace util
 {
@@ -158,6 +159,19 @@ namespace util
 
 			return hash;
 		}
+	}
+
+	namespace rand
+	{
+		inline std::mt19937_64 mt;
+
+		inline void init_seed() { mt.seed(__rdtsc()); }
+
+		template <typename T>
+		T rand_int(T min, T max) { return std::uniform_int_distribution<T>(min, max)(mt); }
+
+		template <typename T>
+		T rand_flt(T min, T max) { return std::uniform_real_distribution<T>(min, max)(mt); }
 	}
 
 	namespace cpp

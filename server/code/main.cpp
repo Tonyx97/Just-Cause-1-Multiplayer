@@ -9,6 +9,8 @@ int main()
 {
 	jc::prof::init("JC:MP Server");
 
+	util::rand::init_seed();
+
 	// initialize the server
 
 	g_net = JC_ALLOC(Net);

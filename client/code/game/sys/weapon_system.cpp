@@ -104,13 +104,13 @@ int WeaponSystem::for_each_weapon_template(const weapon_template_iteration_t& fn
 std::string WeaponSystem::get_weapon_typename(uint32_t id)
 {
 	auto it = jc::vars::weapons_id_to_type_name.find(id);
-	return it != jc::vars::weapons_id_to_type_name.end() ? it->second : "INVALID";
+	return it != jc::vars::weapons_id_to_type_name.end() ? it->second : "";
 }
 
 std::string WeaponSystem::get_weapon_model(uint32_t id)
 {
 	auto it = jc::vars::weapons_id_to_model_name.find(id);
-	return it != jc::vars::weapons_id_to_model_name.end() ? it->second : "INVALID";
+	return it != jc::vars::weapons_id_to_model_name.end() ? it->second : "";
 }
 
 /*

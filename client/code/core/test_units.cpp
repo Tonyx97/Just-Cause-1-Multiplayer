@@ -90,16 +90,20 @@ void jc::test_units::test_0()
 
 		//log(RED, "handle {} (char {})", (void*)handle, (void*)handle->get_character());
 
-		jc::this_call(0x60E110, local_char->get_weapon_belt(), &local_t);
+		g_spawn->spawn_general_item_pickup(local_pos + vec3(util::rand::rand_flt(-5.f, 5.f), 0.f, util::rand::rand_flt(-5.f, 5.f)), ItemType_Health, "medipack.lod");
+		g_spawn->spawn_general_item_pickup(local_pos + vec3(util::rand::rand_flt(-5.f, 5.f), 0.f, util::rand::rand_flt(-5.f, 5.f)), ItemType_Ammo, "building_blocks\\general\\interogation_drugs.lod");
+		g_spawn->spawn_general_item_pickup(local_pos + vec3(util::rand::rand_flt(-5.f, 5.f), 0.f, util::rand::rand_flt(-5.f, 5.f)), ItemType_Grenade, "grenadepack_lod1.rbm");
+		g_spawn->spawn_general_item_pickup(local_pos + vec3(util::rand::rand_flt(-5.f, 5.f), 0.f, util::rand::rand_flt(-5.f, 5.f)), ItemType_Collectible, "building_blocks\\general\\interogation_drugs.lod");
 	}
-
-	static std::vector<ref<ItemPickup>> pickups;
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
 		//g_spawn->spawn_ladder(local_pos, "rifle_infraredbox");
 
-		g_spawn->spawn_item_pickup(local_pos + vec3(3.f, 0.f, 0.f), ItemType_Health, "building_blocks\\general\\interogation_drugs.lod");
+		g_weapon->for_each_weapon_template([&](int i, WeaponTemplate* t)
+		{
+			g_spawn->spawn_weapon_item_pickup(local_pos + vec3(util::rand::rand_flt(-10.f, 10.f), 0.f, util::rand::rand_flt(-10.f, 10.f)), t->get_id());
+		});
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD7))

@@ -12,7 +12,6 @@
 
 #include <mp/net.h>
 #include <mp/chat/chat.h>
-#include <mp/sync_hooks/sync_hooks.h>
 
 HMODULE g_module = nullptr;
 
@@ -21,6 +20,8 @@ void dll_thread()
 	jc::prof::init("JC:MP");
 
 	log(GREEN, "Initializing...");
+
+	util::rand::init_seed();
 
 	// patch multi instance shit
 
@@ -104,7 +105,7 @@ void dll_thread()
 	jc::hooks::init();
 	jc::clean_dbg::init();
 	jc::patches::apply();
-	jc::sync_hooks::apply();
+	jc::hooks::hook_all();
 	jc::test_units::init();
 
 	// initialize mod systems
@@ -183,7 +184,7 @@ void dll_thread()
 	// uninitialize MH
 
 	jc::test_units::destroy();
-	jc::sync_hooks::undo();
+	jc::hooks::unhook_all();
 	jc::patches::undo();
 	jc::clean_dbg::destroy();
 	jc::hooks::destroy();

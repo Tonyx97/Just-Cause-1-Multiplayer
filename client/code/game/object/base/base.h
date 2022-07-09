@@ -36,6 +36,16 @@ enum Hash : uint32_t
 
 struct object_base_map : public jc::map<object_base_map, uint32_t>
 {
+	enum ValueType
+	{
+		Int = 1,
+		Float = 2,
+		String = 3,
+		Vec3 = 5,
+		Mat4 = 8,
+		Unknown = 0
+	};
+
 	static constexpr auto CREATE() { return 0x5CE160; }
 	static constexpr auto DESTROY() { return 0x5CE110; }
 	static constexpr auto INSERT() { return 0x5CE300; }
@@ -89,22 +99,19 @@ struct object_base_map : public jc::map<object_base_map, uint32_t>
 				
 				switch (type)
 				{
-				case ValueType_Int:		inserts.push_back(FORMATV("map.insert<ValueType_Int>(0x{:x}, {}); // int", n->hash, *(int*)(ptr(n->data) + 4))); break;
-				case ValueType_Float:	inserts.push_back(FORMATV("map.insert<ValueType_Float>(0x{:x}, {:.2f}f); // float", n->hash, *(float*)(ptr(n->data) + 4))); break;
-				case ValueType_String:	inserts.push_back(FORMATV("map.insert<ValueType_String>(0x{:x}, R\"({})\"); // string", n->hash, (const char*)(*(ptr*)(ptr(n->data) + 4)))); break;
-				case ValueType_Vec3:
+				case Int:		inserts.push_back(FORMATV("map.insert<object_base_map::Int>(0x{:x}, {}); // int", n->hash, *(int*)(ptr(n->data) + 4))); break;
+				case Float:		inserts.push_back(FORMATV("map.insert<object_base_map::Float>(0x{:x}, {:.2f}f); // float", n->hash, *(float*)(ptr(n->data) + 4))); break;
+				case String:	inserts.push_back(FORMATV("map.insert<object_base_map::String>(0x{:x}, R\"({})\"); // string", n->hash, (const char*)(*(ptr*)(ptr(n->data) + 4)))); break;
+				case Vec3:
 				{
 					vec3s.push_back(**(vec3**)(ptr(n->data) + 4));
-
-					inserts.push_back(FORMATV("map.insert<ValueType_Vec3>(0x{:x}, &v{}); // vec3", n->hash, vec3s.size() - 1u));
-					
+					inserts.push_back(FORMATV("map.insert<object_base_map::Vec3>(0x{:x}, &v{}); // vec3", n->hash, vec3s.size() - 1u));
 					break;
 				}
-				case ValueType_Mat4:
+				case Mat4:
 				{
 					mat4s.push_back(**(mat4**)(ptr(n->data) + 4));
-					inserts.push_back(FORMATV("map.insert<ValueType_Mat4>(0x{:x}, &m{}); // mat4", n->hash, mat4s.size() - 1u));
-
+					inserts.push_back(FORMATV("map.insert<object_base_map::Mat4>(0x{:x}, &m{}); // mat4", n->hash, mat4s.size() - 1u));
 					break;
 				}
 				default:

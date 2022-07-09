@@ -41,7 +41,7 @@
 
 #include <stl/ref.h>
 #include <stl/vec.h>
-#include <stl/maps.h>
+#include <stl/map.h>
 #include <stl/string.h>
 
 #include <core/hooks.h>
