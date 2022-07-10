@@ -74,9 +74,17 @@ void jc::test_units::test_0()
 	{
 	}
 
+	class SoundGameObject : public ObjectBase
+	{
+	public:
+
+		IMPL_OBJECT_TYPE_ID("CSoundGameObject");
+	};
+
 	static CharacterHandle* handle = nullptr;
 
 	static std::vector<ref<AnimatedRigidObject>> temp_vec;
+	static std::vector<ref<SoundGameObject>> temp_vec2;
 
 	if (g_key->is_key_pressed(VK_NUMPAD2))
 	{
@@ -92,7 +100,7 @@ void jc::test_units::test_0()
 
 		for (const auto& t : temp_vec)
 		{
-			t->get_event_manager()->call_event_ex(0x284, &local_t);
+			t->get_event_manager()->call_event(0x284, &local_t);
 		}
 	}
 
@@ -100,49 +108,108 @@ void jc::test_units::test_0()
 	{
 		for (const auto& t : temp_vec)
 		{
-			t->get_event_manager()->call_event_ex(0x288, &local_t);
+			t->get_event_manager()->call_event(0x288, &local_t);
 		}
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		const auto m0 = mat4{ 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
-
 		if (auto test = g_game_control->create_object<AnimatedRigidObject>())
 		{
-			object_base_map map{};
+			{
+				object_base_map map{};
 
-			const auto m0 = mat4{ -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.56f, 1.00f, 0.00f, 1.00f };
-			map.insert<object_base_map::Float>(0x49985996, 0.00f); // float
-			map.insert<object_base_map::Float>(0x1d39cbef, 0.60f); // float
-			map.insert<object_base_map::Mat4>(0x72f35d2, &m0); // mat4
-			map.insert<object_base_map::Float>(0x2dd7ffe, 0.00f); // float
-			map.insert<object_base_map::Mat4>(0xacaefb1, &local_t); // mat4
-			map.insert<object_base_map::Int>(0x2c9331bd, 1); // int
-			map.insert<object_base_map::Int>(0x26299a20, 1); // int
-			map.insert<object_base_map::String>(0x355f55e0, R"(custom::anim_end)"); // string
-			map.insert<object_base_map::String>(0x5A64EBE3, R"(custom::test_event)"); // string
-			map.insert<object_base_map::Int>(0x65965327, 0); // int
-			map.insert<object_base_map::Int>(0x52702583, 0); // int
-			map.insert<object_base_map::Int>(0x525a07d4, 0); // int
-			map.insert<object_base_map::String>(0x5b982501, R"(models\building_blocks\general\safehouse_guer_garage_door_col.pfx)"); // string
-			map.insert<object_base_map::String>(0xca2ea3a9, R"(custom::opendoor)"); // string
-			map.insert<object_base_map::String>(0xae7c2d5e, R"(custom::closedoor)"); // string
-			map.insert<object_base_map::Int>(0x8597f162, 0); // int
-			map.insert<object_base_map::Int>(0x78b67171, 1); // int
-			map.insert<object_base_map::Int>(0xa1f2b8b1, 0); // int
-			map.insert<object_base_map::String>(0xb8fbd88e, R"(CAnimatedRigidObject1)"); // string
-			map.insert<object_base_map::Float>(0xb33b958d, 0.00f); // float
-			map.insert<object_base_map::Float>(0xc868ac91, 0.00f); // float
-			map.insert<object_base_map::Int>(0xe7916975, 0); // int
-			map.insert<object_base_map::Int>(0xda3feaea, 1); // int
-			map.insert<object_base_map::String>(0xef911d14, R"(CAnimatedRigidObject)"); // string
-			map.insert<object_base_map::String>(0xea402acf, R"(building_blocks\general\safehouse_guer_garage_door.lod)"); // string
-			map.insert<object_base_map::String>(0xf83e4d54, R"(building_blocks\animations\z_90.anim)"); // string
+				const auto m0 = mat4{ -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.56f, 1.00f, 0.00f, 1.00f };
+				map.insert<object_base_map::Float>(0x49985996, 0.00f); // float
+				map.insert<object_base_map::Float>(0x1d39cbef, 5.f); // float
+				map.insert<object_base_map::Mat4>(0x72f35d2, &m0); // mat4
+				map.insert<object_base_map::Float>(0x2dd7ffe, 0.00f); // float
+				map.insert<object_base_map::Mat4>(0xacaefb1, &local_t); // mat4
+				map.insert<object_base_map::Int>(0x2c9331bd, 1); // int
+				map.insert<object_base_map::Int>(0x26299a20, 1); // int
+				map.insert<object_base_map::String>(0x355f55e0, R"(custom::anim_end)"); // string
+				map.insert<object_base_map::Int>(0x65965327, 0); // int
+				map.insert<object_base_map::Int>(0x52702583, 0); // int
+				map.insert<object_base_map::Int>(0x525a07d4, 0); // int
+				map.insert<object_base_map::String>(0x5b982501, R"(models\building_blocks\general\safehouse_guer_garage_door_col.pfx)"); // string
+				map.insert<object_base_map::String>(0xca2ea3a9, R"(custom::opendoor)"); // string
+				map.insert<object_base_map::String>(0xae7c2d5e, R"(custom::closedoor)"); // string
+				map.insert<object_base_map::Int>(0x8597f162, 0); // int
+				map.insert<object_base_map::Int>(0x78b67171, 1); // int
+				map.insert<object_base_map::Int>(0xa1f2b8b1, 0); // int
+				map.insert<object_base_map::String>(0xb8fbd88e, R"(CAnimatedRigidObject1)"); // string
+				map.insert<object_base_map::Float>(0xb33b958d, 0.00f); // float
+				map.insert<object_base_map::Float>(0xc868ac91, 0.00f); // float
+				map.insert<object_base_map::Int>(0xe7916975, 0); // int
+				map.insert<object_base_map::Int>(0xda3feaea, 1); // int
+				map.insert<object_base_map::String>(0xef911d14, R"(CAnimatedRigidObject)"); // string
+				map.insert<object_base_map::String>(0xea402acf, R"(building_blocks\general\safehouse_guer_garage_door.lod)"); // string
+				map.insert<object_base_map::String>(0xf83e4d54, R"(building_blocks\animations\z_90.anim)"); // string
+
+				test->init_from_map(&map);
+				//test->get_event_manager()->setup_event_and_subscribe(0x284, "custom::opendoor");
+				//test->get_event_manager()->setup_event_and_subscribe(0x288, "custom::closedoor");
+			}
+
+			{
+				if (auto close_sound = g_game_control->create_object<SoundGameObject>())
+				{
+					object_base_map map{};
+
+					map.insert<object_base_map::Float>(0x51f09be0, 0.00f); // float
+					map.insert<object_base_map::Int>(0x402e727a, 1); // int
+					map.insert<object_base_map::Mat4>(0xacaefb1, &local_t); // mat4
+					map.insert<object_base_map::String>(0x425d6659, R"(door\door_garage.sab)"); // string
+					map.insert<object_base_map::String>(0xb22eaffd, R"(custom::anim_end)"); // string
+					map.insert<object_base_map::Float>(0x695d2cf2, 50.00f); // float
+					map.insert<object_base_map::Int>(0x525a07d4, 0); // int
+					map.insert<object_base_map::Float>(0x8dfff466, 0.00f); // float
+					map.insert<object_base_map::Int>(0xbd63e5b2, -1); // int
+					map.insert<object_base_map::String>(0xb8fbd88e, R"(snd_door_closed)"); // string
+					map.insert<object_base_map::String>(0xe9b2e8b7, R"(custom::closedoor)"); // string
+					map.insert<object_base_map::String>(0xe6d85c43, R"(custom::opendoor)"); // string
+					map.insert<object_base_map::Int>(0xee2cc81d, 1); // int
+					map.insert<object_base_map::String>(0xeb9f5c85, R"(door\door_garage.sob)"); // string
+					map.insert<object_base_map::String>(0xef911d14, R"(CSoundGameObject)"); // string
+
+					close_sound->init_from_map(&map);
+
+					temp_vec2.push_back(std::move(close_sound));
+				}
+
+				if (auto open_sound = g_game_control->create_object<SoundGameObject>())
+				{
+					object_base_map map{};
+
+					map.insert<object_base_map::Float>(0x51f09be0, 0.00f); // float
+					map.insert<object_base_map::Int>(0x402e727a, 0); // int
+					map.insert<object_base_map::Mat4>(0xacaefb1, &local_t); // mat4
+					map.insert<object_base_map::String>(0x425d6659, R"(door\door_garage.sab)"); // string
+					map.insert<object_base_map::String>(0xb22eaffd, R"(custom::opendoor)"); // string
+					map.insert<object_base_map::Float>(0x695d2cf2, 100.f); // float
+					map.insert<object_base_map::Int>(0x525a07d4, 0); // int
+					map.insert<object_base_map::Float>(0x8dfff466, 0.00f); // float
+					map.insert<object_base_map::Int>(0xbd63e5b2, -1); // int
+					map.insert<object_base_map::String>(0xb8fbd88e, R"(snd_door_open)"); // string
+					map.insert<object_base_map::Int>(0xee2cc81d, 1); // int
+					map.insert<object_base_map::String>(0xeb9f5c85, R"(door\door_garage.sob)"); // string
+					map.insert<object_base_map::String>(0xef911d14, R"(CSoundGameObject)"); // string
+
+					jc::write<uint16_t>(jc::game::float_to_i16(500.f), *open_sound, 0xA4);
+					jc::write<uint16_t>(jc::game::float_to_i16(500.f), *open_sound, 0xA6);
+
+					open_sound->init_from_map(&map);
+
+					jc::write<uint16_t>(jc::game::float_to_i16(500.f), *open_sound, 0xA4);
+					jc::write<uint16_t>(jc::game::float_to_i16(500.f), *open_sound, 0xA6);
+
+					log(RED, "open obj {:x}", ptr(*open_sound));
+
+					temp_vec2.push_back(std::move(open_sound));
+				}
+			}
 
 			log(RED, "nice {:x}", ptr(*test));
-
-			test->init_from_map(&map);
 
 			g_game_control->enable_object(test);
 

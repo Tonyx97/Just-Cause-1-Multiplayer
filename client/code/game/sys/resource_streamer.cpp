@@ -71,6 +71,7 @@ bool ResourceStreamer::request_exported_entity(uint32_t id, const ee_resource_ca
 
 		ok = true;
 	}
+	else log(RED, "Could not request exported entity '{}'", ee_name); // todojc - add defer loading for this case
 
 	ee_resource->free();
 

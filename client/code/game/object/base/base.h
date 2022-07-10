@@ -7,23 +7,11 @@ static_assert("map_base.h must be defined");
 #define IMPL_OBJECT_TYPE_ID(x) static constexpr auto CLASS_NAME() { return x; } \
 							   static constexpr auto CLASS_ID() { return util::hash::JENKINS(CLASS_NAME()); }
 
+#include "obj_event_manager.h"
+
 namespace jc::object_base
 {
 	static constexpr uint32_t EVENT_MANAGER = 0xC;
-
-	namespace event_manager
-	{
-		namespace fn
-		{
-			static constexpr uint32_t CALL_EVENT = 0x407FD0;
-		}
-
-		namespace vt
-		{
-			static constexpr uint32_t DESTROY	= 0;
-			static constexpr uint32_t CALL		= 1;
-		}
-	}
 
 	namespace vt
 	{
@@ -161,20 +149,6 @@ struct object_base_map : public jc::map<object_base_map, uint32_t>
 class Transform;
 class Model;
 class Physical;
-
-struct Event
-{
-
-};
-
-struct ObjectEventManager
-{
-	void call_event(ptr offset, void* userdata = nullptr);
-	void call_event_ex(Event* event_instance, void* userdata = nullptr);
-	void call_event_ex(ptr offset, void* userdata = nullptr);
-
-	Event* get_event(ptr offset);
-};
 
 class ObjectBase
 {

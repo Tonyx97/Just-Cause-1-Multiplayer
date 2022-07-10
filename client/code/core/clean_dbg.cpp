@@ -193,7 +193,7 @@ void* __fastcall hk_raycast(uintptr_t _this, void*, ray* r, int a1, float distan
 	{
 		const auto ret = jc::hooks::call<jc::proto::raycast>(_this, r, a1, distance, hit_info, a3, a4, a5);
 
-		log(RED, "[hk_raycast] {} {}", hit_info->object, hit_info->unk);
+		log(RED, "[hk_raycast] {:x} {:x}", ptr(hit_info->object), ptr(hit_info->unk));
 
 		return ret;
 	}

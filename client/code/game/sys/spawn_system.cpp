@@ -52,8 +52,8 @@ using namespace jc::spawn_system::v;
 
 void SpawnSystem::init()
 {
-	// set_max_character_spawns(0);
-	// set_max_vehicle_spawns(0);
+	set_max_character_spawns(0);
+	set_max_vehicle_spawns(0);
 }
 
 void SpawnSystem::destroy()
