@@ -8,7 +8,6 @@ namespace jc::damageable_obj
 
 	namespace fn
 	{
-		static constexpr uint32_t INITIALIZE_WITH_MAP = 0x7A2210;
 	}
 }
 

@@ -106,8 +106,8 @@ void Character::set_model(uint32_t id)
 
 			bool use_npc_variant = false;
 
-			if (!(use_npc_variant = map->find_string(HASH_MODEL, model)))
-				if (!map->find_string(HASH_PD_MODEL, model))
+			if (!(use_npc_variant = map->find_string(ObjectBase::Hash_Model, model)))
+				if (!map->find_string(ObjectBase::Hash_PD_Model, model))
 					return;
 
 			// get current info and set the new model

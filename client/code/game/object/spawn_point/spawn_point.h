@@ -19,6 +19,12 @@ namespace jc::spawn_point
 class SpawnPoint : public ObjectBase
 {
 public:
+
+	enum Hash : uint32_t
+	{
+		Hash_MaxHealth = 0xe1f06be0,
+	};
+
 	void spawn();
 	void spawn_internal();
 };

@@ -113,6 +113,15 @@ struct ref
 	{
 		return { obj, counter };
 	}
+
+	T* move_to(auto& container)
+	{
+		const auto item = obj;
+
+		container.push_back(std::move(*this));
+
+		return item;
+	}
 };
 
 template <typename T>

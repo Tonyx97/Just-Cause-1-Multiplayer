@@ -90,6 +90,12 @@ namespace jc
 	{
 		return (*BITCAST(Ret(__thiscall**)(X, A...), read<ptr>(_this) + (index * sizeof(ptr))))(_this, args...);
 	}
+
+	template <typename X>
+	inline ptr get_vtable_fn(X _this, int index)
+	{
+		return jc::read<ptr>(jc::read<ptr>(_this), index * sizeof(ptr));
+	}
 #endif
 
 	namespace mem

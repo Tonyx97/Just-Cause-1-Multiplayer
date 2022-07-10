@@ -63,7 +63,7 @@ bool ItemPickup::setup(const Transform& transform, uint32_t type, uint32_t weapo
 	}
 
 	if (!description.empty())
-		map.insert<object_base_map::String>(HASH_DESCRIPTION, description); // string
+		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, description); // string
 
 	map.insert<object_base_map::Int>(0x7580ba87, 0); // int
 	map.insert<object_base_map::Int>(0x3f554d9b, 0); // int
@@ -75,12 +75,12 @@ bool ItemPickup::setup(const Transform& transform, uint32_t type, uint32_t weapo
 	map.insert<object_base_map::Int>(0x9098c79d, 0); // int
 	map.insert<object_base_map::Int>(0x9a9d9a7f, 1); // int
 	map.insert<object_base_map::Int>(0xaae1437b, type); // int
+	map.insert<object_base_map::Int>(0xee2cc81d, 1); // int
 	map.insert<object_base_map::Float>(0xce44e7b2, 2.5f); // float - respawn time
 	map.insert<object_base_map::Float>(0xd6c4e1ec, 0.f); // float
-	map.insert<object_base_map::Int>(0xee2cc81d, 1); // int
 	map.insert<object_base_map::String>(0xdb33b0ba, "Item"); // string
-	map.insert<object_base_map::String>(HASH_CLASS, R"(CItemPickup)"); // string
-	map.insert<object_base_map::Mat4>(HASH_TRANSFORM, &transform); // mat4
+	map.insert<object_base_map::String>(ObjectBase::Hash_Class, R"(CItemPickup)"); // string
+	map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, &transform); // mat4
 
 	init_from_map(&map);
 	set_respawn_time_left(0.f);

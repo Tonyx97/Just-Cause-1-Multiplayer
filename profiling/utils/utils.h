@@ -51,6 +51,14 @@ namespace util
 			return !str.compare("true");
 		}
 
+		template <typename T>
+		inline std::string hex_to_str(T value)
+		{
+			std::ostringstream ss;
+			ss << "0x" << std::hex << value;
+			return ss.str();
+		}
+
 		namespace impl
 		{
 			template <typename T>

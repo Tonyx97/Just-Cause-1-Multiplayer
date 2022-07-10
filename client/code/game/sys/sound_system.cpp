@@ -2,12 +2,69 @@
 
 #include "sound_system.h"
 
+#include <game/sys/game_control.h>
+
+#include <game/transform/transform.h>
+
+#include <game/object/sound/sound_game_obj.h>
+
+namespace jc::sound_system
+{
+	namespace v
+	{
+		vec<ref<SoundGameObject>> sound_game_objects;
+
+		template <typename T>
+		T* add_item(auto& container, ref<T>& r)
+		{
+			const auto item = *r;
+
+			container.push_back(std::move(r));
+
+			return item;
+		}
+	}
+}
+
+using namespace jc::sound_system::v;
+
 void SoundSystem::init()
 {
 }
 
 void SoundSystem::destroy()
 {
+}
+
+SoundGameObject* SoundSystem::create_sound(const vec3& position, const std::string& bank_name, uint32_t sound_id)
+{
+	if (auto rf = g_game_control->create_object<SoundGameObject>())
+	{
+		object_base_map map {};
+
+		Transform transform(position);
+
+		map.insert<object_base_map::Int>(SoundGameObject::Hash_SoundID, sound_id); // int
+		map.insert<object_base_map::Int>(0x525a07d4, 0); // int
+		map.insert<object_base_map::Int>(0xbd63e5b2, -1); // int
+		map.insert<object_base_map::Int>(0xee2cc81d, 1); // int
+		map.insert<object_base_map::Float>(0x51f09be0, 0.00f); // float
+		map.insert<object_base_map::Float>(SoundGameObject::Hash_MaxDistance, 100.f); // float
+		map.insert<object_base_map::Float>(0x8dfff466, 0.00f); // float
+		map.insert<object_base_map::String>(SoundGameObject::Hash_SAB, bank_name + ".sab"); // string
+		map.insert<object_base_map::String>(SoundGameObject::Hash_SOB, bank_name + ".sob"); // string
+		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, "CustomSound"); // string
+		map.insert<object_base_map::String>(ObjectBase::Hash_Class, "CSoundGameObject"); // string
+		map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, &transform); // mat4
+
+		rf->init_from_map(&map);
+
+		log(RED, "SoundGameObject: {:x}", ptr(*rf));
+
+		return rf.move_to(sound_game_objects);
+	}
+
+	return nullptr;
 }
 
 SoundBank* SoundSystem::get_hud_bank()

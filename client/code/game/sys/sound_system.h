@@ -11,12 +11,15 @@ namespace jc::sound_system
 }
 
 class SoundBank;
+class SoundGameObject;
 
 class SoundSystem
 {
 public:
 	void init();
 	void destroy();
+
+	SoundGameObject* create_sound(const vec3& position, const std::string& bank_name, uint32_t sound_id);
 
 	SoundBank* get_hud_bank();
 	SoundBank* get_ambience_bank();

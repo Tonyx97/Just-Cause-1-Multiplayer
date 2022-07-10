@@ -11,8 +11,6 @@ static_assert("map_base.h must be defined");
 
 namespace jc::object_base
 {
-	static constexpr uint32_t EVENT_MANAGER = 0xC;
-
 	namespace vt
 	{
 		static constexpr uint32_t DESTROY		= 0;
@@ -24,19 +22,6 @@ namespace jc::object_base
 		static constexpr uint32_t GET_TYPENAME	= 30;
 	}
 }
-
-enum Hash : uint32_t
-{
-	HASH_CLASS				= 0xef911d14,
-	HASH_MODEL				= 0xdfe26313,
-	HASH_PD_MODEL			= 0x206d0589,
-	HASH_DESCRIPTION		= 0xb8fbd88e,
-	HASH_TRANSFORM			= 0xacaefb1,
-	HASH_SPAWN_DISTANCE		= 0xd2f9579a,
-	HASH_RELATIVE			= 0x773aff1c,
-	HASH_MAX_HEALTH			= 0xe1f06be0,
-	HASH_KEY_OBJECT			= 0x69a3a614,
-};
 
 struct object_base_map : public jc::map<object_base_map, uint32_t>
 {
@@ -66,93 +51,33 @@ struct object_base_map : public jc::map<object_base_map, uint32_t>
 			this->insert_impl(key, std::make_pair(TYPE, value));
 	}
 
-	bool find_string(uint32_t hash, jc::stl::string& out)
-	{
-		return jc::this_call<bool>(FIND_STRING(), this, &hash, &out);
-	}
+	bool find_string(uint32_t hash, jc::stl::string& out);
 
-	void walk()
-	{
-		struct Node
-		{
-			Node* left,
-				* parent,
-				* right;
-			ptr	  hash;
-			int	  type;
-			void* data;
-			bool  unk2;
-			bool  is_leaf;
-		};
-
-		Node* first = jc::read<Node*>(this, 0x4);
-		Node* root = jc::read<Node*>(first, 0x4);
-
-		log(GREEN, "object_base_map map {{}};");
-
-		std::vector<vec3> vec3s;
-		std::vector<mat4> mat4s;
-
-		std::vector<std::string> inserts;
-
-		std::function<void(Node*)> walk_tree = [&](Node* n)
-		{
-			if (n->hash != first->hash)
-			{
-				auto type = jc::read<int>(n->data);
-				
-				switch (type)
-				{
-				case Int:		inserts.push_back(FORMATV("map.insert<object_base_map::Int>(0x{:x}, {}); // int", n->hash, *(int*)(ptr(n->data) + 4))); break;
-				case Float:		inserts.push_back(FORMATV("map.insert<object_base_map::Float>(0x{:x}, {:.2f}f); // float", n->hash, *(float*)(ptr(n->data) + 4))); break;
-				case String:	inserts.push_back(FORMATV("map.insert<object_base_map::String>(0x{:x}, R\"({})\"); // string", n->hash, (const char*)(*(ptr*)(ptr(n->data) + 4)))); break;
-				case Vec3:
-				{
-					vec3s.push_back(**(vec3**)(ptr(n->data) + 4));
-					inserts.push_back(FORMATV("map.insert<object_base_map::Vec3>(0x{:x}, &v{}); // vec3", n->hash, vec3s.size() - 1u));
-					break;
-				}
-				case Mat4:
-				{
-					mat4s.push_back(**(mat4**)(ptr(n->data) + 4));
-					inserts.push_back(FORMATV("map.insert<object_base_map::Mat4>(0x{:x}, &m{}); // mat4", n->hash, mat4s.size() - 1u));
-					break;
-				}
-				default:
-					log(RED, "// Unknown map entry with type {}", type);
-				}
-			}
-
-			if (!n->is_leaf)
-			{
-				walk_tree(n->left);
-				walk_tree(n->right);
-			}
-		};
-
-		walk_tree(root);
-
-		for (int i = 0; const auto & v : mat4s)
-			log(GREEN, "const auto m{} = mat4 {{ {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f }};", i++, v[0][0], v[0][1], v[0][2], v[0][3]
-				, v[1][0], v[1][1], v[1][2], v[1][3]
-				, v[2][0], v[2][1], v[2][2], v[2][3]
-				, v[3][0], v[3][1], v[3][2], v[3][3]);
-
-		for (int i = 0; const auto & v : vec3s)
-			log(GREEN, "const auto v{} = vec3 {{ {:.2f}f, {:.2f}f, {:.2f}f }};", i++, v.x, v.y, v.z);
-
-		for (const auto& v : inserts)
-			log(GREEN, "{}", v);
-	}
+	void walk();
 };
 
 class Transform;
 class Model;
 class Physical;
 
-class ObjectBase
+class ObjectBase : public ObjectEventManager
 {
 public:
+
+	enum Hash : uint32_t
+	{
+		Hash_Class = 0xef911d14,
+		Hash_Model = 0xdfe26313,
+		Hash_PD_Model = 0x206d0589,
+		Hash_Desc = 0xb8fbd88e,
+		Hash_LOD_Model = 0xea402acf,
+		Hash_PFX = 0x5b982501,
+		Hash_Transform = 0xacaefb1,
+		Hash_SpawnDistance = 0xd2f9579a,
+		Hash_Relative = 0x773aff1c,
+		Hash_KeyObject = 0x69a3a614,
+	};
+
 	void set_transform(const Transform& transform);
 	void set_position(const vec3& v);
 	void set_model(uint32_t id);
@@ -161,8 +86,6 @@ public:
 	bool is_vehicle() const;
 
 	const char* get_typename() const;
-
-	ObjectEventManager* get_event_manager() const;
 
 	Model* get_model() const;
 
