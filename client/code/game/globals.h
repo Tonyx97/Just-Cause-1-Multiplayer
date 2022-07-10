@@ -38,15 +38,15 @@ namespace jc::game
 		return BITCAST(T*, malloc_internal(size));
 	}
 
-	inline float i16_to_float(int16_t v)
+	inline float i16_to_float(uint16_t v)
 	{
 		const auto i = read<int>(0xA1EAA0, 3 * v) << 8;
 		return *BITCAST(float*, &i);
 	}
 
-	inline int16_t float_to_i16(float v)
+	inline uint16_t float_to_i16(float v)
 	{
-		int16_t out;
-		return *jc::this_call<int16_t*>(jc::g::math::fn::FLOAT_TO_INT16, &out, v);
+		uint16_t out;
+		return *jc::this_call<uint16_t*>(jc::g::math::fn::FLOAT_TO_INT16, &out, v);
 	}
 }

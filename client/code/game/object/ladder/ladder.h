@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../simple_rigid_object/simple_rigid_object.h"
+#include "../rigid_object/simple_rigid_object.h"
 
 namespace jc::ladder
 {

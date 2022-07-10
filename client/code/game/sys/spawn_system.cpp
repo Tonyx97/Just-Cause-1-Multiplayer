@@ -8,7 +8,7 @@
 #include <game/object/character/character.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/damageable_object/damageable_object.h>
-#include <game/object/simple_rigid_object/simple_rigid_object.h>
+#include <game/object/rigid_object/simple_rigid_object.h>
 #include <game/object/spawn_point/agent_spawn_point.h>
 #include <game/object/spawn_point/vehicle_spawn_point.h>
 #include <game/object/mounted_gun/mounted_gun.h>

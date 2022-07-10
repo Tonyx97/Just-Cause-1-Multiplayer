@@ -119,6 +119,8 @@
     <ClCompile Include="code\game\object\mounted_gun\mounted_gun.cpp" />
     <ClCompile Include="code\game\object\resource\ee_resource.cpp" />
     <ClCompile Include="code\game\object\resource\resource.cpp" />
+    <ClCompile Include="code\game\object\rigid_object\animated_rigid_object.cpp" />
+    <ClCompile Include="code\game\object\rigid_object\simple_rigid_object.cpp" />
     <ClCompile Include="code\game\object\spawn_point\agent_spawn_point.cpp" />
     <ClCompile Include="code\game\object\area_damage\area_damage.cpp" />
     <ClCompile Include="code\game\object\character_handle\character_handle.cpp" />
@@ -144,7 +146,6 @@
     <ClCompile Include="code\mp\cmd\cmd.cpp" />
     <ClCompile Include="code\mp\net.cpp" />
     <ClCompile Include="code\stl\ref.cpp" />
-    <ClCompile Include="code\game\object\simple_rigid_object\simple_rigid_object.cpp" />
     <ClCompile Include="code\game\object\spawn_point\spawn_point.cpp" />
     <ClCompile Include="code\game\object\character\comps\stance_controller.cpp" />
     <ClCompile Include="code\game\sys\ai_core.cpp" />
@@ -203,6 +204,8 @@
     <ClInclude Include="code\game\object\mounted_gun\mounted_gun.h" />
     <ClInclude Include="code\game\object\resource\ee_resource.h" />
     <ClInclude Include="code\game\object\resource\resource.h" />
+    <ClInclude Include="code\game\object\rigid_object\animated_rigid_object.h" />
+    <ClInclude Include="code\game\object\rigid_object\simple_rigid_object.h" />
     <ClInclude Include="code\game\object\spawn_point\agent_spawn_point.h" />
     <ClInclude Include="code\game\object\area_damage\area_damage.h" />
     <ClInclude Include="code\game\object\character_handle\character_handle.h" />
@@ -230,7 +233,6 @@
     <ClInclude Include="code\mp\cmd\cmd.h" />
     <ClInclude Include="code\mp\net.h" />
     <ClInclude Include="code\stl\ref.h" />
-    <ClInclude Include="code\game\object\simple_rigid_object\simple_rigid_object.h" />
     <ClInclude Include="code\game\object\spawn_point\spawn_point.h" />
     <ClInclude Include="code\game\object\character\comps\stance_controller.h" />
     <ClInclude Include="code\game\sys\ai_core.h" />

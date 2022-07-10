@@ -7,6 +7,29 @@
 #include "../spawn_point/agent_spawn_point.h"
 #include "../spawn_point/vehicle_spawn_point.h"
 
+void ObjectEventManager::call_event(ptr offset, void* userdata)
+{
+	jc::this_call(jc::object_base::event_manager::fn::CALL_EVENT, REF(void*, this, offset - 0xC), userdata); // not tested
+}
+
+void ObjectEventManager::call_event_ex(Event* event_instance, void* userdata)
+{
+	jc::v_call(this, jc::object_base::event_manager::vt::CALL, event_instance, userdata);
+}
+
+void ObjectEventManager::call_event_ex(ptr offset, void* userdata)
+{
+	if (const auto event_instance = get_event(offset))
+		call_event_ex(event_instance, userdata);
+}
+
+Event* ObjectEventManager::get_event(ptr offset)
+{
+	// todojc - this only access the first entry of the event list
+
+	return jc::read<Event*>(jc::read<ptr>(jc::read<ptr>(this, offset - 0xC), 0x4));
+}
+
 void ObjectBase::init_from_map(object_base_map* map)
 {
 	jc::v_call(this, jc::object_base::vt::INIT_FROM_MAP, map);
@@ -62,6 +85,11 @@ const char* ObjectBase::get_typename() const
 	const char* dummy = nullptr;
 
 	return *jc::v_call<const char**>(this, jc::object_base::vt::GET_TYPENAME, &dummy);
+}
+
+ObjectEventManager* ObjectBase::get_event_manager() const
+{
+	return REF(ObjectEventManager*, this, jc::object_base::EVENT_MANAGER);
 }
 
 Model* ObjectBase::get_model() const

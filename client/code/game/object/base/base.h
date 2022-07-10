@@ -9,6 +9,22 @@ static_assert("map_base.h must be defined");
 
 namespace jc::object_base
 {
+	static constexpr uint32_t EVENT_MANAGER = 0xC;
+
+	namespace event_manager
+	{
+		namespace fn
+		{
+			static constexpr uint32_t CALL_EVENT = 0x407FD0;
+		}
+
+		namespace vt
+		{
+			static constexpr uint32_t DESTROY	= 0;
+			static constexpr uint32_t CALL		= 1;
+		}
+	}
+
 	namespace vt
 	{
 		static constexpr uint32_t DESTROY		= 0;
@@ -146,6 +162,20 @@ class Transform;
 class Model;
 class Physical;
 
+struct Event
+{
+
+};
+
+struct ObjectEventManager
+{
+	void call_event(ptr offset, void* userdata = nullptr);
+	void call_event_ex(Event* event_instance, void* userdata = nullptr);
+	void call_event_ex(ptr offset, void* userdata = nullptr);
+
+	Event* get_event(ptr offset);
+};
+
 class ObjectBase
 {
 public:
@@ -157,6 +187,8 @@ public:
 	bool is_vehicle() const;
 
 	const char* get_typename() const;
+
+	ObjectEventManager* get_event_manager() const;
 
 	Model* get_model() const;
 

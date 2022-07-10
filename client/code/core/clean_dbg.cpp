@@ -124,11 +124,11 @@ void __stdcall hk_print_error(const char* text, ...)
 			g_files_dump.insert(text_str);
 		}
 
-		/**/if (text_str.find("key_kane_bikini.ee") != -1)
+		/*if (text_str.find("key_kane_bikini.ee") != -1)
 		{
 			while (!GetAsyncKeyState(VK_F3))
 				Sleep(100);
-		}
+		}*/
 	}
 }
 
@@ -193,7 +193,7 @@ void* __fastcall hk_raycast(uintptr_t _this, void*, ray* r, int a1, float distan
 	{
 		const auto ret = jc::hooks::call<jc::proto::raycast>(_this, r, a1, distance, hit_info, a3, a4, a5);
 
-		// log(RED, "[hk_raycast] {} {}", hit_info->object, hit_info->unk);
+		log(RED, "[hk_raycast] {} {}", hit_info->object, hit_info->unk);
 
 		return ret;
 	}

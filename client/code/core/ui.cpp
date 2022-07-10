@@ -505,6 +505,11 @@ void UI::render()
 
 			static Character* cc = nullptr;
 
+			if (g_key->is_key_pressed(VK_F5))
+			{
+				local_player_pawn->respawn();
+			}
+
 			if (g_key->is_key_pressed(VK_F6))
 			{
 				//if (!cc)

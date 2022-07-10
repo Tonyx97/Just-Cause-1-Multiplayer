@@ -13,6 +13,7 @@
 #include <game/object/weapon/weapon.h>
 #include <game/object/resource/ee_resource.h>
 #include <game/object/agent_type/npc_variant.h>
+#include <game/object/rigid_object/animated_rigid_object.h>
 #include <game/sys/all.h>
 
 /*
@@ -24,14 +25,11 @@
 00497BE1 - C7 41 20 04000000 - mov [ecx+20],00000004
 */
 
-bool __fastcall hk_test(int a1, void*, int key)
+bool __fastcall hk_test(int a1, void*, int a2, mat4* a3)
 {
-	auto res = jc::hooks::call<jc::proto::dbg::test>(a1, key);
+	auto res = jc::hooks::call<jc::proto::dbg::test>(a1, a2, a3);
 
-	log(WHITE, "--------------------------");
-	for (int i = 0xC; i < 0x530; i += 0x1C)
-		log(GREEN, "{:x} -> {}", i, ((std::string*)(a1 + i))->c_str());
-	log(WHITE, "--------------------------");
+	log(RED, "nice {:x} {:x}", a1, a2);
 	
 	return res;
 }
@@ -74,15 +72,11 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_ADD))
 	{
-		g_day_cycle->set_night_time_enabled(false);
-	}
-
-	if (g_key->is_key_pressed(VK_NUMPAD9))
-	{
-		g_day_cycle->set_night_time_enabled(true);
 	}
 
 	static CharacterHandle* handle = nullptr;
+
+	static std::vector<ref<AnimatedRigidObject>> temp_vec;
 
 	if (g_key->is_key_pressed(VK_NUMPAD2))
 	{
@@ -90,20 +84,70 @@ void jc::test_units::test_0()
 
 		//log(RED, "handle {} (char {})", (void*)handle, (void*)handle->get_character());
 
-		g_spawn->spawn_general_item_pickup(local_pos + vec3(util::rand::rand_flt(-5.f, 5.f), 0.f, util::rand::rand_flt(-5.f, 5.f)), ItemType_Health, "medipack.lod");
-		g_spawn->spawn_general_item_pickup(local_pos + vec3(util::rand::rand_flt(-5.f, 5.f), 0.f, util::rand::rand_flt(-5.f, 5.f)), ItemType_Ammo, "building_blocks\\general\\interogation_drugs.lod");
-		g_spawn->spawn_general_item_pickup(local_pos + vec3(util::rand::rand_flt(-5.f, 5.f), 0.f, util::rand::rand_flt(-5.f, 5.f)), ItemType_Grenade, "grenadepack_lod1.rbm");
-		g_spawn->spawn_general_item_pickup(local_pos + vec3(util::rand::rand_flt(-5.f, 5.f), 0.f, util::rand::rand_flt(-5.f, 5.f)), ItemType_Collectible, "building_blocks\\general\\interogation_drugs.lod");
+		/*for (const auto& t : temp_vec)
+		{
+			jc::write<uint16_t>(jc::game::float_to_i16(1.f), *t, 0x130);
+			jc::this_call(0x783250, *t, jc::this_call<float>(0x7845B0, *t));
+		}*/
+
+		for (const auto& t : temp_vec)
+		{
+			t->get_event_manager()->call_event_ex(0x284, &local_t);
+		}
+	}
+
+	if (g_key->is_key_pressed(VK_NUMPAD9))
+	{
+		for (const auto& t : temp_vec)
+		{
+			t->get_event_manager()->call_event_ex(0x288, &local_t);
+		}
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		//g_spawn->spawn_ladder(local_pos, "rifle_infraredbox");
+		const auto m0 = mat4{ 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
 
-		g_weapon->for_each_weapon_template([&](int i, WeaponTemplate* t)
+		if (auto test = g_game_control->create_object<AnimatedRigidObject>())
 		{
-			g_spawn->spawn_weapon_item_pickup(local_pos + vec3(util::rand::rand_flt(-10.f, 10.f), 0.f, util::rand::rand_flt(-10.f, 10.f)), t->get_id());
-		});
+			object_base_map map{};
+
+			const auto m0 = mat4{ -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.56f, 1.00f, 0.00f, 1.00f };
+			map.insert<object_base_map::Float>(0x49985996, 0.00f); // float
+			map.insert<object_base_map::Float>(0x1d39cbef, 0.60f); // float
+			map.insert<object_base_map::Mat4>(0x72f35d2, &m0); // mat4
+			map.insert<object_base_map::Float>(0x2dd7ffe, 0.00f); // float
+			map.insert<object_base_map::Mat4>(0xacaefb1, &local_t); // mat4
+			map.insert<object_base_map::Int>(0x2c9331bd, 1); // int
+			map.insert<object_base_map::Int>(0x26299a20, 1); // int
+			map.insert<object_base_map::String>(0x355f55e0, R"(custom::anim_end)"); // string
+			map.insert<object_base_map::String>(0x5A64EBE3, R"(custom::test_event)"); // string
+			map.insert<object_base_map::Int>(0x65965327, 0); // int
+			map.insert<object_base_map::Int>(0x52702583, 0); // int
+			map.insert<object_base_map::Int>(0x525a07d4, 0); // int
+			map.insert<object_base_map::String>(0x5b982501, R"(models\building_blocks\general\safehouse_guer_garage_door_col.pfx)"); // string
+			map.insert<object_base_map::String>(0xca2ea3a9, R"(custom::opendoor)"); // string
+			map.insert<object_base_map::String>(0xae7c2d5e, R"(custom::closedoor)"); // string
+			map.insert<object_base_map::Int>(0x8597f162, 0); // int
+			map.insert<object_base_map::Int>(0x78b67171, 1); // int
+			map.insert<object_base_map::Int>(0xa1f2b8b1, 0); // int
+			map.insert<object_base_map::String>(0xb8fbd88e, R"(CAnimatedRigidObject1)"); // string
+			map.insert<object_base_map::Float>(0xb33b958d, 0.00f); // float
+			map.insert<object_base_map::Float>(0xc868ac91, 0.00f); // float
+			map.insert<object_base_map::Int>(0xe7916975, 0); // int
+			map.insert<object_base_map::Int>(0xda3feaea, 1); // int
+			map.insert<object_base_map::String>(0xef911d14, R"(CAnimatedRigidObject)"); // string
+			map.insert<object_base_map::String>(0xea402acf, R"(building_blocks\general\safehouse_guer_garage_door.lod)"); // string
+			map.insert<object_base_map::String>(0xf83e4d54, R"(building_blocks\animations\z_90.anim)"); // string
+
+			log(RED, "nice {:x}", ptr(*test));
+
+			test->init_from_map(&map);
+
+			g_game_control->enable_object(test);
+
+			temp_vec.push_back(std::move(test));
+		}
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD7))
