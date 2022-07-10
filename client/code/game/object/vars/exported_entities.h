@@ -173,4 +173,9 @@ namespace jc::vars
 		{ 152,	"rac_bookmaker_04.ee" },
 		{ 153,	"rac_bookmaker_05.ee" },
 	};
+
+	inline std::unordered_map<uint32_t, std::string> exported_entities_vehicles =
+	{
+		{ 0, "" },
+	};
 }

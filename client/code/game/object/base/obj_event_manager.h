@@ -44,10 +44,5 @@ protected:
 public:
 
 	void call_event(ptr offset, void* userdata = nullptr);
-	void call_event_ex(ptr offset, void* userdata = nullptr);
-	void call_event_ex(Event* event_instance, void* userdata = nullptr);
-
 	void setup_event_and_subscribe(ptr offset, const std::string& name, const std::string& userdata_type = "");
-
-	Event* get_event(ptr offset);
 };

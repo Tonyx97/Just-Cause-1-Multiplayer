@@ -13,16 +13,6 @@ namespace jc::sound_system
 	namespace v
 	{
 		vec<ref<SoundGameObject>> sound_game_objects;
-
-		template <typename T>
-		T* add_item(auto& container, ref<T>& r)
-		{
-			const auto item = *r;
-
-			container.push_back(std::move(r));
-
-			return item;
-		}
 	}
 }
 
@@ -34,6 +24,7 @@ void SoundSystem::init()
 
 void SoundSystem::destroy()
 {
+	sound_game_objects.clear();
 }
 
 SoundGameObject* SoundSystem::create_sound(const vec3& position, const std::string& bank_name, uint32_t sound_id)
@@ -58,8 +49,6 @@ SoundGameObject* SoundSystem::create_sound(const vec3& position, const std::stri
 		map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, &transform); // mat4
 
 		rf->init_from_map(&map);
-
-		log(RED, "SoundGameObject: {:x}", ptr(*rf));
 
 		return rf.move_to(sound_game_objects);
 	}

@@ -9,6 +9,11 @@ bool Event::is_executing() const
 
 int8_t ObjectEventManager::get_base_offset() const
 {
+	// some instances have the event base at 0xC and others have it at -0x14 for some reason
+	// (probably older msvc compiling shit), we want to know which instance is which so we
+	// read the first byte of the first virtual func which will tell us if it's one or another
+	// and then we can get the actual base offset of event instance with this
+
 	const auto vfn0 = jc::get_vtable_fn(this, 0);
 	const auto offset = jc::read<uint8_t>(vfn0) == 0x83 ? -jc::read<int8_t>(vfn0, 0x2) : 0xC;
 
@@ -33,22 +38,4 @@ void ObjectEventManager::setup_event_and_subscribe(ptr offset, const std::string
 void ObjectEventManager::call_event(ptr offset, void* userdata)
 {
 	jc::this_call(jc::obj_event_manager::fn::CALL_EVENT, REF(Event**, this, offset), userdata); // not tested
-}
-
-void ObjectEventManager::call_event_ex(Event* event_instance, void* userdata)
-{
-	jc::v_call(get_event_manager(), jc::obj_event_manager::vt::CALL, event_instance, userdata);
-}
-
-void ObjectEventManager::call_event_ex(ptr offset, void* userdata)
-{
-	if (const auto event_instance = get_event(offset))
-		call_event_ex(event_instance, userdata);
-}
-
-Event* ObjectEventManager::get_event(ptr offset)
-{
-	// todojc - this only access the first entry of the event list
-
-	return jc::read<Event*>(jc::read<ptr>(jc::read<ptr>(this, offset), 0x4));
 }

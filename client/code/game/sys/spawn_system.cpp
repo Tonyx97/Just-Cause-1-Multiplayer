@@ -29,24 +29,6 @@ namespace jc::spawn_system
 		vec<ref<Ladder>>				ladders;
 		vec<ref<ItemPickup>>			item_pickups;
 		vec<ref<AnimatedRigidObject>>	animated_rigid_objects;
-
-		template <typename T>
-		T* add_item(auto& container, ref<T>& r)
-		{
-			const auto item = *r;
-
-			container.push_back(std::move(r));
-
-			return item;
-		}
-
-		template <typename T>
-		T* add_item_nr(auto& container, T* r)
-		{
-			container.push_back(r);
-
-			return r;
-		}
 	}
 }
 
@@ -125,7 +107,11 @@ CharacterHandle* SpawnSystem::spawn_character(const std::string& model_name, con
 	Transform transform(position);
 
 	if (const auto handle = CharacterHandle::GET_FREE_HANDLE()->create(&info, &transform, weapon_id))
-		return add_item_nr(character_handles, handle);
+	{
+		character_handles.push_back(handle);
+
+		return handle;
+	}
 
 	return nullptr;
 }
@@ -138,7 +124,7 @@ SimpleRigidObject* SpawnSystem::spawn_simple_rigid_object(const vec3& position, 
 	{
 		g_game_control->enable_object(rf);
 
-		return add_item(simple_rigid_objects, rf);
+		return rf.move_to(simple_rigid_objects);
 	}
 
 	return nullptr;
@@ -152,7 +138,7 @@ DamageableObject* SpawnSystem::spawn_damageable_object(const vec3& position, con
 	{
 		g_game_control->enable_object(rf);
 
-		return add_item(damageables, rf);
+		return rf.move_to(damageables);
 	}
 
 	return nullptr;
@@ -190,7 +176,7 @@ AgentSpawnPoint* SpawnSystem::create_agent_spawn_point(const vec3& position)
 		rf->init_from_map(&map);
 		rf->set_position(position);
 
-		return add_item(agent_spawns, rf);
+		return rf.move_to(agent_spawns);
 	}
 
 	return nullptr;
@@ -229,7 +215,7 @@ VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
 		rf->set_position(position);
 		rf->set_faction(VehicleSpawnPoint::BlackHand);
 
-		return add_item(vehicle_spawns, rf);
+		return rf.move_to(vehicle_spawns);
 	}
 
 	return nullptr;
@@ -264,7 +250,7 @@ MountedGun* SpawnSystem::spawn_mounted_gun(const vec3& position)
 
 		rf->init_from_map(&map);
 
-		return add_item(mounted_guns, rf);
+		return rf.move_to(mounted_guns);
 	}
 
 	return nullptr;
@@ -301,7 +287,7 @@ Ladder* SpawnSystem::spawn_ladder(const vec3& position, const std::string& model
 
 		rf->init_from_map(&map);
 
-		return add_item(ladders, rf);
+		return rf.move_to(ladders);
 	}
 
 	return nullptr;
@@ -314,7 +300,7 @@ ItemPickup* SpawnSystem::spawn_general_item_pickup(const vec3& position, uint32_
 		if (!rf->setup(position, type, Weapon_None, model, description))
 			return nullptr;
 
-		return add_item(item_pickups, rf);
+		return rf.move_to(item_pickups);
 	}
 
 	return nullptr;
@@ -327,7 +313,7 @@ ItemPickup* SpawnSystem::spawn_weapon_item_pickup(const vec3& position, uint32_t
 		if (!rf->setup(position, ItemType_Weapon, weapon_id, {}, description))
 			return nullptr;
 
-		return add_item(item_pickups, rf);
+		return rf.move_to(item_pickups);
 	}
 
 	return nullptr;
@@ -337,7 +323,7 @@ AnimatedRigidObject* SpawnSystem::spawn_animated_rigid_object(const vec3& positi
 {
 	if (auto rf = g_game_control->create_object<AnimatedRigidObject>())
 	{
-		object_base_map map{};
+		object_base_map map {};
 
 		Transform transform(position);
 
@@ -371,7 +357,7 @@ AnimatedRigidObject* SpawnSystem::spawn_animated_rigid_object(const vec3& positi
 
 		rf->init_from_map(&map);
 
-		return add_item(animated_rigid_objects, rf);
+		return rf.move_to(animated_rigid_objects);
 	}
 
 	return nullptr;
