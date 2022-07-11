@@ -554,8 +554,6 @@ void UI::render()
 						cc->get_skeleton()->set_head_interpolation(1.f);
 					}
 				}
-
-				//*(float*)(ptr(cc->get_skeleton()) + 0x3E8) = 0.f;
 			}
 		}
 	}
