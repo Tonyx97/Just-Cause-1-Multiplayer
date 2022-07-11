@@ -9,6 +9,18 @@ namespace jc::vehicle
 	}
 }
 
+enum VehicleFaction
+{
+	VehFaction_None,
+	VehFaction_Agency = 2,
+	VehFaction_Military,
+	VehFaction_Police,
+	VehFaction_Guerrilla,
+	VehFaction_BlackHand,
+	VehFaction_Montano,
+	VehFaction_Rioja
+};
+
 class Vehicle : public ActionPointOwner
 {
 public:

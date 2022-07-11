@@ -17,18 +17,6 @@ class ObjectSpawnPoint : public SpawnPoint
 {
 public:
 
-	enum Faction : uint32_t
-	{
-		NoFaction = 0,
-		Agency	  = 2,
-		Military  = 3,
-		Police	  = 4,
-		Guerillas = 5,
-		BlackHand = 6,
-		Montano	  = 7,
-		Rioja	  = 8
-	};
-
 	void set_faction(uint32_t faction);
 
 	uint32_t get_faction() const;

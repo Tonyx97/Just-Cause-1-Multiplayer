@@ -176,117 +176,117 @@ namespace jc::vars
 
 	inline std::unordered_map<uint32_t, std::string> exported_entities_vehicles =
 	{
-		{ 0, R"(Exported\Vehicles\Land_Vehicles\LAVE_001_Compact_Car_1.ee)" }, // Baxter Petit
-		{ 1, R"(Exported\Vehicles\Land_Vehicles\LAVE_002_normal_car_1.ee)" }, // Chevalier Streetbird de luxe
-		{ 2, R"(Exported\Vehicles\Land_Vehicles\LAVE_003_Normal_Car_2.ee)" }, // Scando 700 Sedan
-		{ 3, R"(Exported\Vehicles\Land_Vehicles\LAVE_004_Van.ee)" }, // Cutler Bullhorn 
-		{ 4, R"(Exported\Vehicles\Land_Vehicles\lave_004_van_black.ee)" }, // Cutler Bullhorn
-		{ 5, R"(Exported\Vehicles\Land_Vehicles\LAVE_005_Luxuary_Car_1.ee)" }, // Rossi 866 Corral 		
-		{ 6, R"(Exported\Vehicles\Land_Vehicles\LAVE_006_BigJeep.ee)" }, // Emvee Armadillo
-		{ 7, R"(Exported\Vehicles\Land_Vehicles\A1M1\Sheldons_Jeep.ee)" }, // Emvee Armadillo
-		{ 8, R"(Exported\Vehicles\Land_Vehicles\LAVE_006_BigJeep_1_MG_front.ee)" }, // Emvee Armadillo
-		{ 9, R"(Exported\Vehicles\Land_Vehicles\LAVE_006_BigJeep_1_MG_back.ee)" }, // Emvee Armadillo
-		{ 10, R"(Exported\Vehicles\Land_Vehicles\LAVE_007_Jeep2.ee)" }, // Huerta Mesa
-		{ 11, R"(Exported\Vehicles\Land_Vehicles\LAVE_008_Pickup.ee)" }, // Shimizu Tumbleweed
-		{ 12, R"(Exported\Vehicles\Land_Vehicles\LAVE_008_Pickup_FMG_G.ee)" }, // Shimizu Tumbleweed
-		{ 13, R"(Exported\Vehicles\Land_Vehicles\LAVE_008_Pickup_BMG_G.ee)" }, // Shimizu Tumbleweed
-		{ 14, R"(Exported\Vehicles\Land_Vehicles\LAVE_009_truck_medium_1.ee)" }, // Vanderbildt Route 66
-		{ 15, R"(Exported\Vehicles\Land_Vehicles\LAVE_010_ATV.ee)" }, // Fukuda Buckskin Trapper
-		{ 16, R"(Exported\Vehicles\Land_Vehicles\LAVE_011_Motorbike.ee)" }, // Yamada 37 14 Vaquero
-		{ 17, R"(Exported\Vehicles\Land_Vehicles\lave_011_motorbikecivil.ee)" }, // Yamada 37 14 Vaquero
-		{ 18, R"(Exported\Vehicles\Land_Vehicles\LAVE_012_Motorcycle_2.ee)" }, // Victory Bellevue
-		{ 19, R"(Exported\Vehicles\Land_Vehicles\LAVE_013_Armored_transport.ee)" }, // Meister ATV 4
-		{ 20, R"(Exported\Vehicles\Land_Vehicles\lave_013_sidem_transport.ee)" }, // Meister ATV 4
-		{ 21, R"(Exported\Vehicles\Land_Vehicles\LAVE_014_tank.ee)" }, // Ballard M5B1 Scout
-		{ 22, R"(Exported\Vehicles\Land_Vehicles\LAVE_014_tank_AA.ee)" }, // Ballard Centronel AAWV-21 
-		{ 23, R"(Exported\Vehicles\Land_Vehicles\LAVE_014_tank_Rocket.ee)" }, // Ballard Sentry STRL-14 
-		{ 24, R"(Exported\Vehicles\Land_Vehicles\LAVE_017_normal_car_4.ee)" }, // Potomac Silverbullet
-		{ 25, R"(Exported\Vehicles\Land_Vehicles\LAVE_018_normal_car_5.ee)" }, // Cutler Randall Arrowhead
-		{ 26, R"(Exported\Vehicles\Land_Vehicles\LAVE_019_limosine.ee)" }, // Fusilier Commander
-		{ 27, R"(Exported\Vehicles\Land_Vehicles\LAVE_020_pickup_2.ee)" }, // Europ
-		{ 28, R"(Exported\Vehicles\Land_Vehicles\LAVE_021_Truck_medium_2.ee)" }, // Battaille GPT 6
-		{ 29, R"(Exported\Vehicles\Land_Vehicles\LAVE_022_Bulldozer.ee)" }, // Scando Track Loader Extreme
-		{ 30, R"(Exported\Vehicles\Land_Vehicles\LAVE_024_compactcar_2.ee)" }, // Reichsmobil Compact Mark II
-		{ 31, R"(Exported\Vehicles\Land_Vehicles\lave_025_normalcar_6.ee)" }, // Yamada Redwood SUV
-		{ 32, R"(Exported\Vehicles\Land_Vehicles\LAVE_026_Normal_Car_7.ee)" }, // Hurst Dagger
-		{ 33, R"(Exported\Vehicles\Land_Vehicles\LAVE_027_luxuary_car_2.ee)" }, // Chevalier Supernova
-		{ 34, R"(Exported\Vehicles\Land_Vehicles\LAVE_028_Jeep_3.ee)" }, // Wallys GP
-		{ 35, R"(Exported\Vehicles\Land_Vehicles\LAVE_028_Jeep_3MGF.ee)" }, // Wallys GP
-		{ 36, R"(Exported\Vehicles\Land_Vehicles\LAVE_028_Jeep_3_MGB.ee)" }, // Wallys GP
-		{ 37, R"(Exported\Vehicles\Land_Vehicles\LAVE_029_Compact_Car_3.ee)" }, // Squire Synco
-		{ 38, R"(Exported\Vehicles\Land_Vehicles\LAVE_030_Pickup_3.ee)" }, // Reichsmobil Transport
-		{ 39, R"(Exported\Vehicles\Land_Vehicles\LAVE_031_Pickup_4.ee)" }, // Hurst Buckaroo
-		{ 40, R"(Exported\Vehicles\Land_Vehicles\LAVE_031_Pickup_4_FMG.ee)" }, // Hurst Buckaroo
-		{ 41, R"(Exported\Vehicles\Land_Vehicles\LAVE_031_Pickup_4_BMG.ee)" }, // Hurst Buckaroo
-		{ 41, R"(Exported\Vehicles\Land_Vehicles\LAVE_032_Truck_medium_3.ee)" }, // Meyer Compact T
-		{ 42, R"(Exported\Vehicles\Land_Vehicles\LAVE_032_Truck_medium_3_MG.ee)" }, // Meyer Compact T
-		{ 43, R"(Exported\Vehicles\Land_Vehicles\LAVE_033_Motorcycle_3.ee)" }, // Schulz Las Vegas
-		{ 44, R"(Exported\Vehicles\Land_Vehicles\LAVE_034_motorcycle_4.ee)" }, // Mosca 125 Rallye
-		{ 45, R"(Exported\Vehicles\Land_Vehicles\LAVE_035_Normal_car_8.ee)" }, // Cutler Randall Conquistador
-		{ 46, R"(Exported\Vehicles\Land_Vehicles\LAVE_037_Military_truck.ee)" }, // Meister LAV 4
-		{ 47, R"(Exported\Vehicles\Land_Vehicles\LAVE_039_Police_car.ee)" }, // Vaultier Sedan Patrol Compact
-		{ 48, R"(Exported\Vehicles\Land_Vehicles\LAVE_040_police_van.ee)" }, // Vaultier ALEV Patrol Special
-		{ 49, R"(Exported\Vehicles\Land_Vehicles\LAVE_041_ambulance.ee)" }, // MacNamara Emergency III
-		{ 50, R"(Exported\Vehicles\Land_Vehicles\LAVE_042_Bus.ee)" }, // Pankhurst Bus Tap Tap
-		{ 51, R"(Exported\Vehicles\Land_Vehicles\LAVE_043_Rally_Car.ee)" }, // Fukuda Tournament
-		{ 52, R"(Exported\Vehicles\Land_Vehicles\LAVE_044_Monster_Truck.ee)" }, // The Vampire
-		{ 53, R"(Exported\Vehicles\Land_Vehicles\LAVE_044_Monster_Truck_MG.ee)" }, // The Vampire
-		{ 54, R"(Exported\Vehicles\Land_Vehicles\LAVE_045_James_Bond_Car.ee)" }, // Garret Paladin
-		{ 55, R"(Exported\Vehicles\Land_Vehicles\LAVE_046_Military_buggy.ee)" }, // Stinger Buggy
-		{ 56, R"(Exported\Vehicles\Land_Vehicles\LAVE_046_Civilian_buggy.ee)" }, // Stinger Buggy
-		{ 57, R"(Exported\Vehicles\Land_Vehicles\LAVE_048_Taxi.ee)" }, // Taxi
-		{ 58, R"(Exported\Vehicles\Land_Vehicles\LAVE_050_service_vehicle.ee)" }, // AVIA Airport service vehicle
-		{ 59, R"(Exported\Vehicles\Land_Vehicles\LAVE 051 LAVE_051_Military_offroad_bike.ee)" }, // Apache Army Model 842 
-		{ 60, R"(Exported\Vehicles\Land_Vehicles\LAVE_052_military_6_wheel_ATV.ee)" }, // Rotor industries ATRV
-		{ 61, R"(Exported\Vehicles\Land_Vehicles\LAVE_053_Racingbike.ee)" }, // Fukuda Bluebolt
-		{ 62, R"(Exported\Vehicles\Land_Vehicles\LAVE_054_Agency_Jeep.ee)" }, // GP Thunder Extreme Prototype
-		{ 63, R"(Exported\Vehicles\Land_Vehicles\LAVE_055_Tank_3_Rocket.ee)" }, // Harlan OTWV 2 TOW
-		{ 64, R"(Exported\Vehicles\Land_Vehicles\LAVE_055_tank_AA.ee)" }, // Harlan OTWV 2 AAA
-		{ 65, R"(Exported\Vehicles\Land_Vehicles\LAVE_055_Tank_3.ee)" }, // Harlan OTWV 2 CAN
-		{ 66, R"(Exported\Vehicles\Land_Vehicles\LAVE_056_Bus_2.ee)" }, // Vanderbildt Streamliner
-		{ 67, R"(exported\vehicles\air_vehicles\arve_001_civilchopper)" }, // Mullen H45 Dragonfly
-		{ 68, R"(exported\vehicles\air_vehicles\arve_002_attack_helicopter.ee)" }, // Jackson Z-19 Skreemer
-		{ 69, R"(exported\vehicles\air_vehicles\arve_003_transport_helicopter.ee)" }, // HH 22 Savior
-		{ 69, R"(exported\vehicles\air_vehicles\arve_003_rocket_helicopter.ee)" }, // HH 22 Savior
-		{ 70, R"(exported\vehicles\air_vehicles\arve_005_fighter_jet.ee)" }, // Rage Johnston F6 Comet
-		{ 71, R"(exported\vehicles\air_vehicles\arve_006_propeller_plane.ee)" }, // Huerta SPA Ocelot
-		{ 72, R"(exported\vehicles\air_vehicles\ARVE_006_CropDuster.ee)" }, // Huerta SPA Ocelot
-		{ 73, R"(exported\vehicles\air_vehicles\arve_007_military_helicopter.ee)" }, // Delta 5H4 Boxhead
-		{ 74, R"(exported\vehicles\air_vehicles\arve_008_cargo_plane.ee)" }, // Alexander AX 14
-		{ 75, R"(exported\vehicles\air_vehicles\arve_009_millitary_heli_3.ee)" }, // Jackson JC 2 Alamo
-		{ 76, R"(exported\vehicles\air_vehicles\arve_010_learjet.ee)" }, // Stirling Jet Executive
-		{ 77, R"(exported\vehicles\air_vehicles\ARVE_012_police_helicopter.ee)" }, // Huertaz PAS1 Aztek
-		{ 78, R"(exported\vehicles\air_vehicles\arve_013_fighter_jet_2.ee)" }, // Rage Johnston F10 Wraith
-		{ 79, R"(exported\vehicles\air_vehicles\ARVE_014_Civilian_Plane.ee)" }, // Stirling STL 3 Octavio
-		{ 80, R"(exported\vehicles\air_vehicles\ARVE_015_Military_Heli_2.ee)" }, // Fukuda MH Ronin
-		{ 81, R"(exported\vehicles\air_vehicles\arve_016_large_attack_helikopter.ee)" }, // Novak Walker AH 16 Hammerbolt
-		{ 82, R"(exported\vehicles\air_vehicles\ARVE_017_presidential_plane.ee)" }, // The Excelsior, El Grande
-		{ 83, R"(exported\vehicles\air_vehicles\arve_018_propellerplane.ee)" }, // Walker PA Twin Fin
-		{ 84, R"(exported\vehicles\air_vehicles\arve_020_special_attack_heli.ee)" }, // Delta MAH 15 Chimaera
-		{ 85, R"(exported\vehicles\air_vehicles\arve_022_old_school_fighter.ee)" }, // McKenzie Fergusson F2 Victor
-		{ 86, R"(Exported\Vehicles\Air_Vehicles\ARVE_023_Gyrocopter.ee)" }, // Whiptail Gyrocopter
-		{ 87, R"(exported\vehicles\air_vehicles\arve_025_fighter_jet_3.ee)" }, // Ulysses-McCoy Redcloud
-		{ 88, R"(exported\vehicles\sea_vehicles\SEVE_001_Water_Scooter.ee)" }, // Shimizu Mach 2
-		{ 89, R"(exported\vehicles\sea_vehicles\seve_002_patrolboat_medium.ee)" }, // Triton Patroller
-		{ 90, R"(exported\vehicles\sea_vehicles\seve_004_kittyhawk.ee)" }, // Triton Hornet
-		{ 91, R"(exported\vehicles\sea_vehicles\seve_005_speedboat.ee)" }, // Triton - G3 Taiphoon
-		{ 92, R"(exported\vehicles\sea_vehicles\SEVE_006_Yacht.ee)" }, // Miami Sport Wave +
-		{ 93, R"(exported\vehicles\sea_vehicles\SEVE_007_underwater_scooter.ee)" }, // Shimizu Scuba boy
-		{ 94, R"(exported\vehicles\sea_vehicles\SEVE_008_patrol_boat_large.ee)" }, // Triton Broadsider
-		{ 95, R"(exported\vehicles\sea_vehicles\SEVE_008_patrol_boat_largeFGL.ee)" }, // Triton Broadsider
-		{ 96, R"(exported\vehicles\sea_vehicles\SEVE_008_patrol_boatlargeBMG.ee)" }, // Triton Broadsider
-		{ 97, R"(exported\vehicles\sea_vehicles\SEVE_010_water_scooter.ee)" }, // Shimizu Nayad 700			
-		{ 98, R"(exported\vehicles\sea_vehicles\seve_011_patrolboat_medbmg_2.ee)" }, // Pequod Harpoon PC 350
-		{ 99, R"(exported\vehicles\sea_vehicles\seve_011_patrolboat_mediumBI_2.ee)" }, // Pequod Harpoon PC 350
-		{ 100, R"(exported\vehicles\sea_vehicles\SEVE_011_patrolboat_medium_2.ee)" }, // Pequod Harpoon PC 350
-		{ 101, R"(exported\vehicles\sea_vehicles\seve_013_speedboat1.ee)" }, // Viper boatworks Seaserpent III +
-		{ 102, R"(exported\vehicles\sea_vehicles\seve_014_speedboat_2.ee)" }, // Triereme - RC Athena +
-		{ 103, R"(exported\vehicles\sea_vehicles\SEVE_014_speedboat_2MG.ee)" }, // Triereme - RC Athena
-		{ 104, R"(exported\vehicles\sea_vehicles\seve_015_yacht2.ee)" }, // Royal 500 - great white +
-		{ 105, R"(exported\vehicles\sea_vehicles\seve_018_sailing_boat_2.ee)" }, // Bosphorus boatworks - Patna exclusive +
-		{ 106, R"(exported\vehicles\sea_vehicles\seve_020_zodiac.ee)" }, // Jaeger 5FJ 7
-		{ 107, R"(exported\vehicles\sea_vehicles\seve_021_fishingboat_special.ee)" }, // Fishing boat
-		{ 108, R"(exported\vehicles\sea_vehicles\seve_022_fishing_boat.ee)" }, // Fishing boat
-		{ 109, R"(Exported\Vehicles\Sea_Vehicles\SEVE_023_speedboat_special.ee)" }, // Bald Eagle Persuader agency boat at Agency 2 safehouse
+		{ 0, "lave_001_Compact_Car_1.ee" }, // Baxter Petit
+		{ 1, "lave_002_normal_car_1.ee" }, // Chevalier Streetbird de luxe
+		{ 2, "lave_003_Normal_Car_2.ee" }, // Scando 700 Sedan
+		{ 3, "lave_004_Van.ee" }, // Cutler Bullhorn 
+		{ 4, "lave_004_van_black.ee" }, // Cutler Bullhorn
+		{ 5, "lave_005_Luxuary_Car_1.ee" }, // Rossi 866 Corral 		
+		{ 6, "lave_006_BigJeep.ee" }, // Emvee Armadillo
+		{ 7, "sheldons_jeep.ee" }, // Emvee Armadillo
+		{ 8, "lave_006_BigJeep_1_MG_front.ee" }, // Emvee Armadillo
+		{ 9, "lave_006_BigJeep_1_MG_back.ee" }, // Emvee Armadillo
+		{ 10, "lave_007_Jeep2.ee" }, // Huerta Mesa
+		{ 11, "lave_008_Pickup.ee" }, // Shimizu Tumbleweed
+		{ 12, "lave_008_Pickup_FMG_G.ee" }, // Shimizu Tumbleweed
+		{ 13, "lave_008_Pickup_BMG_G.ee" }, // Shimizu Tumbleweed
+		{ 14, "lave_009_truck_medium_1.ee" }, // Vanderbildt Route 66
+		{ 15, "lave_010_ATV.ee" }, // Fukuda Buckskin Trapper
+		{ 16, "lave_011_Motorbike.ee" }, // Yamada 37 14 Vaquero
+		{ 17, "lave_011_motorbikecivil.ee" }, // Yamada 37 14 Vaquero
+		{ 18, "lave_012_Motorcycle_2.ee" }, // Victory Bellevue
+		{ 19, "lave_013_Armored_transport.ee" }, // Meister ATV 4
+		{ 20, "lave_013_sidem_transport.ee" }, // Meister ATV 4
+		{ 21, "lave_014_tank.ee" }, // Ballard M5B1 Scout
+		{ 22, "lave_014_tank_AA.ee" }, // Ballard Centronel AAWV-21 
+		{ 23, "lave_014_tank_Rocket.ee" }, // Ballard Sentry STRL-14 
+		{ 24, "lave_017_normal_car_4.ee" }, // Potomac Silverbullet
+		{ 25, "lave_018_normal_car_5.ee" }, // Cutler Randall Arrowhead
+		{ 26, "lave_019_limosine.ee" }, // Fusilier Commander
+		{ 27, "lave_020_pickup_2.ee" }, // Europ
+		{ 28, "lave_021_Truck_medium_2.ee" }, // Battaille GPT 6
+		{ 29, "lave_022_Bulldozer.ee" }, // Scando Track Loader Extreme
+		{ 30, "lave_024_compactcar_2.ee" }, // Reichsmobil Compact Mark II
+		{ 31, "lave_025_normalcar_6.ee" }, // Yamada Redwood SUV
+		{ 32, "lave_026_Normal_Car_7.ee" }, // Hurst Dagger
+		{ 33, "lave_027_luxuary_car_2.ee" }, // Chevalier Supernova
+		{ 34, "lave_028_Jeep_3.ee" }, // Wallys GP
+		{ 35, "lave_028_Jeep_3MGF.ee" }, // Wallys GP
+		{ 36, "lave_028_Jeep_3_MGB.ee" }, // Wallys GP
+		{ 37, "lave_029_Compact_Car_3.ee" }, // Squire Synco
+		{ 38, "lave_030_Pickup_3.ee" }, // Reichsmobil Transport
+		{ 39, "lave_031_Pickup_4.ee" }, // Hurst Buckaroo
+		{ 40, "lave_031_Pickup_4_FMG.ee" }, // Hurst Buckaroo
+		{ 41, "lave_031_Pickup_4_BMG.ee" }, // Hurst Buckaroo
+		{ 41, "lave_032_Truck_medium_3.ee" }, // Meyer Compact T
+		{ 42, "lave_032_Truck_medium_3_MG.ee" }, // Meyer Compact T
+		{ 43, "lave_033_Motorcycle_3.ee" }, // Schulz Las Vegas
+		{ 44, "lave_034_motorcycle_4.ee" }, // Mosca 125 Rallye
+		{ 45, "lave_035_Normal_car_8.ee" }, // Cutler Randall Conquistador
+		{ 46, "lave_037_Military_truck.ee" }, // Meister LAV 4
+		{ 47, "lave_039_Police_car.ee" }, // Vaultier Sedan Patrol Compact
+		{ 48, "lave_040_police_van.ee" }, // Vaultier ALEV Patrol Special
+		{ 49, "lave_041_ambulance.ee" }, // MacNamara Emergency III
+		{ 50, "lave_042_Bus.ee" }, // Pankhurst Bus Tap Tap
+		{ 51, "lave_043_Rally_Car.ee" }, // Fukuda Tournament
+		{ 52, "lave_044_Monster_Truck.ee" }, // The Vampire
+		{ 53, "lave_044_Monster_Truck_MG.ee" }, // The Vampire
+		{ 54, "lave_045_James_Bond_Car.ee" }, // Garret Paladin
+		{ 55, "lave_046_Military_buggy.ee" }, // Stinger Buggy
+		{ 56, "lave_046_Civilian_buggy.ee" }, // Stinger Buggy
+		{ 57, "lave_048_Taxi.ee" }, // Taxi
+		{ 58, "lave_050_service_vehicle.ee" }, // AVIA Airport service vehicle
+		{ 59, "lave 051 lave_051_Military_offroad_bike.ee" }, // Apache Army Model 842 
+		{ 60, "lave_052_military_6_wheel_ATV.ee" }, // Rotor industries ATRV
+		{ 61, "lave_053_Racingbike.ee" }, // Fukuda Bluebolt
+		{ 62, "lave_054_Agency_Jeep.ee" }, // GP Thunder Extreme Prototype
+		{ 63, "lave_055_Tank_3_Rocket.ee" }, // Harlan OTWV 2 TOW
+		{ 64, "lave_055_tank_AA.ee" }, // Harlan OTWV 2 AAA
+		{ 65, "lave_055_Tank_3.ee" }, // Harlan OTWV 2 CAN
+		{ 66, "lave_056_Bus_2.ee" }, // Vanderbildt Streamliner
+		{ 67, "arve_001_civilchopper" }, // Mullen H45 Dragonfly
+		{ 68, "arve_002_attack_helicopter.ee" }, // Jackson Z-19 Skreemer
+		{ 69, "arve_003_transport_helicopter.ee" }, // HH 22 Savior
+		{ 69, "arve_003_rocket_helicopter.ee" }, // HH 22 Savior
+		{ 70, "arve_005_fighter_jet.ee" }, // Rage Johnston F6 Comet
+		{ 71, "arve_006_propeller_plane.ee" }, // Huerta SPA Ocelot
+		{ 72, "arve_006_CropDuster.ee" }, // Huerta SPA Ocelot
+		{ 73, "arve_007_military_helicopter.ee" }, // Delta 5H4 Boxhead
+		{ 74, "arve_008_cargo_plane.ee" }, // Alexander AX 14
+		{ 75, "arve_009_millitary_heli_3.ee" }, // Jackson JC 2 Alamo
+		{ 76, "arve_010_learjet.ee" }, // Stirling Jet Executive
+		{ 77, "arve_012_police_helicopter.ee" }, // Huertaz PAS1 Aztek
+		{ 78, "arve_013_fighter_jet_2.ee" }, // Rage Johnston F10 Wraith
+		{ 79, "arve_014_Civilian_Plane.ee" }, // Stirling STL 3 Octavio
+		{ 80, "arve_015_Military_Heli_2.ee" }, // Fukuda MH Ronin
+		{ 81, "arve_016_large_attack_helikopter.ee" }, // Novak Walker AH 16 Hammerbolt
+		{ 82, "arve_017_presidential_plane.ee" }, // The Excelsior, El Grande
+		{ 83, "arve_018_propellerplane.ee" }, // Walker PA Twin Fin
+		{ 84, "arve_020_special_attack_heli.ee" }, // Delta MAH 15 Chimaera
+		{ 85, "arve_022_old_school_fighter.ee" }, // McKenzie Fergusson F2 Victor
+		{ 86, "arve_023_Gyrocopter.ee" }, // Whiptail Gyrocopter
+		{ 87, "arve_025_fighter_jet_3.ee" }, // Ulysses-McCoy Redcloud
+		{ 88, "seve_001_Water_Scooter.ee" }, // Shimizu Mach 2
+		{ 89, "seve_002_patrolboat_medium.ee" }, // Triton Patroller
+		{ 90, "seve_004_kittyhawk.ee" }, // Triton Hornet
+		{ 91, "seve_005_speedboat.ee" }, // Triton - G3 Taiphoon
+		{ 92, "seve_006_Yacht.ee" }, // Miami Sport Wave +
+		{ 93, "seve_007_underwater_scooter.ee" }, // Shimizu Scuba boy
+		{ 94, "seve_008_patrol_boat_large.ee" }, // Triton Broadsider
+		{ 95, "seve_008_patrol_boat_largeFGL.ee" }, // Triton Broadsider
+		{ 96, "seve_008_patrol_boatlargeBMG.ee" }, // Triton Broadsider
+		{ 97, "seve_010_water_scooter.ee" }, // Shimizu Nayad 700			
+		{ 98, "seve_011_patrolboat_medbmg_2.ee" }, // Pequod Harpoon PC 350
+		{ 99, "seve_011_patrolboat_mediumBI_2.ee" }, // Pequod Harpoon PC 350
+		{ 100, "seve_011_patrolboat_medium_2.ee" }, // Pequod Harpoon PC 350
+		{ 101, "seve_013_speedboat1.ee" }, // Viper boatworks Seaserpent III +
+		{ 102, "seve_014_speedboat_2.ee" }, // Triereme - RC Athena +
+		{ 103, "seve_014_speedboat_2MG.ee" }, // Triereme - RC Athena
+		{ 104, "seve_015_yacht2.ee" }, // Royal 500 - great white +
+		{ 105, "seve_018_sailing_boat_2.ee" }, // Bosphorus boatworks - Patna exclusive +
+		{ 106, "seve_020_zodiac.ee" }, // Jaeger 5FJ 7
+		{ 107, "seve_021_fishingboat_special.ee" }, // Fishing boat
+		{ 108, "seve_022_fishing_boat.ee" }, // Fishing boat
+		{ 109, "seve_023_speedboat_special.ee" }, // Bald Eagle Persuader agency boat at Agency 2 safehouse
 	};
 }

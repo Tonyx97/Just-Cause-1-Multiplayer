@@ -6,6 +6,7 @@
 #include <game/transform/transform.h>
 #include <game/sys/weapon_system.h>
 #include <game/object/character/character.h>
+#include <game/object/vehicle/vehicle.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/damageable_object/damageable_object.h>
 #include <game/object/rigid_object/simple_rigid_object.h>
@@ -15,6 +16,7 @@
 #include <game/object/mounted_gun/mounted_gun.h>
 #include <game/object/ladder/ladder.h>
 #include <game/object/item/item_pickup.h>
+#include <game/object/vars/exported_entities.h>
 
 namespace jc::spawn_system
 {
@@ -206,14 +208,14 @@ VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
 		map.insert<object_base_map::String>(0x7c87224d, R"(rm_respawn rm_11_release)");
 		map.insert<object_base_map::String>(0x6ea4cb25, R"(rm_11_release)");
 		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(rm_11_vehicle)");
-		map.insert<object_base_map::String>(0x8eb5aff2, R"(Exported\Vehicles\Land_Vehicles\LAVE_031_Pickup_4_BMG.ee)");
+		map.insert<object_base_map::String>(0x8eb5aff2, jc::vars::exported_entities_vehicles[7]);
 		// map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, {}); // put your matrix here
 
 		log(RED, "VehicleSpawnPoint: {:x}", ptr(*rf));
 
 		rf->init_from_map(&map);
 		rf->set_position(position);
-		rf->set_faction(VehicleSpawnPoint::BlackHand);
+		rf->set_faction(VehFaction_BlackHand);
 
 		return rf.move_to(vehicle_spawns);
 	}

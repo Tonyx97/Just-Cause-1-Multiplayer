@@ -504,6 +504,7 @@ void UI::render()
 			}
 
 			static Character* cc = nullptr;
+			static CharacterHandle* cc_h = nullptr;
 
 			if (g_key->is_key_pressed(VK_F5))
 			{
@@ -512,27 +513,51 @@ void UI::render()
 
 			if (g_key->is_key_pressed(VK_F6))
 			{
-				//if (!cc)
+				if (!cc)
 				{
-					cc = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position(), Weapon_Master_Signature_Gun)->get_character();
-					//cc->set_model(126);
+					cc_h = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position(), Weapon_Master_Signature_Gun);
+					cc = cc_h->get_character();
+					cc->set_model(126);
 				}
-				//else
+				else
 				{
 					//cc->respawn();
+					cc_h->destroy();
+					cc = nullptr;
+					cc_h = nullptr;
 				}
 
 				log(RED, "{:x}", ptr(cc));
 			}
 
-			/*if (cc)
+			if (cc)
 			{
-				auto previous_t = cc->get_transform();
+				/*auto previous_t = cc->get_transform();
 
 				previous_t.interpolate(local_transform, 0.2f, 0.05f);
 
-				cc->set_transform(previous_t);
-			}*/
+				cc->set_transform(previous_t);*/
+
+				auto v = *(vec3*)(ptr(local_player_pawn->get_skeleton()) + 0x3D8);
+				float interpolation = *(float*)(ptr(local_player_pawn->get_skeleton()) + 0x3E4);
+
+				*(float*)(ptr(cc->get_skeleton()) + 0x3E8) = 0.f;
+
+				//if (glm::length(v) > 0.f)
+				{
+					/*auto q = (quat*)(ptr(cc->get_skeleton()) + 0x3F0);
+					auto target_q = *(quat*)(ptr(local_player_pawn->get_skeleton()) + 0x3F0);
+
+					//log(CYAN, "{}", glm::length(*q - target_q));
+
+					*q = glm::slerp(*q, target_q, 0.8f);*/
+
+					*(vec3*)(ptr(cc->get_skeleton()) + 0x3D8) = glm::lerp(*(vec3*)(ptr(cc->get_skeleton()) + 0x3D8), v, 0.1f);
+
+					*(float*)(ptr(cc->get_skeleton()) + 0x3E4) = interpolation;
+				}
+				//else *(float*)(ptr(cc->get_skeleton()) + 0x3E4) = 0.f;
+			}
 		}
 	}
 	ImGui::End();
