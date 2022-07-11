@@ -64,7 +64,7 @@ Exported\Vehicles\Land_Vehicles\LAVE_042_Bus.ee  							Pankhurst Bus Tap Tap
 Exported\Vehicles\Land_Vehicles\LAVE_043_Rally_Car.ee  						Fukuda Tournament
 Exported\Vehicles\Land_Vehicles\LAVE_044_Monster_Truck.ee  					The Vampire
 Exported\Vehicles\Land_Vehicles\LAVE_044_Monster_Truck_MG.ee				The Vampire
-Exported\Vehicles\Land_Vehicles\LAVE_045_James_Bond_Car.ee 					no name? will it even spawn? 
+Exported\Vehicles\Land_Vehicles\LAVE_045_James_Bond_Car.ee 					Garret Paladin
 Exported\Vehicles\Land_Vehicles\LAVE_046_Military_buggy.ee  				Stinger Buggy
 Exported\Vehicles\Land_Vehicles\LAVE_046_Civilian_buggy.ee  				Stinger Buggy
 Exported\Vehicles\Land_Vehicles\LAVE_048_Taxi.ee  							Taxi
