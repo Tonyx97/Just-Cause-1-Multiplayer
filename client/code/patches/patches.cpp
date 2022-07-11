@@ -10,7 +10,7 @@
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
 
- jc::stl::string* __fastcall hk_play_ambience_2d_sounds(int a1, void*, jc::stl::string* a2)
+jc::stl::string* __fastcall hk_play_ambience_2d_sounds(int a1, void*, jc::stl::string* a2)
 {
 	auto res = jc::hooks::call<jc::proto::patches::ambience_2d_sounds>(a1, a2);
 
@@ -30,6 +30,16 @@ bool __fastcall hk_character__can_be_destroyed(Character* character)
 		   character->get_death_time() > 10.f;
 }
 
+namespace jc::patches
+{
+	// sets the head interpolation value to 1.0 all the time
+	// so we can set our own rotation values and avoid the engine
+	// setting its own values (we load 1.0 and jump straight to the
+	// head interpolation writing instruction)
+	//
+	patch<8> head_rotation_patch(0x64B1F4);
+}
+
 void jc::patches::apply()
 {
 	// replace 10 with 1 so the alt-tab is faster and doesn't freeze
@@ -45,6 +55,14 @@ void jc::patches::apply()
 
 	jc::protect_v(PAGE_EXECUTE_READWRITE, jc::g::patch::AVOID_WEAPON_BELT_RECREATION_WHILE_CHAR_INIT);
 
+	// apply head rotation patch
+
+	head_rotation_patch._do(
+	{
+		0xD9, 0x05, 0xB4, 0xD2, 0xAE, 0x00,	// fld dword ptr [0xAED2B4]
+		0xEB, 0x49							// jmp
+	});
+
 	// avoid weird 2d sounds
 
 	jc::hooks::hook<jc::proto::patches::ambience_2d_sounds>(&hk_play_ambience_2d_sounds);	// I think this causes crashes sometimes, we have to find a better way
@@ -53,6 +71,8 @@ void jc::patches::apply()
 
 void jc::patches::undo()
 {
+	head_rotation_patch._undo();
+
 	jc::hooks::unhook<jc::proto::patches::character_can_be_destroyed>();
 	jc::hooks::unhook<jc::proto::patches::ambience_2d_sounds>();
 }

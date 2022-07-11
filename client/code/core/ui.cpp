@@ -538,25 +538,24 @@ void UI::render()
 
 				cc->set_transform(previous_t);*/
 
-				auto v = *(vec3*)(ptr(local_player_pawn->get_skeleton()) + 0x3D8);
-				float interpolation = *(float*)(ptr(local_player_pawn->get_skeleton()) + 0x3E4);
+				static int i = 0;
 
-				*(float*)(ptr(cc->get_skeleton()) + 0x3E8) = 0.f;
-
-				//if (glm::length(v) > 0.f)
+				if (++i % 100 == 0)
 				{
-					/*auto q = (quat*)(ptr(cc->get_skeleton()) + 0x3F0);
-					auto target_q = *(quat*)(ptr(local_player_pawn->get_skeleton()) + 0x3F0);
+					log(GREEN, "Interpolating...");
 
-					//log(CYAN, "{}", glm::length(*q - target_q));
+					const auto target = local_player_pawn->get_skeleton()->get_head_euler_rotation();
+					float interpolation = local_player_pawn->get_skeleton()->get_head_interpolation();
 
-					*q = glm::slerp(*q, target_q, 0.8f);*/
-
-					*(vec3*)(ptr(cc->get_skeleton()) + 0x3D8) = glm::lerp(*(vec3*)(ptr(cc->get_skeleton()) + 0x3D8), v, 0.1f);
-
-					*(float*)(ptr(cc->get_skeleton()) + 0x3E4) = interpolation;
+					if (glm::length(target) > 0.f)
+					{
+						cc->get_skeleton()->set_head_euler_rotation(target);
+						//cc->get_skeleton()->set_head_euler_rotation(glm::lerp(cc->get_skeleton()->get_head_euler_rotation(), target, 0.5f));
+						cc->get_skeleton()->set_head_interpolation(1.f);
+					}
 				}
-				//else *(float*)(ptr(cc->get_skeleton()) + 0x3E4) = 0.f;
+
+				//*(float*)(ptr(cc->get_skeleton()) + 0x3E8) = 0.f;
 			}
 		}
 	}

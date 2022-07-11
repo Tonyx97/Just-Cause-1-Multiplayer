@@ -2,10 +2,13 @@
 
 namespace jc::skeleton
 {
-	static constexpr uint32_t BONE_LIST			= 0x260; // Bone*
-	static constexpr uint32_t TRANSFORM_LIST	= 0x294; // Transform*
-	static constexpr uint32_t SKELETON_0		= 0x2AC; // SkeletonInstance*
-	static constexpr uint32_t SKELETON_1		= 0x2B4; // SkeletonInstance*
+	static constexpr uint32_t BONE_LIST				= 0x260; // Bone*
+	static constexpr uint32_t TRANSFORM_LIST		= 0x294; // Transform*
+	static constexpr uint32_t SKELETON_0			= 0x2AC; // SkeletonInstance*
+	static constexpr uint32_t SKELETON_1			= 0x2B4; // SkeletonInstance*
+	static constexpr uint32_t HEAD_EULER_ROTATION	= 0x3D8; // vec3
+	static constexpr uint32_t HEAD_INTERPOLATION	= 0x3E4; // float
+	static constexpr uint32_t HEAD_ROTATION			= 0x3F0; // quat
 }
 
 namespace jc::skeleton_instance
@@ -69,8 +72,18 @@ private:
 	BoneList* get_bone_list();
 
 public:
+
+	void set_head_interpolation(float v);
+	void set_head_euler_rotation(const vec3& v);
+
 	bool get_bone_transform(BoneID index, Transform& out);
+
+	float get_head_interpolation() const;
 
 	SkeletonInstance* get_skeleton_0() const;
 	SkeletonInstance* get_skeleton_1() const;
+
+	vec3 get_head_euler_rotation() const;
+
+	quat get_head_rotation() const;
 };
