@@ -1,5 +1,7 @@
 #pragma once
 
+#define ARRAY_SIZE(x) sizeof(x) / sizeof(*x)
+
 namespace jc
 {
 #ifdef JC_CLIENT

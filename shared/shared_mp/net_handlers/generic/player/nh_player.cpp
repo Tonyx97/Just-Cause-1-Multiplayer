@@ -33,7 +33,8 @@ enet::PacketResult nh::player::tick_info(const enet::PacketR& p)
 
 	auto data = p.get_struct<Player::TickInfo>();
 
-	log(RED, "{} {}", data.body_stance_id, data.arms_stance_id);
+	for (int i = 0; i < data.body_stances_count; ++i)
+		log(RED, "{}", data.body_stances_id[i]);
 
 	g_net->send_broadcast_reliable(pc, PlayerPID_TickInfo, player, data);
 #endif

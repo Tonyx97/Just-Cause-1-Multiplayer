@@ -22,8 +22,19 @@ public:
 	{
 		Transform transform;
 
-		uint32_t body_stance_id = 0u,
-				 arms_stance_id = 0u;
+		uint32_t body_stances_id[4] = { 0u },
+				 arms_stances_id[4] = { 0u };
+
+		int body_stances_count = 0,
+			arms_stances_count = 0;
+
+		void clear()
+		{
+			body_stances_count = arms_stances_count = 0;
+
+			memset(body_stances_id, 0, sizeof(body_stances_id));
+			memset(arms_stances_id, 0, sizeof(arms_stances_id));
+		}
 	};
 
 private:
@@ -53,6 +64,8 @@ public:
 #endif
 	~Player();
 
+	void clear_tick_info() { tick_info.clear(); }
+
 	bool spawn() override;
 
 	const PlayerStaticInfo& get_static_info() const { return static_info; }
@@ -65,8 +78,8 @@ public:
 	void set_body_stance_id(uint32_t id);
 	void set_arms_stance_id(uint32_t id);
 
-	uint32_t get_body_stance_id() const { return tick_info.body_stance_id; }
-	uint32_t get_arms_stance_id() const { return tick_info.arms_stance_id; }
+	uint32_t get_body_stance_id(int index) const { return tick_info.body_stances_id[index]; }
+	uint32_t get_arms_stance_id(int index) const { return tick_info.arms_stances_id[index]; }
 
 	Transform get_transform() const { return tick_info.transform; }
 

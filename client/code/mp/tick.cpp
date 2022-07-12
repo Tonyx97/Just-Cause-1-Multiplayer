@@ -11,5 +11,7 @@ void jc::mp::on_tick()
 	if (auto localplayer = g_net->get_localplayer())
 	{
 		g_net->send_reliable(PlayerPID_TickInfo, localplayer->get_tick_info());
+
+		localplayer->clear_tick_info();
 	}
 }

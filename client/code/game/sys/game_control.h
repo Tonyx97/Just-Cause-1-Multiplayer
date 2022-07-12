@@ -15,8 +15,13 @@ namespace jc::game_control
 class GameControl
 {
 public:
+
+	static bool __fastcall hk_tick(void* _this);
+
 	void init();
 	void destroy();
+	void hook_tick();
+	void unhook_tick();
 
 	template <typename T, typename R = ref<T>>
 	R create_object()

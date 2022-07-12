@@ -42,8 +42,8 @@ class GameStatus;
 
 namespace jc::proto
 {
-	using game_present = prototype<int(__fastcall*)(void*), 0x4036F0, util::hash::JENKINS("Present")>;
-	using game_tick    = prototype<void(__thiscall*)(GameControl*), 0x4F51E0, util::hash::JENKINS("Tick")>;
+	using game_present = prototype<int(__fastcall*)(void*), 0x40FB70, util::hash::JENKINS("Present")>;
+	using game_tick    = prototype<bool(__thiscall*)(void*), 0x4036F0, util::hash::JENKINS("Tick")>;
 	using reset		   = vprototype<int(__stdcall*)(void*, void*), 16, util::hash::JENKINS("Reset")>;
 	using raycast	   = prototype<void*(__thiscall*)(uintptr_t, ray*, int, float, ray_hit_info*, void*, bool, bool), jc::physics::fn::RAYCAST, util::hash::JENKINS("Raycast")>;
 

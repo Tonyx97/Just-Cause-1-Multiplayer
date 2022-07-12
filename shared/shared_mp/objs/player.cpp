@@ -85,12 +85,20 @@ void Player::set_transform(const Transform& transform)
 
 void Player::set_body_stance_id(uint32_t id)
 {
-	tick_info.body_stance_id = id;
+	const auto index = tick_info.body_stances_count++;
+	
+	check(index < ARRAY_SIZE(tick_info.body_stances_id), "Invalid body stance index: {}", index);
+
+	tick_info.body_stances_id[index] = id;
 }
 
 void Player::set_arms_stance_id(uint32_t id)
 {
-	tick_info.arms_stance_id = id;
+	const auto index = tick_info.arms_stances_count++;
+
+	check(index < ARRAY_SIZE(tick_info.arms_stances_id), "Invalid arms stance index: {}", index);
+
+	tick_info.arms_stances_id[index] = id;
 }
 
 // static info getters/setters

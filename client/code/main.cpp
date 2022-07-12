@@ -121,7 +121,6 @@ void dll_thread()
 	jc::hooks::init();
 	jc::clean_dbg::init();
 	jc::patches::apply();
-	jc::hooks::hook_all();
 	jc::test_units::init();
 
 	// initialize mod systems
@@ -137,6 +136,9 @@ void dll_thread()
 
 	g_renderer->hook_present();
 	g_game_status->hook_dispatcher();
+	g_game_control->hook_tick();
+
+	jc::hooks::hook_all();
 
 	log(GREEN, "Mod initialized");
 
@@ -153,6 +155,9 @@ void dll_thread()
 
 	// unhook the present since we cleaned the ui system data
 
+	jc::hooks::unhook_all();
+
+	g_game_control->unhook_tick();
 	g_game_status->unhook_dispatcher();
 	g_renderer->unhook_present();
 
@@ -164,7 +169,6 @@ void dll_thread()
 	// uninitialize MH
 
 	jc::test_units::destroy();
-	jc::hooks::unhook_all();
 	jc::patches::undo();
 	jc::clean_dbg::destroy();
 	jc::hooks::destroy();
