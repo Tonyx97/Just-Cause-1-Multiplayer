@@ -9,6 +9,7 @@
 #include <game/object/spawn_point/spawn_point.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/character/character.h>
+#include <game/object/character/comps/stance_controller.h>
 #else
 #endif
 
@@ -52,6 +53,18 @@ Player::~Player()
 #endif
 }
 
+void Player::set_tick_info(const TickInfo& v)
+{
+	tick_info.clear();
+
+	for (int i = 0; i < v.body_stances_count; ++i) set_body_stance_id(v.body_stances_id[i]);
+	for (int i = 0; i < v.arms_stances_count; ++i) set_arms_stance_id(v.arms_stances_id[i]);
+
+	set_transform(v.transform);
+
+	log(CYAN, "tick info received from player {:x}", get_nid());
+}
+
 bool Player::spawn()
 {
 	// if it's already spawned then do nothing
@@ -90,6 +103,10 @@ void Player::set_body_stance_id(uint32_t id)
 	check(index < ARRAY_SIZE(tick_info.body_stances_id), "Invalid body stance index: {}", index);
 
 	tick_info.body_stances_id[index] = id;
+
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->get_body_stance()->set_stance(id); });
+#endif
 }
 
 void Player::set_arms_stance_id(uint32_t id)
@@ -99,6 +116,10 @@ void Player::set_arms_stance_id(uint32_t id)
 	check(index < ARRAY_SIZE(tick_info.arms_stances_id), "Invalid arms stance index: {}", index);
 
 	tick_info.arms_stances_id[index] = id;
+
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->get_arms_stance()->set_stance(id); });
+#endif
 }
 
 // static info getters/setters

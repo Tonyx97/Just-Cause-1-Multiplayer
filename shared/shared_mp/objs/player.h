@@ -65,6 +65,7 @@ public:
 	~Player();
 
 	void clear_tick_info() { tick_info.clear(); }
+	void set_tick_info(const TickInfo& v);
 
 	bool spawn() override;
 
