@@ -147,6 +147,7 @@
     <ClCompile Include="code\mp\chat\chat.cpp" />
     <ClCompile Include="code\mp\cmd\cmd.cpp" />
     <ClCompile Include="code\mp\net.cpp" />
+    <ClCompile Include="code\mp\tick.cpp" />
     <ClCompile Include="code\stl\ref.cpp" />
     <ClCompile Include="code\game\object\spawn_point\spawn_point.cpp" />
     <ClCompile Include="code\game\object\character\comps\stance_controller.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="code\mp\chat\chat.h" />
     <ClInclude Include="code\mp\cmd\cmd.h" />
     <ClInclude Include="code\mp\net.h" />
+    <ClInclude Include="code\mp\tick.h" />
     <ClInclude Include="code\stl\ref.h" />
     <ClInclude Include="code\game\object\spawn_point\spawn_point.h" />
     <ClInclude Include="code\game\object\character\comps\stance_controller.h" />

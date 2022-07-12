@@ -4,21 +4,30 @@
 
 #include "comps/skeleton.h"
 
+class Transform;
+class WeaponBelt;
+class VehicleController;
+class hkCharacterProxy;
+class BodyStanceController;
+class ArmsStanceController;
+class NPCVariant;
+
 namespace jc::character
 {
-	static constexpr uint32_t GRENADES_AMMO		 = 0x90; // int32_t
-	static constexpr uint32_t WEAPON_BELT		 = 0xD8; // WeaponBelt
-	static constexpr uint32_t SKELETON			 = 0xDC; // Skeleton
-	static constexpr uint32_t STANCE_CONTROLLER	 = 0x514; // StanceController
-	static constexpr uint32_t TRANSFORM			 = 0x5D8; // Transform
-	static constexpr uint32_t VEHICLE_CONTROLLER = 0x878; // VehicleController*
-	static constexpr uint32_t DEATH_TIME		 = 0x8E4; // float
-	static constexpr uint32_t VELOCITY			 = 0x7DC; // vec3
-	static constexpr uint32_t FLAGS				 = 0x884; // uint32_t
-	static constexpr uint32_t GRENADE_TIMEOUT	 = 0x914; // float
-	static constexpr uint32_t GRENADE_TIME		 = 0x918; // float
-	static constexpr uint32_t INFO				 = 0x924; // CharacterInfo*
-	static constexpr uint32_t ROLL_CLAMP		 = 0xA34; // float
+	static constexpr uint32_t GRENADES_AMMO				= 0x90; // int32_t
+	static constexpr uint32_t WEAPON_BELT				= 0xD8; // WeaponBelt
+	static constexpr uint32_t SKELETON					= 0xDC; // Skeleton
+	static constexpr uint32_t BODY_STANCE_CONTROLLER	= 0x514; // BodyStanceController
+	static constexpr uint32_t ARMS_STANCE_CONTROLLER	= 0x568; // ArmsStanceController
+	static constexpr uint32_t TRANSFORM					= 0x5D8; // Transform
+	static constexpr uint32_t VEHICLE_CONTROLLER		= 0x878; // VehicleController*
+	static constexpr uint32_t DEATH_TIME				= 0x8E4; // float
+	static constexpr uint32_t VELOCITY					= 0x7DC; // vec3
+	static constexpr uint32_t FLAGS						= 0x884; // uint32_t
+	static constexpr uint32_t GRENADE_TIMEOUT			= 0x914; // float
+	static constexpr uint32_t GRENADE_TIME				= 0x918; // float
+	static constexpr uint32_t INFO						= 0x924; // CharacterInfo*
+	static constexpr uint32_t ROLL_CLAMP				= 0xA34; // float
 
 	namespace fn
 	{
@@ -46,21 +55,20 @@ namespace jc::character
 
 	namespace hook
 	{
-		using set_animation_internal_t = prototype<void(__thiscall*)(void*, int*, ptr, std::string*, bool, float), 0x7915E0, util::hash::JENKINS("CharSetAnim")>;
+		namespace body_stance
+		{
+			using set_stance_t = prototype<void(__thiscall*)(BodyStanceController*, uint32_t), 0x625750, util::hash::JENKINS("BodyStance::SetStance")>;
+		}
 
-		static constexpr uint32_t SET_ANIMATION_INTERNAL = 0x7915E0;
+		namespace arms_stance
+		{
+			using set_stance_t = prototype<void(__thiscall*)(ArmsStanceController*, uint32_t), 0x744230, util::hash::JENKINS("ArmsStance::SetStance")>;
+		}
 
 		void apply();
 		void undo();
 	}
 }
-
-class Transform;
-class WeaponBelt;
-class VehicleController;
-class hkCharacterProxy;
-class StanceController;
-class NPCVariant;
 
 struct CharacterInfo
 {
@@ -119,7 +127,8 @@ public:
 
 	CharacterInfo* get_info() const;
 
-	StanceController* get_stance_controller() const;
+	BodyStanceController* get_body_stance() const;
+	ArmsStanceController* get_arms_stance() const;
 
 	vec3 get_velocity();
 	vec3 get_bone_position(BoneID index) const;

@@ -76,16 +76,21 @@ bool Player::spawn()
 
 void Player::set_transform(const Transform& transform)
 {
-	info.transform = transform;
+	tick_info.transform = transform;
 
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->set_transform(transform); });
 #endif
 }
 
-Transform Player::get_transform() const
+void Player::set_body_stance_id(uint32_t id)
 {
-	return info.transform;
+	tick_info.body_stance_id = id;
+}
+
+void Player::set_arms_stance_id(uint32_t id)
+{
+	tick_info.arms_stance_id = id;
 }
 
 // static info getters/setters

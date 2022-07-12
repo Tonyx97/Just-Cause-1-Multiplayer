@@ -22,7 +22,7 @@ jc::stl::string* __fastcall hk_play_ambience_2d_sounds(int a1, void*, jc::stl::s
 
 bool __fastcall hk_character__can_be_destroyed(Character* character)
 {
-	const auto stance_controller = character->get_stance_controller();
+	const auto stance_controller = character->get_body_stance();
 	const auto movement_id		 = stance_controller->get_movement_id();
 
 	return character->get_max_hp() <= std::numeric_limits<float>::max() &&

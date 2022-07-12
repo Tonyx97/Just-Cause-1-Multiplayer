@@ -98,6 +98,22 @@ void dll_thread()
 	g_net = JC_ALLOC(Net);
 	g_chat = JC_ALLOC(Chat);
 
+	// initialize net
+
+	log(GREEN, "Initializing NET...");
+
+#ifdef _DEBUG
+	char nick[256] = { 0 };
+
+	auto len = DWORD(256);
+
+	GetUserNameA(nick, &len);
+
+	g_net->init("192.168.0.22", nick);
+#else
+	g_net->init("192.168.0.22", "test_user");	// todojc
+#endif
+
 	// initializing MH
 
 	log(GREEN, "Initializing MH and patches...");
@@ -122,22 +138,6 @@ void dll_thread()
 	g_renderer->hook_present();
 	g_game_status->hook_dispatcher();
 
-	// initialize net
-
-	log(GREEN, "Initializing NET...");
-
-#ifdef _DEBUG
-	char nick[256] = { 0 };
-
-	auto len = DWORD(256);
-
-	GetUserNameA(nick, &len);
-
-	g_net->init("192.168.0.22", nick);
-#else
-	g_net->init("192.168.0.22", "test_user");	// todojc
-#endif
-
 	log(GREEN, "Mod initialized");
 
 	// f8 = exit key (unloads the mod only)
@@ -149,7 +149,6 @@ void dll_thread()
 
 	// wait until we disconnected and the ui is cleaned
 
-	g_net->destroy();
 	g_ui->wait_until_destruction();
 
 	// unhook the present since we cleaned the ui system data
@@ -161,6 +160,14 @@ void dll_thread()
 
 	g_explosion->destroy();
 	g_key->destroy();
+
+	// uninitialize MH
+
+	jc::test_units::destroy();
+	jc::hooks::unhook_all();
+	jc::patches::undo();
+	jc::clean_dbg::destroy();
+	jc::hooks::destroy();
 
 	// destroy game systems
 
@@ -181,13 +188,9 @@ void dll_thread()
 	g_renderer->destroy();
 	g_game_control->destroy();
 
-	// uninitialize MH
+	// destroy net after all hooks are done
 
-	jc::test_units::destroy();
-	jc::hooks::unhook_all();
-	jc::patches::undo();
-	jc::clean_dbg::destroy();
-	jc::hooks::destroy();
+	g_net->destroy();
 
 	// free mod systems
 

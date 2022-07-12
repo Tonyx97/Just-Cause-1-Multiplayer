@@ -1,6 +1,7 @@
 #include <defs/standard.h>
 
 #include "net.h"
+#include "tick.h"
 
 #include <game/sys/all.h>
 
@@ -48,13 +49,20 @@ bool Net::init(const std::string& ip, const std::string& nick)
 		return logb(RED, "Connection failed");
 	}
 
+	connected = true;
+
+	log(GREEN, "Connected");
+
 	// packet to initialize the client in the server
 
 	send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Init, nick);
 
-	log(GREEN, "Connected");
+	// make sure the net system is initialized before continuing
 
-	return (connected = true);
+	while (!is_initialized())
+		tick();
+
+	return connected;
 }
 
 void Net::disconnect()
@@ -91,6 +99,7 @@ void Net::disconnect()
 
 	remove_player_client(local);
 
+	local	  = nullptr;
 	peer	  = nullptr;
 	connected = false;
 }
@@ -176,8 +185,7 @@ void Net::setup_channels()
 		switch (auto id = p.get_id())
 		{
 		case PlayerPID_Spawn:			return nh::player::spawn(p);
-		case PlayerPID_Transform:		return nh::player::transform(p);
-		case PlayerPID_SetAnim:			return nh::player::set_anim(p);
+		case PlayerPID_TickInfo:		return nh::player::tick_info(p);
 		case DayCyclePID_SetTime:		return nh::day_cycle::dispatch(p);
 		}
 
@@ -212,8 +220,5 @@ void Net::tick()
 		}
 	});
 
-	// todojc - debug
-
-	if (auto local_char = g_world->get_localplayer_character())
-		send_reliable(PlayerPID_Transform, local_char->get_transform());
+	jc::mp::on_tick();
 }

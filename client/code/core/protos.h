@@ -42,7 +42,7 @@ class GameStatus;
 
 namespace jc::proto
 {
-	using game_present = prototype<int(__fastcall*)(void*), 0x40FB70, util::hash::JENKINS("Present")>;
+	using game_present = prototype<int(__fastcall*)(void*), 0x4036F0, util::hash::JENKINS("Present")>;
 	using game_tick    = prototype<void(__thiscall*)(GameControl*), 0x4F51E0, util::hash::JENKINS("Tick")>;
 	using reset		   = vprototype<int(__stdcall*)(void*, void*), 16, util::hash::JENKINS("Reset")>;
 	using raycast	   = prototype<void*(__thiscall*)(uintptr_t, ray*, int, float, ray_hit_info*, void*, bool, bool), jc::physics::fn::RAYCAST, util::hash::JENKINS("Raycast")>;
@@ -78,8 +78,8 @@ namespace jc::proto
 			
 		}
 
-		using test = prototype<bool(__thiscall*)(int a1, int a2, mat4* a3), 0x782AC0, util::hash::JENKINS("test")>;
-		using test2	= prototype<int(__thiscall*)(int, std::string*), 0x5C0CE0, util::hash::JENKINS("test2")>;
+		using test = prototype<void(__thiscall*)(ptr a1, int id), 0x625750, util::hash::JENKINS("test")>;
+		using test2	= prototype<void(__thiscall*)(ptr a1, int id), 0x744230, util::hash::JENKINS("test2")>;
 		// using test3 = prototype<int(__cdecl*)(int, ptr, ptr*, ptr*, std::string*), 0x987D20, utils::hash::JENKINS("test3")>;
 		//  using LoadAsset = prototype<int(__thiscall*)(int, std::string*, int, const char*, int), 0x5C2DC0, utils::hash::JENKINS("test")>;
 		//  using LoadModel = prototype<int(__thiscall*)(int, std::string*, Transform*, bool, bool, int), 0x57AF60, utils::hash::JENKINS("test")>;

@@ -16,18 +16,25 @@ struct PlayerStaticInfo
 
 class Player : public NetObject
 {
-private:
+public:
 
-	struct Info
+	struct TickInfo : public PacketBase
 	{
 		Transform transform;
-	} info {};
+
+		uint32_t body_stance_id = 0u,
+				 arms_stance_id = 0u;
+	};
+
+private:
 
 	CharacterHandle* handle = nullptr;
 
 	PlayerStaticInfo static_info {};
 
 	PlayerClient* client = nullptr;
+
+	TickInfo tick_info {};
 
 public:
 
@@ -52,11 +59,16 @@ public:
 
 	PlayerClient* get_client() const { return client; }
 
-	// info getters/setters
+	// tick info getters/setters
 
 	void set_transform(const Transform& transform);
+	void set_body_stance_id(uint32_t id);
+	void set_arms_stance_id(uint32_t id);
 
-	Transform get_transform() const;
+	uint32_t get_body_stance_id() const { return tick_info.body_stance_id; }
+	uint32_t get_arms_stance_id() const { return tick_info.arms_stance_id; }
+
+	Transform get_transform() const { return tick_info.transform; }
 
 	// static info getters/setters
 
@@ -66,4 +78,6 @@ public:
 	uint32_t get_skin() const;
 
 	const std::string& get_nick() const { return static_info.nick; }
+
+	const TickInfo& get_tick_info() const { return tick_info; }
 };

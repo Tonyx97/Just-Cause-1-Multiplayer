@@ -38,8 +38,8 @@ using namespace jc::spawn_system::v;
 
 void SpawnSystem::init()
 {
-	set_max_character_spawns(0);
-	set_max_vehicle_spawns(0);
+	//set_max_character_spawns(0);
+	//set_max_vehicle_spawns(0);
 }
 
 void SpawnSystem::destroy()
@@ -209,7 +209,7 @@ VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
 		map.insert<object_base_map::String>(0x6ea4cb25, R"(rm_11_release)");
 		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(rm_11_vehicle)");
 		map.insert<object_base_map::String>(0x8eb5aff2, jc::vars::exported_entities_vehicles[7]);
-		// map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, {}); // put your matrix here
+		// map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, {});
 
 		log(RED, "VehicleSpawnPoint: {:x}", ptr(*rf));
 

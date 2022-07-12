@@ -76,8 +76,7 @@ void Net::setup_channels()
 		switch (auto id = p.get_id())
 		{
 		case PlayerPID_Spawn:			return nh::player::spawn(p);
-		case PlayerPID_Transform:		return nh::player::transform(p);
-		case PlayerPID_SetAnim:			return nh::player::set_anim(p);
+		case PlayerPID_TickInfo:		return nh::player::tick_info(p);
 		}
 
 		return enet::PacketRes_NotFound;

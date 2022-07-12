@@ -2,11 +2,13 @@
 
 #include "keycode.h"
 #include "ui.h"
+#include "test_units.h"
 
 #include <game/sys/all.h>
 
 #include <game/transform/transform.h>
 #include <game/object/character/character.h>
+#include <game/object/character/comps/stance_controller.h>
 #include <game/object/character/comps/vehicle_controller.h>
 #include <game/object/camera/camera.h>
 #include <game/object/weapon/bullet.h>
@@ -503,7 +505,6 @@ void UI::render()
 				ImGui::Text("Scale: %.2f %.2f %.2f", ls.x, ls.y, ls.z);
 			}
 
-			static Character* cc = nullptr;
 			static CharacterHandle* cc_h = nullptr;
 
 			if (g_key->is_key_pressed(VK_F5))
@@ -513,46 +514,42 @@ void UI::render()
 
 			if (g_key->is_key_pressed(VK_F6))
 			{
-				if (!cc)
+				if (!g_test_char)
 				{
-					cc_h = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position(), Weapon_Master_Signature_Gun);
-					cc = cc_h->get_character();
-					cc->set_model(126);
+					cc_h = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position(), Weapon_None);
+					g_test_char = cc_h->get_character();
+					g_test_char->set_model(126);
 				}
 				else
 				{
 					//cc->respawn();
 					cc_h->destroy();
-					cc = nullptr;
 					cc_h = nullptr;
+					g_test_char = nullptr;
 				}
 
-				log(RED, "{:x}", ptr(cc));
+				log(RED, "{:x}", ptr(g_test_char));
 			}
 
-			if (cc)
+			if (g_test_char && g_test_char->is_alive())
 			{
-				/*auto previous_t = cc->get_transform();
+				// interpolate main transform
+
+				auto previous_t = g_test_char->get_transform();
+
+				local_transform.translate(vec3(2.f, 0.f, 0.f));
 
 				previous_t.interpolate(local_transform, 0.2f, 0.05f);
 
-				cc->set_transform(previous_t);*/
+				g_test_char->set_transform(previous_t);
 
-				static int i = 0;
+				// interpolate head rotation
 
-				if (++i % 100 == 0)
+				const auto target = local_player_pawn->get_skeleton()->get_head_euler_rotation();
+
+				if (glm::length(target) > 0.f)
 				{
-					log(GREEN, "Interpolating...");
-
-					const auto target = local_player_pawn->get_skeleton()->get_head_euler_rotation();
-					float interpolation = local_player_pawn->get_skeleton()->get_head_interpolation();
-
-					if (glm::length(target) > 0.f)
-					{
-						cc->get_skeleton()->set_head_euler_rotation(target);
-						//cc->get_skeleton()->set_head_euler_rotation(glm::lerp(cc->get_skeleton()->get_head_euler_rotation(), target, 0.5f));
-						cc->get_skeleton()->set_head_interpolation(1.f);
-					}
+					g_test_char->get_skeleton()->set_head_euler_rotation(target);
 				}
 			}
 		}

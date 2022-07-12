@@ -10,9 +10,28 @@ namespace jc::stance_controller
 	}
 }
 
+class Character;
+
 class StanceController
 {
+private:
 public:
 
 	int get_movement_id() const;
+};
+
+class BodyStanceController : public StanceController
+{
+private:
+public:
+
+	Character* get_character() const;
+};
+
+class ArmsStanceController : public StanceController
+{
+private:
+public:
+
+	Character* get_character() const;
 };

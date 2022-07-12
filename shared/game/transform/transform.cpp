@@ -43,6 +43,11 @@ void Transform::interpolate(const Transform& transform, float tf, float rf, floa
 	compose(interpolated_t, interpolated_r, interpolated_s);
 }
 
+void Transform::translate(const vec3& v)
+{
+	m = glm::translate(m, v);
+}
+
 vec3 Transform::right()
 {
 	return m[0];

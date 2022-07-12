@@ -7,3 +7,5 @@ namespace jc::test_units
 	void destroy();
 	void test_0();
 }
+
+inline class Character* g_test_char = nullptr;

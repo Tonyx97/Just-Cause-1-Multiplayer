@@ -20,24 +20,23 @@ enet::PacketResult nh::player::spawn(const enet::PacketR& p)
 	return enet::PacketRes_Ok;
 }
 
-enet::PacketResult nh::player::transform(const enet::PacketR& p)
+enet::PacketResult nh::player::tick_info(const enet::PacketR& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
-		player->set_transform(p.get_struct<Transform>());
+	{
+		//player->set_transform(p.get_struct<Player::TickInfo>());
+	}
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
 
-	//player->set_transform();
+	auto data = p.get_struct<Player::TickInfo>();
 
-	g_net->send_broadcast_reliable(pc, PlayerPID_Transform, player, p.get_struct<Transform>());
+	log(RED, "{} {}", data.body_stance_id, data.arms_stance_id);
+
+	g_net->send_broadcast_reliable(pc, PlayerPID_TickInfo, player, data);
 #endif
 
-	return enet::PacketRes_Ok;
-}
-
-enet::PacketResult nh::player::set_anim(const enet::PacketR& p)
-{
 	return enet::PacketRes_Ok;
 }

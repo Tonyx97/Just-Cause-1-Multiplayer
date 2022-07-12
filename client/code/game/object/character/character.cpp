@@ -23,27 +23,40 @@
 
 namespace jc::character::hook
 {
-	void __fastcall set_animation_internal(void* a1, void*, int* a2, ptr a3, std::string* a4, bool a5, float a6)
+	namespace body_stance
 	{
-		if (const auto localplayer = g_world->get_localplayer_character())
-			if (const auto skl = localplayer->get_skeleton())
-				if (skl->get_skeleton_0()->get_animator() == a1 ||
-					skl->get_skeleton_1()->get_animator() == a1)
-				{
-					//g_net->send_reliable(PlayerPID_SetAnim, *a4);
-				}
+		void __fastcall set_stance(BodyStanceController* body_stance, void*, uint32_t id)
+		{
+			if (const auto local_char = g_world->get_localplayer_character())
+				if (const auto local_body_stance = local_char->get_body_stance(); local_body_stance == body_stance)
+					g_net->get_localplayer()->set_body_stance_id(id);
 
-		return jc::hooks::call<jc::character::hook::set_animation_internal_t>(a1, a2, a3, a4, a5, a6);
+			jc::hooks::call<set_stance_t>(body_stance, id);
+		}
+	}
+
+	namespace arms_stance
+	{
+		void __fastcall set_stance(ArmsStanceController* arms_stance, void*, uint32_t id)
+		{
+			if (const auto local_char = g_world->get_localplayer_character())
+				if (const auto local_arms_stance = local_char->get_arms_stance(); local_arms_stance == arms_stance)
+					g_net->get_localplayer()->set_arms_stance_id(id);
+
+			jc::hooks::call<set_stance_t>(arms_stance, id);
+		}
 	}
 
 	void apply()
 	{
-		jc::hooks::hook<set_animation_internal_t>(&set_animation_internal);
+		jc::hooks::hook<body_stance::set_stance_t>(&body_stance::set_stance);
+		jc::hooks::hook<arms_stance::set_stance_t>(&arms_stance::set_stance);
 	}
 
 	void undo()
 	{
-		jc::hooks::unhook<set_animation_internal_t>();
+		jc::hooks::unhook<arms_stance::set_stance_t>();
+		jc::hooks::unhook<body_stance::set_stance_t>();
 	}
 }
 
@@ -214,9 +227,14 @@ CharacterInfo* Character::get_info() const
 	return REF(CharacterInfo*, this, jc::character::INFO);
 }
 
-StanceController* Character::get_stance_controller() const
+BodyStanceController* Character::get_body_stance() const
 {
-	return REF(StanceController*, this, jc::character::STANCE_CONTROLLER);
+	return REF(BodyStanceController*, this, jc::character::BODY_STANCE_CONTROLLER);
+}
+
+ArmsStanceController* Character::get_arms_stance() const
+{
+	return REF(ArmsStanceController*, this, jc::character::ARMS_STANCE_CONTROLLER);
 }
 
 vec3 Character::get_velocity()

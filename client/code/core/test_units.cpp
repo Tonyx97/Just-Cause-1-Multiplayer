@@ -26,21 +26,27 @@
 00497BE1 - C7 41 20 04000000 - mov [ecx+20],00000004
 */
 
-bool __fastcall hk_test(int a1, void*, int a2, mat4* a3)
+void __fastcall hk_test(ptr a1, void*, int id)
 {
-	auto res = jc::hooks::call<jc::proto::dbg::test>(a1, a2, a3);
+	if (g_world && g_world->get_localplayer_character() && a1 == ptr(g_world->get_localplayer_character()->get_body_stance()))
+	{
+		if (g_test_char)
+			jc::hooks::call<jc::proto::dbg::test>(ptr(g_test_char->get_body_stance()), id);
 
-	log(RED, "nice {:x} {:x}", a1, a2);
-	
-	return res;
+		log(RED, "id {:x}", id);
+	}
+
+	jc::hooks::call<jc::proto::dbg::test>(a1, id);
 }
 
-int __fastcall hk_test2(int m, void*, std::string* str)
+void __fastcall hk_test2(ptr a1, void*, int id)
 {
-	if (str)
-		log(RED, "Requested '{}'", str->c_str());
+	if (g_test_char && g_world && g_world->get_localplayer_character() && a1 == ptr(g_world->get_localplayer_character()->get_arms_stance()))
+	{
+		jc::hooks::call<jc::proto::dbg::test2>(ptr(g_test_char->get_arms_stance()), id);
+	}
 
-	return jc::hooks::call<jc::proto::dbg::test2>(m, str);
+	jc::hooks::call<jc::proto::dbg::test2>(a1, id);
 }
 
 void jc::test_units::init()
