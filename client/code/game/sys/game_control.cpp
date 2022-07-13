@@ -18,64 +18,67 @@ bool __fastcall GameControl::hk_tick(void* _this)
 	const auto res = jc::hooks::call<jc::proto::game_tick>(_this);
 
 	{
-		auto local_player_pawn = g_world->get_localplayer_character();
-
-		static CharacterHandle* cc_h = nullptr;
-
-		if (g_key->is_key_pressed(VK_F5))
+		if (auto local_player_pawn = g_world->get_localplayer_character())
 		{
-			local_player_pawn->respawn();
-		}
+			auto local_transform = local_player_pawn->get_transform();
 
-		if (g_key->is_key_pressed(VK_F6))
-		{
-			if (!g_test_char)
+			static CharacterHandle* cc_h = nullptr;
+
+			if (g_key->is_key_pressed(VK_F5))
 			{
-				cc_h = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position());
-				g_test_char = cc_h->get_character();
-				g_test_char->set_model(126);
-				g_test_char->set_invincible(true);
-			}
-			else
-			{
-				//cc->respawn();
-				cc_h->destroy();
-				cc_h = nullptr;
-				g_test_char = nullptr;
+				local_player_pawn->respawn();
 			}
 
-			log(RED, "{:x}", ptr(g_test_char));
-		}
-
-		if (g_test_char && g_test_char->is_alive())
-		{
-			// interpolate main transform
-
-			/*auto previous_t = g_test_char->get_transform();
-
-			local_transform.translate(vec3(2.f, 0.f, 0.f));
-
-			previous_t.interpolate(local_transform, 0.2f, 0.05f);
-
-			g_test_char->set_transform(previous_t);*/
-
-			vec3 vel = {};
-
-			// interpolate head rotation
-
-			const auto target = local_player_pawn->get_skeleton()->get_head_euler_rotation();
-
-			if (glm::length(target) > 0.f)
+			if (g_key->is_key_pressed(VK_F6))
 			{
-				g_test_char->get_skeleton()->set_head_euler_rotation(target);
+				if (!g_test_char)
+				{
+					cc_h = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position());
+					g_test_char = cc_h->get_character();
+					g_test_char->set_model(126);
+					g_test_char->set_invincible(true);
+				}
+				else
+				{
+					//cc->respawn();
+					cc_h->destroy();
+					cc_h = nullptr;
+					g_test_char = nullptr;
+				}
+
+				log(RED, "{:x}", ptr(g_test_char));
 			}
 
-			if (g_key->is_key_down(VK_NEXT))
+			if (g_test_char && g_test_char->is_alive())
 			{
-				static int i = 0;
+				// interpolate main transform
 
-				//if (++i % 10 == 0)
-					jc::this_call(0x5A45D0, g_test_char, 0.f, 0.f, 1.f, true);
+				auto previous_t = g_test_char->get_transform();
+
+				local_transform.translate(vec3(0.f, 0.f, 2.f));
+
+				previous_t.interpolate(local_transform, 0.2f, 0.05f);
+
+				g_test_char->set_transform(previous_t);
+
+				vec3 vel = {};
+
+				// interpolate head rotation
+
+				const auto target = local_player_pawn->get_skeleton()->get_head_euler_rotation();
+
+				if (glm::length(target) > 0.f)
+				{
+					g_test_char->get_skeleton()->set_head_euler_rotation(target);
+				}
+
+				/*if (g_key->is_key_down(VK_NEXT))
+				{
+					static int i = 0;
+
+					//if (++i % 10 == 0)
+						jc::this_call(0x5A45D0, g_test_char, 0.f, 0.f, 1.f, true);
+				}*/
 			}
 		}
 	}

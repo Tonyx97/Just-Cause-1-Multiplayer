@@ -9,19 +9,6 @@
 namespace enet
 {
 	channel_dispatch_t channel_fns[ChannelID_Max] = { nullptr };
-
-	void PacketR::get_data(void* out, size_t out_size) const
-	{
-		memcpy(out, data + std::exchange(offset, offset + out_size), out_size);
-	}
-
-	NetObject* PacketR::get_net_object_impl() const
-    {
-		const auto nid = get_uint();
-		const auto type = get_uint();
-
-		return g_net->get_net_object_by_nid(nid);
-    }
 }
 
 #ifdef JC_CLIENT
@@ -56,7 +43,7 @@ void enet::call_channel_dispatcher(const ENetEvent& e)
 
 	check(channel >= 0 && channel < ChannelID_Max, "Invalid channel ID");
 
-	PacketR p(e);
+	Packet p(e);
 
 	switch (channel_fns[channel](p))
 	{

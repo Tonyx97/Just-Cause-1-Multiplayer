@@ -17,12 +17,8 @@ private:
 	bool timed_out = false;
 
 	template <typename... A>
-	inline void send_impl(uint8_t channel, uint32_t id, uint32_t flags, const A&... args)
+	inline void send_impl(uint8_t channel, const std::vector<uint8_t>& data, uint32_t flags = ENET_PACKET_FLAG_RELIABLE)
 	{
-		vec<uint8_t> data;
-
-		enet::serialize(data, 1u, id);
-		enet::serialize_params(data, 1u, args...);
 		enet::send_packet(peer, data.data(), data.size(), flags, channel);
 	}
 #endif
@@ -55,20 +51,26 @@ public:
 	const std::string& get_nick() const;
 
 #ifdef JC_SERVER
+	template <typename T>
+	inline void send_reliable(const T& packet)
+	{
+		send_impl(T::CHANNEL, packet.serialize());
+	}
+
+	inline void send(uint8_t channel, const PacketHolder& p)
+	{
+		enet::send_packet(peer, channel, p);
+	}
+
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_reliable(uint32_t id, const A&... args)
 	{
-		send_impl(channel, id, ENET_PACKET_FLAG_RELIABLE, args...);
-	}
+		vec<uint8_t> data;
 
-	template <uint8_t channel = ChannelID_Generic>
-	inline void send(enet::PacketW& p, bool make_ready = true)
-	{
-		if (make_ready)
-			p.ready();
+		enet::serialize_params(data, id, args...);
 
-		enet::send_packet(peer, p.get_packet(), channel);
-	}
+		send_impl(channel, data);
+}
 
 	void set_timed_out() { timed_out = true; }
 
@@ -81,5 +83,3 @@ public:
 #define AS_PC(pc)							BITCAST(PlayerClient*, pc)
 #define CREATE_PLAYER_CLIENT(nid_or_peer)	JC_ALLOC(PlayerClient, nid_or_peer)
 #define DESTROY_PLAYER_CLIENT(pc)			JC_FREE(pc)
-#define DESERIALIZE_NID_AND_TYPE(p)			const auto nid = p.get_uint(); \
-											const auto type = p.get_uint()

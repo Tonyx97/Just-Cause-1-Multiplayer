@@ -6,7 +6,7 @@
 #include <game/sys/day_cycle.h>
 #endif
 
-enet::PacketResult nh::day_cycle::dispatch(const enet::PacketR& p)
+enet::PacketResult nh::day_cycle::dispatch(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	g_day_cycle->set_time(p.get_float());

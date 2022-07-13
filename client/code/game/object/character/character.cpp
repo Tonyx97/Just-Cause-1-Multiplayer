@@ -28,79 +28,30 @@ namespace jc::character::hook
 {
 	namespace body_stance
 	{
-		void __fastcall set_stance(BodyStanceController* body_stance, void*, uint32_t id)
+		void __fastcall set_stance(Character* character, void*, float angle, float right, float forward, bool aiming)
 		{
 			if (const auto local_char = g_world->get_localplayer_character())
-				if (const auto local_body_stance = local_char->get_body_stance(); local_body_stance == body_stance)
+				if (character == local_char)
 				{
-					const auto localplayer = g_net->get_localplayer();
+					//const auto localplayer = g_net->get_localplayer();
 
-					//if (g_test_char)
-					//	g_test_char->get_body_stance()->set_stance(id);
+					//log(RED, "{} {} {} {}", angle, right, forward, aiming);
 
-					if (localplayer->get_body_stance_id() != id)
-					{
-						localplayer->set_body_stance_id(id);
-
-						g_net->send_reliable(PlayerPID_Stance, true, id);
-					}
+					if (g_test_char)
+						jc::hooks::call<set_stance_t>(g_test_char, angle, right, forward, aiming);
 				}
-				/*else
-				{
-					if (const auto character = body_stance->get_character())
-						if (g_net->get_player_by_character(character))
-						{
-							log(RED, "ignoring 1");
-							return;
-						}
-				}*/
 
-			jc::hooks::call<set_stance_t>(body_stance, id);
-		}
-	}
-
-	namespace arms_stance
-	{
-		void __fastcall set_stance(ArmsStanceController* arms_stance, void*, uint32_t id)
-		{
-			if (const auto local_char = g_world->get_localplayer_character())
-				if (const auto local_arms_stance = local_char->get_arms_stance(); local_arms_stance == arms_stance)
-				{
-					const auto localplayer = g_net->get_localplayer();
-
-					//if (g_test_char)
-					//	g_test_char->get_arms_stance()->set_stance(id);
-
-					if (localplayer->get_arms_stance_id() != id)
-					{
-						localplayer->set_arms_stance_id(id);
-
-						g_net->send_reliable(PlayerPID_Stance, false, id);
-					}
-				}
-				/*else
-				{
-					if (const auto character = arms_stance->get_character())
-						if (g_net->get_player_by_character(character))
-						{
-							log(RED, "ignoring 2");
-							return;
-						}
-				}*/
-
-			jc::hooks::call<set_stance_t>(arms_stance, id);
+			jc::hooks::call<set_stance_t>(character, angle, right, forward, aiming);
 		}
 	}
 
 	void apply()
 	{
 		jc::hooks::hook<body_stance::set_stance_t>(&body_stance::set_stance);
-		jc::hooks::hook<arms_stance::set_stance_t>(&arms_stance::set_stance);
 	}
 
 	void undo()
 	{
-		jc::hooks::unhook<arms_stance::set_stance_t>();
 		jc::hooks::unhook<body_stance::set_stance_t>();
 	}
 }

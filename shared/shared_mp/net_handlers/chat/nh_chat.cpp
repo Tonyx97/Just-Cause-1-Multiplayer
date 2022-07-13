@@ -10,7 +10,7 @@
 #include <mp/chat/chat.h>
 #endif
 
-enet::PacketResult nh::chat::msg(const enet::PacketR& p)
+enet::PacketResult nh::chat::msg(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
@@ -18,7 +18,7 @@ enet::PacketResult nh::chat::msg(const enet::PacketR& p)
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
-	const auto msg = p.get_str<std::string>();
+	const auto msg = p.get_str();
 
 	g_net->send_broadcast_reliable<ChannelID_Chat>(ChatPID_Msg, player, msg);
 

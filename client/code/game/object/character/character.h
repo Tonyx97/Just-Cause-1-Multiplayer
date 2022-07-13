@@ -57,12 +57,7 @@ namespace jc::character
 	{
 		namespace body_stance
 		{
-			using set_stance_t = prototype<void(__thiscall*)(BodyStanceController*, uint32_t), 0x625750, util::hash::JENKINS("BodyStance::SetStance")>;
-		}
-
-		namespace arms_stance
-		{
-			using set_stance_t = prototype<void(__thiscall*)(ArmsStanceController*, uint32_t), 0x744230, util::hash::JENKINS("ArmsStance::SetStance")>;
+			using set_stance_t = prototype<void(__thiscall*)(Character*, float, float, float, bool), 0x5A45D0, util::hash::JENKINS("BodyStance::SetStance")>;
 		}
 
 		void apply();

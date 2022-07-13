@@ -6,7 +6,7 @@
 
 #include <shared_mp/player_client/player_client.h>
 
-enet::PacketResult nh::player_client::init(const enet::PacketR& p)
+enet::PacketResult nh::player_client::init(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	g_net->add_local(p.get_uint());
@@ -30,7 +30,7 @@ enet::PacketResult nh::player_client::init(const enet::PacketR& p)
 	return enet::PacketRes_Ok;
 }
 
-enet::PacketResult nh::player_client::join(const enet::PacketR& p)
+enet::PacketResult nh::player_client::join(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
@@ -47,7 +47,7 @@ enet::PacketResult nh::player_client::join(const enet::PacketR& p)
 	return enet::PacketRes_Ok;
 }
 
-enet::PacketResult nh::player_client::quit(const enet::PacketR& p)
+enet::PacketResult nh::player_client::quit(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
@@ -66,17 +66,17 @@ enet::PacketResult nh::player_client::quit(const enet::PacketR& p)
 	return enet::PacketRes_BadArgs;
 }
 
-enet::PacketResult nh::player_client::sync_instances(const enet::PacketR& p)
+enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
-	const auto count = p.get_int();
 	const auto localplayer = g_net->get_localplayer();
+	const auto info = p.get<PlayerClientSyncInstancesPacket>();
 
-	log(YELLOW, "Syncing {} player instances...", count);
+	log(YELLOW, "Syncing {} player instances...", info.net_objects.size());
 
-	for (int i = 0; i < count; ++i)
+	for (const auto& [nid, type] : info.net_objects)
 	{
-		DESERIALIZE_NID_AND_TYPE(p);
+		check(type == NetObject_Player, "Type must be NetObject_Player");
 
 		// we skip the sync of this net object if:
 		// 
@@ -86,38 +86,33 @@ enet::PacketResult nh::player_client::sync_instances(const enet::PacketR& p)
 		// 2. instance already exists then we skip this
 		// current net object
 
-		const bool skip = localplayer->equal(nid) ||
-						  g_net->get_net_object_by_nid(nid);
+		if (localplayer->equal(nid) || g_net->get_net_object_by_nid(nid))
+			continue;
 
-		check(type == NetObject_Player, "Type must be NetObject_Player");
+		const auto new_pc = g_net->add_player_client(nid);
 
-		if (skip)
-			p.skip<PacketCheck_PlayerStaticInfo>();
-		else
-		{
-			const auto new_pc = g_net->add_player_client(nid);
+		::check(new_pc, "Could not create new player");
 
-			::check(new_pc, "Could not create new player");
+		const auto player = new_pc->get_player();
 
-			const auto player = new_pc->get_player();
-			const auto info = p.get_struct<PacketCheck_PlayerStaticInfo>();
+		player->spawn();
 
-			player->set_nick(*info.nick);
-			player->set_skin(info.skin);
-			player->spawn();
+		/*const auto info = p.get_struct<PacketCheck_PlayerStaticInfo>();
 
-			log(PURPLE, "Created new player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
-		}
+		player->set_nick(*info.nick);
+		player->set_skin(info.skin);*/
+
+		log(PURPLE, "Created new player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
 	}
 
-	log(YELLOW, "All player instances synced (a total of {})", count);
+	log(YELLOW, "All player instances synced (a total of {})", info.net_objects.size());
 #elif defined(JC_SERVER)
 #endif
 
 	return enet::PacketRes_Ok;
 }
 
-enet::PacketResult nh::player_client::nick(const enet::PacketR& p)
+enet::PacketResult nh::player_client::nick(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
@@ -131,7 +126,7 @@ enet::PacketResult nh::player_client::nick(const enet::PacketR& p)
 		return enet::PacketRes_Ok;
 	}
 #else
-	const auto nick = p.get_str<std::string>();
+	const auto nick = p.get_str();
 	const auto pc = p.get_pc();
 
 	pc->set_nick(nick);

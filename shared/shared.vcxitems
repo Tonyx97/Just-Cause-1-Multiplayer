@@ -37,20 +37,19 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\object_lists.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\objs\player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\packets\all.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\packets\base.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\packets\check\check.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\packets\player_client.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\player_client\player_client.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)timer\timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)game\transform\transform.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)net\interface.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)net\serializer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\chat\nh_chat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\generic\day_cycle\nh_day_cycle.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\generic\player\nh_player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\player_client\nh_player_client.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\objs\net_object.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)net\serializer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\object_lists.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\objs\player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\player_client\player_client.cpp" />

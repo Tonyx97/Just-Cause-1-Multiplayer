@@ -1,7 +1,5 @@
 #pragma once
 
-#include <shared_mp/packets/all.h>
-
 // network id of an object
 //
 using NID = uint32_t;

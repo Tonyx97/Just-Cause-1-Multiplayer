@@ -18,12 +18,12 @@ class Player : public NetObject
 {
 public:
 
-	struct TickInfo : public PacketBase
+	struct TickInfo
 	{
 		Transform transform;
 	};
 
-	struct DynamicInfo : public PacketBase
+	struct DynamicInfo
 	{
 		uint32_t body_stance_id = 0u,
 				 arms_stance_id = 0u;

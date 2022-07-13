@@ -1,8 +1,6 @@
 #pragma once
 
-#include <shared_mp/packets/base.h>
-
-class Transform : public PacketBase
+class Transform
 {
 private:
 	mat4 m;

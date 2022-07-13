@@ -2,8 +2,12 @@
 
 #include "serializer.h"
 
-void enet::serialize_net_object(vec<uint8_t>& buffer, size_t at, NetObject* v)
+#include <mp/net.h>
+
+NetObject* enet::deserialize_net_object(std::vector<uint8_t>& data)
 {
-	serialize(buffer, at, v->get_nid());
-	serialize(buffer, at, v->get_type());
+	const auto nid = deserialize_int(data);
+	const auto type = deserialize_int(data);
+
+	return g_net->get_net_object_by_nid(nid);
 }

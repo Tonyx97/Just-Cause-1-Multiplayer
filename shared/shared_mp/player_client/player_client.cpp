@@ -56,9 +56,7 @@ void PlayerClient::set_joined(bool v)
 #else
 	if (joined)
 	{
-		enet::PacketW p(PlayerClientPID_SyncInstances);
-
-		int count = 0;
+		PlayerClientSyncInstancesPacket p;
 
 		g_net->for_each_net_object([&](NID, NetObject* obj)
 		{
@@ -68,30 +66,23 @@ void PlayerClient::set_joined(bool v)
 				{
 					const auto& static_info = casted_player->get_static_info();
 
-					PacketCheck_PlayerStaticInfo info;
+					/*PacketCheck_PlayerStaticInfo info;
 
 					info.nick = static_info.nick;
-					info.skin = static_info.skin;
+					info.skin = static_info.skin;*/
 
-					p.add(obj);
-					p.add(info);
-
-					++count;
+					p.net_objects.push_back(obj);
 
 					log(PURPLE, "Syncing player with NID {:x} ({})", casted_player->get_nid(), casted_player->get_nick());
 				}
 			}
 			else
 			{
-				p.add(obj);
-
-				++count;
+				p.net_objects.push_back(obj);
 
 				log(PURPLE, "Syncing net object with NID {:x}", obj->get_nid());
 			}
 		});
-
-		p.add_begin(count);
 
 		// send all net object main info to all players who joined to sync instances
 		// this creates and spawns the players that are not in other players'
@@ -99,7 +90,7 @@ void PlayerClient::set_joined(bool v)
 		// the other players who already joined and it will also create those players for
 		// this player
 
-		g_net->send_broadcast_joined_reliable<ChannelID_PlayerClient>(p);
+		g_net->send_broadcast_joined_reliable(p);
 
 		// let the other players know this player joined
 

@@ -44,7 +44,7 @@ void Net::setup_channels()
 {
 	// player client dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const enet::PacketR& p)
+	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const enet::Packet& p)
 	{
 		switch (auto id = p.get_id())
 		{
@@ -59,7 +59,7 @@ void Net::setup_channels()
 
 	// chat dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_Chat, [&](const enet::PacketR& p)
+	enet::add_channel_dispatcher(ChannelID_Chat, [&](const enet::Packet& p)
 	{
 		switch (auto id = p.get_id())
 		{
@@ -71,12 +71,13 @@ void Net::setup_channels()
 
 	// generic packet dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::PacketR& p)
+	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::Packet& p)
 	{
 		switch (auto id = p.get_id())
 		{
 		case PlayerPID_Spawn:			return nh::player::spawn(p);
 		case PlayerPID_TickInfo:		return nh::player::tick_info(p);
+		case PlayerPID_DynamicInfo:		return nh::player::dynamic_info(p);
 		case PlayerPID_Stance:			return nh::player::stance(p);
 		}
 
@@ -135,6 +136,6 @@ void Net::send_global_packets()
 
 		//test += 0.05f;
 
-		g_net->send_broadcast_reliable(DayCyclePID_SetTime, test);
+		//g_net->send_broadcast_reliable(DayCyclePID_SetTime, test);
 	});
 }

@@ -7,6 +7,24 @@ class Net : public ObjectLists
 private:
 	ENetHost* sv = nullptr;
 
+	inline void send_broadcast_reliable(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc = nullptr)
+	{
+		for_each_player_client([&](NID, PlayerClient* pc)
+		{
+			if (pc != ignore_pc)
+				pc->send(channel, p);
+		});
+	}
+
+	inline void send_broadcast_joined_reliable(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc = nullptr)
+	{
+		for_each_joined_player_client([&](NID, PlayerClient* pc)
+		{
+			if (pc != ignore_pc)
+				pc->send(channel, p);
+		});
+	}
+
 public:
 	bool init();
 	void destroy();
@@ -14,54 +32,42 @@ public:
 	void tick();
 	void send_global_packets();
 
-	template <uint8_t channel = ChannelID_Generic>
-	inline void send_broadcast_reliable(enet::PacketW& p, PlayerClient* ignore_pc = nullptr)
+	template <typename T>
+	inline void send_broadcast_reliable(const T& data)
 	{
-		p.ready();
-
-		for_each_player_client([&](NID, PlayerClient* pc)
-		{
-			if (pc != ignore_pc)
-				pc->send<channel>(p, false);
-		});
-	}
-
-	template <uint8_t channel = ChannelID_Generic>
-	inline void send_broadcast_joined_reliable(enet::PacketW& p, PlayerClient* ignore_pc = nullptr)
-	{
-		p.ready();
-
-		for_each_joined_player_client([&](NID, PlayerClient* pc)
-		{
-			if (pc != ignore_pc)
-				pc->send<channel>(p, false);
-		});
-	}
-
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_broadcast_reliable(PlayerClient* ignore_pc, uint32_t id, const A&... args)
-	{
-		enet::PacketW p(id);
-
-		p.add(args...);
-
-		send_broadcast_reliable<channel>(p, ignore_pc);
-	}
-
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_broadcast_joined_reliable(PlayerClient* ignore_pc, uint32_t id, const A&... args)
-	{
-		enet::PacketW p(id);
-
-		p.add(args...);
-
-		send_broadcast_joined_reliable<channel>(p, ignore_pc);
+		send_broadcast_reliable(T::CHANNEL, data.serialize_as_packet(), nullptr);
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_broadcast_reliable(uint32_t id, const A&... args)
 	{
 		send_broadcast_reliable<channel>(nullptr, id, args...);
+	}
+
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_broadcast_reliable(PlayerClient* ignore_pc, uint32_t id, const A&... args)
+	{
+		vec<uint8_t> data;
+
+		enet::serialize_params(data, id, args...);
+
+		send_broadcast_reliable(channel, PacketHolder(data), ignore_pc);
+	}
+
+	template <typename T>
+	inline void send_broadcast_joined_reliable(const T& data)
+	{
+		send_broadcast_joined_reliable(T::CHANNEL, data.serialize_as_packet(), nullptr);
+	}
+
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_broadcast_joined_reliable(PlayerClient* ignore_pc, uint32_t id, const A&... args)
+	{
+		vec<uint8_t> data;
+
+		enet::serialize_params(data, id, args...);
+
+		send_broadcast_joined_reliable(channel, PacketHolder(data), ignore_pc);
 	}
 
 	ENetHost* get_host() const { return sv; };

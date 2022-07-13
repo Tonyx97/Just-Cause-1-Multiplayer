@@ -12,9 +12,12 @@ void jc::mp::logic::on_tick()
 	{
 		if (const auto local_char = g_world->get_localplayer_character())
 		{
+			const auto skeleton = local_char->get_skeleton();
+
 			localplayer->set_transform(local_char->get_transform());
 
-			g_net->send_reliable(PlayerPID_TickInfo, localplayer->get_tick_info());
+			//g_net->send_reliable(PlayerPID_TickInfo, localplayer->get_tick_info());
+			//g_net->send_reliable(PlayerPID_DynamicInfo, 0, skeleton->get_head_euler_rotation().x, skeleton->get_head_euler_rotation().y, skeleton->get_head_euler_rotation().z);
 		}
 	}
 }

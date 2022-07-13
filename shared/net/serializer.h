@@ -8,112 +8,126 @@
 
 namespace enet
 {
+	NetObject* deserialize_net_object(std::vector<uint8_t>& data);
+
+	template <typename T = int>
+	inline T deserialize_int(std::vector<uint8_t>& data)
+	{
+		static_assert(std::is_integral_v<T>, "Not integral type");
+
+		const auto value = *BITCAST(T*, data.data());
+
+		data.erase(data.begin(), data.begin() + sizeof(T));
+
+		return value;
+	}
+
+	template <typename T = float>
+	inline T deserialize_float(std::vector<uint8_t>& data)
+	{
+		static_assert(std::is_floating_point_v<T>, "Not floating type");
+
+		const auto value = *BITCAST(T*, data.data());
+
+		data.erase(data.begin(), data.begin() + sizeof(T));
+
+		return value;
+	}
+
+	inline std::string deserialize_string(std::vector<uint8_t>& data)
+	{
+		size_t size = 0u;
+
+		const auto len = deserialize_int(data);
+
+		std::string out;
+
+		out.resize(len);
+
+		memcpy(out.data(), data.data(), len);
+
+		data.erase(data.begin(), data.begin() + len);
+
+		return out;
+	}
+
 	// puts data into the buffer
 	//
-	inline void serialize_general_data(vec<uint8_t>& buffer, size_t at, const void* data, size_t size)
+	inline void serialize_general_data(vec<uint8_t>& buffer, const void* data, size_t size)
 	{
 		auto ptr = BITCAST(uint8_t*, data);
 
-		if (at == 1u)
-			buffer.insert(buffer.end(), ptr, ptr + size);
-		else buffer.insert(buffer.begin() + sizeof(PacketID), ptr, ptr + size);
+		buffer.insert(buffer.end(), ptr, ptr + size);
 	}
 
 	// puts string data into the buffer
 	//
-	inline void serialize_string(vec<uint8_t>& buffer, size_t at, const void* data, size_t size)
+	inline void serialize_string(vec<uint8_t>& buffer, const void* data, size_t size)
 	{
 		auto ptr = BITCAST(uint8_t*, data);
 		auto len_ptr = BITCAST(uint8_t*, &size);
 
-		if (at == 1u)
-		{
-			buffer.insert(buffer.end(), len_ptr, len_ptr + sizeof(size));
-			buffer.insert(buffer.end(), ptr, ptr + size);
-		}
-		else
-		{
-			buffer.insert(buffer.begin() + sizeof(PacketID), len_ptr, len_ptr + sizeof(size));
-			buffer.insert(buffer.begin() + sizeof(PacketID), ptr, ptr + size);
-		}
+		buffer.insert(buffer.end(), len_ptr, len_ptr + sizeof(size));
+		buffer.insert(buffer.end(), ptr, ptr + size);
 	}
-
-	// puts net object
-	//
-	void serialize_net_object(vec<uint8_t>& buffer, size_t at, NetObject* v);
-
-	// serialize dummy
-	//
-	template <typename... A>
-	inline void serialize(vec<uint8_t>& buffer, size_t at) {}
 
 	// serialize std::string
 	//
-	template <typename... A>
-	inline void serialize(vec<uint8_t>& buffer, size_t at, const std::string& v, const A&... args)
+	inline void serialize_string(vec<uint8_t>& buffer, const std::string& v)
 	{
-		serialize_string(buffer, at, v.data(), v.length());
-
-		serialize(buffer, at, args...);
+		serialize_string(buffer, v.data(), v.length());
 	}
 
 	// serialize std::wstring
 	//
-	template <typename... A>
-	inline void serialize(vec<uint8_t>& buffer, size_t at, const std::wstring& v, const A&... args)
+	inline void serialize_wstring(vec<uint8_t>& buffer, const std::wstring& v)
 	{
-		serialize_string(buffer, at, v.data(), v.length() * 2u);
-
-		serialize(buffer, at, args...);
-	}
-
-	// serialize integral types
-	//
-	template <typename T, typename... A, std::enable_if_t<std::is_integral_v<T> || std::is_enum_v<T>>* = nullptr>
-	inline void serialize(vec<uint8_t>& buffer, size_t at, const T& v, const A&... args)
-	{
-		serialize_general_data(buffer, at, &v, sizeof(v));
-
-		serialize(buffer, at, args...);
+		serialize_string(buffer, v.data(), v.length() * 2u);
 	}
 
 	// serialize floating point types
 	//
-	template <typename T, typename... A, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-	inline void serialize(vec<uint8_t>& buffer, size_t at, const T& v, const A&... args)
+	inline void serialize_float(vec<uint8_t>& buffer, float v)
 	{
-		serialize_general_data(buffer, at, &v, sizeof(v));
-
-		serialize(buffer, at, args...);
-	}
-	
-	// serialize packet structs
-	//
-	template <typename T, typename... A, std::enable_if_t<std::derived_from<std::remove_pointer_t<std::remove_reference_t<T>>, PacketBase>>* = nullptr>
-	inline void serialize(vec<uint8_t>& buffer, size_t at, const T& v, const A&... args)
-	{
-		serialize_general_data(buffer, at, &v, sizeof(v));
-
-		serialize(buffer, at, args...);
+		serialize_general_data(buffer, &v, sizeof(v));
 	}
 
-	// serialize net objects
+	// serialize integral types
 	//
-	template <typename T, typename... A, std::enable_if_t<std::derived_from<std::remove_pointer_t<std::remove_reference_t<T>>, NetObject>>* = nullptr>
-	inline void serialize(vec<uint8_t>& buffer, size_t at, const T& v, const A&... args)
+	template <typename T>
+	inline void serialize_int(vec<uint8_t>& buffer, T v)
 	{
-		serialize_net_object(buffer, at, v);
-
-		serialize(buffer, at, args...);
+		serialize_general_data(buffer, &v, sizeof(v));
 	}
 
-	// main serialization method
-	// 0 -> insert at the beginning
-	// 1 -> insert at the end
+	// puts net object
 	//
-	template <typename... A>
-	inline void serialize_params(vec<uint8_t>& buffer, size_t at, const A&... args)
+	inline void serialize_net_object(vec<uint8_t>& buffer, NetObject* v)
 	{
-		serialize(buffer, at, args...);
+		serialize_int(buffer, v->get_nid());
+		serialize_int(buffer, v->get_type());
+	}
+
+	// serialize a group of parameters at the same time
+	//
+	inline void serialize_params(std::vector<uint8_t>&) {}
+
+	template <typename T, typename... A>
+	inline void serialize_params(std::vector<uint8_t>& data, const T& value, A... args)
+	{
+		if constexpr (std::is_same_v<T, std::string>)
+			serialize_string(data, value);
+		else if constexpr (std::is_integral_v<T>)
+			serialize_int(data, value);
+		else if constexpr (std::is_floating_point_v<T>)
+			serialize_float(data, value);
+		else if constexpr (std::derived_from<std::remove_pointer_t<std::remove_reference_t<T>>, NetObject>)
+			serialize_net_object(data, value);
+		else serialize_general_data(data, &value, sizeof(value));
+
+		serialize_params(data, args...);
 	}
 }
+
+#define DESERIALIZE_NID_AND_TYPE(p)			const auto nid = enet::deserialize_int<uint32_t>(p); \
+											const auto type = enet::deserialize_int<uint32_t>(p)

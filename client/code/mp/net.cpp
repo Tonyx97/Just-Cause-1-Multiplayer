@@ -55,7 +55,7 @@ bool Net::init(const std::string& ip, const std::string& nick)
 	log(GREEN, "Connected");
 
 	// packet to initialize the client in the server
-
+	
 	send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Init, nick);
 
 	// make sure the net system is initialized before continuing
@@ -144,7 +144,7 @@ void Net::setup_channels()
 {
 	// player client dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const enet::PacketR& p)
+	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const enet::Packet& p)
 	{
 		switch (auto id = p.get_id())
 		{
@@ -160,7 +160,7 @@ void Net::setup_channels()
 
 	// chat dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_Chat, [&](const enet::PacketR& p)
+	enet::add_channel_dispatcher(ChannelID_Chat, [&](const enet::Packet& p)
 	{
 		// if localplayer is not in game then we don't want any of these packets
 
@@ -177,7 +177,7 @@ void Net::setup_channels()
 
 	// generic packet dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::PacketR& p)
+	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::Packet& p)
 	{
 		// if localplayer is not in game then we don't want any of these packets
 
@@ -188,6 +188,7 @@ void Net::setup_channels()
 		{
 		case PlayerPID_Spawn:			return nh::player::spawn(p);
 		case PlayerPID_TickInfo:		return nh::player::tick_info(p);
+		case PlayerPID_DynamicInfo:		return nh::player::dynamic_info(p);
 		case PlayerPID_Stance:			return nh::player::stance(p);
 		case DayCyclePID_SetTime:		return nh::day_cycle::dispatch(p);
 		}

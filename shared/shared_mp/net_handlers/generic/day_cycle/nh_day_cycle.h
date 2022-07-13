@@ -4,5 +4,5 @@
 
 namespace nh::day_cycle
 {
-	enet::PacketResult dispatch(const enet::PacketR& p);
+	enet::PacketResult dispatch(const enet::Packet& p);
 }

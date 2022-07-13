@@ -41,14 +41,25 @@ public:
 
 	void set_net_stats(int v) { net_stat = v; }
 
+	inline void send_packet(uint32_t channel, const std::vector<uint8_t>& data, uint32_t flags = ENET_PACKET_FLAG_RELIABLE)
+	{
+		enet::send_packet(enet::GET_CLIENT_PEER(), data.data(), data.size(), flags, channel);
+	}
+
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_reliable(uint32_t id, const A&... args)
 	{
 		vec<uint8_t> data;
 
-		enet::serialize(data, 1u, id);
-		enet::serialize_params(data, 1u, args...);
-		enet::send_packet(enet::GET_CLIENT_PEER(), data.data(), data.size(), ENET_PACKET_FLAG_RELIABLE, channel);
+		enet::serialize_params(data, id, args...);
+
+		send_packet(channel, data);
+	}
+
+	template <typename T>
+	inline void send_reliable(const T& packet)
+	{
+		send_packet(T::CHANNEL, packet.serialize());
 	}
 
 	bool is_initialized() const { return initialized; }

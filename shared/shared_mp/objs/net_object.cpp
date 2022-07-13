@@ -1,7 +1,7 @@
 #ifndef JC_LOADER
 #include <defs/standard.h>
 
-#include <shared_mp/objs/net_object.h>
+#include "net_object.h"
 
 #ifdef JC_SERVER
 namespace enet

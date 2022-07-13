@@ -11,7 +11,7 @@ int StanceController::get_movement_id() const
 
 void BodyStanceController::set_stance(uint32_t id)
 {
-	jc::hooks::call<jc::character::hook::body_stance::set_stance_t>(this, id);
+	//jc::hooks::call<jc::character::hook::body_stance::set_stance_t>(this, id);
 }
 
 Character* BodyStanceController::get_character() const
@@ -21,7 +21,7 @@ Character* BodyStanceController::get_character() const
 
 void ArmsStanceController::set_stance(uint32_t id)
 {
-	jc::hooks::call<jc::character::hook::arms_stance::set_stance_t>(this, id);
+	//jc::hooks::call<jc::character::hook::arms_stance::set_stance_t>(this, id);
 }
 
 Character* ArmsStanceController::get_character() const
