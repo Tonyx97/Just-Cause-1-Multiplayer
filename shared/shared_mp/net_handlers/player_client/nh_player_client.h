@@ -8,5 +8,6 @@ namespace nh::player_client
 	enet::PacketResult join(const enet::Packet& p);
 	enet::PacketResult quit(const enet::Packet& p);
 	enet::PacketResult sync_instances(const enet::Packet& p);
+	enet::PacketResult static_info(const enet::Packet& p);
 	enet::PacketResult nick(const enet::Packet& p);
 }

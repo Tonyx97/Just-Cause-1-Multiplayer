@@ -97,16 +97,42 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 
 		player->spawn();
 
-		/*const auto info = p.get_struct<PacketCheck_PlayerStaticInfo>();
-
-		player->set_nick(*info.nick);
-		player->set_skin(info.skin);*/
-
 		log(PURPLE, "Created new player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
 	}
 
 	log(YELLOW, "All player instances synced (a total of {})", info.net_objects.size());
 #elif defined(JC_SERVER)
+#endif
+
+	return enet::PacketRes_Ok;
+}
+
+enet::PacketResult nh::player_client::static_info(const enet::Packet& p)
+{
+#ifdef JC_CLIENT
+	const auto localplayer = g_net->get_localplayer();
+	const auto info = p.get<PlayerClientStaticInfoPacket>();
+
+	log(YELLOW, "Updating {} player static info...", info.info.size());
+
+	for (const auto& [player, _info] : info.info)
+	{
+		check(player->get_type() == NetObject_Player, "Type must be NetObject_Player");
+
+		// if this is the localplayer then we skip,
+		// we already know our local info
+
+		const auto nid = player->get_nid();
+
+		if (localplayer->equal(nid))
+			continue;
+
+		player->set_nick(_info.nick);
+		player->set_skin(_info.skin);
+
+		log(PURPLE, "Updated static info for player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
+	}
+#else
 #endif
 
 	return enet::PacketRes_Ok;

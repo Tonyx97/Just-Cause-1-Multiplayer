@@ -52,45 +52,68 @@ void PlayerClient::set_joined(bool v)
 	joined = v;
 
 #ifdef JC_CLIENT
-	
+
 #else
 	if (joined)
 	{
-		PlayerClientSyncInstancesPacket p;
+		// sync net object instances
 
-		g_net->for_each_net_object([&](NID, NetObject* obj)
 		{
-			if (auto casted_player = obj->cast<Player>())
+			PlayerClientSyncInstancesPacket p;
+
+			g_net->for_each_net_object([&](NID, NetObject* obj)
 			{
-				if (casted_player->get_client()->is_joined())
+				if (auto casted_player = obj->cast<Player>())
 				{
-					const auto& static_info = casted_player->get_static_info();
+					if (casted_player->get_client()->is_joined())
+					{
+						p.net_objects.push_back(obj);
 
-					/*PacketCheck_PlayerStaticInfo info;
-
-					info.nick = static_info.nick;
-					info.skin = static_info.skin;*/
-
+						log(PURPLE, "Syncing player with NID {:x} ({})", casted_player->get_nid(), casted_player->get_nick());
+					}
+				}
+				else
+				{
 					p.net_objects.push_back(obj);
 
-					log(PURPLE, "Syncing player with NID {:x} ({})", casted_player->get_nid(), casted_player->get_nick());
+					log(PURPLE, "Syncing net object with NID {:x}", obj->get_nid());
 				}
-			}
-			else
+			});
+
+			// send all net object main info to all players who joined to sync instances
+			// this creates and spawns the players that are not in other players'
+			// game, for example, if a player just joined, it will create the player for 
+			// the other players who already joined and it will also create those players for
+			// this player
+
+			g_net->send_broadcast_joined_reliable(p);
+		}
+
+		// sync player's static info
+
+		{
+			PlayerClientStaticInfoPacket p;
+
+			g_net->for_each_joined_player_client([&](NID, PlayerClient* pc)
 			{
-				p.net_objects.push_back(obj);
+				if (auto player = pc->get_player())
+				{
+					const auto& static_info = player->get_static_info();
 
-				log(PURPLE, "Syncing net object with NID {:x}", obj->get_nid());
-			}
-		});
+					p.info.emplace_back(player, PlayerClientStaticInfoPacket::Info
+					{
+						.nick = static_info.nick,
+						.skin = static_info.skin
+					});
 
-		// send all net object main info to all players who joined to sync instances
-		// this creates and spawns the players that are not in other players'
-		// game, for example, if a player just joined, it will create the player for 
-		// the other players who already joined and it will also create those players for
-		// this player
+					log(PURPLE, "Updating player static info with NID {:x} ({})", player->get_nid(), player->get_nick());
+				}
+			});
 
-		g_net->send_broadcast_joined_reliable(p);
+			// send the static info of each player to all players
+
+			g_net->send_broadcast_joined_reliable(p);
+		}
 
 		// let the other players know this player joined
 

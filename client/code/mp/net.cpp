@@ -152,6 +152,7 @@ void Net::setup_channels()
 		case PlayerClientPID_Join:				return nh::player_client::join(p);
 		case PlayerClientPID_Quit:				return nh::player_client::quit(p);
 		case PlayerClientPID_SyncInstances:		return nh::player_client::sync_instances(p);
+		case PlayerClientPID_StaticInfo:		return nh::player_client::static_info(p);
 		case PlayerClientPID_Nick:				return nh::player_client::nick(p);
 		}
 

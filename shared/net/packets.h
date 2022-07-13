@@ -10,6 +10,7 @@ enum PlayerClientPacketID : unsigned int
 	PlayerClientPID_Join,
 	PlayerClientPID_Quit,
 	PlayerClientPID_SyncInstances,
+	PlayerClientPID_StaticInfo,
 	PlayerClientPID_Nick,
 	PlayerClientPID_Max
 };
