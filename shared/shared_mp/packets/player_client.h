@@ -47,15 +47,15 @@ struct PlayerClientSyncInstancesPacket
 
 struct PlayerClientStaticInfoPacket
 {
+	static constexpr uint32_t ID = PlayerClientPID_StaticInfo;
+	static constexpr uint32_t CHANNEL = ChannelID_PlayerClient;
+
 	struct Info
 	{
 		std::string nick;
 
 		uint32_t skin;
 	};
-
-	static constexpr uint32_t ID = PlayerClientPID_StaticInfo;
-	static constexpr uint32_t CHANNEL = ChannelID_PlayerClient;
 
 	std::vector<std::pair<Player*, Info>> info;
 
