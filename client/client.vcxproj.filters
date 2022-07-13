@@ -273,7 +273,7 @@
     <ClCompile Include="code\game\object\sound\sound_game_obj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\mp\tick.cpp">
+    <ClCompile Include="code\mp\logic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -554,7 +554,7 @@
     <ClInclude Include="code\game\object\sound\sound_game_obj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\mp\tick.h">
+    <ClInclude Include="code\mp\logic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

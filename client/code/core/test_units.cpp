@@ -143,7 +143,37 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD1))
 	{
-		auto variant = NPCVariant::CREATE();
+		struct vel_test
+		{
+			vec3  dir;
+			vec3  pos;
+			float vel;
+			float damage;
+			float unk1, unk2;
+			float min_vel;
+		} ay;
+
+		ay.dir = { 153.f, 159.f, 56.48f };
+		ay.pos = local_pos;
+		ay.vel = 0.f;
+		ay.damage = 0.f;
+		ay.unk1 = 1.f;
+		ay.unk2 = 1.f;
+		ay.min_vel = 100.f;
+
+		vec3 test = vec3(10.f, 0.f, 0.f);
+
+		//(*(int(__thiscall**)(ptr, vec3*))(*(ptr*)out[1] + 0x10))(out[1], &test);
+
+		//(*(void(__thiscall**)(Character*, vel_test*))(*(ptr*)local_char + 0x7C))(local_char, &ay);
+
+		auto physical = local_char->get_physical();
+
+		jc::this_call(0x744B20, physical.obj, &ay.dir, ptr(local_char) + 0x608);
+
+		*(ptr*)(ptr(local_char) + 0x884) =  *(ptr*)(ptr(local_char) + 0x884) & 0xFFFBFFFF;
+
+		/*auto variant = NPCVariant::CREATE();
 
 		log(RED, "nice 1 {:x}", ptr(*variant));
 
@@ -161,7 +191,7 @@ void jc::test_units::test_0()
 
 		log(RED, "nice 2");
 
-		local_char->set_npc_variant(*variant);
+		local_char->set_npc_variant(*variant);*/
 	}
 
 	static ptr anim_ptr = 0;

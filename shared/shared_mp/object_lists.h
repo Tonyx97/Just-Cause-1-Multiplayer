@@ -17,6 +17,8 @@ public:
 
 #ifdef JC_CLIENT
 	PlayerClient* add_player_client(NID nid);
+
+	Player* get_player_by_character(class Character* character);
 #else
 	PlayerClient* add_player_client(ENetPeer* peer);
 #endif

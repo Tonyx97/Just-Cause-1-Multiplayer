@@ -14,6 +14,15 @@ PlayerClient* ObjectLists::add_player_client(NID nid)
 
 	return pc;
 }
+
+Player* ObjectLists::get_player_by_character(Character* character)
+{
+	for (const auto& [nid, player] : players)
+		if (player->get_character() == character)
+			return player;
+
+	return nullptr;
+}
 #else
 PlayerClient* ObjectLists::add_player_client(ENetPeer* peer)
 {

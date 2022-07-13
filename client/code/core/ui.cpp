@@ -504,54 +504,6 @@ void UI::render()
 				ImGui::Text("Rotation: %.2f %.2f %.2f %.2f", lr.w, lr.x, lr.y, lr.z);
 				ImGui::Text("Scale: %.2f %.2f %.2f", ls.x, ls.y, ls.z);
 			}
-
-			static CharacterHandle* cc_h = nullptr;
-
-			if (g_key->is_key_pressed(VK_F5))
-			{
-				local_player_pawn->respawn();
-			}
-
-			if (g_key->is_key_pressed(VK_F6))
-			{
-				if (!g_test_char)
-				{
-					cc_h = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position(), Weapon_None);
-					g_test_char = cc_h->get_character();
-					g_test_char->set_model(126);
-				}
-				else
-				{
-					//cc->respawn();
-					cc_h->destroy();
-					cc_h = nullptr;
-					g_test_char = nullptr;
-				}
-
-				log(RED, "{:x}", ptr(g_test_char));
-			}
-
-			if (g_test_char && g_test_char->is_alive())
-			{
-				// interpolate main transform
-
-				auto previous_t = g_test_char->get_transform();
-
-				local_transform.translate(vec3(2.f, 0.f, 0.f));
-
-				previous_t.interpolate(local_transform, 0.2f, 0.05f);
-
-				g_test_char->set_transform(previous_t);
-
-				// interpolate head rotation
-
-				const auto target = local_player_pawn->get_skeleton()->get_head_euler_rotation();
-
-				if (glm::length(target) > 0.f)
-				{
-					g_test_char->get_skeleton()->set_head_euler_rotation(target);
-				}
-			}
 		}
 	}
 	ImGui::End();

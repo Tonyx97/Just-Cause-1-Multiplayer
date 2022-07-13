@@ -21,20 +21,12 @@ public:
 	struct TickInfo : public PacketBase
 	{
 		Transform transform;
+	};
 
-		uint32_t body_stances_id[4] = { 0u },
-				 arms_stances_id[4] = { 0u };
-
-		int body_stances_count = 0,
-			arms_stances_count = 0;
-
-		void clear()
-		{
-			body_stances_count = arms_stances_count = 0;
-
-			memset(body_stances_id, 0, sizeof(body_stances_id));
-			memset(arms_stances_id, 0, sizeof(arms_stances_id));
-		}
+	struct DynamicInfo : public PacketBase
+	{
+		uint32_t body_stance_id = 0u,
+				 arms_stance_id = 0u;
 	};
 
 private:
@@ -46,6 +38,11 @@ private:
 	PlayerClient* client = nullptr;
 
 	TickInfo tick_info {};
+	DynamicInfo dyn_info {};
+
+#ifdef JC_CLIENT
+	bool local = false;
+#endif
 
 public:
 
@@ -57,6 +54,7 @@ public:
 	Player(PlayerClient* pc, NID nid);
 
 	void verify_exec(const std::function<void(Character*)>& fn);
+	void set_local() { local = true; }
 #else
 	Player(PlayerClient* pc);
 
@@ -64,7 +62,6 @@ public:
 #endif
 	~Player();
 
-	void clear_tick_info() { tick_info.clear(); }
 	void set_tick_info(const TickInfo& v);
 
 	bool spawn() override;
@@ -76,18 +73,27 @@ public:
 	// tick info getters/setters
 
 	void set_transform(const Transform& transform);
+
+	Transform get_transform() const { return tick_info.transform; }
+
+	// dynamic info getters/setters
+
 	void set_body_stance_id(uint32_t id);
 	void set_arms_stance_id(uint32_t id);
 
-	uint32_t get_body_stance_id(int index) const { return tick_info.body_stances_id[index]; }
-	uint32_t get_arms_stance_id(int index) const { return tick_info.arms_stances_id[index]; }
-
-	Transform get_transform() const { return tick_info.transform; }
+	uint32_t get_body_stance_id() const { return dyn_info.body_stance_id; }
+	uint32_t get_arms_stance_id() const { return dyn_info.arms_stance_id; }
 
 	// static info getters/setters
 
 	void set_nick(const std::string& v);
 	void set_skin(uint32_t v);
+
+#ifdef JC_CLIENT
+	Character* get_character() const;
+
+	bool is_local() const { return local; }
+#endif
 
 	uint32_t get_skin() const;
 

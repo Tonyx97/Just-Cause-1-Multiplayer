@@ -11,20 +11,20 @@ int StanceController::get_movement_id() const
 
 void BodyStanceController::set_stance(uint32_t id)
 {
-	jc::this_call(jc::stance_controller::fn::SET_BODY_STANCE, this, id);
+	jc::hooks::call<jc::character::hook::body_stance::set_stance_t>(this, id);
 }
 
 Character* BodyStanceController::get_character() const
 {
-	return jc::read<Character*>(this, jc::character::BODY_STANCE_CONTROLLER);
+	return REF(Character*, this, -jc::character::BODY_STANCE_CONTROLLER);
 }
 
 void ArmsStanceController::set_stance(uint32_t id)
 {
-	jc::this_call(jc::stance_controller::fn::SET_ARMS_STANCE, this, id);
+	jc::hooks::call<jc::character::hook::arms_stance::set_stance_t>(this, id);
 }
 
 Character* ArmsStanceController::get_character() const
 {
-	return jc::read<Character*>(this, jc::character::ARMS_STANCE_CONTROLLER);
+	return REF(Character*, this, -jc::character::ARMS_STANCE_CONTROLLER);
 }

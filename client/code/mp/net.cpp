@@ -1,12 +1,13 @@
 #include <defs/standard.h>
 
 #include "net.h"
-#include "tick.h"
+#include "logic.h"
 
 #include <game/sys/all.h>
 
 #include <shared_mp/net_handlers/all.h>
 #include <shared_mp/player_client/player_client.h>
+#include <shared_mp/objs/player.h>
 
 #include <game/sys/world.h>
 #include <game/object/character/character.h>
@@ -120,6 +121,7 @@ void Net::add_local(NID nid)
 
 	local = add_player_client(nid);
 	local->set_nick(nick);
+	local->get_player()->set_local();
 }
 
 void Net::set_initialized(bool v)
@@ -186,6 +188,7 @@ void Net::setup_channels()
 		{
 		case PlayerPID_Spawn:			return nh::player::spawn(p);
 		case PlayerPID_TickInfo:		return nh::player::tick_info(p);
+		case PlayerPID_Stance:			return nh::player::stance(p);
 		case DayCyclePID_SetTime:		return nh::day_cycle::dispatch(p);
 		}
 
@@ -220,5 +223,10 @@ void Net::tick()
 		}
 	});
 
-	jc::mp::on_tick();
+	jc::mp::logic::on_tick();
+}
+
+void Net::update_objects()
+{
+	jc::mp::logic::on_update_objects();
 }

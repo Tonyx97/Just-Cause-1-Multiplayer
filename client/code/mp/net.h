@@ -32,6 +32,13 @@ public:
 	void set_joined(bool v);
 	void setup_channels();
 	void tick();
+
+	/*
+	* updates the objects while we don't receive any data such as the player stance animation
+	* where we want to set the last one without receiving the stance all the time
+	*/
+	void update_objects();
+
 	void set_net_stats(int v) { net_stat = v; }
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>

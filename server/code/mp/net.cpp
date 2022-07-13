@@ -77,6 +77,7 @@ void Net::setup_channels()
 		{
 		case PlayerPID_Spawn:			return nh::player::spawn(p);
 		case PlayerPID_TickInfo:		return nh::player::tick_info(p);
+		case PlayerPID_Stance:			return nh::player::stance(p);
 		}
 
 		return enet::PacketRes_NotFound;

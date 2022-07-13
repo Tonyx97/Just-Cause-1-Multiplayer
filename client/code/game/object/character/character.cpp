@@ -21,6 +21,9 @@
 
 // hooks
 
+#include <core/test_units.h>
+#include "comps/stance_controller.h"
+
 namespace jc::character::hook
 {
 	namespace body_stance
@@ -29,7 +32,28 @@ namespace jc::character::hook
 		{
 			if (const auto local_char = g_world->get_localplayer_character())
 				if (const auto local_body_stance = local_char->get_body_stance(); local_body_stance == body_stance)
-					g_net->get_localplayer()->set_body_stance_id(id);
+				{
+					const auto localplayer = g_net->get_localplayer();
+
+					//if (g_test_char)
+					//	g_test_char->get_body_stance()->set_stance(id);
+
+					if (localplayer->get_body_stance_id() != id)
+					{
+						localplayer->set_body_stance_id(id);
+
+						g_net->send_reliable(PlayerPID_Stance, true, id);
+					}
+				}
+				/*else
+				{
+					if (const auto character = body_stance->get_character())
+						if (g_net->get_player_by_character(character))
+						{
+							log(RED, "ignoring 1");
+							return;
+						}
+				}*/
 
 			jc::hooks::call<set_stance_t>(body_stance, id);
 		}
@@ -41,7 +65,28 @@ namespace jc::character::hook
 		{
 			if (const auto local_char = g_world->get_localplayer_character())
 				if (const auto local_arms_stance = local_char->get_arms_stance(); local_arms_stance == arms_stance)
-					g_net->get_localplayer()->set_arms_stance_id(id);
+				{
+					const auto localplayer = g_net->get_localplayer();
+
+					//if (g_test_char)
+					//	g_test_char->get_arms_stance()->set_stance(id);
+
+					if (localplayer->get_arms_stance_id() != id)
+					{
+						localplayer->set_arms_stance_id(id);
+
+						g_net->send_reliable(PlayerPID_Stance, false, id);
+					}
+				}
+				/*else
+				{
+					if (const auto character = arms_stance->get_character())
+						if (g_net->get_player_by_character(character))
+						{
+							log(RED, "ignoring 2");
+							return;
+						}
+				}*/
 
 			jc::hooks::call<set_stance_t>(arms_stance, id);
 		}

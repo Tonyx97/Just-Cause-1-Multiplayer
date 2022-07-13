@@ -14,7 +14,6 @@ int __fastcall Renderer::hk_game_present(void* _this)
 	jc::hooks::HookLock lock {};
 
 	g_renderer->on_present();
-	g_key->clear_states();
 
 	return jc::hooks::call<jc::proto::game_present>(_this);
 }

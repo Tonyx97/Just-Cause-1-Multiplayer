@@ -6,6 +6,7 @@
 
 #ifdef JC_CLIENT
 #include <game/sys/spawn_system.h>
+#include <game/sys/world.h>
 #include <game/object/spawn_point/spawn_point.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/character/character.h>
@@ -19,23 +20,39 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 	set_nid(nid);
 	set_player_client(pc);
 
-	const auto localplayer = g_net->get_localplayer();
-
-	if (localplayer && !localplayer->equal(this))
+	if (const auto localplayer = g_net->get_localplayer())
 	{
-		handle = g_spawn->spawn_character("female1", { 0.f, 0.f, 0.f });
-		
-		set_spawned(true);
+		if (!localplayer->equal(this))
+		{
+			// create and spawn the character if it's not the localplayer
+
+			handle = g_spawn->spawn_character("female1", { 0.f, 0.f, 0.f });
+			
+			// make the remote player invincible from the client logic so it doesn't get killed
+			// by local events
+
+			get_character()->set_invincible(true);
+
+			set_spawned(true);
+		}
 	}
 }
 
 void Player::verify_exec(const std::function<void(Character*)>& fn)
 {
-	if (!handle)
+	if (local || !handle)
 		return;
 
 	if (const auto character = handle->get_character())
 		fn(character);
+}
+
+Character* Player::get_character() const
+{
+	if (is_local())
+		return g_world->get_localplayer_character();
+
+	return handle->get_character();
 }
 #else
 Player::Player(PlayerClient* pc) : client(pc)
@@ -55,14 +72,7 @@ Player::~Player()
 
 void Player::set_tick_info(const TickInfo& v)
 {
-	tick_info.clear();
-
-	for (int i = 0; i < v.body_stances_count; ++i) set_body_stance_id(v.body_stances_id[i]);
-	for (int i = 0; i < v.arms_stances_count; ++i) set_arms_stance_id(v.arms_stances_id[i]);
-
 	set_transform(v.transform);
-
-	log(CYAN, "tick info received from player {:x}", get_nid());
 }
 
 bool Player::spawn()
@@ -98,11 +108,7 @@ void Player::set_transform(const Transform& transform)
 
 void Player::set_body_stance_id(uint32_t id)
 {
-	const auto index = tick_info.body_stances_count++;
-	
-	check(index < ARRAY_SIZE(tick_info.body_stances_id), "Invalid body stance index: {}", index);
-
-	tick_info.body_stances_id[index] = id;
+	dyn_info.body_stance_id = id;
 
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->get_body_stance()->set_stance(id); });
@@ -111,11 +117,7 @@ void Player::set_body_stance_id(uint32_t id)
 
 void Player::set_arms_stance_id(uint32_t id)
 {
-	const auto index = tick_info.arms_stances_count++;
-
-	check(index < ARRAY_SIZE(tick_info.arms_stances_id), "Invalid arms stance index: {}", index);
-
-	tick_info.arms_stances_id[index] = id;
+	dyn_info.arms_stance_id = id;
 
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->get_arms_stance()->set_stance(id); });
