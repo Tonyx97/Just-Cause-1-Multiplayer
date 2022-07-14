@@ -87,6 +87,8 @@ void Net::setup_channels()
 
 void Net::tick()
 {
+	SetWindowText(GetConsoleWindow(), std::format(L"JC:MP Server ({} players connected)", get_player_clients_count()).c_str());
+
 	// send all independent packets to all clients
 	// such as day cycle time etc
 	
@@ -128,14 +130,13 @@ void Net::tick()
 
 void Net::send_global_packets()
 {
-	SetWindowText(GetConsoleWindow(), std::format(L"JC:MP Server ({} players connected)", get_player_clients_count()).c_str());
-
 	static auto day_cycle_timer = timer::add_timer(1000, [&]()
 	{
 		static float test = 0.f;
+		static bool enabled = false;
 
 		//test += 0.05f;
 
-		//g_net->send_broadcast_reliable(DayCyclePID_SetTime, test);
+		g_net->send_broadcast_reliable(DayCyclePID_SetTime, enabled, test);
 	});
 }

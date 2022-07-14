@@ -10,6 +10,15 @@ namespace enet
 {
 	NetObject* deserialize_net_object(std::vector<uint8_t>& data);
 
+	inline bool deserialize_bool(std::vector<uint8_t>& data)
+	{
+		const auto value = *BITCAST(bool*, data.data());
+
+		data.erase(data.begin(), data.begin() + sizeof(value));
+
+		return value;
+	}
+
 	template <typename T = int>
 	inline T deserialize_int(std::vector<uint8_t>& data)
 	{

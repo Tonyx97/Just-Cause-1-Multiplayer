@@ -111,7 +111,7 @@ namespace enet
 		template <typename T = uint32_t>
 		T get_uint() const { return deserialize_int(data); }
 
-		bool get_bool() const { return !!deserialize_int(data); }
+		bool get_bool() const { return deserialize_bool(data); }
 
 		float get_float() const { return deserialize_float(data); }
 

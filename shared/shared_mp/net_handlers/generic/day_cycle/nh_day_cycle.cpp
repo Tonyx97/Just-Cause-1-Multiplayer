@@ -9,6 +9,7 @@
 enet::PacketResult nh::day_cycle::dispatch(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
+	g_day_cycle->set_enabled(p.get_bool());
 	g_day_cycle->set_time(p.get_float());
 #endif
 
