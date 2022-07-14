@@ -176,9 +176,9 @@ void Net::setup_channels()
 		return enet::PacketRes_NotFound;
 	});
 
-	// generic packet dispatcher
+	// world packet dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::Packet& p)
+	enet::add_channel_dispatcher(ChannelID_World, [&](const enet::Packet& p)
 	{
 		// if localplayer is not in game then we don't want any of these packets
 
@@ -187,15 +187,31 @@ void Net::setup_channels()
 
 		switch (auto id = p.get_id())
 		{
-		case PlayerPID_Spawn:			return nh::player::spawn(p);
-		case PlayerPID_TickInfo:		return nh::player::tick_info(p);
-		case PlayerPID_DynamicInfo:		return nh::player::dynamic_info(p);
-		case PlayerPID_Stance:			return nh::player::stance(p);
 		case DayCyclePID_SetTime:		return nh::day_cycle::dispatch(p);
 		}
 
 		return enet::PacketRes_NotFound;
 	});
+
+	// world packet dispatcher
+
+	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::Packet& p)
+		{
+			// if localplayer is not in game then we don't want any of these packets
+
+			if (!g_game_status->is_in_game())
+				return enet::PacketRes_NotUsable;
+
+			switch (auto id = p.get_id())
+			{
+			case PlayerPID_Spawn:			return nh::player::spawn(p);
+			case PlayerPID_TickInfo:		return nh::player::tick_info(p);
+			case PlayerPID_DynamicInfo:		return nh::player::dynamic_info(p);
+			case PlayerPID_Stance:			return nh::player::stance(p);
+			}
+
+			return enet::PacketRes_NotFound;
+		});
 }
 
 void Net::tick()

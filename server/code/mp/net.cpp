@@ -69,6 +69,17 @@ void Net::setup_channels()
 		return enet::PacketRes_NotFound;
 	});
 
+	// world dispatcher
+
+	enet::add_channel_dispatcher(ChannelID_World, [&](const enet::Packet& p)
+	{
+		/*switch (auto id = p.get_id())
+		{
+		}*/
+
+		return enet::PacketRes_NotFound;
+	});
+
 	// generic packet dispatcher
 
 	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::Packet& p)
@@ -137,6 +148,6 @@ void Net::send_global_packets()
 
 		//test += 0.05f;
 
-		g_net->send_broadcast_reliable(DayCyclePID_SetTime, enabled, test);
+		g_net->send_broadcast_reliable<ChannelID_World>(DayCyclePID_SetTime, enabled, test);
 	});
 }

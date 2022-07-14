@@ -42,6 +42,11 @@ namespace jc
 		*(T*)(ptr(x) + offset) = value;
 	}
 
+	inline void nop(ptr address, size_t size)
+	{
+		memset(BITCAST(void*, address), 0x90, size);
+	}
+
 	template <typename T, typename X>
 	inline void write_protect(T value, X x, ptr offset = 0u)
 	{

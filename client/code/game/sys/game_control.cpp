@@ -18,15 +18,35 @@ bool __fastcall GameControl::hk_tick(void* _this)
 	const auto res = jc::hooks::call<jc::proto::game_tick>(_this);
 
 	{
-		if (auto local_player_pawn = g_world->get_localplayer_character())
+		if (auto local_char = g_world->get_localplayer_character())
 		{
-			auto local_transform = local_player_pawn->get_transform();
+			auto localplayer = g_world->get_localplayer();
+
+			auto local_transform = local_char->get_transform();
 
 			static CharacterHandle* cc_h = nullptr;
 
-			if (g_key->is_key_pressed(VK_F5))
+			if (g_key->is_key_down(VK_F5))
 			{
-				local_player_pawn->respawn();
+				auto lp = ptr(localplayer);
+				auto lpc = ptr(local_char);
+
+				for (int i = 0; i < 1000; ++i)
+					local_char->respawn();
+
+				/*jc::this_call(0x4D1480, localplayer, 0);
+				jc::this_call(0x58DC90, local_char);
+				// 
+				jc::this_call(0x4C34C0, localplayer);
+				*(bool*)(lp + 0x4AC) = 1;
+				jc::write<bool>(true, 0xD85B8C);
+				jc::std_call(0x58C960, 0);
+				jc::this_call(0x59F8E0, lpc);
+
+				jc::this_call(0x603760, lp + 0x24);
+
+				jc::this_call(0x485290, jc::read<ptr>(0xD32EE4), 0);
+				jc::this_call(0x488410, jc::read<ptr>(0xD32EE4), jc::read<ptr>(0xD32EE4) + 0x20);*/
 			}
 
 			if (g_key->is_key_pressed(VK_F6))
@@ -65,7 +85,7 @@ bool __fastcall GameControl::hk_tick(void* _this)
 
 				// interpolate head rotation
 
-				const auto target = local_player_pawn->get_skeleton()->get_head_euler_rotation();
+				const auto target = local_char->get_skeleton()->get_head_euler_rotation();
 
 				if (glm::length(target) > 0.f)
 				{
