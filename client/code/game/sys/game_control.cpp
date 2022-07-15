@@ -7,7 +7,7 @@
 #include <game/object/character/character.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/sys/world.h>
-#include <game/sys/spawn_system.h>
+#include <game/sys/factory_system.h>
 #include <core/keycode.h>
 #include <core/test_units.h>
 
@@ -53,7 +53,7 @@ bool __fastcall GameControl::hk_tick(void* _this)
 			{
 				if (!g_test_char)
 				{
-					cc_h = g_spawn->spawn_character("female1", g_world->get_localplayer_character()->get_position());
+					cc_h = g_factory->spawn_character("female1", g_world->get_localplayer_character()->get_position());
 					g_test_char = cc_h->get_character();
 					g_test_char->set_model(126);
 					g_test_char->set_invincible(true);

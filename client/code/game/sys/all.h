@@ -14,6 +14,6 @@
 #include "resource_streamer.h"
 #include "game_control.h"
 #include "game_status.h"
-#include "spawn_system.h"
+#include "factory_system.h"
 #include "weapon_system.h"
 #include "world.h"

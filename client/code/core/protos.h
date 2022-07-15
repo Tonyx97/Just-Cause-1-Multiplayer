@@ -62,7 +62,7 @@ namespace jc::proto
 
 		namespace map_dumper
 		{
-			using vcall6_obj_init = prototype<void(__thiscall*)(ptr, ptr), 0x4BDF00, util::hash::JENKINS("vcall6_obj_init")>;
+			using vcall6_obj_init = prototype<void(__thiscall*)(ptr, ptr), 0x6D8E30, util::hash::JENKINS("vcall6_obj_init")>;
 			using find_int		  = prototype<bool(__thiscall*)(ptr, uint32_t*, int*), 0x46AEF0, util::hash::JENKINS("FindInt")>;
 			using find_bool		  = prototype<bool(__thiscall*)(ptr, uint32_t*, bool*), 0x46AF70, util::hash::JENKINS("FindBool")>;
 			using find_int16	  = prototype<bool(__thiscall*)(ptr, uint32_t*, int16_t*), 0x4C0030, util::hash::JENKINS("FindInt16")>;
@@ -78,7 +78,7 @@ namespace jc::proto
 			
 		}
 
-		using test = prototype<void(__thiscall*)(ptr a1, int id), 0x625750, util::hash::JENKINS("test")>;
+		using test = prototype<void(__thiscall*)(ptr event_instance, int userdata), 0x407FD0, util::hash::JENKINS("test")>;
 		using test2	= prototype<void(__thiscall*)(ptr a1, int id), 0x744230, util::hash::JENKINS("test2")>;
 		// using test3 = prototype<int(__cdecl*)(int, ptr, ptr*, ptr*, std::string*), 0x987D20, utils::hash::JENKINS("test3")>;
 		//  using LoadAsset = prototype<int(__thiscall*)(int, std::string*, int, const char*, int), 0x5C2DC0, utils::hash::JENKINS("test")>;

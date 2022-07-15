@@ -1,7 +1,7 @@
 #include <defs/standard.h>
 
 #include "game_control.h"
-#include "spawn_system.h"
+#include "factory_system.h"
 
 #include <game/transform/transform.h>
 #include <game/sys/weapon_system.h>
@@ -17,8 +17,10 @@
 #include <game/object/ladder/ladder.h>
 #include <game/object/item/item_pickup.h>
 #include <game/object/vars/exported_entities.h>
+#include <game/object/mission/objective.h>
+#include <game/object/ui/map_icon.h>
 
-namespace jc::spawn_system
+namespace jc::factory_system
 {
 	namespace v
 	{
@@ -31,18 +33,20 @@ namespace jc::spawn_system
 		vec<ref<Ladder>>				ladders;
 		vec<ref<ItemPickup>>			item_pickups;
 		vec<ref<AnimatedRigidObject>>	animated_rigid_objects;
+		vec<ref<UIMapIcon>>				ui_map_icons;
+		vec<ref<Objective>>				objectives;
 	}
 }
 
-using namespace jc::spawn_system::v;
+using namespace jc::factory_system::v;
 
-void SpawnSystem::init()
+void FactorySystem::init()
 {
 	set_max_character_spawns(0);
 	set_max_vehicle_spawns(0);
 }
 
-void SpawnSystem::destroy()
+void FactorySystem::destroy()
 {
 	// clear our containers
 
@@ -61,17 +65,17 @@ void SpawnSystem::destroy()
 	set_max_vehicle_spawns(20);
 }
 
-void SpawnSystem::set_max_character_spawns(int v)
+void FactorySystem::set_max_character_spawns(int v)
 {
 	jc::write<int16_t>(v, this, jc::spawn_system::MAX_CHARACTER_SPAWNS);
 }
 
-void SpawnSystem::set_max_vehicle_spawns(int v)
+void FactorySystem::set_max_vehicle_spawns(int v)
 {
 	jc::write<int16_t>(v, this, jc::spawn_system::MAX_VEHICLE_SPAWNS);
 }
 
-void SpawnSystem::destroy_agent_spawn_point(AgentSpawnPoint* v)
+void FactorySystem::destroy_agent_spawn_point(AgentSpawnPoint* v)
 {
 	if (!v)
 		return;
@@ -79,17 +83,17 @@ void SpawnSystem::destroy_agent_spawn_point(AgentSpawnPoint* v)
 	agent_spawns.erase(std::remove_if(agent_spawns.begin(), agent_spawns.end(), [&](const auto& r) { return r.obj == v; }));
 }
 
-int16_t SpawnSystem::get_max_character_spawns() const
+int16_t FactorySystem::get_max_character_spawns() const
 {
 	return jc::read<int16_t>(this, jc::spawn_system::MAX_CHARACTER_SPAWNS);
 }
 
-int16_t SpawnSystem::get_max_vehicle_spawns() const
+int16_t FactorySystem::get_max_vehicle_spawns() const
 {
 	return jc::read<int16_t>(this, jc::spawn_system::MAX_VEHICLE_SPAWNS);
 }
 
-CharacterHandle* SpawnSystem::spawn_character(const std::string& model_name, const vec3& position, int weapon_id)
+CharacterHandle* FactorySystem::spawn_character(const std::string& model_name, const vec3& position, int weapon_id)
 {
 	CharacterInfo info {};
 
@@ -118,7 +122,7 @@ CharacterHandle* SpawnSystem::spawn_character(const std::string& model_name, con
 	return nullptr;
 }
 
-SimpleRigidObject* SpawnSystem::spawn_simple_rigid_object(const vec3& position, const std::string& model_name, const std::string& pfx_name)
+SimpleRigidObject* FactorySystem::spawn_simple_rigid_object(const vec3& position, const std::string& model_name, const std::string& pfx_name)
 {
 	Transform transform(position);
 
@@ -132,7 +136,7 @@ SimpleRigidObject* SpawnSystem::spawn_simple_rigid_object(const vec3& position, 
 	return nullptr;
 }
 
-DamageableObject* SpawnSystem::spawn_damageable_object(const vec3& position, const std::string& model_name, const std::string& pfx_name)
+DamageableObject* FactorySystem::spawn_damageable_object(const vec3& position, const std::string& model_name, const std::string& pfx_name)
 {
 	Transform transform(position);
 
@@ -146,7 +150,7 @@ DamageableObject* SpawnSystem::spawn_damageable_object(const vec3& position, con
 	return nullptr;
 }
 
-AgentSpawnPoint* SpawnSystem::create_agent_spawn_point(const vec3& position)
+AgentSpawnPoint* FactorySystem::create_agent_spawn_point(const vec3& position)
 {
 	if (auto rf = g_game_control->create_object<AgentSpawnPoint>())
 	{
@@ -184,7 +188,7 @@ AgentSpawnPoint* SpawnSystem::create_agent_spawn_point(const vec3& position)
 	return nullptr;
 }
 
-VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
+VehicleSpawnPoint* FactorySystem::create_vehicle_spawn_point(const vec3& position)
 {
 	if (auto rf = g_game_control->create_object<VehicleSpawnPoint>())
 	{
@@ -223,7 +227,7 @@ VehicleSpawnPoint* SpawnSystem::create_vehicle_spawn_point(const vec3& position)
 	return nullptr;
 }
 
-MountedGun* SpawnSystem::spawn_mounted_gun(const vec3& position)
+MountedGun* FactorySystem::spawn_mounted_gun(const vec3& position)
 {
 	if (auto rf = g_game_control->create_object<MountedGun>())
 	{
@@ -258,7 +262,7 @@ MountedGun* SpawnSystem::spawn_mounted_gun(const vec3& position)
 	return nullptr;
 }
 
-Ladder* SpawnSystem::spawn_ladder(const vec3& position, const std::string& model, float length)
+Ladder* FactorySystem::spawn_ladder(const vec3& position, const std::string& model, float length)
 {
 	if (auto rf = g_game_control->create_object<Ladder>())
 	{
@@ -295,7 +299,7 @@ Ladder* SpawnSystem::spawn_ladder(const vec3& position, const std::string& model
 	return nullptr;
 }
 
-ItemPickup* SpawnSystem::spawn_general_item_pickup(const vec3& position, uint32_t type, const std::string& model, const std::string& description)
+ItemPickup* FactorySystem::spawn_general_item_pickup(const vec3& position, uint32_t type, const std::string& model, const std::string& description)
 {
 	if (auto rf = g_game_control->create_object<ItemPickup>())
 	{
@@ -308,7 +312,7 @@ ItemPickup* SpawnSystem::spawn_general_item_pickup(const vec3& position, uint32_
 	return nullptr;
 }
 
-ItemPickup* SpawnSystem::spawn_weapon_item_pickup(const vec3& position, uint32_t weapon_id, const std::string& description)
+ItemPickup* FactorySystem::spawn_weapon_item_pickup(const vec3& position, uint32_t weapon_id, const std::string& description)
 {
 	if (auto rf = g_game_control->create_object<ItemPickup>())
 	{
@@ -321,7 +325,7 @@ ItemPickup* SpawnSystem::spawn_weapon_item_pickup(const vec3& position, uint32_t
 	return nullptr;
 }
 
-AnimatedRigidObject* SpawnSystem::spawn_animated_rigid_object(const vec3& position, const std::string& model, const std::string& pfx_name)
+AnimatedRigidObject* FactorySystem::spawn_animated_rigid_object(const vec3& position, const std::string& model, const std::string& pfx_name)
 {
 	if (auto rf = g_game_control->create_object<AnimatedRigidObject>())
 	{
@@ -360,6 +364,32 @@ AnimatedRigidObject* SpawnSystem::spawn_animated_rigid_object(const vec3& positi
 		rf->init_from_map(&map);
 
 		return rf.move_to(animated_rigid_objects);
+	}
+
+	return nullptr;
+}
+
+UIMapIcon* FactorySystem::create_map_icon(const vec3& position, uint32_t icon)
+{
+	if (auto rf = g_game_control->create_object<UIMapIcon>(false))
+	{
+		if (!rf->setup(position, icon))
+			return nullptr;
+
+		return rf.move_to(ui_map_icons);
+	}
+
+	return nullptr;
+}
+
+Objective* FactorySystem::create_objective(const vec3& position, const u8vec4& color)
+{
+	if (auto rf = g_game_control->create_object<Objective>(false))
+	{
+		if (!rf->setup(position, color))
+			return nullptr;
+
+		return rf.move_to(objectives);
 	}
 
 	return nullptr;

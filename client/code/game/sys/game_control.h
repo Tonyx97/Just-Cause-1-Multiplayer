@@ -24,13 +24,13 @@ public:
 	void unhook_tick();
 
 	template <typename T, typename R = ref<T>>
-	R create_object()
+	R create_object(bool enable_now = true)
 	{
 		R r;
 
 		const std::string class_name = T::CLASS_NAME();
 
-		jc::this_call(jc::game_control::fn::CREATE_OBJECT, this, &r, &class_name, true);
+		jc::this_call(jc::game_control::fn::CREATE_OBJECT, this, &r, &class_name, enable_now);
 
 		return r;
 	}

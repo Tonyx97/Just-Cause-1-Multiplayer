@@ -49,4 +49,14 @@ namespace jc::game
 		uint16_t out;
 		return *jc::this_call<uint16_t*>(jc::g::math::fn::FLOAT_TO_INT16, &out, v);
 	}
+
+	inline u16vec3 to_u16vec3(const vec3& v)
+	{
+		return u16vec3(jc::game::float_to_i16(v.x), jc::game::float_to_i16(v.y), jc::game::float_to_i16(v.z));
+	}
+
+	inline vec3 to_vec3(const u16vec3& v)
+	{
+		return vec3(jc::game::i16_to_float(v.x), jc::game::i16_to_float(v.y), jc::game::i16_to_float(v.z));
+	}
 }

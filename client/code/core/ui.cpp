@@ -622,7 +622,7 @@ void UI::build_debug()
 			static AgentSpawnPoint* spawn_point = nullptr;
 			if (!spawn_point)
 			{
-				spawn_point = g_spawn->create_agent_spawn_point(g_world->get_localplayer_character()->get_position());
+				spawn_point = g_factory->create_agent_spawn_point(g_world->get_localplayer_character()->get_position());
 			}
 			else
 			{
@@ -635,7 +635,7 @@ void UI::build_debug()
 			static VehicleSpawnPoint* spawn_point = nullptr;
 			if (!spawn_point)
 			{
-				auto spawn_point = g_spawn->create_vehicle_spawn_point(g_world->get_localplayer_character()->get_position());
+				auto spawn_point = g_factory->create_vehicle_spawn_point(g_world->get_localplayer_character()->get_position());
 			}
 			else
 			{

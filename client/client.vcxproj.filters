@@ -150,7 +150,7 @@
     <ClCompile Include="code\game\object\base\comps\physical.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\spawn_system.cpp">
+    <ClCompile Include="code\game\sys\factory_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\character_handle\character_handle.cpp">
@@ -274,6 +274,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\mp\logic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\game\object\ui\map_icon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\game\object\mission\objective.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\game\object\ui\target_indicator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -419,7 +428,7 @@
     <ClInclude Include="code\core\patching.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\spawn_system.h">
+    <ClInclude Include="code\game\sys\factory_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\character_handle\character_handle.h">
@@ -555,6 +564,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\mp\logic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\ui\map_icon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\vars\ui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\mission\objective.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\ui\target_indicator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

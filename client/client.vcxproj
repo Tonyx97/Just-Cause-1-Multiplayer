@@ -117,6 +117,7 @@
     <ClCompile Include="code\game\object\exported_entity\exported_entity.cpp" />
     <ClCompile Include="code\game\object\item\item_pickup.cpp" />
     <ClCompile Include="code\game\object\ladder\ladder.cpp" />
+    <ClCompile Include="code\game\object\mission\objective.cpp" />
     <ClCompile Include="code\game\object\mounted_gun\mounted_gun.cpp" />
     <ClCompile Include="code\game\object\resource\ee_resource.cpp" />
     <ClCompile Include="code\game\object\resource\resource.cpp" />
@@ -131,6 +132,8 @@
     <ClCompile Include="code\game\object\base\comps\model.cpp" />
     <ClCompile Include="code\game\object\base\base.cpp" />
     <ClCompile Include="code\game\object\spawn_point\object_spawn_point.cpp" />
+    <ClCompile Include="code\game\object\ui\target_indicator.cpp" />
+    <ClCompile Include="code\game\object\ui\map_icon.cpp" />
     <ClCompile Include="code\game\object\vehicle\airplane.cpp" />
     <ClCompile Include="code\game\object\vehicle\air_vehicle.cpp" />
     <ClCompile Include="code\game\object\vehicle\boat.cpp" />
@@ -160,7 +163,7 @@
     <ClCompile Include="code\game\globals.cpp" />
     <ClCompile Include="code\core\hooks.cpp" />
     <ClCompile Include="code\game\sys\explosion_manager.cpp" />
-    <ClCompile Include="code\game\sys\spawn_system.cpp" />
+    <ClCompile Include="code\game\sys\factory_system.cpp" />
     <ClCompile Include="code\game\sys\weapon_system.cpp" />
     <ClCompile Include="code\game\object\spawn_point\vehicle_spawn_point.cpp" />
     <ClCompile Include="code\game\object\weapon\weapon.cpp" />
@@ -205,6 +208,7 @@
     <ClInclude Include="code\game\object\exported_entity\exported_entity.h" />
     <ClInclude Include="code\game\object\item\item_pickup.h" />
     <ClInclude Include="code\game\object\ladder\ladder.h" />
+    <ClInclude Include="code\game\object\mission\objective.h" />
     <ClInclude Include="code\game\object\mounted_gun\mounted_gun.h" />
     <ClInclude Include="code\game\object\resource\ee_resource.h" />
     <ClInclude Include="code\game\object\resource\resource.h" />
@@ -219,7 +223,10 @@
     <ClInclude Include="code\game\object\base\comps\model.h" />
     <ClInclude Include="code\game\object\base\base.h" />
     <ClInclude Include="code\game\object\spawn_point\object_spawn_point.h" />
+    <ClInclude Include="code\game\object\ui\target_indicator.h" />
+    <ClInclude Include="code\game\object\ui\map_icon.h" />
     <ClInclude Include="code\game\object\vars\exported_entities.h" />
+    <ClInclude Include="code\game\object\vars\ui.h" />
     <ClInclude Include="code\game\object\vars\weapons.h" />
     <ClInclude Include="code\game\object\vehicle\airplane.h" />
     <ClInclude Include="code\game\object\vehicle\air_vehicle.h" />
@@ -252,7 +259,7 @@
     <ClInclude Include="code\core\hooks.h" />
     <ClInclude Include="code\core\protos.h" />
     <ClInclude Include="code\game\sys\explosion_manager.h" />
-    <ClInclude Include="code\game\sys\spawn_system.h" />
+    <ClInclude Include="code\game\sys\factory_system.h" />
     <ClInclude Include="code\game\sys\weapon_system.h" />
     <ClInclude Include="code\game\object\spawn_point\vehicle_spawn_point.h" />
     <ClInclude Include="code\game\object\weapon\weapon.h" />

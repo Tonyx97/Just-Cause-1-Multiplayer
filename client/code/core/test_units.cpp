@@ -15,6 +15,8 @@
 #include <game/object/agent_type/npc_variant.h>
 #include <game/object/rigid_object/animated_rigid_object.h>
 #include <game/object/sound/sound_game_obj.h>
+#include <game/object/mission/objective.h>
+#include <game/object/ui/map_icon.h>
 #include <game/sys/all.h>
 
 /*
@@ -26,39 +28,34 @@
 00497BE1 - C7 41 20 04000000 - mov [ecx+20],00000004
 */
 
-void __fastcall hk_test(ptr a1, void*, int id)
-{
-	if (g_world && g_world->get_localplayer_character() && a1 == ptr(g_world->get_localplayer_character()->get_body_stance()))
-	{
-		if (g_test_char)
-			jc::hooks::call<jc::proto::dbg::test>(ptr(g_test_char->get_body_stance()), id);
+std::set<ptr> ay;
 
-		log(RED, "id {:x}", id);
+void __fastcall hk_test(ptr event_list, void*, ptr userdata)
+{
+	if (!ay.contains(event_list))
+	{
+		ay.insert(event_list);
+		log(CYAN, "added {:x} {:x} - {:x}", event_list, userdata, ptr(_ReturnAddress()));
 	}
 
-	jc::hooks::call<jc::proto::dbg::test>(a1, id);
+	jc::hooks::call<jc::proto::dbg::test>(event_list, userdata);
 }
 
 void __fastcall hk_test2(ptr a1, void*, int id)
 {
-	if (g_test_char && g_world && g_world->get_localplayer_character() && a1 == ptr(g_world->get_localplayer_character()->get_arms_stance()))
-	{
-		jc::hooks::call<jc::proto::dbg::test2>(ptr(g_test_char->get_arms_stance()), id);
-	}
-
 	jc::hooks::call<jc::proto::dbg::test2>(a1, id);
 }
 
 void jc::test_units::init()
 {
-	//jc::hooks::hook<jc::proto::dbg::test>(&hk_test);
+	jc::hooks::hook<jc::proto::dbg::test>(&hk_test);
 	//jc::hooks::hook<jc::proto::dbg::test2>(&hk_test2);
 }
 
 void jc::test_units::destroy()
 {
 	//jc::hooks::unhook<jc::proto::dbg::test2>();
-	//jc::hooks::unhook<jc::proto::dbg::test>();
+	jc::hooks::unhook<jc::proto::dbg::test>();
 }
 
 void jc::test_units::test_0()
@@ -73,12 +70,19 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD8))
 	{
-		g_spawn->spawn_damageable_object(local_pos + vec3(2.f, 0.f, 0.f), "building_blocks\\general\\oil_barrel_red.lod", "models\\building_blocks\\general\\oil_barrel.pfx");
-		// g_spawn->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "building_blocks\\general\\coca_pakage_box.lod", "coca_package_box.pfx");
+		g_factory->spawn_damageable_object(local_pos + vec3(2.f, 0.f, 0.f), "building_blocks\\general\\oil_barrel_red.lod", "models\\building_blocks\\general\\oil_barrel.pfx");
+		// g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "building_blocks\\general\\coca_pakage_box.lod", "coca_package_box.pfx");
 	}
 
 	if (g_key->is_key_pressed(VK_ADD))
 	{
+		g_factory->create_objective(local_pos + vec3(20.f, 0.f, 0.f), { 255, 255, 255, 255 });
+
+		/*static int i = 0;
+
+		i = ++i % 16;
+
+		g_factory->create_map_icon(local_pos + vec3(20.f, 0.f, 0.f), i);*/
 	}
 
 	static CharacterHandle* handle = nullptr;
@@ -87,7 +91,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD2))
 	{
-		//handle = g_spawn->spawn_character("female1", local_pos + vec3(2.f, 0.f, 0.f), Weapon_Pistol);
+		//handle = g_factory->spawn_character("female1", local_pos + vec3(2.f, 0.f, 0.f), Weapon_Pistol);
 
 		//log(RED, "handle {} (char {})", (void*)handle, (void*)handle->get_character());
 
@@ -107,7 +111,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		if (garage_door = g_spawn->spawn_animated_rigid_object(
+		if (garage_door = g_factory->spawn_animated_rigid_object(
 			local_pos,
 			R"(building_blocks\general\safehouse_guer_garage_door.lod)",
 			R"(models\building_blocks\general\safehouse_guer_garage_door_col.pfx)"))

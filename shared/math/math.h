@@ -28,6 +28,7 @@ using vec3 = glm::vec3;
 using vec2 = glm::vec2;
 using vec1 = glm::vec1;
 using ivec4 = glm::i32vec4;
+using u8vec4 = glm::u8vec4;
 using ivec3 = glm::i32vec3;
 using u16vec3 = glm::u16vec3;
 using ivec2 = glm::i32vec2;

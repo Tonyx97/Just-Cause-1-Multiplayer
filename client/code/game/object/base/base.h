@@ -76,6 +76,7 @@ public:
 		Hash_SpawnDistance = 0xd2f9579a,
 		Hash_Relative = 0x773aff1c,
 		Hash_KeyObject = 0x69a3a614,
+		Hash_Enabled = 0xee2cc81d,
 	};
 
 	void set_transform(const Transform& transform);

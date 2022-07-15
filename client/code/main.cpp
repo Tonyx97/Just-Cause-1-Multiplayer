@@ -37,7 +37,7 @@ void dll_thread()
 			if (renderer->get_device())
 				if (auto world = jc::read<World*>(jc::world::SINGLETON))
 					if (auto physics = jc::read<World*>(jc::physics::SINGLETON))
-						if (auto spawn_system = jc::read<SpawnSystem*>(jc::spawn_system::SINGLETON))
+						if (auto spawn_system = jc::read<FactorySystem*>(jc::spawn_system::SINGLETON))
 							if (auto game_status = jc::read<GameStatus*>(jc::game_status::SINGLETON))
 								if (auto day_cycle = jc::read<DayCycle*>(jc::day_cycle::SINGLETON))
 									if (auto ai_core = jc::read<AiCore*>(jc::ai_core::SINGLETON))
@@ -62,7 +62,7 @@ void dll_thread()
 	g_particle		= jc::read<ParticleSystem*>(jc::particle_system::SINGLETON);
 	g_day_cycle		= jc::read<DayCycle*>(jc::day_cycle::SINGLETON);
 	g_weapon		= jc::read<WeaponSystem*>(jc::weapon_system::SINGLETON);
-	g_spawn			= jc::read<SpawnSystem*>(jc::spawn_system::SINGLETON);
+	g_factory			= jc::read<FactorySystem*>(jc::spawn_system::SINGLETON);
 	g_ai			= jc::read<AiCore*>(jc::ai_core::SINGLETON);
 	g_game_status	= jc::read<GameStatus*>(jc::game_status::SINGLETON);
 	g_rsrc_streamer = jc::read<ResourceStreamer*>(jc::resource_streamer::SINGLETON);
@@ -83,7 +83,7 @@ void dll_thread()
 	g_particle->init();
 	g_day_cycle->init();
 	g_weapon->init();
-	g_spawn->init();
+	g_factory->init();
 	g_ai->init();
 	g_game_status->init();
 	g_rsrc_streamer->init();
@@ -178,7 +178,7 @@ void dll_thread()
 	g_rsrc_streamer->destroy();
 	g_game_status->destroy();
 	g_ai->destroy();
-	g_spawn->destroy();
+	g_factory->destroy();
 	g_weapon->destroy();
 	g_day_cycle->destroy();
 	g_particle->destroy();

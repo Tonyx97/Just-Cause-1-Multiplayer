@@ -107,7 +107,7 @@ struct ref
 		jc::this_call(jc::reference::fn::UNK_REF, counter);
 	}
 
-	operator bool () { return !!obj; }
+	operator bool () const { return !!obj; }
 
 	ref_holder<T> to_holder() const
 	{

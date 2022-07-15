@@ -52,6 +52,7 @@ void object_base_map::walk()
 			{ ObjectBase::Hash_SpawnDistance, "ObjectBase::Hash_SpawnDistance" },
 			{ ObjectBase::Hash_Relative, "ObjectBase::Hash_Relative" },
 			{ ObjectBase::Hash_KeyObject, "ObjectBase::Hash_KeyObject" },
+			{ ObjectBase::Hash_Enabled, "ObjectBase::Hash_Enabled" },
 
 			// SpawnPoint
 

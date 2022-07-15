@@ -2,7 +2,7 @@
 
 namespace jc::spawn_system
 {
-	static constexpr uint32_t SINGLETON = 0xD32C54; // SpawnSystem*
+	static constexpr uint32_t SINGLETON = 0xD32C54; // FactorySystem*
 
 	static constexpr uint32_t MAX_CHARACTER_SPAWNS = 0x3C; // int16
 	static constexpr uint32_t MAX_VEHICLE_SPAWNS   = 0x3E; // int16
@@ -17,8 +17,13 @@ class VehicleSpawnPoint;
 class MountedGun;
 class Ladder;
 class ItemPickup;
+class UIMapIcon;
+class Objective;
 
-class SpawnSystem
+/*
+* Factory/SpawnSystem to create and spawn game objects
+*/
+class FactorySystem
 {
 private:
 public:
@@ -41,6 +46,8 @@ public:
 	ItemPickup*				spawn_general_item_pickup(const vec3& position, uint32_t type, const std::string& model, const std::string& description = {});
 	ItemPickup*				spawn_weapon_item_pickup(const vec3& position, uint32_t weapon_id, const std::string& description = {});
 	AnimatedRigidObject*	spawn_animated_rigid_object(const vec3& position, const std::string& model, const std::string& pfx_name);
+	UIMapIcon*				create_map_icon(const vec3& position, uint32_t icon);
+	Objective*				create_objective(const vec3& position, const u8vec4& color);
 };
 
-inline SpawnSystem* g_spawn = nullptr;
+inline FactorySystem* g_factory = nullptr;

@@ -5,7 +5,7 @@
 #include "player.h"
 
 #ifdef JC_CLIENT
-#include <game/sys/spawn_system.h>
+#include <game/sys/factory_system.h>
 #include <game/sys/world.h>
 #include <game/object/spawn_point/spawn_point.h>
 #include <game/object/character_handle/character_handle.h>
@@ -26,7 +26,7 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 		{
 			// create and spawn the character if it's not the localplayer
 
-			handle = g_spawn->spawn_character("female1", { 0.f, 0.f, 0.f });
+			handle = g_factory->spawn_character("female1", { 0.f, 0.f, 0.f });
 			
 			// make the remote player invincible from the client logic so it doesn't get killed
 			// by local events
