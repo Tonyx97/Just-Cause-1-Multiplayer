@@ -212,7 +212,7 @@ VehicleSpawnPoint* FactorySystem::create_vehicle_spawn_point(const vec3& positio
 		map.insert<object_base_map::String>(0x7c87224d, R"(rm_respawn rm_11_release)");
 		map.insert<object_base_map::String>(0x6ea4cb25, R"(rm_11_release)");
 		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(rm_11_vehicle)");
-		map.insert<object_base_map::String>(0x8eb5aff2, jc::vars::exported_entities_vehicles[7]);
+		map.insert<object_base_map::String>(0x8eb5aff2, jc::vars::exported_entities_vehicles[61]);
 		// map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, {});
 
 		log(RED, "VehicleSpawnPoint: {:x}", ptr(*rf));

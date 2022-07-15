@@ -76,7 +76,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_ADD))
 	{
-		g_factory->create_objective(local_pos + vec3(20.f, 0.f, 0.f), { 255, 255, 255, 255 });
+		g_factory->create_objective(local_pos + vec3(20.f, 0.f, 0.f), { util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), 255 });
 
 		/*static int i = 0;
 
