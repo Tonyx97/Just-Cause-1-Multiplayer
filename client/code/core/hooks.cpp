@@ -8,11 +8,13 @@
 void jc::hooks::hook_all()
 {
 	character::hook::apply();
+	alive_object::hook::apply();
 	item_pickup::hook::apply();
 }
 
 void jc::hooks::unhook_all()
 {
 	item_pickup::hook::undo();
+	alive_object::hook::undo();
 	character::hook::undo();
 }

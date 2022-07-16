@@ -23,9 +23,9 @@ bool Objective::setup(const vec3& position, const u8vec4& color)
 	map.insert<object_base_map::Int>(0xde0d8dc5, 54000); // int
 	map.insert<object_base_map::Int>(ObjectBase::Hash_Relative, 1); // int
 	map.insert<object_base_map::Float>(0x3ee0f1b4, 0.00f); // float
-	map.insert<object_base_map::String>(0x43677192, R"(failed_timetrial)"); // string
-	map.insert<object_base_map::String>(0xb284d36a, R"(icon_objective)"); // string
+	map.insert<object_base_map::String>(0xb284d36a, "icon_objective"); // string
 
+	//map.insert<object_base_map::String>(0x43677192, R"(failed_timetrial)"); // string
 	//map.insert<object_base_map::String>(0x20200f3e, R"({60500BE1-D672-4264-AB85-ABBA7CD9DBD1}::go)"); // string
 	//map.insert<object_base_map::String>(0x5ec6a145, R"({60500BE1-D672-4264-AB85-ABBA7CD9DBD1}::go)"); // string
 	//map.insert<object_base_map::String>(0xa728d18b, R"(rm_tr_11_tbr)"); // string - or SM_Leave_Area_Msg
@@ -33,8 +33,8 @@ bool Objective::setup(const vec3& position, const u8vec4& color)
 	//map.insert<object_base_map::String>(0xb82c81c0, R"(bomb_explode_pulse)"); // string
 	//map.insert<object_base_map::String>(0xc3a589bc, R"(dropoffobjectivematrix)"); // string
 
-	map.insert<object_base_map::String>(ObjectBase::Hash_Class, R"(CObjective)"); // string
-	map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(objective_start)"); // string
+	map.insert<object_base_map::String>(ObjectBase::Hash_Class, "CObjective"); // string
+	map.insert<object_base_map::String>(ObjectBase::Hash_Desc, "objective_start"); // string
 	map.insert<object_base_map::Vec3>(0xcf235620, &position); // vec3
 
 	init_from_map(&map);

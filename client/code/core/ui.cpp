@@ -488,6 +488,7 @@ void UI::render()
 
 			ImGui::Text("------------------");
 			ImGui::Text("Closest HP ptr: 0x%x", closest_hp_ptr);
+			ImGui::Text("Facing object: 0x%x", ptr(local_player_pawn->get_facing_object()));
 
 			if (closest_weapon)
 				ImGui::Text("Closest Weapon: 0x%x", ptr(closest_weapon));

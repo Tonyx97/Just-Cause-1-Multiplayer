@@ -86,6 +86,8 @@ public:
 
 	bool is_vehicle() const;
 
+	uint32_t get_typename_hash() const;
+
 	const char* get_typename() const;
 
 	Model* get_model() const;

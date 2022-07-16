@@ -5,6 +5,7 @@
 #include <mp/net.h>
 
 #include <game/object/character/character.h>
+#include <game/object/localplayer/localplayer.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/sys/world.h>
 #include <game/sys/factory_system.h>
@@ -26,28 +27,11 @@ bool __fastcall GameControl::hk_tick(void* _this)
 
 			static CharacterHandle* cc_h = nullptr;
 
-			if (g_key->is_key_down(VK_F5))
-			{
-				auto lp = ptr(localplayer);
-				auto lpc = ptr(local_char);
+			if (g_key->is_key_pressed(VK_F4))
+				localplayer->get_character()->set_hp(1.f);
 
-				for (int i = 0; i < 1000; ++i)
-					local_char->respawn();
-
-				/*jc::this_call(0x4D1480, localplayer, 0);
-				jc::this_call(0x58DC90, local_char);
-				// 
-				jc::this_call(0x4C34C0, localplayer);
-				*(bool*)(lp + 0x4AC) = 1;
-				jc::write<bool>(true, 0xD85B8C);
-				jc::std_call(0x58C960, 0);
-				jc::this_call(0x59F8E0, lpc);
-
-				jc::this_call(0x603760, lp + 0x24);
-
-				jc::this_call(0x485290, jc::read<ptr>(0xD32EE4), 0);
-				jc::this_call(0x488410, jc::read<ptr>(0xD32EE4), jc::read<ptr>(0xD32EE4) + 0x20);*/
-			}
+			if (g_key->is_key_pressed(VK_F5))
+				localplayer->respawn();
 
 			if (g_key->is_key_pressed(VK_F6))
 			{

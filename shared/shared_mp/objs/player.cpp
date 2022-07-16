@@ -27,11 +27,6 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 			// create and spawn the character if it's not the localplayer
 
 			handle = g_factory->spawn_character("female1", { 0.f, 0.f, 0.f });
-			
-			// make the remote player invincible from the client logic so it doesn't get killed
-			// by local events
-
-			get_character()->set_invincible(true);
 
 			set_spawned(true);
 		}
@@ -64,15 +59,16 @@ Player::Player(PlayerClient* pc) : client(pc)
 Player::~Player()
 {
 #ifdef JC_CLIENT
-	if (const auto old_handle = std::exchange(handle, nullptr))
-		handle->destroy();
+	if (!is_local())
+	{
+		const auto old_handle = std::exchange(handle, nullptr);
+
+		check(old_handle, "Invalid handle when destroying a remote player");
+
+		old_handle->destroy();
+	}
 #else
 #endif
-}
-
-void Player::set_tick_info(const TickInfo& v)
-{
-	set_transform(v.transform);
 }
 
 bool Player::spawn()
@@ -97,6 +93,23 @@ bool Player::spawn()
 
 // info getters/setters
 
+void Player::set_hp(float v)
+{
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c)
+	{
+		// todojc - probably not a good idea to do this here but it's fine for now
+
+		if (!is_alive() && v > 0.f)
+			c->respawn();
+
+		c->set_hp(v);
+	});
+#endif
+
+	tick_info.hp = v;
+}
+
 void Player::set_transform(const Transform& transform)
 {
 	tick_info.transform = transform;
@@ -104,6 +117,16 @@ void Player::set_transform(const Transform& transform)
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->set_transform(transform); });
 #endif
+}
+
+bool Player::is_alive() const
+{
+	return get_hp() > 0.f;
+}
+
+float Player::get_hp() const
+{
+	return tick_info.hp;
 }
 
 void Player::set_body_stance_id(uint32_t id)
@@ -131,15 +154,26 @@ void Player::set_nick(const std::string& v)
 	static_info.nick = v;
 }
 
+void Player::set_tick_info(const TickInfo& v)
+{
+	set_transform(v.transform);
+}
+
 void Player::set_skin(uint32_t v)
 {
 	static_info.skin = v;
 
 #ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->set_model(v, false); });
 #endif
 }
 
 uint32_t Player::get_skin() const
 {
 	return static_info.skin;
+}
+
+bool Player::must_skip_engine_stances() const
+{
+	return skip_engine_stances;
 }

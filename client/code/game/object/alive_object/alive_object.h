@@ -2,6 +2,8 @@
 
 #include "../base/base.h"
 
+class AliveObject;
+
 namespace jc::alive_object
 {
 	static constexpr uint32_t MAX_HEALTH = 0x48;		// float
@@ -12,6 +14,14 @@ namespace jc::alive_object
 	{
 		static constexpr uint32_t SET_HEALTH		= 33;
 		static constexpr uint32_t INITIALIZE_MODELS = 34;
+	}
+
+	namespace hook
+	{
+		using set_health_t = prototype<void(__thiscall*)(AliveObject*, float), 0x743E30, util::hash::JENKINS("AliveObject::SetHealth")>;
+
+		void apply();
+		void undo();
 	}
 }
 

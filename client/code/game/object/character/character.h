@@ -44,6 +44,7 @@ namespace jc::character
 		static constexpr uint32_t CREATE_SKELETON			= 0x648430;
 		static constexpr uint32_t CAN_BE_DESTROYED			= 0x595F10;
 		static constexpr uint32_t RESPAWN					= 0x598420;
+		static constexpr uint32_t GET_FACING_OBJECT			= 0x596DC0;
 		
 	}
 
@@ -55,10 +56,10 @@ namespace jc::character
 
 	namespace hook
 	{
-		namespace body_stance
-		{
-			using set_stance_t = prototype<void(__thiscall*)(Character*, float, float, float, bool), 0x5A45D0, util::hash::JENKINS("BodyStance::SetStance")>;
-		}
+		using character_can_be_destroyed = prototype<bool(__fastcall*)(Character*), 0x595F10, util::hash::JENKINS("Character::CanBeDestroyed")>;
+		using dispatch_movement_t = prototype<void(__thiscall*)(Character*, float, float, float, bool), 0x5A45D0, util::hash::JENKINS("Character::DispatchMovement")>;
+		using set_body_stance_t = prototype<void(__thiscall*)(BodyStanceController*, uint32_t), 0x625750, util::hash::JENKINS("BodyStanceController::SetStance")>;
+		using setup_punch_t = prototype<Character* (__thiscall*)(Character*), 0x5A4380, util::hash::JENKINS("Character::SetupPunch")>;
 
 		void apply();
 		void undo();
@@ -97,7 +98,7 @@ public:
 	void set_grenades_ammo(int32_t v);
 	void set_animation(const std::string& name, float speed, bool unk0 = false, bool unk1 = false);
 	void set_grenade_timeout(float v);
-	void set_model(uint32_t id);
+	void set_model(uint32_t id, bool sync = true);
 	void set_npc_variant(NPCVariant* v);
 	void set_flag(uint32_t mask);
 	void remove_flag(uint32_t mask);
@@ -113,6 +114,8 @@ public:
 	float get_grenade_time() const;
 	float get_death_time() const;
 	float get_roll_clamp() const;
+
+	Character* get_facing_object() const;
 
 	WeaponBelt* get_weapon_belt() const;
 

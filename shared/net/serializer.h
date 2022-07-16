@@ -19,6 +19,16 @@ namespace enet
 		return value;
 	}
 
+	template <typename T>
+	inline T deserialize_general_data(std::vector<uint8_t>& data)
+	{
+		const auto value = *BITCAST(T*, data.data());
+
+		data.erase(data.begin(), data.begin() + sizeof(T));
+
+		return value;
+	}
+
 	template <typename T = int>
 	inline T deserialize_int(std::vector<uint8_t>& data)
 	{
@@ -30,6 +40,7 @@ namespace enet
 
 		return value;
 	}
+
 
 	template <typename T = float>
 	inline T deserialize_float(std::vector<uint8_t>& data)

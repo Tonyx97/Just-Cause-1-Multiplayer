@@ -88,7 +88,6 @@ namespace jc::proto
 
 	namespace patches
 	{
-		using ambience_2d_sounds		 = prototype<jc::stl::string*(__thiscall*)(int, jc::stl::string*), 0x656ED0, util::hash::JENKINS("Ambience2DSounds")>;
-		using character_can_be_destroyed = prototype<bool(__fastcall*)(Character*), 0x595F10, util::hash::JENKINS("Character::CanBeDestroyed")>;
+		using ambience_2d_sounds	= prototype<jc::stl::string*(__thiscall*)(int, jc::stl::string*), 0x656ED0, util::hash::JENKINS("Ambience2DSounds")>;
 	}
 }

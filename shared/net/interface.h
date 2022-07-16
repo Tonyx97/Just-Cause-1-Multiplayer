@@ -118,6 +118,9 @@ namespace enet
 		template <typename T>
 		T get() const { return T().deserialize(data); }
 
+		template <typename T>
+		T get_raw() const { return deserialize_general_data<T>(data); }
+
 		std::string get_str() const { return deserialize_string(data); }
 
 		template <typename T = NetObject>

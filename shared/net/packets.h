@@ -41,7 +41,8 @@ enum PlayerPacketID : unsigned int
 	PlayerPID_Spawn = GenericPID_Max,
 	PlayerPID_TickInfo,
 	PlayerPID_DynamicInfo,
-	PlayerPID_Stance,
+	PlayerPID_StanceAndMovement,
+	PlayerPID_Health,
 	PlayerPID_Max
 };
 

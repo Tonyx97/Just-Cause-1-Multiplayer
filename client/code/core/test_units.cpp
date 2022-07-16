@@ -48,14 +48,14 @@ void __fastcall hk_test2(ptr a1, void*, int id)
 
 void jc::test_units::init()
 {
-	jc::hooks::hook<jc::proto::dbg::test>(&hk_test);
+	//jc::hooks::hook<jc::proto::dbg::test>(&hk_test);
 	//jc::hooks::hook<jc::proto::dbg::test2>(&hk_test2);
 }
 
 void jc::test_units::destroy()
 {
 	//jc::hooks::unhook<jc::proto::dbg::test2>();
-	jc::hooks::unhook<jc::proto::dbg::test>();
+	//jc::hooks::unhook<jc::proto::dbg::test>();
 }
 
 void jc::test_units::test_0()

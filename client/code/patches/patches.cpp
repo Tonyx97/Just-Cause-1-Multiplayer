@@ -20,27 +20,6 @@ jc::stl::string* __fastcall hk_play_ambience_2d_sounds(int a1, void*, jc::stl::s
 	return res;
 }
 
-bool __fastcall hk_character__can_be_destroyed(Character* character)
-{
-	// if our local player is being checked here, it means PlayerSettings is trying to
-	// get us to the game continue menu, we will return false all the time so we can implement our
-	// own spawing and also we avoid the stupid menu that serves no purpose
-
-	if (character == g_world->get_localplayer_character())
-		return false;
-
-	// we implement our own logic of this function, we can modify the amount of time
-	// a character can stay death before its destruction or we can just skip it in the future
-	// and so on, this will vary in future development
-
-	const auto stance_controller = character->get_body_stance();
-	const auto movement_id		 = stance_controller->get_movement_id();
-
-	return character->get_max_hp() <= std::numeric_limits<float>::max() &&
-		   (movement_id == 0x34 || movement_id == 0x62) &&
-		   character->get_death_time() > 10.f;
-}
-
 namespace jc::patches
 {
 	// sets the head interpolation value to 1.0 all the time
@@ -71,6 +50,10 @@ void jc::patches::apply()
 	// replace 10 with 1 so the alt-tab is faster and doesn't freeze
 
 	jc::write(1, jc::g::FOCUS_FREEZE_TIME);
+
+	// remove the randomness in the character's punch damage
+
+	jc::write(1ui8, 0x5A4400);
 
 	// make npcs look at other npcs when they are less than 0 meters (aka never lol)
 
@@ -113,10 +96,6 @@ void jc::patches::apply()
 	// avoid weird 2d sounds
 
 	jc::hooks::hook<jc::proto::patches::ambience_2d_sounds>(&hk_play_ambience_2d_sounds);
-
-	// implement our own logic for Character::CanBeDestroyed
-
-	jc::hooks::hook<jc::proto::patches::character_can_be_destroyed>(&hk_character__can_be_destroyed);
 }
 
 void jc::patches::undo()
@@ -126,6 +105,7 @@ void jc::patches::undo()
 	death_state._undo();
 	head_rotation_patch._undo();
 
-	jc::hooks::unhook<jc::proto::patches::character_can_be_destroyed>();
 	jc::hooks::unhook<jc::proto::patches::ambience_2d_sounds>();
+
+	jc::write(20ui8, 0x5A4400);
 }

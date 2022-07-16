@@ -26,33 +26,132 @@
 
 namespace jc::character::hook
 {
-	namespace body_stance
+	bool __fastcall can_be_destroyed(Character* character)
 	{
-		void __fastcall set_stance(Character* character, void*, float angle, float right, float forward, bool aiming)
+		// if our local player is being checked here, it means PlayerSettings is trying to
+		// get us to the game continue menu, we will return false all the time so we can implement our
+		// own spawing and also we avoid the stupid menu that serves no purpose, same for remote players
+		// obviously...
+
+		if (g_net->get_player_by_character(character))
+			return false;
+
+		// we implement our own logic of this function, we can modify the amount of time
+		// a character can stay death before its destruction or we can just skip it in the future
+		// and so on, this will vary in future development
+
+		const auto stance_controller = character->get_body_stance();
+		const auto movement_id = stance_controller->get_movement_id();
+
+		return character->get_max_hp() <= std::numeric_limits<float>::max() &&
+			(movement_id == 0x34 || movement_id == 0x62) &&
+			character->get_death_time() > 10.f;
+	}
+
+	void __fastcall dispatch_movement(Character* character, void*, float angle, float right, float forward, bool aiming)
+	{
+		if (const auto local_char = g_world->get_localplayer_character())
 		{
-			if (const auto local_char = g_world->get_localplayer_character())
-				if (character == local_char)
-				{
-					//const auto localplayer = g_net->get_localplayer();
+			if (character == local_char)
+			{
+				//const auto localplayer = g_net->get_localplayer();
 
-					//log(RED, "{} {} {} {}", angle, right, forward, aiming);
+				//log(RED, "{} {} {} {}", angle, right, forward, aiming);
 
-					if (g_test_char)
-						jc::hooks::call<set_stance_t>(g_test_char, angle, right, forward, aiming);
-				}
+				if (g_test_char)
+					jc::hooks::call<dispatch_movement_t>(g_test_char, angle, right, forward, aiming);
 
-			jc::hooks::call<set_stance_t>(character, angle, right, forward, aiming);
+				g_net->send_reliable(PlayerPID_StanceAndMovement, 0u, angle, right, forward, aiming);
+			}
+			else if (g_net->get_player_by_character(character))
+				return;
 		}
+
+		jc::hooks::call<dispatch_movement_t>(character, angle, right, forward, aiming);
+	}
+
+	void __fastcall set_stance(BodyStanceController* stance, void*, uint32_t id)
+	{
+		if (const auto local_char = g_world->get_localplayer_character())
+		{
+			const auto character = stance->get_character();
+
+			if (character == local_char)
+			{
+				switch (const auto ret_add = ptr(_ReturnAddress()))
+				{
+				case 0x59F44C: // check jump
+				{
+					g_net->send_reliable(PlayerPID_StanceAndMovement, 1u);
+					break;
+				}
+				default:
+				{
+					// if the engine is not setting the stance from a known return address
+					// then we need to filter by stance id
+
+					switch (id)
+					{
+					case 1:
+					case 9: break; // ignore
+					case 85:
+					case 86:
+					case 88:
+					case 89:
+					{
+						g_net->send_reliable(PlayerPID_StanceAndMovement, 3u, id);
+
+						break;
+					}
+					default:
+					{
+						//log(GREEN, "[DBG] Localplayer stance set to: {} from {:x}", id, ret_add);
+					}
+					}
+				}
+				}
+			}
+			else if (const auto player = g_net->get_player_by_character(character))
+			{
+				// if we are trying to set the stance from a top-hooked function such as dispatch_movement_t
+				// then we want to make sure this player's stance can be changed from this local player,
+				// this is useful because we want to ignore all stances that the game sets to remote players
+				// like falling and stuff like that, which will be controlled by packets sent by remote players
+				// containg such information (summary: to avoid desync)
+				
+				if (player->must_skip_engine_stances())
+					return;
+			}
+		}
+
+		jc::hooks::call<set_body_stance_t>(stance, id);
+	}
+
+	Character* __fastcall setup_punch(Character* character, void*)
+	{
+		auto res = jc::hooks::call<setup_punch_t>(character);
+
+		if (const auto local_char = g_world->get_localplayer_character())
+			if (character == local_char && res == character)
+				g_net->send_reliable(PlayerPID_StanceAndMovement, 2u);
+
+		return res;
 	}
 
 	void apply()
 	{
-		jc::hooks::hook<body_stance::set_stance_t>(&body_stance::set_stance);
+		jc::hooks::hook<character_can_be_destroyed>(&can_be_destroyed);
+		jc::hooks::hook<dispatch_movement_t>(&dispatch_movement);
+		jc::hooks::hook<set_body_stance_t>(&set_stance);
+		jc::hooks::hook<setup_punch_t>(&setup_punch);
 	}
 
 	void undo()
 	{
-		jc::hooks::unhook<body_stance::set_stance_t>();
+		jc::hooks::unhook<setup_punch_t>();
+		jc::hooks::unhook<set_body_stance_t>();
+		jc::hooks::unhook<dispatch_movement_t>();
+		jc::hooks::unhook<character_can_be_destroyed>();
 	}
 }
 
@@ -95,17 +194,17 @@ void Character::set_grenade_timeout(float v)
 	jc::write(v, this, jc::character::GRENADE_TIMEOUT);
 }
 
-void Character::set_model(uint32_t id)
+void Character::set_model(uint32_t id, bool sync)
 {
-	// Avalanche bois forgot to recreate the skeleton when setting the character info
-	// so we have to do it ourselves
-
-	rebuild_skeleton();
-
 	g_rsrc_streamer->request_exported_entity(id, [&](ExportedEntityResource* eer)
 	{
 		if (object_base_map* map = nullptr; eer->get_exported_entity()->load_class_properties(map) && map)
 		{
+			// Avalanche bois forgot to recreate the skeleton when setting the character info
+			// so we have to do it ourselves
+
+			rebuild_skeleton();
+
 			// let's try to get the model name from the map
 			// we will try to get the normal model first, if it fails
 			// the only choice we have is to check for PD model which seems
@@ -143,6 +242,13 @@ void Character::set_model(uint32_t id)
 				npc_variant->init_from_map(map);
 
 				set_npc_variant(*npc_variant);
+			}
+
+			if (sync)
+			{
+				// sync the skin id with other players
+
+				g_net->send_reliable(PlayerPID_DynamicInfo, 2u, id);
 			}
 		}
 	});
@@ -201,6 +307,11 @@ float Character::get_death_time() const
 float Character::get_roll_clamp() const
 {
 	return jc::read<float>(this, jc::character::ROLL_CLAMP);
+}
+
+Character* Character::get_facing_object() const
+{
+	return jc::this_call<Character*>(jc::character::fn::GET_FACING_OBJECT, this, nullptr);
 }
 
 WeaponBelt* Character::get_weapon_belt() const

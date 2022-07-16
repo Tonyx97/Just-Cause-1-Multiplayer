@@ -12,6 +12,11 @@ namespace jc::stance_controller
 	}
 }
 
+enum BodyStanceID
+{
+	BodyStance_Jump = 21
+};
+
 class Character;
 
 class StanceController

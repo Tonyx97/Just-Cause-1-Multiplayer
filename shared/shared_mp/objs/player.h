@@ -21,6 +21,8 @@ public:
 	struct TickInfo
 	{
 		Transform transform;
+
+		float hp;
 	};
 
 	struct DynamicInfo
@@ -46,6 +48,10 @@ private:
 
 public:
 
+	float angle, right, forward;
+	bool aiming;
+	bool skip_engine_stances = true;
+
 	static constexpr uint32_t TYPE() { return NetObject_Player; }
 
 	uint32_t get_type() const override { return TYPE(); }
@@ -62,17 +68,18 @@ public:
 #endif
 	~Player();
 
-	void set_tick_info(const TickInfo& v);
-
 	bool spawn() override;
-
-	const PlayerStaticInfo& get_static_info() const { return static_info; }
 
 	PlayerClient* get_client() const { return client; }
 
 	// tick info getters/setters
 
+	void set_hp(float v);
 	void set_transform(const Transform& transform);
+
+	bool is_alive() const;
+
+	float get_hp() const;
 
 	Transform get_transform() const { return tick_info.transform; }
 
@@ -86,6 +93,7 @@ public:
 
 	// static info getters/setters
 
+	void set_tick_info(const TickInfo& v);
 	void set_nick(const std::string& v);
 	void set_skin(uint32_t v);
 
@@ -95,9 +103,13 @@ public:
 	bool is_local() const { return local; }
 #endif
 
+	bool must_skip_engine_stances() const;
+
 	uint32_t get_skin() const;
 
 	const std::string& get_nick() const { return static_info.nick; }
 
 	const TickInfo& get_tick_info() const { return tick_info; }
+
+	const PlayerStaticInfo& get_static_info() const { return static_info; }
 };

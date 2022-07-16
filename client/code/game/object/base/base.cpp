@@ -186,6 +186,11 @@ bool ObjectBase::is_vehicle() const
 	return jc::v_call<bool>(this, jc::object_base::vt::IS_VEHICLE);
 }
 
+uint32_t ObjectBase::get_typename_hash() const
+{
+	return util::hash::JENKINS(get_typename());
+}
+
 const char* ObjectBase::get_typename() const
 {
 	const char* dummy = nullptr;

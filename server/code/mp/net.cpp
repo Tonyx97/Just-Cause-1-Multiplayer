@@ -86,10 +86,11 @@ void Net::setup_channels()
 	{
 		switch (auto id = p.get_id())
 		{
-		case PlayerPID_Spawn:			return nh::player::spawn(p);
-		case PlayerPID_TickInfo:		return nh::player::tick_info(p);
-		case PlayerPID_DynamicInfo:		return nh::player::dynamic_info(p);
-		case PlayerPID_Stance:			return nh::player::stance(p);
+		case PlayerPID_Spawn:						return nh::player::spawn(p);
+		case PlayerPID_TickInfo:					return nh::player::tick_info(p);
+		case PlayerPID_DynamicInfo:					return nh::player::dynamic_info(p);
+		case PlayerPID_StanceAndMovement:			return nh::player::stance_and_movement(p);
+		case PlayerPID_Health:						return nh::player::health(p);
 		}
 
 		return enet::PacketRes_NotFound;
@@ -107,8 +108,12 @@ void Net::tick()
 
 	// process packets from the players
 
+	int packets_received_this_tick = 0;
+
 	enet::dispatch_packets([&](ENetEvent& e)
 	{
+		++packets_received_this_tick;
+
 		switch (e.type)
 		{
 		case ENET_EVENT_TYPE_RECEIVE:
@@ -135,6 +140,8 @@ void Net::tick()
 		}
 		}
 	});
+
+	log(RED, "Packets this tick: {}", packets_received_this_tick);
 
 	std::this_thread::sleep_for(std::chrono::microseconds(8333));
 }
