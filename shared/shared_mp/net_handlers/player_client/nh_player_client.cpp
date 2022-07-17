@@ -97,7 +97,7 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 
 		player->spawn();
 
-		log(PURPLE, "Created new player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
+		log(PURPLE, "Created new player with NID {:x}", player->get_nid());
 	}
 
 	log(YELLOW, "All player instances synced (a total of {})", info.net_objects.size());

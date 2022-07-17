@@ -25,7 +25,12 @@ void Transform::compose(const vec3& t, const quat& r, const vec3& s)
 	m = mat_t * mat_r * mat_s;
 }
 
-void Transform::interpolate(const Transform& transform, float tf, float rf, float sf)
+void Transform::translate(const vec3& v)
+{
+	m = glm::translate(m, v);
+}
+
+Transform& Transform::interpolate(const Transform& transform, float tf, float rf, float sf)
 {
 	vec3 t0, t1, s0, s1;
 	quat r0, r1;
@@ -41,11 +46,8 @@ void Transform::interpolate(const Transform& transform, float tf, float rf, floa
 	const auto interpolated_s = glm::lerp(s0, s1, sf);
 
 	compose(interpolated_t, interpolated_r, interpolated_s);
-}
 
-void Transform::translate(const vec3& v)
-{
-	m = glm::translate(m, v);
+	return *this;
 }
 
 vec3 Transform::right()

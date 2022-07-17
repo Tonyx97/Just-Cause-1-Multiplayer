@@ -3,7 +3,8 @@
 class Transform
 {
 private:
-	mat4 m;
+
+	mat4 m = mat4(1.f);
 
 public:
 	Transform() {}
@@ -11,8 +12,9 @@ public:
 
 	void compose(const vec3& t, const quat& r, const vec3& s);
 	void decompose(vec3& t, quat& r, vec3& s) const;
-	void interpolate(const Transform& transform, float tf = 1.f, float rf = 1.f, float sf = 1.f);
 	void translate(const vec3& v);
+
+	Transform& interpolate(const Transform& transform, float tf = 1.f, float rf = 1.f, float sf = 1.f);
 
 	vec3 right();
 	vec3 up();

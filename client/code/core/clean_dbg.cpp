@@ -44,6 +44,8 @@ inline std::string get_solution_dir()
 
 void __stdcall hk_print_error(const char* text, ...)
 {
+	jc::hooks::HookLock lock {};
+
 	if (!text)
 		return;
 
@@ -189,6 +191,8 @@ int __fastcall hk_create_std_string(std::string* _this, void*, const char* str, 
 
 void* __fastcall hk_raycast(uintptr_t _this, void*, ray* r, int a1, float distance, ray_hit_info* hit_info, void* a3, bool a4, bool a5)
 {
+	jc::hooks::HookLock lock {};
+
 	if (_ReturnAddress() == (void*)0x646A00)
 	{
 		const auto ret = jc::hooks::call<jc::proto::raycast>(_this, r, a1, distance, hit_info, a3, a4, a5);
@@ -205,11 +209,11 @@ bool g_rec_map = false;
 
 void __fastcall hk_casp_vcall6(ptr casp, void*, ptr map)
 {
+	jc::hooks::HookLock lock {};
+
 	g_rec_map = ENABLE_MAP_DEBUG;
 
-	//if (g_rec_map)
-	//	log(WHITE, "------------------ {:x} --------------------------", casp);
-
+	if (g_rec_map)
 	{
 		log(WHITE, "------------------ {:x} --------------------------", casp);
 
@@ -222,14 +226,13 @@ void __fastcall hk_casp_vcall6(ptr casp, void*, ptr map)
 
 	jc::hooks::call<jc::proto::dbg::map_dumper::vcall6_obj_init>(casp, map);
 
-	//if (g_rec_map)
-	//	log(WHITE, "---------------------------------------------------");
-
 	g_rec_map = false;
 }
 
 bool __fastcall hk_map_find_bool(ptr map, void*, uint32_t* hash, bool* out)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_bool>(map, hash, out);
 
 	if (res && g_rec_map)
@@ -240,6 +243,8 @@ bool __fastcall hk_map_find_bool(ptr map, void*, uint32_t* hash, bool* out)
 
 bool __fastcall hk_map_find_int16(ptr map, void*, uint32_t* hash, int16_t* out)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_int16>(map, hash, out);
 
 	if (res && g_rec_map)
@@ -250,6 +255,8 @@ bool __fastcall hk_map_find_int16(ptr map, void*, uint32_t* hash, int16_t* out)
 
 bool __fastcall hk_map_find_int(ptr map, void*, uint32_t* hash, int* out)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_int>(map, hash, out);
 
 	if (res && g_rec_map)
@@ -260,6 +267,8 @@ bool __fastcall hk_map_find_int(ptr map, void*, uint32_t* hash, int* out)
 
 bool __fastcall hk_map_find_float(ptr map, void*, uint32_t* hash, float* out)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_float>(map, hash, out);
 
 	if (res && g_rec_map)
@@ -270,6 +279,8 @@ bool __fastcall hk_map_find_float(ptr map, void*, uint32_t* hash, float* out)
 
 bool __fastcall hk_map_find_vec3(ptr map, void*, uint32_t* hash, vec3* out)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_vec3>(map, hash, out);
 
 	if (res && g_rec_map)
@@ -280,6 +291,8 @@ bool __fastcall hk_map_find_vec3(ptr map, void*, uint32_t* hash, vec3* out)
 
 bool __fastcall hk_map_find_vec3i16(ptr map, void*, uint32_t* hash, u16vec3* out)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_vec3u16>(map, hash, out);
 
 	if (res && g_rec_map)
@@ -290,6 +303,8 @@ bool __fastcall hk_map_find_vec3i16(ptr map, void*, uint32_t* hash, u16vec3* out
 
 bool __fastcall hk_map_find_mat4(ptr map, void*, uint32_t* hash, mat4* out)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_mat4>(map, hash, out);
 
 	if (res && g_rec_map)
@@ -314,6 +329,8 @@ bool __fastcall hk_map_find_mat4(ptr map, void*, uint32_t* hash, mat4* out)
 
 bool __fastcall hk_map_find_str1(ptr map, void*, uint32_t* hash, std::string* out)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_string>(map, hash, out);
 
 	if (res && g_rec_map)
@@ -335,6 +352,8 @@ bool __fastcall hk_map_find_str1(ptr map, void*, uint32_t* hash, std::string* ou
 
 bool __cdecl hk_map_find_str2(ptr map, uint32_t hash, ptr* out, std::string* idk)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_string2>(map, hash, out, idk);
 
 	if (res && g_rec_map)
@@ -345,6 +364,8 @@ bool __cdecl hk_map_find_str2(ptr map, uint32_t hash, ptr* out, std::string* idk
 
 bool __cdecl hk_map_find_str3(ptr map, uint32_t hash, ptr* out, std::string* idk)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_string3>(map, hash, out, idk);
 
 	if (res && g_rec_map)
@@ -355,6 +376,8 @@ bool __cdecl hk_map_find_str3(ptr map, uint32_t hash, ptr* out, std::string* idk
 
 bool __cdecl hk_map_find_str4(ptr map, uint32_t hash, ptr* idk, ptr* out, std::string* idk2)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::find_string4>(map, hash, idk, out, idk2);
 
 	if (res && g_rec_map)
@@ -365,6 +388,8 @@ bool __cdecl hk_map_find_str4(ptr map, uint32_t hash, ptr* idk, ptr* out, std::s
 
 mat4* __fastcall hk_map_get_mat4(ptr map, void*, uint32_t* hash)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::get_mat4>(map, hash);
 
 	if (res && g_rec_map)

@@ -36,7 +36,7 @@ bool CharacterHandle::is_looking_at_any_npc() const
 
 CharacterHandle* CharacterHandle::create(CharacterInfo* info, Transform* transform, int weapon_id)
 {
-	std::string xml_file = "";
+	jc::stl::string xml_file = "";
 
 	jc::this_call<CharacterHandle*>(jc::character_handle::fn::CREATE_CHARACTER, this, info, transform, weapon_id, &xml_file, nullptr, nullptr);
 

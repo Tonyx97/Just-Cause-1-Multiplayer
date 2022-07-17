@@ -15,26 +15,36 @@ namespace jc::stl
 {
 	struct string
 	{
-		ptr base;
+		ptr base = 0;
 
-		char data[0x10];
+		char data[0x10] = { 0 };
 
-		int unk;
-		int length;
+		int unk = 0;
+		int length = 0;
 
 		void alloc()
 		{
-			jc::this_call(jc::string::fn::CTOR_DTOR, this, 0);
+			jc::this_call<void>(jc::string::fn::CTOR_DTOR, this, false);
 		}
 
 		string() { alloc(); }
-		~string() { jc::this_call(jc::string::fn::CTOR_DTOR, this, 1); }
+		~string()
+		{
+			jc::this_call<void>(jc::string::fn::CTOR_DTOR, this, true);
+		}
 
 		string(const char* str)
 		{
 			alloc();
 
 			jc::this_call(jc::string::fn::INIT, this, str, strlen(str));
+		}
+
+		string(const std::string& str)
+		{
+			alloc();
+
+			jc::this_call(jc::string::fn::INIT, this, str.data(), str.length());
 		}
 
 		const char* c_str() const
@@ -59,6 +69,7 @@ namespace jc::stl
 		string& operator=(const string& str)
 		{
 			jc::this_call(jc::string::fn::ASSIGN, this, &str, 0, -1);
+
 			return *this;
 		}
 

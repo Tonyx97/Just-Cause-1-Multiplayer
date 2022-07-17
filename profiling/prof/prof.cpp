@@ -32,13 +32,14 @@ namespace jc::prof
 			console_handle = CONSOLE_OUT;
 			console_hwnd = GetConsoleWindow();
 
+			console_allocated = true;
+
+#ifdef JC_CLIENT
 			auto screen_width = GetSystemMetrics(SM_CXSCREEN);
 			auto screen_height = GetSystemMetrics(SM_CYSCREEN);
 
 			SetConsoleTitleA(name);
 			SetWindowPos(console_hwnd, 0, 0, 0, 1000, 650, 0);
-
-			console_allocated = true;
 
 			CONSOLE_FONT_INFOEX cfi { 0 };
 			cfi.cbSize = sizeof(cfi);
@@ -52,7 +53,6 @@ namespace jc::prof
 			SetCurrentConsoleFontEx(CONSOLE_OUT, FALSE, &cfi);
 			SetConsoleTextAttribute(CONSOLE_OUT, WHITE);
 
-#ifdef JC_CLIENT
 			HWND game_window = nullptr;
 
 			while (!game_window)

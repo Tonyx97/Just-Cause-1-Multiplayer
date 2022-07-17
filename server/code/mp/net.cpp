@@ -134,6 +134,8 @@ void Net::tick()
 		}
 		case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
 		{
+			log(RED, "some time out");
+
 			AS_PC(e.peer->data)->set_timed_out();
 
 			[[fallthrough]];
@@ -147,7 +149,7 @@ void Net::tick()
 		}
 	});
 
-	log(RED, "Packets this tick: {}", packets_received_this_tick);
+	//log(RED, "Packets this tick: {}", packets_received_this_tick);
 
 	std::this_thread::sleep_for(std::chrono::microseconds(8333));
 }

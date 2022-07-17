@@ -32,8 +32,8 @@ public:
 	static constexpr auto SIZE() { return jc::ee_resource::INSTANCE_SIZE; }
 
 	void set_flag(uint32_t flag);
+	void check() const;
 
-	bool check() const;
 	bool is_loaded() const;
 
 	ExportedEntity* get_exported_entity() const;

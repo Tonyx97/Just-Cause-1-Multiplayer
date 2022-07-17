@@ -6,6 +6,7 @@ namespace jc::physical
 	{
 		static constexpr uint32_t _UNK1				= 11;
 		static constexpr uint32_t _UNK2				= 27;
+		static constexpr uint32_t ADD_VELOCITY		= 31;
 		static constexpr uint32_t SET_VELOCITY		= 37;
 		static constexpr uint32_t GET_VELOCITY		= 43;
 	}

@@ -174,4 +174,7 @@ struct bref
 		if (destroyed)
 			memset(this, 0, sizeof(*this));
 	}
+
+	T* operator->() const noexcept { return obj; }
+	T* operator*() const noexcept { return obj; }
 };

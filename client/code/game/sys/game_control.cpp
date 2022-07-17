@@ -2,6 +2,8 @@
 
 #include "game_control.h"
 
+#include <timer/timer.h>
+
 #include <mp/net.h>
 
 #include <game/object/character/character.h>
@@ -90,6 +92,8 @@ bool __fastcall GameControl::hk_tick(void* _this)
 	g_net->tick();
 	g_net->update_objects();
 	g_key->clear_states();
+
+	timer::dispatch();
 
 	return res;
 }

@@ -14,7 +14,9 @@ void Physical::vcall_unk2()
 
 void Physical::set_velocity(const vec3& v)
 {
-	jc::v_call(this, jc::physical::vt::SET_VELOCITY);
+	//jc::v_call(this, jc::physical::vt::SET_VELOCITY);
+
+	jc::write(v, this, 0x40);
 }
 
 vec3 Physical::get_velocity() const

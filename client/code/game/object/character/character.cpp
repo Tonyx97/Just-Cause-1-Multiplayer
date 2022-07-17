@@ -28,6 +28,8 @@ namespace jc::character::hook
 {
 	bool __fastcall can_be_destroyed(Character* character)
 	{
+		jc::hooks::HookLock lock {};
+
 		// if our local player is being checked here, it means PlayerSettings is trying to
 		// get us to the game continue menu, we will return false all the time so we can implement our
 		// own spawing and also we avoid the stupid menu that serves no purpose, same for remote players
@@ -50,6 +52,8 @@ namespace jc::character::hook
 
 	void __fastcall dispatch_movement(Character* character, void*, float angle, float right, float forward, bool aiming)
 	{
+		jc::hooks::HookLock lock {};
+
 		if (const auto local_char = g_world->get_localplayer_character())
 		{
 			if (character == local_char)
@@ -70,6 +74,8 @@ namespace jc::character::hook
 
 	void __fastcall set_stance(BodyStanceController* stance, void*, uint32_t id)
 	{
+		jc::hooks::HookLock lock {};
+
 		if (const auto local_char = g_world->get_localplayer_character())
 		{
 			const auto character = stance->get_character();
@@ -127,6 +133,8 @@ namespace jc::character::hook
 
 	Character* __fastcall setup_punch(Character* character, void*)
 	{
+		jc::hooks::HookLock lock {};
+
 		auto res = jc::hooks::call<setup_punch_t>(character);
 
 		if (const auto local_char = g_world->get_localplayer_character())
@@ -172,6 +180,11 @@ void Character::rebuild_skeleton()
 	jc::this_call<ptr>(jc::character::fn::CREATE_SKELETON, skeleton);
 }
 
+void Character::dispatch_movement(float angle, float right, float forward, bool aiming)
+{
+	jc::hooks::call<jc::character::hook::dispatch_movement_t>(this, angle, right, forward, aiming);
+}
+
 void Character::respawn()
 {
 	jc::this_call<ptr>(jc::character::fn::RESPAWN, this, 1.f);
@@ -182,7 +195,7 @@ void Character::set_grenades_ammo(int32_t v)
 	jc::write(v, this, jc::character::GRENADES_AMMO);
 }
 
-void Character::set_animation(const std::string& name, float speed, bool unk0, bool unk1)
+void Character::set_animation(const jc::stl::string& name, float speed, bool unk0, bool unk1)
 {
 	jc::this_call<bool>(jc::character::fn::SET_ANIMATION, this, &name, unk0, speed, unk1);
 }
@@ -218,16 +231,16 @@ void Character::set_model(uint32_t id, bool sync)
 
 			// get current info and set the new model
 
-			auto new_info = *get_info();
+			auto new_info = get_info();
 
-			new_info.model = model.c_str();
+			new_info->model = model;
 
 			// make sure we patch/skip the weapon belt recreation, because, for some reason, they added
 			// that inside this character info function
 
 			scoped_patch<8> sp(jc::g::patch::AVOID_WEAPON_BELT_RECREATION_WHILE_CHAR_INIT.address, { 0xE9, 0x8C, 0x0, 0x0, 0x0, 0x90, 0x90, 0x90 });
 
-			jc::v_call<ptr>(this, jc::alive_object::vt::INITIALIZE_MODELS, &new_info);
+			jc::v_call<ptr>(this, jc::alive_object::vt::INITIALIZE_MODELS, new_info);
 
 			// if we need to use npc variant then create one
 			// initialize it using the agent type map
@@ -246,7 +259,7 @@ void Character::set_model(uint32_t id, bool sync)
 			{
 				// sync the skin id with other players
 
-				g_net->send_reliable(PlayerPID_DynamicInfo, 2u, id);
+				g_net->send_reliable(PlayerPID_DynamicInfo, 3u, id);
 			}
 		}
 	});

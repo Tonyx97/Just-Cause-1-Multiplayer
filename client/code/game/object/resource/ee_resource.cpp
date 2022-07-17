@@ -20,12 +20,12 @@ ExportedEntityResource* ExportedEntityResource::CREATE()
 
 void ExportedEntityResource::set_flag(uint32_t flag)
 {
-	jc::this_call(jc::ee_resource::fn::SET_FLAG, this, flag);
+	jc::this_call<void>(jc::ee_resource::fn::SET_FLAG, this, flag);
 }
 
-bool ExportedEntityResource::check() const
+void ExportedEntityResource::check() const
 {
-	return jc::this_call(jc::ee_resource::fn::CHECK, this);
+	jc::this_call<void>(jc::ee_resource::fn::CHECK, this);
 }
 
 bool ExportedEntityResource::is_loaded() const

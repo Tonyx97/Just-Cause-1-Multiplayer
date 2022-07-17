@@ -143,7 +143,7 @@ void ObjectBase::init_from_map(object_base_map* map)
 
 void ObjectBase::set_transform(const Transform& transform)
 {
-	switch (util::hash::JENKINS(get_typename()))
+	switch (get_typename_hash())
 	{
 	case Character::CLASS_ID():
 	{

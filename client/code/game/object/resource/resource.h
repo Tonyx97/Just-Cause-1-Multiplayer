@@ -23,5 +23,5 @@ public:
 
 	void free();
 
-	bool push(const std::string& file_to_load);
+	bool push(const jc::stl::string& file_to_load);
 };

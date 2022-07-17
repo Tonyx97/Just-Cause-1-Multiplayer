@@ -1,5 +1,12 @@
+#define ENET_IMPLEMENTATION
+#define ENET_FEATURE_ADDRESS_MAPPING
+
+#include <enet.h>
+
 #include <defs/libs.h>
 #include <defs/standard.h>
+
+#include <timer/timer.h>
 
 #include <game/sys/all.h>
 
@@ -62,7 +69,7 @@ void dll_thread()
 	g_particle		= jc::read<ParticleSystem*>(jc::particle_system::SINGLETON);
 	g_day_cycle		= jc::read<DayCycle*>(jc::day_cycle::SINGLETON);
 	g_weapon		= jc::read<WeaponSystem*>(jc::weapon_system::SINGLETON);
-	g_factory			= jc::read<FactorySystem*>(jc::spawn_system::SINGLETON);
+	g_factory		= jc::read<FactorySystem*>(jc::spawn_system::SINGLETON);
 	g_ai			= jc::read<AiCore*>(jc::ai_core::SINGLETON);
 	g_game_status	= jc::read<GameStatus*>(jc::game_status::SINGLETON);
 	g_rsrc_streamer = jc::read<ResourceStreamer*>(jc::resource_streamer::SINGLETON);
@@ -102,16 +109,16 @@ void dll_thread()
 
 	log(GREEN, "Initializing NET...");
 
-#ifdef _DEBUG
 	char nick[256] = { 0 };
 
 	auto len = DWORD(256);
 
-	GetUserNameA(nick, &len);
+	GetUserNameA(nick, &len);	// todojc
 
+#ifdef _DEBUG
 	g_net->init("192.168.0.22", nick);
 #else
-	g_net->init("192.168.0.22", "test_user");	// todojc
+	g_net->init("217.182.174.42", nick);
 #endif
 
 	// initializing MH
@@ -134,11 +141,11 @@ void dll_thread()
 
 	log(GREEN, "Hooking...");
 
-	g_renderer->hook_present();
-	g_game_status->hook_dispatcher();
-	g_game_control->hook_tick();
-
 	jc::hooks::hook_all();
+
+	g_renderer->hook_present();
+	g_game_control->hook_tick();
+	g_game_status->hook_dispatcher();
 
 	log(GREEN, "Mod initialized");
 
@@ -152,20 +159,14 @@ void dll_thread()
 	// wait until we disconnected and the ui is cleaned
 
 	g_ui->wait_until_destruction();
-	g_net->pre_destroy();
 
 	// unhook the present since we cleaned the ui system data
 
-	jc::hooks::unhook_all();
-
-	g_game_control->unhook_tick();
 	g_game_status->unhook_dispatcher();
+	g_game_control->unhook_tick();
 	g_renderer->unhook_present();
 
-	// destroy the rest of the mod systems
-
-	g_explosion->destroy();
-	g_key->destroy();
+	jc::hooks::unhook_all();
 
 	// uninitialize MH
 
@@ -173,6 +174,16 @@ void dll_thread()
 	jc::patches::undo();
 	jc::clean_dbg::destroy();
 	jc::hooks::destroy();
+
+	// destroy the rest of the mod systems
+
+	g_explosion->destroy();
+	g_key->destroy();
+
+	// destroy net after all hooks are done
+
+	g_net->pre_destroy();
+	g_net->destroy();
 
 	// destroy game systems
 
@@ -193,9 +204,9 @@ void dll_thread()
 	g_renderer->destroy();
 	g_game_control->destroy();
 
-	// destroy net after all hooks are done
+	// clear all resources
 
-	g_net->destroy();
+	timer::clear_timers();
 
 	// free mod systems
 

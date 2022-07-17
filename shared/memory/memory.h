@@ -63,43 +63,43 @@ namespace jc
 	}
 
 	template <typename Ret = ptr, typename... A, typename X>
-	inline Ret call(X fn, A... args)
+	__declspec(noinline) inline Ret call(X fn, A... args)
 	{
 		return BITCAST(Ret(A...), fn)(args...);
 	}
 
 	template <typename Ret = ptr, typename... A, typename X>
-	inline Ret std_call(X fn, A... args)
+	__declspec(noinline) inline Ret std_call(X fn, A... args)
 	{
 		return BITCAST(Ret(__stdcall*)(A...), fn)(args...);
 	}
 
 	template <typename Ret = ptr, typename... A, typename X>
-	inline Ret this_call(X fn, A... args)
+	__declspec(noinline) inline Ret this_call(X fn, A... args)
 	{
 		return BITCAST(Ret(__thiscall*)(A...), fn)(args...);
 	}
 
 	template <typename Ret = ptr, typename... A, typename X>
-	inline Ret fast_call(X fn, A... args)
+	__declspec(noinline) inline Ret fast_call(X fn, A... args)
 	{
 		return BITCAST(Ret(__fastcall*)(A...), fn)(args...);
 	}
 
 	template <typename Ret = ptr, typename... A, typename X>
-	inline Ret c_call(X fn, A... args)
+	__declspec(noinline) inline Ret c_call(X fn, A... args)
 	{
 		return BITCAST(Ret(__cdecl*)(A...), fn)(args...);
 	}
 
 	template <typename Ret = ptr, typename... A, typename X>
-	inline Ret v_call(X _this, int index, A... args)
+	__declspec(noinline) inline Ret v_call(X _this, int index, A... args)
 	{
 		return (*BITCAST(Ret(__thiscall**)(X, A...), read<ptr>(_this) + (index * sizeof(ptr))))(_this, args...);
 	}
 
 	template <typename X>
-	inline ptr get_vtable_fn(X _this, int index)
+	__declspec(noinline) inline ptr get_vtable_fn(X _this, int index)
 	{
 		return jc::read<ptr>(jc::read<ptr>(_this), index * sizeof(ptr));
 	}

@@ -79,7 +79,7 @@ namespace jc::hooks
 	}
 
 	template <typename T, typename... A>
-	inline auto call(A... args)
+	__declspec(noinline) inline auto call(A... args)
 	{
 		auto it = originals.find(T::HASH);
 

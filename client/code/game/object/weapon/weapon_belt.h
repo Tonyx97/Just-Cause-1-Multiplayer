@@ -30,5 +30,5 @@ public:
 	int32_t get_slot_ammo(WeaponSlot slot);
 	int32_t get_current_weapon_id();
 
-	Weapon* get_current_weapon();
+	ref<Weapon> get_current_weapon();
 };

@@ -203,7 +203,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD3))
 	{
-		std::string anim_name = R"(Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_2.anim)";
+		jc::stl::string anim_name = R"(Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_2.anim)";
 		// std::string anim_name = R"(Models\Characters\Animations\NPCMoves\idle\smoke_npc_2.anim)";
 
 		// if (!anim)
@@ -227,7 +227,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		std::string anim_name = R"(std_drink_rum_NPC.anim)";
+		jc::stl::string anim_name = R"(std_drink_rum_NPC.anim)";
 		//std::string anim_name = R"(dance_hooker_NPC_2.anim)";
 
 		/*ptr temp = 0;

@@ -24,11 +24,11 @@ int32_t WeaponBelt::get_current_weapon_id()
 	return jc::read<int32_t>(this, jc::weapon_belt::CURRENT_WEAPON_ID);
 }
 
-Weapon* WeaponBelt::get_current_weapon()
+ref<Weapon> WeaponBelt::get_current_weapon()
 {
-	ptr info[2] = { 0 };
+	ref<Weapon> r;
 
-	jc::this_call<void*>(jc::weapon_belt::fn::GET_CURRENT_WEAPON, this, info);
+	jc::this_call(jc::weapon_belt::fn::GET_CURRENT_WEAPON, this, &r);
 
-	return BITCAST(Weapon*, info[0]);
+	return r;
 }

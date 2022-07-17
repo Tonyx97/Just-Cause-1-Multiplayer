@@ -28,7 +28,12 @@ namespace enet
 {
 	static constexpr uint32_t GAME_PORT	   = 19971;
 	static constexpr uint32_t MAX_PLAYERS  = 128;
-	static constexpr uint32_t PEER_TIMEOUT = 120 * 1000 * 1000;
+#ifdef JC_REL
+	static constexpr uint32_t PEER_TIMEOUT = 31 * 1000;
+#else
+	//static constexpr uint32_t PEER_TIMEOUT = 120 * 1000 * 1000;
+	static constexpr uint32_t PEER_TIMEOUT = 10000;
+#endif
 
 	enum PacketResult
 	{
@@ -104,12 +109,12 @@ namespace enet
 
 		uint32_t get_id() const { return id; }
 		uint8_t get_channel() const { return channel; }
-
+		
 		template <typename T = int>
 		T get_int() const { return deserialize_int(data); }
 
 		template <typename T = uint32_t>
-		T get_uint() const { return deserialize_int(data); }
+		T get_uint() const { return deserialize_int<T>(data); }
 
 		bool get_bool() const { return deserialize_bool(data); }
 

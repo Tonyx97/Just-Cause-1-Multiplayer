@@ -60,7 +60,7 @@ namespace jc::character
 		using dispatch_movement_t = prototype<void(__thiscall*)(Character*, float, float, float, bool), 0x5A45D0, util::hash::JENKINS("Character::DispatchMovement")>;
 		using set_body_stance_t = prototype<void(__thiscall*)(BodyStanceController*, uint32_t), 0x625750, util::hash::JENKINS("BodyStanceController::SetStance")>;
 		using set_arms_stance_t = prototype<void(__thiscall*)(ArmsStanceController*, uint32_t), 0x744230, util::hash::JENKINS("ArmsStanceController::SetStance")>;
-		using setup_punch_t = prototype<Character* (__thiscall*)(Character*), 0x5A4380, util::hash::JENKINS("Character::SetupPunch")>;
+		using setup_punch_t = prototype<Character*(__thiscall*)(Character*), 0x5A4380, util::hash::JENKINS("Character::SetupPunch")>;
 
 		void apply();
 		void undo();
@@ -74,7 +74,7 @@ struct CharacterInfo
 	int	  z;
 	float w;
 
-	std::string name,
+	jc::stl::string name,
 		model,
 		eyelid,
 		skeleton,
@@ -87,6 +87,7 @@ struct CharacterInfo
 class Character : public AliveObject
 {
 private:
+
 	void rebuild_skeleton();
 
 public:
@@ -95,9 +96,10 @@ public:
 
 	static void SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai = false);
 
+	void dispatch_movement(float angle, float right, float forward, bool aiming);
 	void respawn();
 	void set_grenades_ammo(int32_t v);
-	void set_animation(const std::string& name, float speed, bool unk0 = false, bool unk1 = false);
+	void set_animation(const jc::stl::string& name, float speed, bool unk0 = false, bool unk1 = false);
 	void set_grenade_timeout(float v);
 	void set_model(uint32_t id, bool sync = true);
 	void set_npc_variant(NPCVariant* v);

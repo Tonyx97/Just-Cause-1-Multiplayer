@@ -12,6 +12,8 @@
 
 jc::stl::string* __fastcall hk_play_ambience_2d_sounds(int a1, void*, jc::stl::string* a2)
 {
+	jc::hooks::HookLock lock {};
+
 	auto res = jc::hooks::call<jc::proto::patches::ambience_2d_sounds>(a1, a2);
 
 	if (a2)

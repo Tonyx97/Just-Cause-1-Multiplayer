@@ -409,7 +409,8 @@ void UI::render()
 				}
 				if (show_velocity)
 				{
-					v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.1f}", glm::length(pawn->get_velocity())).c_str());
+					const auto vel = pawn->get_velocity();
+					v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.1f} ({:.1f}, {:.1f}, {:.1f})", glm::length(vel), vel.x, vel.y, vel.z).c_str());
 					pad += 1;
 				}
 				if (show_distance)

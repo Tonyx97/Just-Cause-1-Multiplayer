@@ -31,9 +31,9 @@ struct PlayerClientSyncInstancesPacket
 #ifdef JC_CLIENT
 	PlayerClientSyncInstancesPacket& deserialize(vec<uint8_t>& data)
 	{
-		const auto size = enet::deserialize_int(data);
+		const auto size = enet::deserialize_int<size_t>(data);
 
-		for (int i = 0; i < size; ++i)
+		for (size_t i = 0u; i < size; ++i)
 		{
 			DESERIALIZE_NID_AND_TYPE(data);
 
@@ -79,9 +79,9 @@ struct PlayerClientStaticInfoPacket
 
 	PlayerClientStaticInfoPacket& deserialize(vec<uint8_t>& data)
 	{
-		const auto size = enet::deserialize_int(data);
+		const auto size = enet::deserialize_int<size_t>(data);
 
-		for (int i = 0; i < size; ++i)
+		for (size_t i = 0u; i < size; ++i)
 		{
 			const auto player = enet::deserialize_net_object(data)->cast_safe<Player>();
 

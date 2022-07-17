@@ -28,7 +28,7 @@ public:
 	{
 		R r;
 
-		const std::string class_name = T::CLASS_NAME();
+		jc::stl::string class_name = T::CLASS_NAME();
 
 		jc::this_call(jc::game_control::fn::CREATE_OBJECT, this, &r, &class_name, enable_now);
 

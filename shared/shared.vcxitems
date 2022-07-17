@@ -14,7 +14,6 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)defs\enet.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)defs\glm.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)defs\json.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)defs\libs.h" />

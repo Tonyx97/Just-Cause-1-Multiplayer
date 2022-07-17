@@ -20,7 +20,7 @@ public:
 
 	struct TickInfo
 	{
-		Transform transform;
+		Transform transform {};
 
 		float hp;
 	};
@@ -88,7 +88,7 @@ public:
 
 	float get_hp() const;
 
-	Transform get_transform() const { return tick_info.transform; }
+	const Transform& get_transform() const { return tick_info.transform; }
 
 	// dynamic info getters/setters
 

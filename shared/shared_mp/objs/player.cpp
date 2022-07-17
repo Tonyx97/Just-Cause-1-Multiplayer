@@ -29,6 +29,8 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 			handle = g_factory->spawn_character("female1", { 0.f, 0.f, 0.f });
 
 			set_spawned(true);
+
+			log(PURPLE, "Player {:x} spawned now", get_nid());
 		}
 	}
 }
@@ -113,10 +115,6 @@ void Player::set_hp(float v)
 void Player::set_transform(const Transform& transform)
 {
 	tick_info.transform = transform;
-
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_transform(transform); });
-#endif
 }
 
 bool Player::is_alive() const

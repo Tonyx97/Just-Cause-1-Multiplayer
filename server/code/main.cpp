@@ -1,5 +1,10 @@
-#include <defs/standard.h>
+#define ENET_IMPLEMENTATION
+#define ENET_FEATURE_ADDRESS_MAPPING
+
+#include <enet.h>
+
 #include <defs/libs.h>
+#include <defs/standard.h>
 
 #include <mp/net.h>
 

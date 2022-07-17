@@ -42,9 +42,9 @@ bool ResourceStreamer::request_exported_entity(uint32_t id, const ee_resource_ca
 	if (it == jc::vars::exported_entities.end())
 		return false;
 
-	const auto& ee_name = it->second;
+	jc::stl::string ee_name = it->second;
 
-	log(YELLOW, "[ResourceStreamer] Requesting EE '{}'", ee_name);
+	log(YELLOW, "[ResourceStreamer] Requesting EE '{}'", ee_name.c_str());
 
 	auto ee_resource = ExportedEntityResource::CREATE();
 
@@ -71,7 +71,7 @@ bool ResourceStreamer::request_exported_entity(uint32_t id, const ee_resource_ca
 
 		ok = true;
 	}
-	else log(RED, "Could not request exported entity '{}'", ee_name); // todojc - add defer loading for this case
+	else log(RED, "Could not request exported entity '{}'", ee_name.c_str()); // todojc - add defer loading for this case
 
 	ee_resource->free();
 

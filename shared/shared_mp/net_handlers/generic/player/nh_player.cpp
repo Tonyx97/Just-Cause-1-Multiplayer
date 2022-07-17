@@ -11,6 +11,7 @@
 #ifdef JC_CLIENT
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
+#include <game/object/base/comps/physical.h>
 #endif
 
 enet::PacketResult nh::player::spawn(const enet::Packet& p)
@@ -65,7 +66,7 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 	{
 	case 0u: // transform
 	{
-		const auto transform = p.get_raw<Transform>();
+		auto transform = p.get_raw<Transform>();
 
 #ifdef JC_CLIENT
 		player->set_transform(transform);
@@ -77,7 +78,21 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 
 		break;
 	}
-	case 1u: // head rotation
+	case 1u: // velocity
+	{
+		const auto velocity = p.get_raw<vec3>();
+
+#ifdef JC_CLIENT
+		player->get_character()->get_physical()->set_velocity(velocity);
+#endif
+
+#ifdef JC_SERVER
+		g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, velocity);
+#endif
+
+		break;
+	}
+	case 2u: // head rotation
 	{
 		const auto rotation = p.get_raw<vec3>();
 
@@ -91,7 +106,7 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 
 		break;
 	}
-	case 2u: // skin
+	case 3u: // skin
 	{
 		const auto skin_id = p.get_uint();
 
@@ -192,8 +207,6 @@ enet::PacketResult nh::player::health(const enet::Packet& p)
 #endif
 
 	const float new_hp = p.get_float();
-
-	log(GREEN, "Some player's new hp: {}", new_hp);
 
 #ifdef JC_CLIENT
 	player->set_hp(new_hp);
