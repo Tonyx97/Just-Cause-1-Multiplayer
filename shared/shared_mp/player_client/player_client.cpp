@@ -25,9 +25,6 @@ PlayerClient::PlayerClient(ENetPeer* peer) : peer(peer)
 PlayerClient::~PlayerClient()
 {
 #ifdef JC_SERVER
-	// the player client is not added yet in the list so it will broadcast
-	// to the rest of players
-
 	g_net->send_broadcast_reliable<ChannelID_PlayerClient>(this, PlayerClientPID_Quit, player);
 
 	if (timed_out)

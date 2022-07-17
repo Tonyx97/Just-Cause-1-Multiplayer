@@ -2,7 +2,6 @@
 
 #include "object_lists.h"
 
-#include <shared_mp/player_client/player_client.h>
 #include <shared_mp/objs/player.h>
 
 #ifdef JC_CLIENT
@@ -17,8 +16,8 @@ PlayerClient* ObjectLists::add_player_client(NID nid)
 
 Player* ObjectLists::get_player_by_character(Character* character)
 {
-	for (const auto& [nid, player] : players)
-		if (player->get_character() == character)
+	for (const auto& [nid, pc] : player_clients)
+		if (const auto player = pc->get_player(); player->get_character() == character)
 			return player;
 
 	return nullptr;
@@ -47,6 +46,36 @@ bool ObjectLists::remove_player_client(PlayerClient* pc)
 	return true;
 }
 
+void ObjectLists::clear_object_list()
+{
+	// erase Player instances in this list because PlayerClient 
+	// destroys them in the dtor
+
+	std::erase_if(net_objects, [](const auto& p) { return p.second->get_type() == NetObject_Player; });
+
+	// destroys all player clients
+
+	auto it = player_clients.begin();
+	
+	while (it != player_clients.end())
+	{
+		const auto [nid, pc] = *it;
+
+		DESTROY_PLAYER_CLIENT(pc);
+
+		it = player_clients.erase(it);
+	}
+
+	check(player_clients.empty(), "Player client list must be empty");
+
+	// free all net objects remaining that are not Player
+
+	for (const auto& [_, obj] : net_objects)
+		JC_FREE(obj);
+
+	net_objects.clear();
+}
+
 NetObject* ObjectLists::get_net_object_by_nid_impl(NID nid)
 {
 	auto it = net_objects.find(nid);
@@ -62,7 +91,6 @@ NetObject* ObjectLists::add_net_object(NetObject* net_obj)
 	case NetObject_Player:
 	{
 		player_clients.insert({ nid, net_obj->get_player_client()});
-		players.insert({ nid, net_obj->cast<Player>() });
 		break;
 	}
 	default:
@@ -83,7 +111,6 @@ bool ObjectLists::remove_net_object(NetObject* net_obj)
 	case NetObject_Player:
 	{
 		player_clients.erase(nid);
-		players.erase(nid);
 		break;
 	}
 	default:
@@ -97,8 +124,8 @@ bool ObjectLists::remove_net_object(NetObject* net_obj)
 
 Player* ObjectLists::get_player_by_nid(NID nid)
 {
-	auto it = players.find(nid);
-	return it != players.end() ? it->second : nullptr;
+	const auto pc = get_player_client_by_nid(nid);
+	return pc ? pc->get_player() : nullptr;
 }
 
 PlayerClient* ObjectLists::get_player_client_by_nid(NID nid)

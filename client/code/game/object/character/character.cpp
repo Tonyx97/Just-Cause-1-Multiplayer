@@ -54,8 +54,6 @@ namespace jc::character::hook
 		{
 			if (character == local_char)
 			{
-				//const auto localplayer = g_net->get_localplayer();
-
 				//log(RED, "{} {} {} {}", angle, right, forward, aiming);
 
 				if (g_test_char)

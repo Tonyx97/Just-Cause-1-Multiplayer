@@ -37,12 +37,11 @@ void jc::mp::logic::on_update_objects()
 			if (player->is_local())
 				break;
 
-			player->skip_engine_stances = false;
-			jc::hooks::call<jc::character::hook::dispatch_movement_t>(player->get_character(), player->angle, player->right, player->forward, player->aiming);
-			player->skip_engine_stances = player->is_alive();
+			const auto& move_info = player->get_movement_info();
 
-			//player->set_body_stance_id(player->get_body_stance_id());
-			//player->set_arms_stance_id(player->get_arms_stance_id());
+			player->skip_engine_stances = false;
+			jc::hooks::call<jc::character::hook::dispatch_movement_t>(player->get_character(), move_info.angle, move_info.right, move_info.forward, move_info.aiming);
+			player->skip_engine_stances = player->is_alive();
 
 			break;
 		}

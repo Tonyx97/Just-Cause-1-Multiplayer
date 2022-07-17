@@ -152,6 +152,7 @@ void dll_thread()
 	// wait until we disconnected and the ui is cleaned
 
 	g_ui->wait_until_destruction();
+	g_net->pre_destroy();
 
 	// unhook the present since we cleaned the ui system data
 

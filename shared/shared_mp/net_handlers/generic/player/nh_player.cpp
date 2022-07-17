@@ -132,12 +132,9 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 
 		//log(GREEN, "{} {} {} {}", angle, right, forward, aiming);
 
-#ifdef JC_CLIENT
-		player->angle = angle;
-		player->right = right;
-		player->forward = forward;
-		player->aiming = aiming;
-#else
+		player->set_movement_info(angle, right, forward, aiming);
+
+#ifdef JC_SERVER
 		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, angle, right, forward, aiming);
 #endif
 

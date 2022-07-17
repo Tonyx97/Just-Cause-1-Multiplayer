@@ -26,6 +26,7 @@ private:
 
 public:
 	bool init(const std::string& ip, const std::string& nick);
+	void pre_destroy();
 	void destroy();
 	void add_local(NID nid);
 	void set_initialized(bool v);

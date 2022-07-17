@@ -45,7 +45,7 @@ bool __fastcall GameControl::hk_tick(void* _this)
 				else
 				{
 					//cc->respawn();
-					cc_h->destroy();
+					g_factory->destroy_character_handle(cc_h);
 					cc_h = nullptr;
 					g_test_char = nullptr;
 				}

@@ -59,6 +59,7 @@ namespace jc::character
 		using character_can_be_destroyed = prototype<bool(__fastcall*)(Character*), 0x595F10, util::hash::JENKINS("Character::CanBeDestroyed")>;
 		using dispatch_movement_t = prototype<void(__thiscall*)(Character*, float, float, float, bool), 0x5A45D0, util::hash::JENKINS("Character::DispatchMovement")>;
 		using set_body_stance_t = prototype<void(__thiscall*)(BodyStanceController*, uint32_t), 0x625750, util::hash::JENKINS("BodyStanceController::SetStance")>;
+		using set_arms_stance_t = prototype<void(__thiscall*)(ArmsStanceController*, uint32_t), 0x744230, util::hash::JENKINS("ArmsStanceController::SetStance")>;
 		using setup_punch_t = prototype<Character* (__thiscall*)(Character*), 0x5A4380, util::hash::JENKINS("Character::SetupPunch")>;
 
 		void apply();

@@ -5,6 +5,7 @@ using ptr = uintptr_t;
 #define RCAST(T, x) reinterpret_cast<T>(x)
 #define BITCAST(T, x) std::bit_cast<T>(x)
 #define REF(T, x, off) std::bit_cast<T>(ptr(x) + off)
+#define REFB(T, x, off) std::bit_cast<T>(static_cast<ptr>(BITCAST(intptr_t, x) - BITCAST(intptr_t, off)))
 #define REFNO(T, x) std::bit_cast<T>(ptr(x))
 
 #ifdef JC_CLIENT

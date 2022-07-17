@@ -6,9 +6,12 @@
 
 class ObjectLists
 {
+protected:
+
+	void clear_object_list();
+
 private:
 	std::unordered_map<NID, PlayerClient*> player_clients;
-	std::unordered_map<NID, Player*> players;
 	std::unordered_map<NID, NetObject*> net_objects;
 
 	NetObject* get_net_object_by_nid_impl(NID nid);
@@ -60,8 +63,8 @@ public:
 	template <typename Fn>
 	void for_each_player(const Fn& fn)
 	{
-		for (const auto& [nid, player] : players)
-			fn(player);
+		for (const auto& [nid, player] : player_clients)
+			fn(player->get_player());
 	}
 
 	size_t get_player_clients_count() const { return player_clients.size(); }

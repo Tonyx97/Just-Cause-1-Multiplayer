@@ -65,7 +65,7 @@ Player::~Player()
 
 		check(old_handle, "Invalid handle when destroying a remote player");
 
-		old_handle->destroy();
+		g_factory->destroy_character_handle(old_handle);
 	}
 #else
 #endif
@@ -171,6 +171,14 @@ void Player::set_skin(uint32_t v)
 uint32_t Player::get_skin() const
 {
 	return static_info.skin;
+}
+
+void Player::set_movement_info(float angle, float right, float forward, bool aiming)
+{
+	move_info.angle = angle;
+	move_info.right = right;
+	move_info.forward = forward;
+	move_info.aiming = aiming;
 }
 
 bool Player::must_skip_engine_stances() const

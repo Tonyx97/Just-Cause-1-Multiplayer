@@ -66,6 +66,18 @@ bool Net::init(const std::string& ip, const std::string& nick)
 	return connected;
 }
 
+void Net::pre_destroy()
+{
+	// destroy the local's player client before clearing the object list
+
+	if (const auto old_local = std::exchange(local, nullptr))
+		remove_player_client(old_local);
+
+	// destroy and clear object list
+
+	clear_object_list();
+}
+
 void Net::disconnect()
 {
 	if (!peer || !connected)
@@ -98,9 +110,9 @@ void Net::disconnect()
 	if (timed_out)
 		log(RED, "Time out");
 
-	remove_player_client(local);
+	if (const auto old_local = std::exchange(local, nullptr))
+		remove_player_client(old_local);
 
-	local	  = nullptr;
 	peer	  = nullptr;
 	connected = false;
 }

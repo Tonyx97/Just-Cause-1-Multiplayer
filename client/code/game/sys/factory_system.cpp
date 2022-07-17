@@ -50,10 +50,8 @@ void FactorySystem::destroy()
 {
 	// clear our containers
 
-	for (auto handle : character_handles)
-		handle->destroy();
+	check(character_handles.empty(), "All character handles must be empty");
 
-	character_handles.clear();
 	simple_rigid_objects.clear();
 	damageables.clear();
 	agent_spawns.clear();
@@ -73,6 +71,16 @@ void FactorySystem::set_max_character_spawns(int v)
 void FactorySystem::set_max_vehicle_spawns(int v)
 {
 	jc::write<int16_t>(v, this, jc::spawn_system::MAX_VEHICLE_SPAWNS);
+}
+
+void FactorySystem::destroy_character_handle(CharacterHandle* v)
+{
+	if (!v)
+		return;
+
+	character_handles.erase(std::remove_if(character_handles.begin(), character_handles.end(), [&](const auto& r) { return r == v; }));
+
+	v->destroy();
 }
 
 void FactorySystem::destroy_agent_spawn_point(AgentSpawnPoint* v)

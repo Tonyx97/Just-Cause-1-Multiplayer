@@ -31,6 +31,13 @@ public:
 				 arms_stance_id = 0u;
 	};
 
+	struct MovementInfo
+	{
+		float angle, right, forward;
+
+		bool aiming;
+	};
+
 private:
 
 	CharacterHandle* handle = nullptr;
@@ -41,6 +48,7 @@ private:
 
 	TickInfo tick_info {};
 	DynamicInfo dyn_info {};
+	MovementInfo move_info {};
 
 #ifdef JC_CLIENT
 	bool local = false;
@@ -48,8 +56,6 @@ private:
 
 public:
 
-	float angle, right, forward;
-	bool aiming;
 	bool skip_engine_stances = true;
 
 	static constexpr uint32_t TYPE() { return NetObject_Player; }
@@ -76,6 +82,7 @@ public:
 
 	void set_hp(float v);
 	void set_transform(const Transform& transform);
+	void set_movement_info(float angle, float right, float forward, bool aiming);
 
 	bool is_alive() const;
 
@@ -112,4 +119,6 @@ public:
 	const TickInfo& get_tick_info() const { return tick_info; }
 
 	const PlayerStaticInfo& get_static_info() const { return static_info; }
+
+	const MovementInfo& get_movement_info() const { return move_info; }
 };

@@ -36,6 +36,12 @@ bool Net::init()
 
 void Net::destroy()
 {
+	// destroy and clear object list
+
+	clear_object_list();
+
+	// destroy enet
+
 	enet_host_destroy(sv);
 	enet_deinitialize();
 }
