@@ -14,11 +14,11 @@
 #include <core/keycode.h>
 #include <core/test_units.h>
 
-bool __fastcall GameControl::hk_tick(void* _this)
+DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 {
 	jc::hooks::HookLock lock {};
 
-	const auto res = jc::hooks::call<jc::proto::game_tick>(_this);
+	const auto res = tick_hook.call(_this);
 
 	{
 		if (auto local_char = g_world->get_localplayer_character())
@@ -108,10 +108,10 @@ void GameControl::destroy()
 
 void GameControl::hook_tick()
 {
-	jc::hooks::hook<jc::proto::game_tick>(&hk_tick);
+	tick_hook.hook();
 }
 
 void GameControl::unhook_tick()
 {
-	jc::hooks::unhook<jc::proto::game_tick>();
+	tick_hook.unhook();
 }

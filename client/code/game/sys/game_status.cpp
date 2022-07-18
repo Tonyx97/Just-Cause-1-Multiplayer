@@ -4,11 +4,11 @@
 
 #include <mp/net.h>
 
-bool __fastcall GameStatus::hk_dispatch(GameStatus* gs)
+DEFINE_HOOK_FASTCALL(dispatch, 0x497A70, bool, GameStatus* gs)
 {
 	jc::hooks::HookLock lock {};
 	
-	auto res = jc::hooks::call<jc::proto::game_status::dispatch>(gs);
+	auto res = dispatch_hook.call(gs);
 
 	switch (gs->get_status())
 	{
@@ -39,12 +39,12 @@ void GameStatus::destroy()
 
 void GameStatus::hook_dispatcher()
 {
-	jc::hooks::hook<jc::proto::game_status::dispatch>(&hk_dispatch);
+	dispatch_hook.hook();
 }
 
 void GameStatus::unhook_dispatcher()
 {
-	jc::hooks::unhook<jc::proto::game_status::dispatch>();
+	dispatch_hook.unhook();
 }
 
 bool GameStatus::is_game_loaded() const

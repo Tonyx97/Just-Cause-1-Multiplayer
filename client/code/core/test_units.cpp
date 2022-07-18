@@ -38,12 +38,12 @@ void __fastcall hk_test(ptr event_list, void*, ptr userdata)
 		log(CYAN, "added {:x} {:x} - {:x}", event_list, userdata, ptr(_ReturnAddress()));
 	}
 
-	jc::hooks::call<jc::proto::dbg::test>(event_list, userdata);
+	//jc::hooks::call<jc::proto::dbg::test>(event_list, userdata);
 }
 
 void __fastcall hk_test2(ptr a1, void*, int id)
 {
-	jc::hooks::call<jc::proto::dbg::test2>(a1, id);
+	//jc::hooks::call<jc::proto::dbg::test2>(a1, id);
 }
 
 void jc::test_units::init()

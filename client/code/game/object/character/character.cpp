@@ -26,7 +26,7 @@
 
 namespace jc::character::hook
 {
-	bool __fastcall can_be_destroyed(Character* character)
+	DEFINE_HOOK_THISCALL_S(can_be_destroyed, 0x595F10, bool, Character* character)
 	{
 		jc::hooks::HookLock lock {};
 
@@ -50,7 +50,7 @@ namespace jc::character::hook
 			character->get_death_time() > 10.f;
 	}
 
-	void __fastcall dispatch_movement(Character* character, void*, float angle, float right, float forward, bool aiming)
+	DEFINE_HOOK_THISCALL(dispatch_movement, 0x5A45D0, void, Character* character, float angle, float right, float forward, bool aiming)
 	{
 		jc::hooks::HookLock lock {};
 
@@ -61,7 +61,7 @@ namespace jc::character::hook
 				//log(RED, "{} {} {} {}", angle, right, forward, aiming);
 
 				if (g_test_char)
-					jc::hooks::call<dispatch_movement_t>(g_test_char, angle, right, forward, aiming);
+					dispatch_movement_hook.call(g_test_char, angle, right, forward, aiming);
 
 				g_net->send_reliable(PlayerPID_StanceAndMovement, 0u, angle, right, forward, aiming);
 			}
@@ -69,10 +69,10 @@ namespace jc::character::hook
 				return;
 		}
 
-		jc::hooks::call<dispatch_movement_t>(character, angle, right, forward, aiming);
+		dispatch_movement_hook.call(character, angle, right, forward, aiming);
 	}
 
-	void __fastcall set_stance(BodyStanceController* stance, void*, uint32_t id)
+	DEFINE_HOOK_THISCALL(set_body_stance, 0x625750, void, BodyStanceController* stance, uint32_t id)
 	{
 		jc::hooks::HookLock lock {};
 
@@ -128,14 +128,14 @@ namespace jc::character::hook
 			}
 		}
 
-		jc::hooks::call<set_body_stance_t>(stance, id);
+		set_body_stance_hook.call(stance, id);
 	}
 
-	Character* __fastcall setup_punch(Character* character, void*)
+	DEFINE_HOOK_THISCALL_S(setup_punch, 0x5A4380, Character*, Character* character)
 	{
 		jc::hooks::HookLock lock {};
 
-		auto res = jc::hooks::call<setup_punch_t>(character);
+		auto res = setup_punch_hook.call(character);
 
 		if (const auto local_char = g_world->get_localplayer_character())
 			if (character == local_char && res == character)
@@ -146,18 +146,18 @@ namespace jc::character::hook
 
 	void apply()
 	{
-		jc::hooks::hook<character_can_be_destroyed>(&can_be_destroyed);
-		jc::hooks::hook<dispatch_movement_t>(&dispatch_movement);
-		jc::hooks::hook<set_body_stance_t>(&set_stance);
-		jc::hooks::hook<setup_punch_t>(&setup_punch);
+		setup_punch_hook.unhook();
+		set_body_stance_hook.unhook();
+		dispatch_movement_hook.unhook();
+		can_be_destroyed_hook.unhook();
 	}
 
 	void undo()
 	{
-		jc::hooks::unhook<setup_punch_t>();
-		jc::hooks::unhook<set_body_stance_t>();
-		jc::hooks::unhook<dispatch_movement_t>();
-		jc::hooks::unhook<character_can_be_destroyed>();
+		can_be_destroyed_hook.hook();
+		dispatch_movement_hook.hook();
+		set_body_stance_hook.hook();
+		setup_punch_hook.hook();
 	}
 }
 
@@ -182,7 +182,7 @@ void Character::rebuild_skeleton()
 
 void Character::dispatch_movement(float angle, float right, float forward, bool aiming)
 {
-	jc::hooks::call<jc::character::hook::dispatch_movement_t>(this, angle, right, forward, aiming);
+	jc::character::hook::dispatch_movement_hook.call(this, angle, right, forward, aiming);
 }
 
 void Character::respawn()
@@ -283,6 +283,16 @@ void Character::remove_flag(uint32_t mask)
 void Character::set_roll_clamp_enabled(bool v)
 {
 	jc::write(v ? 0.f : 1.f, this, jc::character::ROLL_CLAMP);
+}
+
+void Character::set_body_stance(uint32_t id)
+{
+	jc::character::hook::set_body_stance_hook.call(get_body_stance(), id);
+}
+
+void Character::setup_punch()
+{
+	jc::character::hook::setup_punch_hook.call(this);
 }
 
 bool Character::has_flag(uint32_t mask) const

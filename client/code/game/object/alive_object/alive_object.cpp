@@ -10,7 +10,7 @@
 
 namespace jc::alive_object::hook
 {
-	void __fastcall set_health(AliveObject* obj, void*, float hp)
+	DEFINE_HOOK_THISCALL(set_health, 0x743E30, void, AliveObject* obj, float hp)
 	{
 		jc::hooks::HookLock lock {};
 
@@ -37,17 +37,17 @@ namespace jc::alive_object::hook
 		}
 		}
 
-		jc::hooks::call<set_health_t>(obj, hp);
+		set_health_hook.call(obj, hp);
 	}
 
 	void apply()
 	{
-		jc::hooks::hook<set_health_t>(&set_health);
+		set_health_hook.hook();
 	}
 
 	void undo()
 	{
-		jc::hooks::unhook<set_health_t>();
+		set_health_hook.unhook();
 	}
 }
 
@@ -63,7 +63,7 @@ void AliveObject::remove_alive_flag(uint16_t v)
 
 void AliveObject::set_hp(float v)
 {
-	jc::hooks::call<jc::alive_object::hook::set_health_t>(this, v);
+	jc::alive_object::hook::set_health_hook.call(this, v);
 }
 
 void AliveObject::set_max_hp(float v)

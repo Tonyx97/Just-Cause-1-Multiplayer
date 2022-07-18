@@ -9,22 +9,13 @@
 
 #include <core/test_units.h>
 
-int __fastcall Renderer::hk_game_present(void* _this)
+DEFINE_HOOK_FASTCALL(game_present, 0x40FB70, int, void* _this)
 {
 	jc::hooks::HookLock lock {};
 
 	g_renderer->on_present();
 
-	return jc::hooks::call<jc::proto::game_present>(_this);
-}
-
-int __stdcall Renderer::hk_reset(void* _this, D3DPRESENT_PARAMETERS* params)
-{
-	jc::hooks::HookLock lock {};
-
-	g_renderer->on_reset();
-
-	return jc::hooks::call<jc::proto::reset>(_this, params);
+	return game_present_hook.call(_this);
 }
 
 void Renderer::on_present()
@@ -32,11 +23,6 @@ void Renderer::on_present()
 	g_ui->dispatch();
 
 	jc::test_units::test_0();
-}
-
-void Renderer::on_reset()
-{
-	// check(false, "Well well, look who decided to be called :o");
 }
 
 void Renderer::init()
@@ -49,14 +35,12 @@ void Renderer::destroy()
 
 void Renderer::hook_present()
 {
-	jc::hooks::hook<jc::proto::game_present>(&hk_game_present);
-	jc::hooks::vhook<jc::proto::reset>(get_device(), &hk_reset);
+	game_present_hook.hook();
 }
 
 void Renderer::unhook_present()
 {
-	jc::hooks::unhook<jc::proto::reset>();
-	jc::hooks::unhook<jc::proto::game_present>();
+	game_present_hook.unhook();
 }
 
 IDirect3DDevice9* Renderer::get_device() const

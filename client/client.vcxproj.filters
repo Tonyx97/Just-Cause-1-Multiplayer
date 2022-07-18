@@ -305,9 +305,6 @@
     <ClInclude Include="code\core\hooks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\core\protos.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="code\imgui\imconfig.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>

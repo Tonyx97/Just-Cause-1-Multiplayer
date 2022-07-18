@@ -18,8 +18,6 @@ namespace jc::alive_object
 
 	namespace hook
 	{
-		using set_health_t = prototype<void(__thiscall*)(AliveObject*, float), 0x743E30, util::hash::JENKINS("AliveObject::SetHealth")>;
-
 		void apply();
 		void undo();
 	}

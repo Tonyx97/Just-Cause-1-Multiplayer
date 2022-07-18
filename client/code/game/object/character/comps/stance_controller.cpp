@@ -11,7 +11,7 @@ int StanceController::get_movement_id() const
 
 void BodyStanceController::set_stance(uint32_t id)
 {
-	jc::hooks::call<jc::character::hook::set_body_stance_t>(this, id);
+	check(false, "todojc");
 }
 
 Character* BodyStanceController::get_character() const
@@ -21,7 +21,7 @@ Character* BodyStanceController::get_character() const
 
 void ArmsStanceController::set_stance(uint32_t id)
 {
-	jc::hooks::call<jc::character::hook::set_arms_stance_t>(this, id);
+	check(false, "todojc");
 }
 
 Character* ArmsStanceController::get_character() const

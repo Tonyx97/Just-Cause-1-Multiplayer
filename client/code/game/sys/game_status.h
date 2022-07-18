@@ -31,8 +31,6 @@ public:
 	bool is_game_loaded() const;
 
 	uint32_t get_status() const;
-
-	static bool __fastcall hk_dispatch(GameStatus* gs);
 };
 
 inline GameStatus* g_game_status = nullptr;

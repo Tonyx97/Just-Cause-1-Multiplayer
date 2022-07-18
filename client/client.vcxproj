@@ -65,7 +65,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;NOMINMAX;JC_CLIENT;_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_DEPRECATION_WARNING;SOLUTION_DIR="$(SolutionDir).";JC_DBG;_DEBUG;CLIENT_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;NOMINMAX;_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_DEPRECATION_WARNING;SOLUTION_DIR="$(SolutionDir).";_DEBUG;CLIENT_EXPORTS;_WINDOWS;_USRDLL;JC_CLIENT;JC_DBG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -87,7 +87,7 @@
       <WarningLevel>Level3</WarningLevel>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;NOMINMAX;JC_CLIENT;_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_DEPRECATION_WARNING;SOLUTION_DIR="$(SolutionDir).";JC_REL;NDEBUG;CLIENT_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;NOMINMAX;_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_DEPRECATION_WARNING;SOLUTION_DIR="$(SolutionDir).";JC_REL;NDEBUG;CLIENT_EXPORTS;_WINDOWS;_USRDLL;JC_CLIENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -260,7 +260,6 @@
     <ClInclude Include="code\game\sys\camera_manager.h" />
     <ClInclude Include="code\game\globals.h" />
     <ClInclude Include="code\core\hooks.h" />
-    <ClInclude Include="code\core\protos.h" />
     <ClInclude Include="code\game\sys\explosion_manager.h" />
     <ClInclude Include="code\game\sys\factory_system.h" />
     <ClInclude Include="code\game\sys\weapon_system.h" />

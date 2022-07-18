@@ -13,16 +13,10 @@ public:
 	void init();
 	void destroy();
 	void on_present();
-	void on_reset();
 	void hook_present();
 	void unhook_present();
 
 	IDirect3DDevice9* get_device() const;
-
-	// hooks
-
-	static int __fastcall hk_game_present(void* _this);
-	static int __stdcall hk_reset(void* _this, D3DPRESENT_PARAMETERS* params);
 };
 
 inline Renderer* g_renderer = nullptr;

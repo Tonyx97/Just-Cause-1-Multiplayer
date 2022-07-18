@@ -123,7 +123,7 @@ void dll_thread()
 
 	// initializing MH
 
-	log(GREEN, "Initializing MH and patches...");
+	log(GREEN, "Initializing patches...");
 
 	jc::hooks::init();
 	jc::clean_dbg::init();
@@ -141,11 +141,11 @@ void dll_thread()
 
 	log(GREEN, "Hooking...");
 
-	jc::hooks::hook_all();
-
 	g_renderer->hook_present();
 	g_game_control->hook_tick();
 	g_game_status->hook_dispatcher();
+
+	jc::hooks::hook_all();
 
 	log(GREEN, "Mod initialized");
 

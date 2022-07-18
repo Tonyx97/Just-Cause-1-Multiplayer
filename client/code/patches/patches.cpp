@@ -10,15 +10,15 @@
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
 
-jc::stl::string* __fastcall hk_play_ambience_2d_sounds(int a1, void*, jc::stl::string* a2)
+DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
 {
-	jc::hooks::HookLock lock {};
+	jc::hooks::HookLock lock{};
 
-	auto res = jc::hooks::call<jc::proto::patches::ambience_2d_sounds>(a1, a2);
+	auto res = play_ambience_2d_sounds_hook.call(a1, a2);
 
 	if (a2)
 		*a2 = "";
-
+		
 	return res;
 }
 
@@ -97,7 +97,7 @@ void jc::patches::apply()
 
 	// avoid weird 2d sounds
 
-	jc::hooks::hook<jc::proto::patches::ambience_2d_sounds>(&hk_play_ambience_2d_sounds);
+	play_ambience_2d_sounds_hook.hook();
 }
 
 void jc::patches::undo()
@@ -107,7 +107,7 @@ void jc::patches::undo()
 	death_state._undo();
 	head_rotation_patch._undo();
 
-	jc::hooks::unhook<jc::proto::patches::ambience_2d_sounds>();
+	play_ambience_2d_sounds_hook.unhook();
 
 	jc::write(20ui8, 0x5A4400);
 }

@@ -158,7 +158,7 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	case 1u: // jump
 	{
 #ifdef JC_CLIENT
-		jc::hooks::call<jc::character::hook::set_body_stance_t>(player->get_character()->get_body_stance(), BodyStance_Jump);
+		player->get_character()->set_body_stance(BodyStance_Jump);
 #else
 		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type);
 #endif
@@ -168,7 +168,7 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	case 2u: // punch
 	{
 #ifdef JC_CLIENT
-		jc::hooks::call<jc::character::hook::setup_punch_t>(player->get_character());
+		player->get_character()->setup_punch();
 #else
 		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type);
 #endif
@@ -182,7 +182,7 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 #ifdef JC_CLIENT
 		//log(GREEN, "some player stanced: {}", stance_id);
 
-		jc::hooks::call<jc::character::hook::set_body_stance_t>(player->get_character()->get_body_stance(), stance_id);
+		player->get_character()->set_body_stance(stance_id);
 #else
 		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, stance_id);
 #endif

@@ -42,7 +42,7 @@ inline std::string get_solution_dir()
 	return solution_dir;
 }
 
-void __stdcall hk_print_error(const char* text, ...)
+/*void __stdcall hk_print_error(const char* text, ...)
 {
 	jc::hooks::HookLock lock {};
 
@@ -126,11 +126,11 @@ void __stdcall hk_print_error(const char* text, ...)
 			g_files_dump.insert(text_str);
 		}
 
-		/*if (text_str.find("key_kane_bikini.ee") != -1)
-		{
-			while (!GetAsyncKeyState(VK_F3))
-				Sleep(100);
-		}*/
+		//if (text_str.find("key_kane_bikini.ee") != -1)
+		//{
+		//	while (!GetAsyncKeyState(VK_F3))
+		//		Sleep(100);
+		//}
 	}
 }
 
@@ -336,17 +336,6 @@ bool __fastcall hk_map_find_str1(ptr map, void*, uint32_t* hash, std::string* ou
 	if (res && g_rec_map)
 		log(GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\");", *hash, *out);
 
-	/*if (_ReturnAddress() == (void*)0x563897)
-	{
-		log(GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\");", *hash, *out);
-
-		uint32_t _hash = 0x206d0589;
-		jc::stl::string out2;
-
-		if (jc::hooks::call<jc::proto::dbg::map_dumper::find_string>(map, &_hash, (std::string*)&out2))
-			log(RED, "nice! {} (size {})", out2.c_str(), ((object_base_map*)map)->size);
-	}*/
-
 	return res;
 }
 
@@ -393,28 +382,14 @@ mat4* __fastcall hk_map_get_mat4(ptr map, void*, uint32_t* hash)
 	auto res = jc::hooks::call<jc::proto::dbg::map_dumper::get_mat4>(map, hash);
 
 	if (res && g_rec_map)
-	{
-		auto m = *res;
-
-		log(GREEN, "float mat_data[16] = {{");
-
-		for (int i = 0; i < 16; ++i)
-			log(GREEN, "{:.1f}f, ", *(float*)(ptr(res) + i * 0x4));
-
-		log(GREEN, "}};");
-
-		log(GREEN, "mat4 mat = *(mat4*)mat_data;");
-		log(GREEN, "map.insert<ValueType_Mat4>(0x{:x}, &mat);", *hash);
-
-		//log(GREEN, "map.insert<ValueType_Mat4>(0x{:x}, .); // put your matrix here", *hash);
-	}
+		log(GREEN, "map.insert<ValueType_Mat4>(0x{:x}, .); // put your matrix here", *hash);
 
 	return res;
-}
+}*/
 
 void jc::clean_dbg::init()
 {
-	if (ENABLE_DUMPING)
+	/*if (ENABLE_DUMPING)
 	{
 		const auto file_dump_path = get_solution_dir() + FILE_DUMP_PATH;
 
@@ -531,14 +506,14 @@ void jc::clean_dbg::init()
 
 		jc::hooks::hook<jc::proto::dbg::init_std_string>(&hk_create_std_string);
 		jc::hooks::hook<jc::proto::dbg::hash_str>(&hk_hash_str);
-	}
+	}*/
 }
 
 void jc::clean_dbg::destroy()
 {
 	// general debug
 
-	jc::hooks::unhook<jc::proto::dbg::print_error>();
+	/*jc::hooks::unhook<jc::proto::dbg::print_error>();
 	jc::hooks::unhook<jc::proto::raycast>();
 
 	// map dumper
@@ -597,5 +572,5 @@ void jc::clean_dbg::destroy()
 			for (const auto& [name, hash] : g_hashes)
 				hash_dump_file << name << " -> 0x" << std::uppercase << std::hex << hash.first << " (from 0x" << std::hex << hash.second << ")" << std::endl;
 		}
-	}
+	}*/
 }
