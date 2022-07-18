@@ -53,6 +53,12 @@ void dll_thread()
 		SwitchToThread();
 	} while (true);
 
+	char nick[256] = { 0 };
+
+	auto len = DWORD(256);
+
+	GetUserNameA(nick, &len);	// todojc
+
 	// get game systems
 
 	log(GREEN, "Getting game systems...");
@@ -105,22 +111,6 @@ void dll_thread()
 	g_net = JC_ALLOC(Net);
 	g_chat = JC_ALLOC(Chat);
 
-	// initialize net
-
-	log(GREEN, "Initializing NET...");
-
-	char nick[256] = { 0 };
-
-	auto len = DWORD(256);
-
-	GetUserNameA(nick, &len);	// todojc
-
-#ifdef _DEBUG
-	g_net->init("192.168.0.22", nick);
-#else
-	g_net->init("217.182.174.42", nick);
-#endif
-
 	// initializing MH
 
 	log(GREEN, "Initializing patches...");
@@ -145,6 +135,16 @@ void dll_thread()
 	g_game_control->hook_tick();
 	g_game_status->hook_dispatcher();
 
+	// initialize net
+
+	log(GREEN, "Initializing NET...");
+
+#ifdef _DEBUG
+	g_net->init("192.168.0.22", nick);
+#else
+	g_net->init("217.182.174.42", nick);
+#endif
+
 	jc::hooks::hook_all();
 
 	log(GREEN, "Mod initialized");
@@ -156,6 +156,11 @@ void dll_thread()
 	while (!GetAsyncKeyState(VK_F8) && !(game_exit = GetAsyncKeyState(VK_F9)))
 		Sleep(50);
 
+	// clear timers
+
+	g_net->pre_destroy();
+	//timer::clear_timers();
+
 	// wait until we disconnected and the ui is cleaned
 
 	g_ui->wait_until_destruction();
@@ -166,24 +171,25 @@ void dll_thread()
 	g_game_control->unhook_tick();
 	g_renderer->unhook_present();
 
-	jc::hooks::unhook_all();
-
 	// uninitialize MH
 
 	jc::test_units::destroy();
 	jc::patches::undo();
 	jc::clean_dbg::destroy();
+
+	// destroy net after all hooks are done
+
+	g_net->destroy();
+
+	// unhook all
+
+	jc::hooks::unhook_all();
 	jc::hooks::destroy();
 
 	// destroy the rest of the mod systems
 
 	g_explosion->destroy();
 	g_key->destroy();
-
-	// destroy net after all hooks are done
-
-	g_net->pre_destroy();
-	g_net->destroy();
 
 	// destroy game systems
 
@@ -203,10 +209,6 @@ void dll_thread()
 	g_world->destroy();
 	g_renderer->destroy();
 	g_game_control->destroy();
-
-	// clear all resources
-
-	timer::clear_timers();
 
 	// free mod systems
 

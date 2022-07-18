@@ -147,7 +147,7 @@ void ObjectBase::set_transform(const Transform& transform)
 	{
 	case Character::CLASS_ID():
 	{
-		jc::this_call<ptr>(jc::character::fn::SET_TRANSFORM, this, &transform);
+		jc::this_call<void>(jc::character::fn::SET_TRANSFORM, this, &transform);
 		break;
 	}
 	case AgentSpawnPoint::CLASS_ID():
@@ -188,7 +188,8 @@ bool ObjectBase::is_vehicle() const
 
 uint32_t ObjectBase::get_typename_hash() const
 {
-	return util::hash::JENKINS(get_typename());
+	const auto type_name = get_typename();
+	return type_name ? util::hash::JENKINS(type_name) : 0u;
 }
 
 const char* ObjectBase::get_typename() const

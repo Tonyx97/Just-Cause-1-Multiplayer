@@ -55,9 +55,11 @@ enet::PacketResult nh::player_client::quit(const enet::Packet& p)
 		check(g_net->get_local()->get_nid() != player->get_nid(), "A localplayer cannot receive 'connect' packet with its NID");
 		check(player, "Player must exist before '{}' packet", CURR_FN);
 
-		log(YELLOW, "[{}] Destroyed player with NID {:x}", CURR_FN, player->get_nid());
+		const auto nid = player->get_nid();
 	
 		g_net->remove_player_client(player->get_client());
+
+		log(YELLOW, "[{}] Destroyed player with NID {:x}", CURR_FN, nid);
 
 		return enet::PacketRes_Ok;
 	}

@@ -165,11 +165,11 @@ namespace jc::prof
 
 	bool error_internal(const std::string& text, int type)
 	{
-		__debugbreak();
-
 		if (type == 0)
 		{
 			MessageBoxA(nullptr, text.c_str(), "JC:MP", MB_OK | MB_ICONERROR);
+
+			__debugbreak();
 
 			TerminateProcess(GetCurrentProcess(), 1);
 		}
@@ -177,8 +177,12 @@ namespace jc::prof
 		{
 			MessageBoxA(nullptr, text.c_str(), "JC:MP", MB_OK | MB_ICONWARNING);
 
+			__debugbreak();
+
 			return (type == 2);
 		}
+
+		__debugbreak();
 
 		return false;
 	}

@@ -14,8 +14,6 @@ namespace jc::item_pickup
 
 	namespace hook
 	{
-		//using on_item_pickup_t = prototype<void(__thiscall*)(void*, int*, ptr, std::string*, bool, float), 0x77CE20, util::hash::JENKINS("OnItemPickup")>;
-
 		void apply();
 		void undo();
 	}

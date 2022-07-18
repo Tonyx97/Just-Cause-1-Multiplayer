@@ -6,8 +6,6 @@
 
 DEFINE_HOOK_FASTCALL(dispatch, 0x497A70, bool, GameStatus* gs)
 {
-	jc::hooks::HookLock lock {};
-	
 	auto res = dispatch_hook.call(gs);
 
 	switch (gs->get_status())

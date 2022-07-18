@@ -42,7 +42,7 @@ public:
 
 #ifdef JC_SERVER
 	NetObject();
-	virtual ~NetObject();
+	~NetObject();
 #endif
 
 	virtual uint32_t get_type() const = 0;

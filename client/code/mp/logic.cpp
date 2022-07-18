@@ -28,22 +28,20 @@ void jc::mp::logic::on_tick()
 		return { nullptr, nullptr };
 	};
 
-	static auto transform_sync = timer::add_timer(10, [&get_local_instances]()
-	{
+	//static auto transform_sync = timer::add_timer(10, [&get_local_instances]()
+	//{
 		if (const auto info = get_local_instances())
 		{
 			g_net->send_reliable(PlayerPID_DynamicInfo, 0u, info.character->get_transform());
 			g_net->send_reliable(PlayerPID_DynamicInfo, 1u, info.character->get_velocity());
 		}
-	});
+	//});
 
-	static auto head_rotation_sync = timer::add_timer(30, [&get_local_instances]()
-	{
+	//static auto head_rotation_sync = timer::add_timer(30, [&get_local_instances]()
+	//{
 		if (const auto info = get_local_instances())
 			g_net->send_reliable(PlayerPID_DynamicInfo, 2u, info.character->get_skeleton()->get_head_euler_rotation());
-	});
-
-	timer::dispatch();
+	//});
 }
 
 void jc::mp::logic::on_update_objects()
@@ -76,10 +74,13 @@ void jc::mp::logic::on_update_objects()
 
 			// interpolate the previous transform with the target one
 
-			//if (glm::length(player_char->get_velocity()) < 0.1f && GetAsyncKeyState(VK_F1))
+			//const auto interpolated = previous_transform.interpolate(target_transform, 0.5f, 0.5f);
+
+			//player_char->set_transform(target_transform);
+
+			/*if (glm::length(player_char->get_velocity()) < 0.1f && GetAsyncKeyState(VK_F1))
 			{
-				player_char->set_transform(previous_transform.interpolate(target_transform, 0.5f, 0.5f));
-			}
+			}*/
 
 			break;
 		}

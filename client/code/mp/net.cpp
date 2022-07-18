@@ -83,24 +83,12 @@ void Net::disconnect()
 	if (!peer || !connected)
 		return;
 
+	if (const auto old_local = std::exchange(local, nullptr))
+		remove_player_client(old_local);
+
 	enet_peer_disconnect(peer, 0);
 
-	bool disconnected = false;
-
-	enet::dispatch_packets([&](ENetEvent& e)
-	{
-		switch (e.type)
-		{
-		case ENET_EVENT_TYPE_RECEIVE:
-			enet_packet_destroy(e.packet);
-			break;
-		case ENET_EVENT_TYPE_DISCONNECT:
-			disconnected = true;
-			break;
-		}
-	}, 500);
-
-	if (disconnected)
+	if (peer)
 	{
 		enet_peer_reset(peer);
 
@@ -109,9 +97,6 @@ void Net::disconnect()
 
 	if (timed_out)
 		log(RED, "Time out");
-
-	if (const auto old_local = std::exchange(local, nullptr))
-		remove_player_client(old_local);
 
 	peer	  = nullptr;
 	connected = false;

@@ -19,43 +19,19 @@
 #include <game/object/ui/map_icon.h>
 #include <game/sys/all.h>
 
-/*
-* code where this int is set to progress in the level loading
-* 
-004980CD - C7 42 1C 01000000 - mov [edx+1C],00000001
-00497B28 - C7 41 20 02000000 - mov [ecx+20],00000002
-00497B59 - C7 41 20 03000000 - mov [ecx+20],00000003
-00497BE1 - C7 41 20 04000000 - mov [ecx+20],00000004
-*/
-
-std::set<ptr> ay;
-
-void __fastcall hk_test(ptr event_list, void*, ptr userdata)
+DEFINE_HOOK_CCALL(_test, 0x407FD0, void, ptr a1, ptr a2)
 {
-	if (!ay.contains(event_list))
-	{
-		ay.insert(event_list);
-		log(CYAN, "added {:x} {:x} - {:x}", event_list, userdata, ptr(_ReturnAddress()));
-	}
-
-	//jc::hooks::call<jc::proto::dbg::test>(event_list, userdata);
-}
-
-void __fastcall hk_test2(ptr a1, void*, int id)
-{
-	//jc::hooks::call<jc::proto::dbg::test2>(a1, id);
+	_test_hook.call(a1, a2);
 }
 
 void jc::test_units::init()
 {
-	//jc::hooks::hook<jc::proto::dbg::test>(&hk_test);
-	//jc::hooks::hook<jc::proto::dbg::test2>(&hk_test2);
+	//_test_hook.hook();
 }
 
 void jc::test_units::destroy()
 {
-	//jc::hooks::unhook<jc::proto::dbg::test2>();
-	//jc::hooks::unhook<jc::proto::dbg::test>();
+	//_test_hook.unhook();
 }
 
 void jc::test_units::test_0()

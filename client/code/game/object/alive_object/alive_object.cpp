@@ -12,8 +12,6 @@ namespace jc::alive_object::hook
 {
 	DEFINE_HOOK_THISCALL(set_health, 0x743E30, void, AliveObject* obj, float hp)
 	{
-		jc::hooks::HookLock lock {};
-
 		switch (obj->get_typename_hash())
 		{
 		case Character::CLASS_ID():

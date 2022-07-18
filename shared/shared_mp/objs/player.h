@@ -40,8 +40,6 @@ public:
 
 private:
 
-	CharacterHandle* handle = nullptr;
-
 	PlayerStaticInfo static_info {};
 
 	PlayerClient* client = nullptr;
@@ -51,6 +49,8 @@ private:
 	MovementInfo move_info {};
 
 #ifdef JC_CLIENT
+	CharacterHandle* handle = nullptr;
+
 	bool local = false;
 #endif
 

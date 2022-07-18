@@ -59,9 +59,7 @@ void ObjectLists::clear_object_list()
 	
 	while (it != player_clients.end())
 	{
-		const auto [nid, pc] = *it;
-
-		DESTROY_PLAYER_CLIENT(pc);
+		DESTROY_PLAYER_CLIENT(it->second);
 
 		it = player_clients.erase(it);
 	}
@@ -94,7 +92,7 @@ NetObject* ObjectLists::add_net_object(NetObject* net_obj)
 		break;
 	}
 	default:
-		return nullptr;
+		check(false, "Invalid net object type");
 	}
 
 	net_objects.insert({ nid, net_obj });
@@ -114,7 +112,7 @@ bool ObjectLists::remove_net_object(NetObject* net_obj)
 		break;
 	}
 	default:
-		return false;
+		check(false, "Invalid net object type");
 	}
 
 	net_objects.erase(nid);

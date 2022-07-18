@@ -12,8 +12,6 @@
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
 {
-	jc::hooks::HookLock lock{};
-
 	auto res = play_ambience_2d_sounds_hook.call(a1, a2);
 
 	if (a2)

@@ -8,12 +8,10 @@ namespace jc::item_pickup::hook
 {
 	void apply()
 	{
-		//jc::hooks::hook<on_item_pickup_t>(&);
 	}
 
 	void undo()
 	{
-		//jc::hooks::unhook<on_item_pickup_t>();
 	}
 }
 

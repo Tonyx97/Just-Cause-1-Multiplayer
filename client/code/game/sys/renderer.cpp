@@ -9,20 +9,36 @@
 
 #include <core/test_units.h>
 
+// dbg
+
+#include <timer/timer.h>
+
+#include <mp/net.h>
+
+#include <game/object/character/character.h>
+#include <game/object/localplayer/localplayer.h>
+#include <game/object/character_handle/character_handle.h>
+
 DEFINE_HOOK_FASTCALL(game_present, 0x40FB70, int, void* _this)
 {
-	jc::hooks::HookLock lock {};
+	g_ui->dispatch();
 
+	auto res = game_present_hook.call(_this);
+	
 	g_renderer->on_present();
 
-	return game_present_hook.call(_this);
+	return res;
 }
 
 void Renderer::on_present()
 {
-	g_ui->dispatch();
+	//jc::test_units::test_0();
 
-	jc::test_units::test_0();
+	g_net->tick();
+	g_net->update_objects();
+	g_key->clear_states();
+
+	//timer::dispatch();
 }
 
 void Renderer::init()

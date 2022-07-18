@@ -90,7 +90,6 @@ public:
 
 	static void SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai = false);
 
-	void dispatch_movement(float angle, float right, float forward, bool aiming);
 	void respawn();
 	void set_grenades_ammo(int32_t v);
 	void set_animation(const jc::stl::string& name, float speed, bool unk0 = false, bool unk1 = false);
@@ -100,6 +99,7 @@ public:
 	void set_flag(uint32_t mask);
 	void remove_flag(uint32_t mask);
 	void set_roll_clamp_enabled(bool v);
+	void dispatch_movement(float angle, float right, float forward, bool aiming);
 	void set_body_stance(uint32_t id);
 	void setup_punch();
 

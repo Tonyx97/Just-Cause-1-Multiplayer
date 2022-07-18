@@ -26,7 +26,7 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 		{
 			// create and spawn the character if it's not the localplayer
 
-			handle = g_factory->spawn_character("female1", { 0.f, 0.f, 0.f });
+			handle = g_factory->spawn_character("female1", { 3393.f, 180.04f, 8997.96f });
 
 			set_spawned(true);
 
@@ -68,6 +68,8 @@ Player::~Player()
 		check(old_handle, "Invalid handle when destroying a remote player");
 
 		g_factory->destroy_character_handle(old_handle);
+
+		log(RED, "Player {} character despawned", get_nid());
 	}
 #else
 #endif

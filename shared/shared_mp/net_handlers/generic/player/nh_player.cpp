@@ -209,7 +209,7 @@ enet::PacketResult nh::player::health(const enet::Packet& p)
 	const float new_hp = p.get_float();
 
 #ifdef JC_CLIENT
-	player->set_hp(new_hp);
+	//player->set_hp(new_hp);
 #else
 	g_net->send_broadcast_reliable(pc, PlayerPID_Health, player, new_hp);
 #endif
