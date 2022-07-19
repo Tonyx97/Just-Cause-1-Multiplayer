@@ -196,7 +196,8 @@ void dll_thread()
 
 	do
 	{
-		if (g_renderer && g_renderer->get_device() &&
+		if (g_renderer &&
+			g_renderer->get_device() &&
 			g_world &&
 			g_game_control &&
 			g_physics &&
