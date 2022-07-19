@@ -59,7 +59,7 @@ namespace jc::character::hook
 				if (g_test_char)
 					dispatch_movement_hook.call(g_test_char, angle, right, forward, aiming);
 
-				g_net->send_reliable(PlayerPID_StanceAndMovement, 0u, angle, right, forward, aiming);
+				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, angle, right, forward, aiming);
 			}
 			else if (g_net->get_player_by_character(character))
 				return;
@@ -80,7 +80,7 @@ namespace jc::character::hook
 				{
 				case 0x59F44C: // check jump
 				{
-					g_net->send_reliable(PlayerPID_StanceAndMovement, 1u);
+					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Jump);
 					break;
 				}
 				default:
@@ -97,7 +97,7 @@ namespace jc::character::hook
 					case 88:
 					case 89:
 					{
-						g_net->send_reliable(PlayerPID_StanceAndMovement, 3u, id);
+						g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_BodyStance, id);
 
 						break;
 					}
@@ -131,7 +131,7 @@ namespace jc::character::hook
 
 		if (const auto local_char = g_world->get_localplayer_character())
 			if (character == local_char && res == character)
-				g_net->send_reliable(PlayerPID_StanceAndMovement, 2u);
+				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Punch);
 
 		return res;
 	}
@@ -246,7 +246,7 @@ void Character::set_model(uint32_t id, bool sync)
 			{
 				// sync the skin id with other players
 
-				g_net->send_reliable(PlayerPID_DynamicInfo, 3u, id);
+				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Skin, id);
 			}
 		}
 	});
@@ -280,6 +280,12 @@ void Character::dispatch_movement(float angle, float right, float forward, bool 
 void Character::set_body_stance(uint32_t id)
 {
 	jc::character::hook::set_body_stance_hook.call(get_body_stance(), id);
+}
+
+void Character::set_arms_stance(uint32_t id)
+{
+	check(false, "todojc");
+	//jc::character::hook::set_body_stance_hook.call(get_arms_stance(), id);
 }
 
 void Character::setup_punch()

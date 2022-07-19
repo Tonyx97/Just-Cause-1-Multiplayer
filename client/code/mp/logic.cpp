@@ -32,15 +32,15 @@ void jc::mp::logic::on_tick()
 	//{
 		if (const auto info = get_local_instances())
 		{
-			g_net->send_reliable(PlayerPID_DynamicInfo, 0u, info.character->get_transform());
-			g_net->send_reliable(PlayerPID_DynamicInfo, 1u, info.character->get_velocity());
+			g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Transform, info.character->get_transform());
+			g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Velocity, info.character->get_velocity());
 		}
 	//});
 
 	//static auto head_rotation_sync = timer::add_timer(30, [&get_local_instances]()
 	//{
 		if (const auto info = get_local_instances())
-			g_net->send_reliable(PlayerPID_DynamicInfo, 2u, info.character->get_skeleton()->get_head_euler_rotation());
+			g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_HeadRotation, info.character->get_skeleton()->get_head_euler_rotation());
 	//});
 }
 

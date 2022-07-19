@@ -101,6 +101,7 @@ public:
 	void set_roll_clamp_enabled(bool v);
 	void dispatch_movement(float angle, float right, float forward, bool aiming);
 	void set_body_stance(uint32_t id);
+	void set_arms_stance(uint32_t id);
 	void setup_punch();
 
 	bool has_flag(uint32_t mask) const;

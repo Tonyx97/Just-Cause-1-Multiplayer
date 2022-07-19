@@ -28,28 +28,6 @@ enet::PacketResult nh::player::spawn(const enet::Packet& p)
 	return enet::PacketRes_Ok;
 }
 
-enet::PacketResult nh::player::tick_info(const enet::Packet& p)
-{
-#ifdef JC_CLIENT
-	/*if (const auto player = p.get_net_object<Player>())
-	{
-		const auto info = p.get_struct<Player::TickInfo>();
-
-		player->set_tick_info(info);
-	}*/
-#else
-	/*const auto pc = p.get_pc();
-	const auto player = pc->get_player();
-	const auto info = p.get_struct<Player::TickInfo>();
-
-	player->set_tick_info(info);
-
-	g_net->send_broadcast_reliable(pc, PlayerPID_TickInfo, player, info);*/
-#endif
-
-	return enet::PacketRes_Ok;
-}
-
 enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
@@ -62,17 +40,13 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 	const auto player = pc->get_player();
 #endif
 
-	log(RED, "received dynamic info from {:x} lol", player->get_nid());
-
 	switch (const auto type = p.get_uint())
 	{
-	case 0u: // transform
+	case PlayerDynInfo_Transform:
 	{
 		auto transform = p.get_raw<Transform>();
 
-#ifdef JC_CLIENT
 		player->set_transform(transform);
-#endif
 
 #ifdef JC_SERVER
 		g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, transform);
@@ -80,13 +54,11 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 
 		break;
 	}
-	case 1u: // velocity
+	case PlayerDynInfo_Velocity:
 	{
 		const auto velocity = p.get_raw<vec3>();
 
-#ifdef JC_CLIENT
 		//player->get_character()->get_physical()->set_velocity(velocity);
-#endif
 
 #ifdef JC_SERVER
 		g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, velocity);
@@ -94,13 +66,11 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 
 		break;
 	}
-	case 2u: // head rotation
+	case PlayerDynInfo_HeadRotation:
 	{
 		const auto rotation = p.get_raw<vec3>();
 
-#ifdef JC_CLIENT
-		player->get_character()->get_skeleton()->set_head_euler_rotation(rotation);
-#endif
+		player->set_head_rotation(rotation);
 
 #ifdef JC_SERVER
 		g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, rotation);
@@ -108,13 +78,11 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 
 		break;
 	}
-	case 3u: // skin
+	case PlayerDynInfo_Skin:
 	{
 		const auto skin_id = p.get_uint();
 
-#ifdef JC_CLIENT
 		player->set_skin(skin_id);
-#endif
 
 #ifdef JC_SERVER
 		g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, skin_id);
@@ -139,15 +107,13 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 
 	switch (const auto type = p.get_uint())
 	{
-	case 0u: // WASD movement
+	case PlayerStanceID_Movement:
 	{
 		const float angle = p.get_float(),
 					right = p.get_float(),
 					forward = p.get_float();
 
 		const bool aiming = p.get_bool();
-
-		//log(GREEN, "{} {} {} {}", angle, right, forward, aiming);
 
 		player->set_movement_info(angle, right, forward, aiming);
 
@@ -157,34 +123,32 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 
 		break;
 	}
-	case 1u: // jump
+	case PlayerStanceID_Jump:
 	{
-#ifdef JC_CLIENT
-		player->get_character()->set_body_stance(BodyStance_Jump);
-#else
+		player->set_body_stance_id(BodyStance_Jump);
+
+#ifdef JC_SERVER
 		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type);
 #endif
 
 		break;
 	}
-	case 2u: // punch
+	case PlayerStanceID_Punch:
 	{
-#ifdef JC_CLIENT
-		player->get_character()->setup_punch();
-#else
+		player->do_punch();
+
+#ifdef JC_SERVER
 		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type);
 #endif
 
 		break;
 	}
-	case 3u: // jump
+	case PlayerStanceID_BodyStance:
 	{
 		const auto stance_id = p.get_uint();
 
 #ifdef JC_CLIENT
-		//log(GREEN, "some player stanced: {}", stance_id);
-
-		player->get_character()->set_body_stance(stance_id);
+		player->set_body_stance_id(stance_id);
 #else
 		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, stance_id);
 #endif

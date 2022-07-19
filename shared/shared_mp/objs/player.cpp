@@ -111,22 +111,20 @@ void Player::set_hp(float v)
 	});
 #endif
 
-	tick_info.hp = v;
+	dyn_info.hp = v;
 }
 
 void Player::set_transform(const Transform& transform)
 {
-	tick_info.transform = transform;
+	dyn_info.transform = transform;
 }
 
-bool Player::is_alive() const
+void Player::set_movement_info(float angle, float right, float forward, bool aiming)
 {
-	return get_hp() > 0.f;
-}
-
-float Player::get_hp() const
-{
-	return tick_info.hp;
+	move_info.angle = angle;
+	move_info.right = right;
+	move_info.forward = forward;
+	move_info.aiming = aiming;
 }
 
 void Player::set_body_stance_id(uint32_t id)
@@ -134,7 +132,7 @@ void Player::set_body_stance_id(uint32_t id)
 	dyn_info.body_stance_id = id;
 
 #ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->get_body_stance()->set_stance(id); });
+	verify_exec([&](Character* c) { c->set_body_stance(id); });
 #endif
 }
 
@@ -143,7 +141,23 @@ void Player::set_arms_stance_id(uint32_t id)
 	dyn_info.arms_stance_id = id;
 
 #ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->get_arms_stance()->set_stance(id); });
+	verify_exec([&](Character* c) { c->set_arms_stance(id); });
+#endif
+}
+
+void Player::set_head_rotation(const vec3& v)
+{
+	dyn_info.head_rotation = v;
+
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->get_skeleton()->set_head_euler_rotation(v); });
+#endif
+}
+
+void Player::do_punch()
+{
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->setup_punch(); });
 #endif
 }
 
@@ -152,11 +166,6 @@ void Player::set_arms_stance_id(uint32_t id)
 void Player::set_nick(const std::string& v)
 {
 	static_info.nick = v;
-}
-
-void Player::set_tick_info(const TickInfo& v)
-{
-	set_transform(v.transform);
 }
 
 void Player::set_skin(uint32_t v)
@@ -171,14 +180,6 @@ void Player::set_skin(uint32_t v)
 uint32_t Player::get_skin() const
 {
 	return static_info.skin;
-}
-
-void Player::set_movement_info(float angle, float right, float forward, bool aiming)
-{
-	move_info.angle = angle;
-	move_info.right = right;
-	move_info.forward = forward;
-	move_info.aiming = aiming;
 }
 
 bool Player::must_skip_engine_stances() const

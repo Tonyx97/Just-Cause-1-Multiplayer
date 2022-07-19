@@ -1,5 +1,7 @@
 #pragma once
 
+#include <game/shared/stances.h>
+
 namespace jc::stance_controller
 {
 	static constexpr uint32_t MOVEMENT_ID = 0x24;
@@ -11,11 +13,6 @@ namespace jc::stance_controller
 		static constexpr uint32_t GET_MOVEMENT_ID = 0x6FE850;
 	}
 }
-
-enum BodyStanceID
-{
-	BodyStance_Jump = 21
-};
 
 class Character;
 
