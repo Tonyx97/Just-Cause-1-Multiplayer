@@ -143,23 +143,14 @@ void UI::destroy()
 
 void UI::dispatch()
 {
-	// if the system is marked as being destroyed then we want to
-	// destroy all resources used by DX and ImGui from the same thread it was
-	// created (aka this one from the hook, the game one)
-
-	if (is_destroying())
-		destroy();
-	else if (!is_destroyed())
-	{
 #ifdef JC_DBG
-		if (g_key->is_key_pressed(VK_INSERT))
-			toggle_debug();
+	if (g_key->is_key_pressed(VK_INSERT))
+		toggle_debug();
 #endif
 
-		begin();
-		render();
-		end();
-	}
+	begin();
+	render();
+	end();
 }
 
 void UI::begin_window(const char* name, const ImVec2& pos, const ImVec2& size, const ImVec4& color)
@@ -181,14 +172,6 @@ void UI::end_window()
 void UI::draw_filled_rect(float x, float y, float w, float h, const ImVec4& color)
 {
 	ImGui::GetWindowDrawList()->AddQuadFilled({ x, y }, { x, y + h }, { x + w, y + h }, { x + w, y }, ImGui::ColorConvertFloat4ToU32(color));
-}
-
-void UI::wait_until_destruction()
-{
-	destroying = true;
-
-	while (!destroyed)
-		SwitchToThread();
 }
 
 float UI::add_text(const char* text, float x, float y, float s, const ImVec4& color, bool center, int shadow, float wrap)

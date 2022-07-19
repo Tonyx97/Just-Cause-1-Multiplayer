@@ -22,11 +22,167 @@
 
 HMODULE g_module = nullptr;
 
+bool initialized = false;
+
+std::atomic_bool unload_mod = false;
+std::atomic_bool mod_unloaded = false;
+
+DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
+{
+	const auto res = tick_hook.call(_this);
+
+	if (!initialized)
+	{
+		char nick[256] = { 0 };
+
+		auto len = DWORD(256);
+
+		GetUserNameA(nick, &len);	// todojc
+
+		// initialize game systems/managers
+
+		log(GREEN, "Initializing game systems...");
+
+		g_game_control->init();
+		g_renderer->init();
+		g_world->init();
+		g_camera->init();
+		g_physics->init();
+		g_vehicle->init();
+		g_ammo->init();
+		g_sound->init();
+		g_time->init();
+		g_particle->init();
+		g_day_cycle->init();
+		g_weapon->init();
+		g_factory->init();
+		g_ai->init();
+		g_game_status->init();
+		g_rsrc_streamer->init();
+
+		// initialize mod systems
+
+		log(GREEN, "Creating mod systems...");
+
+		g_ui = JC_ALLOC(UI);
+		g_key = JC_ALLOC(Keycode);
+		g_explosion = JC_ALLOC(ExplosionManager);
+		g_net = JC_ALLOC(Net);
+		g_chat = JC_ALLOC(Chat);
+
+		// initializing MH
+
+		log(GREEN, "Initializing patches...");
+
+		jc::clean_dbg::init();
+		jc::patches::apply();
+		jc::test_units::init();
+
+		// initialize mod systems
+
+		log(GREEN, "Initializing mod systems...");
+
+		g_key->init();
+		g_explosion->init();
+
+		// hook present
+
+		log(GREEN, "Hooking...");
+
+		g_renderer->hook_present();
+		g_game_control->hook_tick();
+		g_game_status->hook_dispatcher();
+
+		// initialize net
+
+		log(GREEN, "Initializing NET...");
+
+#ifdef _DEBUG
+		g_net->init("192.168.0.22", nick);
+#else
+		g_net->init("217.182.174.42", nick);
+#endif
+
+		jc::hooks::hook_queued();
+
+		log(GREEN, "Loaded from hook");
+
+		initialized = true;
+	}
+	else if (unload_mod)
+	{
+		// clear timers
+
+		//timer::clear_timers();
+
+		// unhook the present since we cleaned the ui system data
+
+		g_game_status->unhook_dispatcher();
+		g_game_control->unhook_tick();
+		g_renderer->unhook_present();
+
+		// uninitialize MH
+
+		jc::test_units::destroy();
+		jc::patches::undo();
+		jc::clean_dbg::destroy();
+
+		// unhook all
+
+		jc::hooks::unhook_queued();
+
+		// destroy net after all hooks are done
+
+		g_net->pre_destroy();
+		g_net->destroy();
+
+		// destroy the rest of the mod systems
+
+		g_explosion->destroy();
+		g_key->destroy();
+		g_ui->destroy();
+
+		// destroy game systems
+
+		g_rsrc_streamer->destroy();
+		g_game_status->destroy();
+		g_ai->destroy();
+		g_factory->destroy();
+		g_weapon->destroy();
+		g_day_cycle->destroy();
+		g_particle->destroy();
+		g_time->destroy();
+		g_sound->destroy();
+		g_ammo->destroy();
+		g_vehicle->destroy();
+		g_physics->destroy();
+		g_camera->destroy();
+		g_world->destroy();
+		g_renderer->destroy();
+		g_game_control->destroy();
+
+		// free mod systems
+
+		JC_FREE(g_chat);
+		JC_FREE(g_explosion);
+		JC_FREE(g_key);
+		JC_FREE(g_ui);
+		JC_FREE(g_net);
+
+		log(GREEN, "Unloaded from hook successfully");
+
+		unload_mod = false;
+		mod_unloaded = true;
+	}
+
+	return res;
+}
+
 void dll_thread()
 {
 	jc::prof::init("JC:MP");
 
-	log(GREEN, "Initializing...");
+	log(GREEN, "Initializing at {:x}...", ptr(g_module));
 
 	util::rand::init_seed();
 
@@ -51,80 +207,11 @@ void dll_thread()
 		SwitchToThread();
 	} while (true);
 
-	char nick[256] = { 0 };
-
-	auto len = DWORD(256);
-
-	GetUserNameA(nick, &len);	// todojc
-
-	// initialize game systems/managers
-
-	log(GREEN, "Initializing game systems...");
-
-	g_game_control->init();
-	g_renderer->init();
-	g_world->init();
-	g_camera->init();
-	g_physics->init();
-	g_vehicle->init();
-	g_ammo->init();
-	g_sound->init();
-	g_time->init();
-	g_particle->init();
-	g_day_cycle->init();
-	g_weapon->init();
-	g_factory->init();
-	g_ai->init();
-	g_game_status->init();
-	g_rsrc_streamer->init();
-
-	// initialize mod systems
-
-	log(GREEN, "Creating mod systems...");
-
-	g_ui = JC_ALLOC(UI);
-	g_key = JC_ALLOC(Keycode);
-	g_explosion = JC_ALLOC(ExplosionManager);
-	g_net = JC_ALLOC(Net);
-	g_chat = JC_ALLOC(Chat);
-
-	// initializing MH
-
-	log(GREEN, "Initializing patches...");
-
 	jc::hooks::init();
-	jc::clean_dbg::init();
-	jc::patches::apply();
-	jc::test_units::init();
 
-	// initialize mod systems
+	tick_hook.hook();
 
-	log(GREEN, "Initializing mod systems...");
-
-	g_key->init();
-	g_explosion->init();
-	
-	// hook present
-
-	log(GREEN, "Hooking...");
-
-	g_renderer->hook_present();
-	g_game_control->hook_tick();
-	g_game_status->hook_dispatcher();
-
-	// initialize net
-
-	log(GREEN, "Initializing NET...");
-
-#ifdef _DEBUG
-	g_net->init("192.168.0.22", nick);
-#else
-	g_net->init("217.182.174.42", nick);
-#endif
-
-	jc::hooks::hook_all();
-
-	log(GREEN, "Mod initialized");
+	jc::hooks::hook_queued();
 
 	// f8 = exit key (unloads the mod only)
 
@@ -133,67 +220,15 @@ void dll_thread()
 	while (!GetAsyncKeyState(VK_F8) && !(game_exit = GetAsyncKeyState(VK_F9)))
 		Sleep(50);
 
-	// clear timers
+	unload_mod = true;
 
-	g_net->pre_destroy();
-	//timer::clear_timers();
+	while (!mod_unloaded)
+		Sleep(100);
 
-	// wait until we disconnected and the ui is cleaned
+	tick_hook.unhook();
 
-	g_ui->wait_until_destruction();
-
-	// unhook the present since we cleaned the ui system data
-
-	g_game_status->unhook_dispatcher();
-	g_game_control->unhook_tick();
-	g_renderer->unhook_present();
-
-	// uninitialize MH
-
-	jc::test_units::destroy();
-	jc::patches::undo();
-	jc::clean_dbg::destroy();
-
-	// destroy net after all hooks are done
-
-	g_net->destroy();
-
-	// unhook all
-
-	jc::hooks::unhook_all();
+	jc::hooks::unhook_queued();
 	jc::hooks::destroy();
-
-	// destroy the rest of the mod systems
-
-	g_explosion->destroy();
-	g_key->destroy();
-
-	// destroy game systems
-
-	g_rsrc_streamer->destroy();
-	g_game_status->destroy();
-	g_ai->destroy();
-	g_factory->destroy();
-	g_weapon->destroy();
-	g_day_cycle->destroy();
-	g_particle->destroy();
-	g_time->destroy();
-	g_sound->destroy();
-	g_ammo->destroy();
-	g_vehicle->destroy();
-	g_physics->destroy();
-	g_camera->destroy();
-	g_world->destroy();
-	g_renderer->destroy();
-	g_game_control->destroy();
-
-	// free mod systems
-
-	JC_FREE(g_chat);
-	JC_FREE(g_explosion);
-	JC_FREE(g_key);
-	JC_FREE(g_ui);
-	JC_FREE(g_net);
 
 	// close console and unload dll
 

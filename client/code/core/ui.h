@@ -50,12 +50,6 @@ public:
 	void end_window();
 	void draw_filled_rect(float x, float y, float w, float h, const ImVec4& color);
 
-	/*
-	 * Marks this system as destroying and waits until the hook itself has freed all
-	 * the resources and assets from ImGui etc.
-	 */
-	void wait_until_destruction();
-
 	void toggle_debug()
 	{
 		show_debug = !show_debug;

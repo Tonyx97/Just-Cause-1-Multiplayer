@@ -14,14 +14,6 @@
 #include <core/keycode.h>
 #include <core/test_units.h>
 
-DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
-{
-	const auto res = tick_hook.call(_this);
-
-
-	return res;
-}
-
 void GameControl::init()
 {
 }

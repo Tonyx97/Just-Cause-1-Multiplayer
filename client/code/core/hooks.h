@@ -44,7 +44,7 @@ struct DetourHook
 	}
 
 	template <typename... A>
-	inline auto call(A... args)
+	__declspec(noinline) auto call(A... args)
 	{
 		check(original, "Hook was not applied, invalid original function");
 
@@ -85,6 +85,8 @@ namespace jc::hooks
 {
 	void init();
 	void destroy();
-	void hook_all();
-	void unhook_all();
+	void hook_queued();
+	void unhook_queued();
+	void hook_game_fns();
+	void unhook_game_fns();
 }
