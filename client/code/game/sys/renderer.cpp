@@ -21,19 +21,16 @@
 
 DEFINE_HOOK_FASTCALL(game_present, 0x40FB70, int, void* _this)
 {
-	g_ui->dispatch();
-
-	auto res = game_present_hook.call(_this);
-	
 	g_renderer->on_present();
 
-	return res;
+	return game_present_hook.call(_this);
 }
 
 void Renderer::on_present()
 {
 	//jc::test_units::test_0();
 
+	g_ui->dispatch();
 	g_net->tick();
 	g_net->update_objects();
 	g_key->clear_states();

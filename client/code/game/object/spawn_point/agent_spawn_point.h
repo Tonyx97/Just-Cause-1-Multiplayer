@@ -4,7 +4,8 @@
 
 namespace jc::agent_spawn_point
 {
-	static constexpr uint32_t TYPE = 0x254; // AgentType*
+	static constexpr uint32_t CHARACTER		= 0xEC; // Character*
+	static constexpr uint32_t TYPE			= 0x254; // AgentType*
 }
 
 class AgentType
@@ -27,7 +28,9 @@ public:
 	const char* get_preset_name() const;
 	const char* get_spawn_name() const;
 
-	AgentType* get_agent_type();
+	Character* get_character() const;
+
+	AgentType* get_agent_type() const;
 
 	vec3 get_position() const;
 };

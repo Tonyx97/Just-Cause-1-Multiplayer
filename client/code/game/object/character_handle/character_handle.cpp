@@ -18,8 +18,7 @@ CharacterHandle* CharacterHandle::GET_FREE_HANDLE()
 
 void CharacterHandle::destroy()
 {
-	if (const auto character = get_character_unsafe())
-		get_character()->remove_flag(1 << 6);
+	get_character()->remove_flag(1 << 6);
 
 	set_pending_destroy();
 }

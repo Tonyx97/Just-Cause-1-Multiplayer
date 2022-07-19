@@ -12,12 +12,10 @@
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
 {
-	auto res = play_ambience_2d_sounds_hook.call(a1, a2);
-
 	if (a2)
 		*a2 = "";
 		
-	return res;
+	return play_ambience_2d_sounds_hook.call(a1, a2);
 }
 
 namespace jc::patches
@@ -95,7 +93,7 @@ void jc::patches::apply()
 
 	// avoid weird 2d sounds
 
-	play_ambience_2d_sounds_hook.hook();
+	//play_ambience_2d_sounds_hook.hook();
 }
 
 void jc::patches::undo()
@@ -105,7 +103,7 @@ void jc::patches::undo()
 	death_state._undo();
 	head_rotation_patch._undo();
 
-	play_ambience_2d_sounds_hook.unhook();
+	//play_ambience_2d_sounds_hook.unhook();
 
 	jc::write(20ui8, 0x5A4400);
 }

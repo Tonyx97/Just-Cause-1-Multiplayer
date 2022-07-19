@@ -528,7 +528,7 @@ void UI::render()
 						log(RED, "{:x}", ptr(g_test_char));
 					}
 
-					if (g_test_char && g_test_char->is_alive())
+					/*if (g_test_char && g_test_char->is_alive())
 					{
 						// interpolate main transform
 
@@ -550,15 +550,7 @@ void UI::render()
 						{
 							g_test_char->get_skeleton()->set_head_euler_rotation(target);
 						}
-
-						/*if (g_key->is_key_down(VK_NEXT))
-						{
-							static int i = 0;
-
-							//if (++i % 10 == 0)
-								jc::this_call(0x5A45D0, g_test_char, 0.f, 0.f, 1.f, true);
-						}*/
-					}
+					}*/
 				}
 			}
 		}
@@ -680,6 +672,7 @@ void UI::build_debug()
 			if (!spawn_point)
 			{
 				spawn_point = g_factory->create_agent_spawn_point(g_world->get_localplayer_character()->get_position());
+				log(RED, "{:x}", ptr(spawn_point));
 			}
 			else
 			{

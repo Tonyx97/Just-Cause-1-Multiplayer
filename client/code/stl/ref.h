@@ -122,6 +122,15 @@ struct ref
 
 		return item;
 	}
+
+	T* move_to_set(auto& container)
+	{
+		const auto item = obj;
+
+		container.insert(std::move(*this));
+
+		return item;
+	}
 };
 
 template <typename T>

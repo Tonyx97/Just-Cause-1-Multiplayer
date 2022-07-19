@@ -29,8 +29,6 @@ std::atomic_bool mod_unloaded = false;
 
 DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 {
-	const auto res = tick_hook.call(_this);
-
 	if (!initialized)
 	{
 		char nick[256] = { 0 };
@@ -93,6 +91,8 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		g_game_control->hook_tick();
 		g_game_status->hook_dispatcher();
 
+		jc::hooks::hook_game_fns();
+
 		// initialize net
 
 		log(GREEN, "Initializing NET...");
@@ -120,6 +120,8 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		g_game_status->unhook_dispatcher();
 		g_game_control->unhook_tick();
 		g_renderer->unhook_present();
+
+		jc::hooks::unhook_game_fns();
 
 		// uninitialize MH
 
@@ -175,7 +177,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		mod_unloaded = true;
 	}
 
-	return res;
+	return tick_hook.call(_this);
 }
 
 void dll_thread()

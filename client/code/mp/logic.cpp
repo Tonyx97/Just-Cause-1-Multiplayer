@@ -74,9 +74,9 @@ void jc::mp::logic::on_update_objects()
 
 			// interpolate the previous transform with the target one
 
-			//const auto interpolated = previous_transform.interpolate(target_transform, 0.5f, 0.5f);
+			const auto interpolated = previous_transform.interpolate(target_transform, 0.5f, 0.5f);
 
-			//player_char->set_transform(target_transform);
+			player_char->set_transform(target_transform);
 
 			/*if (glm::length(player_char->get_velocity()) < 0.1f && GetAsyncKeyState(VK_F1))
 			{

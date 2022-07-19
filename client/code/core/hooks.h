@@ -47,7 +47,7 @@ struct DetourHook
 	}
 
 	template <typename... A>
-	__declspec(noinline) auto call(A... args)
+	__forceinline auto call(A... args)
 	{
 		check(original, "Hook was not applied, invalid original function");
 

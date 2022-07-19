@@ -6,8 +6,6 @@
 
 DEFINE_HOOK_FASTCALL(dispatch, 0x497A70, bool, GameStatus* gs)
 {
-	auto res = dispatch_hook.call(gs);
-
 	switch (gs->get_status())
 	{
 	case GameStatus_MainMenu: break;
@@ -24,7 +22,7 @@ DEFINE_HOOK_FASTCALL(dispatch, 0x497A70, bool, GameStatus* gs)
 	//case GameStatus_Unload: g_net->set_loaded(false); break;
 	}
 
-	return res;
+	return dispatch_hook.call(gs);
 }
 
 void GameStatus::init()

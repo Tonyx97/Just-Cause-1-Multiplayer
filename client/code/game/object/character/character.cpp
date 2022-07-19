@@ -274,17 +274,17 @@ void Character::set_roll_clamp_enabled(bool v)
 
 void Character::dispatch_movement(float angle, float right, float forward, bool aiming)
 {
-	//jc::character::hook::dispatch_movement_hook.call(this, angle, right, forward, aiming);
+	jc::character::hook::dispatch_movement_hook.call(this, angle, right, forward, aiming);
 }
 
 void Character::set_body_stance(uint32_t id)
 {
-	//jc::character::hook::set_body_stance_hook.call(get_body_stance(), id);
+	jc::character::hook::set_body_stance_hook.call(get_body_stance(), id);
 }
 
 void Character::setup_punch()
 {
-	//jc::character::hook::setup_punch_hook.call(this);
+	jc::character::hook::setup_punch_hook.call(this);
 }
 
 bool Character::has_flag(uint32_t mask) const

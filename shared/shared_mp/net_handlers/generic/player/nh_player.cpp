@@ -62,6 +62,8 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 	const auto player = pc->get_player();
 #endif
 
+	log(RED, "received dynamic info from {:x} lol", player->get_nid());
+
 	switch (const auto type = p.get_uint())
 	{
 	case 0u: // transform
@@ -83,7 +85,7 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 		const auto velocity = p.get_raw<vec3>();
 
 #ifdef JC_CLIENT
-		player->get_character()->get_physical()->set_velocity(velocity);
+		//player->get_character()->get_physical()->set_velocity(velocity);
 #endif
 
 #ifdef JC_SERVER
@@ -208,9 +210,9 @@ enet::PacketResult nh::player::health(const enet::Packet& p)
 
 	const float new_hp = p.get_float();
 
-#ifdef JC_CLIENT
-	//player->set_hp(new_hp);
-#else
+	player->set_hp(new_hp);
+
+#ifdef JC_SERVER
 	g_net->send_broadcast_reliable(pc, PlayerPID_Health, player, new_hp);
 #endif
 

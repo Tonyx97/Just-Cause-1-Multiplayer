@@ -61,13 +61,13 @@ Player::Player(PlayerClient* pc) : client(pc)
 Player::~Player()
 {
 #ifdef JC_CLIENT
-	if (!is_local())
+	if (!is_local() && handle)
 	{
-		const auto old_handle = std::exchange(handle, nullptr);
+		check(handle, "Invalid agent spawn point when destroying a remote player");
 
-		check(old_handle, "Invalid handle when destroying a remote player");
+		g_factory->destroy_character_handle(handle);
 
-		g_factory->destroy_character_handle(old_handle);
+		handle = nullptr;
 
 		log(RED, "Player {} character despawned", get_nid());
 	}

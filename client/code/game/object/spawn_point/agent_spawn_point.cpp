@@ -50,7 +50,12 @@ const char* AgentSpawnPoint::get_spawn_name() const
 	return reinterpret_cast<const char*>((uint8_t*)this + jc::spawn_point::SPAWN_NAME);
 }
 
-AgentType* AgentSpawnPoint::get_agent_type()
+Character* AgentSpawnPoint::get_character() const
+{
+	return jc::read<Character*>(this, jc::agent_spawn_point::CHARACTER);
+}
+
+AgentType* AgentSpawnPoint::get_agent_type() const
 {
 	return jc::read<AgentType*>(this, jc::agent_spawn_point::TYPE);
 }

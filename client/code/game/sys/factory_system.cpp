@@ -24,17 +24,17 @@ namespace jc::factory_system
 {
 	namespace v
 	{
-		vec<CharacterHandle*>			character_handles;
-		vec<ref<SimpleRigidObject>>		simple_rigid_objects;
-		vec<ref<DamageableObject>>		damageables;
-		vec<ref<AgentSpawnPoint>>		agent_spawns;
-		vec<ref<VehicleSpawnPoint>>		vehicle_spawns;
-		vec<ref<MountedGun>>			mounted_guns;
-		vec<ref<Ladder>>				ladders;
-		vec<ref<ItemPickup>>			item_pickups;
-		vec<ref<AnimatedRigidObject>>	animated_rigid_objects;
-		vec<ref<UIMapIcon>>				ui_map_icons;
-		vec<ref<Objective>>				objectives;
+		std::unordered_set<CharacterHandle*>	character_handles;
+		vec<ref<SimpleRigidObject>>				simple_rigid_objects;
+		vec<ref<DamageableObject>>				damageables;
+		vec<ref<AgentSpawnPoint>>				agent_spawns;
+		vec<ref<VehicleSpawnPoint>>				vehicle_spawns;
+		vec<ref<MountedGun>>					mounted_guns;
+		vec<ref<Ladder>>						ladders;
+		vec<ref<ItemPickup>>					item_pickups;
+		vec<ref<AnimatedRigidObject>>			animated_rigid_objects;
+		vec<ref<UIMapIcon>>						ui_map_icons;
+		vec<ref<Objective>>						objectives;
 	}
 }
 
@@ -75,10 +75,9 @@ void FactorySystem::set_max_vehicle_spawns(int v)
 
 void FactorySystem::destroy_character_handle(CharacterHandle* v)
 {
-	if (!v)
-		return;
+	check(character_handles.contains(v), "Character handle must exists");
 
-	character_handles.erase(std::remove_if(character_handles.begin(), character_handles.end(), [&](const auto& r) { return r == v; }));
+	character_handles.erase(v);
 
 	v->destroy();
 }
@@ -122,7 +121,7 @@ CharacterHandle* FactorySystem::spawn_character(const std::string& model_name, c
 
 	if (const auto handle = CharacterHandle::GET_FREE_HANDLE()->create(&info, &transform, weapon_id))
 	{
-		character_handles.push_back(handle);
+		character_handles.insert(handle);
 
 		return handle;
 	}
@@ -178,7 +177,7 @@ AgentSpawnPoint* FactorySystem::create_agent_spawn_point(const vec3& position)
 		map.insert<object_base_map::Int>(SpawnPoint::Hash_MaxHealth, 100);
 		map.insert<object_base_map::Int>(ObjectBase::Hash_KeyObject, 0);
 		map.insert<object_base_map::Int>(ObjectBase::Hash_Relative, 1);
-		map.insert<object_base_map::Float>(ObjectBase::Hash_SpawnDistance, 40.f);
+		map.insert<object_base_map::Float>(ObjectBase::Hash_SpawnDistance, 500.f);
 		map.insert<object_base_map::String>(0xdfe49873, R"(civilian\c_hooker.xml)");
 		map.insert<object_base_map::String>(0xa4129310, R"(default_report_msg)");
 		map.insert<object_base_map::String>(0x8eb5aff2, R"(exported\agenttypes\civilians\civ_bikinigirl2.ee)");
