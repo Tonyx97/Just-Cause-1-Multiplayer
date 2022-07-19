@@ -17,21 +17,41 @@ void jc::hooks::destroy()
 
 void jc::hooks::hook_queued()
 {
-	check(MH_QueueEnableHook(MH_ALL_HOOKS) == MH_OK, "Could not queue all hooks");
+	const auto tid = uint32_t(GetCurrentThreadId());
+
+	auto& pending_hooks_list = pending_hooks[tid];
+	auto& placed_hooks_list = placed_hooks[tid];
+
+	for (auto target : pending_hooks_list)
+		check(MH_QueueEnableHook(target) == MH_OK, "Could not queue all hooks");
+
 	check(MH_EnableHook(MH_ALL_HOOKS) == MH_OK, "Could not enable all hooks");
+	
+	for (auto target : pending_hooks_list)
+		placed_hooks_list.push_back(target);
+
+	log(CYAN, "Hooked {} functions in thread {:x}", pending_hooks_list.size(), tid);
+
+	pending_hooks_list.clear();
 }
 
 void jc::hooks::unhook_queued()
 {
-	check(MH_QueueDisableHook(MH_ALL_HOOKS) == MH_OK, "Could not queue all hooks");
+	const auto tid = uint32_t(GetCurrentThreadId());
+
+	auto& placed_hooks_list = placed_hooks[tid];
+
+	for (auto target : placed_hooks_list)
+		check(MH_QueueDisableHook(target) == MH_OK, "Could not queue all hooks");
+
 	check(MH_DisableHook(MH_ALL_HOOKS) == MH_OK, "Could not disable all hooks");
 
-	log(GREEN, "Destroying {} hooks...", hooks_to_destroy.size());
-
-	for (auto target : hooks_to_destroy)
+	for (auto target : placed_hooks_list)
 		check(MH_RemoveHook(target) == MH_OK, "Could not remove hook");
 
-	hooks_to_destroy.clear();
+	log(CYAN, "Unhooked {} functions in thread {:x}", placed_hooks_list.size(), tid);
+
+	placed_hooks_list.clear();
 
 	log(GREEN, "All hooks were destroyed");
 }

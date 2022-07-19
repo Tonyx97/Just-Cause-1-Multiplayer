@@ -12,7 +12,8 @@ class Character;
 class GameControl;
 class GameStatus;
 
-inline std::vector<void*> hooks_to_destroy;
+inline std::map<uint32_t, std::vector<void*>> pending_hooks;
+inline std::map<uint32_t, std::vector<void*>> placed_hooks;
 
 template <typename T>
 struct DetourHook
@@ -36,11 +37,13 @@ struct DetourHook
 		created = (status == MH_OK);
 
 		check(created && original, "Hook could not be created {}", int(status));
+
+		pending_hooks[uint32_t(GetCurrentThreadId())].push_back(BITCAST(void*, target));
 	}
 
 	inline void unhook()
 	{
-		hooks_to_destroy.push_back(BITCAST(void*, target));
+		//hooks_to_destroy.push_back(BITCAST(void*, target));
 	}
 
 	template <typename... A>
