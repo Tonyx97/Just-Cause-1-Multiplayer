@@ -28,14 +28,7 @@ DEFINE_HOOK_FASTCALL(game_present, 0x40FB70, int, void* _this)
 
 void Renderer::on_present()
 {
-	//jc::test_units::test_0();
-
 	g_ui->dispatch();
-	g_net->tick();
-	g_net->update_objects();
-	g_key->clear_states();
-
-	//timer::dispatch();
 }
 
 void Renderer::init()

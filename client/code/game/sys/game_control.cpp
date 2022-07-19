@@ -22,12 +22,17 @@ void GameControl::destroy()
 {
 }
 
-void GameControl::hook_tick()
+void GameControl::on_tick()
 {
-	//tick_hook.hook();
-}
+	// debug test units
 
-void GameControl::unhook_tick()
-{
-	//tick_hook.unhook();
+	jc::test_units::test_0();
+
+	// do mod logic
+
+	g_net->tick();
+	g_net->update_objects();
+	g_key->clear_states();
+
+	timer::dispatch();
 }

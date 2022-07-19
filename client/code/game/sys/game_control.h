@@ -18,8 +18,7 @@ public:
 
 	void init();
 	void destroy();
-	void hook_tick();
-	void unhook_tick();
+	void on_tick();
 
 	template <typename T, typename R = ref<T>>
 	R create_object(bool enable_now = true)

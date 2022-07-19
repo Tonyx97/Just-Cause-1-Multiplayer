@@ -88,7 +88,6 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		log(GREEN, "Hooking...");
 
 		g_renderer->hook_present();
-		g_game_control->hook_tick();
 		g_game_status->hook_dispatcher();
 
 		jc::hooks::hook_game_fns();
@@ -113,12 +112,11 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 	{
 		// clear timers
 
-		//timer::clear_timers();
+		timer::clear_timers();
 
 		// unhook the present since we cleaned the ui system data
 
 		g_game_status->unhook_dispatcher();
-		g_game_control->unhook_tick();
 		g_renderer->unhook_present();
 
 		jc::hooks::unhook_game_fns();
@@ -176,6 +174,8 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		unload_mod = false;
 		mod_unloaded = true;
 	}
+	else if (g_game_control)
+		g_game_control->on_tick();
 
 	return tick_hook.call(_this);
 }
