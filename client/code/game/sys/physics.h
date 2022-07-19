@@ -63,4 +63,4 @@ public:
 	vec3 get_world_position() const;
 };
 
-inline Physics* g_physics = nullptr;
+inline Singleton<Physics, jc::physics::SINGLETON> g_physics;

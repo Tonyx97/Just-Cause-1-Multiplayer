@@ -40,15 +40,13 @@ void dll_thread()
 
 	do
 	{
-		if (auto renderer = jc::read<Renderer*>(jc::renderer::SINGLETON))
-			if (renderer->get_device())
-				if (auto world = jc::read<World*>(jc::world::SINGLETON))
-					if (auto physics = jc::read<World*>(jc::physics::SINGLETON))
-						if (auto spawn_system = jc::read<FactorySystem*>(jc::spawn_system::SINGLETON))
-							if (auto game_status = jc::read<GameStatus*>(jc::game_status::SINGLETON))
-								if (auto day_cycle = jc::read<DayCycle*>(jc::day_cycle::SINGLETON))
-									if (auto ai_core = jc::read<AiCore*>(jc::ai_core::SINGLETON))
-										break;
+		if (g_renderer && g_renderer->get_device() &&
+			g_world &&
+			g_game_control &&
+			g_physics &&
+			g_game_status &&
+			g_day_cycle &&
+			g_ai) break;
 
 		SwitchToThread();
 	} while (true);
@@ -58,27 +56,6 @@ void dll_thread()
 	auto len = DWORD(256);
 
 	GetUserNameA(nick, &len);	// todojc
-
-	// get game systems
-
-	log(GREEN, "Getting game systems...");
-
-	g_game_control	= jc::read<GameControl*>(jc::game_control::SINGLETON);
-	g_renderer		= jc::read<Renderer*>(jc::renderer::SINGLETON);
-	g_world			= jc::read<World*>(jc::world::SINGLETON);
-	g_camera		= jc::read<CameraManager*>(jc::camera_manager::SINGLETON);
-	g_physics		= jc::read<Physics*>(jc::physics::SINGLETON);
-	g_vehicle		= jc::read<VehicleManager*>(jc::vehicle_manager::SINGLETON);
-	g_ammo			= jc::read<AmmoManager*>(jc::ammo_manager::SINGLETON);
-	g_sound			= jc::read<SoundSystem*>(jc::sound_system::SINGLETON);
-	g_time			= jc::read<TimeSystem*>(jc::time_system::SINGLETON);
-	g_particle		= jc::read<ParticleSystem*>(jc::particle_system::SINGLETON);
-	g_day_cycle		= jc::read<DayCycle*>(jc::day_cycle::SINGLETON);
-	g_weapon		= jc::read<WeaponSystem*>(jc::weapon_system::SINGLETON);
-	g_factory		= jc::read<FactorySystem*>(jc::spawn_system::SINGLETON);
-	g_ai			= jc::read<AiCore*>(jc::ai_core::SINGLETON);
-	g_game_status	= jc::read<GameStatus*>(jc::game_status::SINGLETON);
-	g_rsrc_streamer = jc::read<ResourceStreamer*>(jc::resource_streamer::SINGLETON);
 
 	// initialize game systems/managers
 

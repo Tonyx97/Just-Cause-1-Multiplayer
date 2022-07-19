@@ -51,4 +51,4 @@ public:
 	Objective*				create_objective(const vec3& position, const u8vec4& color);
 };
 
-inline FactorySystem* g_factory = nullptr;
+inline Singleton<FactorySystem, jc::spawn_system::SINGLETON> g_factory;

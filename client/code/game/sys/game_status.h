@@ -33,4 +33,4 @@ public:
 	uint32_t get_status() const;
 };
 
-inline GameStatus* g_game_status = nullptr;
+inline Singleton<GameStatus, jc::game_status::SINGLETON> g_game_status;

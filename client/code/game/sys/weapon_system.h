@@ -53,4 +53,4 @@ public:
 	//sptr<Weapon> create_weapon_instance(WeaponID id);
 };
 
-inline WeaponSystem* g_weapon = nullptr;
+inline Singleton<WeaponSystem, jc::weapon_system::SINGLETON> g_weapon;

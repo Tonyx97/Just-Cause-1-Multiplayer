@@ -24,4 +24,4 @@ public:
 	Character* get_localplayer_character() const;
 };
 
-inline World* g_world = nullptr;
+inline Singleton<World, jc::world::SINGLETON> g_world;

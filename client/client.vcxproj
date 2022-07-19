@@ -154,7 +154,6 @@
     <ClCompile Include="code\mp\cmd\cmd.cpp" />
     <ClCompile Include="code\mp\net.cpp" />
     <ClCompile Include="code\mp\logic.cpp" />
-    <ClCompile Include="code\stl\ref.cpp" />
     <ClCompile Include="code\game\object\spawn_point\spawn_point.cpp" />
     <ClCompile Include="code\game\object\character\comps\stance_controller.cpp" />
     <ClCompile Include="code\game\sys\ai_core.cpp" />

@@ -31,4 +31,4 @@ public:
 	int32_t get_max_ammo_for_slot(WeaponSlot slot);
 };
 
-inline AmmoManager* g_ammo = nullptr;
+inline Singleton<AmmoManager, jc::ammo_manager::SINGLETON> g_ammo;

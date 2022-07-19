@@ -42,4 +42,4 @@ public:
 	}
 };
 
-inline GameControl* g_game_control = nullptr;
+inline Singleton<GameControl, jc::game_control::SINGLETON> g_game_control;

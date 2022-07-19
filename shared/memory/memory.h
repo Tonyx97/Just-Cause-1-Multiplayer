@@ -134,5 +134,17 @@ namespace jc
 	}
 }
 
+#ifdef JC_CLIENT
+template <typename T, ptr address>
+struct Singleton
+{
+	T* get() const noexcept { return jc::read<T*>(address); }
+	T* operator*() const noexcept { return get(); }
+	T* operator->() const noexcept { return get(); }
+
+	operator bool() const noexcept { return !!get(); }
+};
+#endif
+
 #define JC_ALLOC(type, ...) jc::mem::alloc<type>(std::source_location::current(), __VA_ARGS__)
 #define JC_FREE jc::mem::free

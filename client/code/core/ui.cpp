@@ -17,6 +17,7 @@
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/spawn_point/agent_spawn_point.h>
 #include <game/object/spawn_point/vehicle_spawn_point.h>
+#include <game/object/localplayer/localplayer.h>
 
 #include <mp/chat/chat.h>
 
@@ -507,27 +508,27 @@ void UI::render()
 				ImGui::Text("Scale: %.2f %.2f %.2f", ls.x, ls.y, ls.z);
 			}
 
-
-
-			/*{
+			{
 				if (auto local_char = g_world->get_localplayer_character())
 				{
-					auto localplayer = g_world->get_localplayer();
+					auto localp = g_world->get_localplayer();
 
 					auto local_transform = local_char->get_transform();
 
 					static CharacterHandle* cc_h = nullptr;
 
 					if (g_key->is_key_pressed(VK_F4))
-						localplayer->get_character()->set_hp(1.f);
+						localp->get_character()->set_hp(1.f);
 
 					if (g_key->is_key_pressed(VK_F5))
-						localplayer->respawn();
+						localp->respawn();
 
 					if (g_key->is_key_pressed(VK_F6))
 					{
 						if (!g_test_char)
 						{
+							g_factory->create_objective(local_pos + vec3(20.f, 0.f, 0.f), { util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), 255 });
+
 							cc_h = g_factory->spawn_character("female1", g_world->get_localplayer_character()->get_position());
 							g_test_char = cc_h->get_character();
 							g_test_char->set_model(126);
@@ -573,10 +574,10 @@ void UI::render()
 
 							//if (++i % 10 == 0)
 								jc::this_call(0x5A45D0, g_test_char, 0.f, 0.f, 1.f, true);
-						}
+						}*/
 					}
 				}
-			}*/
+			}
 		}
 	}
 	ImGui::End();

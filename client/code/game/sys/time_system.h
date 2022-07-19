@@ -26,4 +26,4 @@ public:
 	float get_time_scale() const;
 };
 
-inline TimeSystem* g_time = nullptr;
+inline Singleton<TimeSystem, jc::time_system::SINGLETON> g_time;

@@ -19,4 +19,4 @@ public:
 	void* spawn_fx(const std::string& name, const vec3& position, const vec3& rotation = {}, const vec3& velocity = {}, bool unk1 = false, bool unk2 = false);
 };
 
-inline ParticleSystem* g_particle = nullptr;
+inline Singleton<ParticleSystem, jc::particle_system::SINGLETON> g_particle;

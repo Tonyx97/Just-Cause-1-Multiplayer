@@ -162,9 +162,6 @@
     <ClCompile Include="code\game\sys\ai_core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\stl\ref.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\game\object\base\comps\model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

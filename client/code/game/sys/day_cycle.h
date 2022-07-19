@@ -44,4 +44,4 @@ public:
 	float get_minute() const;
 };
 
-inline DayCycle* g_day_cycle = nullptr;
+inline Singleton<DayCycle, jc::day_cycle::SINGLETON> g_day_cycle;

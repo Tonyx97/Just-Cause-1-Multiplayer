@@ -36,4 +36,4 @@ public:
 	void insert_character_handle(CharacterHandle* handle);
 };
 
-inline AiCore* g_ai = nullptr;
+inline Singleton<AiCore, jc::ai_core::SINGLETON> g_ai;

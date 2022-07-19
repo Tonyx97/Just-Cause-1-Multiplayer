@@ -25,4 +25,4 @@ public:
 	Camera* get_main_camera() const;
 };
 
-inline CameraManager* g_camera = nullptr;
+inline Singleton<CameraManager, jc::camera_manager::SINGLETON> g_camera;

@@ -16,4 +16,4 @@ public:
 	int for_each_vehicle(const vehicle_iteration_t& fn);
 };
 
-inline VehicleManager* g_vehicle = nullptr;
+inline Singleton<VehicleManager, jc::vehicle_manager::SINGLETON> g_vehicle;

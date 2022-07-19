@@ -19,4 +19,4 @@ public:
 	IDirect3DDevice9* get_device() const;
 };
 
-inline Renderer* g_renderer = nullptr;
+inline Singleton<Renderer, jc::renderer::SINGLETON> g_renderer;

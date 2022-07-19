@@ -28,4 +28,4 @@ public:
 	SoundBank* get_sound_bank_by_index(int i);
 };
 
-inline SoundSystem* g_sound = nullptr;
+inline Singleton<SoundSystem, jc::sound_system::SINGLETON> g_sound;

@@ -38,4 +38,4 @@ public:
 	std::deque<void*>* get_loading_queue() const;
 };
 
-inline ResourceStreamer* g_rsrc_streamer = nullptr;
+inline Singleton<ResourceStreamer, jc::resource_streamer::SINGLETON> g_rsrc_streamer;
