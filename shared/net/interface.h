@@ -29,10 +29,9 @@ namespace enet
 	static constexpr uint32_t GAME_PORT	   = 19971;
 	static constexpr uint32_t MAX_PLAYERS  = 128;
 #ifdef JC_REL
-	static constexpr uint32_t PEER_TIMEOUT = 31 * 1000;
+	static constexpr uint32_t PEER_TIMEOUT = 20 * 1000;
 #else
-	//static constexpr uint32_t PEER_TIMEOUT = 120 * 1000 * 1000;
-	static constexpr uint32_t PEER_TIMEOUT = 10000;
+	static constexpr uint32_t PEER_TIMEOUT = 10 * 1000;
 #endif
 
 	enum PacketResult

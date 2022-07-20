@@ -111,14 +111,14 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD7))
 	{
-		/*static int id = 0;
+		static int id = 0;
 
 		local_char->set_model(id++);
 
 		if (id >= jc::vars::exported_entities.size())
-			id = 0;*/
+			id = 0;
 
-		local_char->set_model(7);
+		//local_char->set_model(7);
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD1))

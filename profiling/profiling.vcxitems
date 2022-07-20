@@ -15,10 +15,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)prof\prof.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)registry\registry.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)prof\prof.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)registry\registry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\utils.h" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,7 @@
 #include "defs/standard.h"
 
+#include <registry/registry.h>
+
 uint32_t get_pid(const wchar_t* name)
 {
 	auto snap_handle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
@@ -95,6 +97,8 @@ int main()
 
 	std::wstring game_dir;
 
+	g_registry.init();
+
 	auto load_game = [&](const std::string& ip)
 	{
 		STARTUPINFO si;
@@ -160,14 +164,14 @@ int main()
 			return logb(RED, "Error parsing loader.ini");
 		
 		auto game_dir_key = reader.Get("game", "path", "UNDEFINED");
+		auto ip = reader.Get("game", "ip", "UNDEFINED");
+
+		g_registry.set_string("ip", ip);
 
 		if (GetFileAttributesA(game_dir_key.c_str()) == INVALID_FILE_ATTRIBUTES)
 			return logb(RED, "Invalid JC directory path: \"{}\"", game_dir_key);
 
-		std::wstring temp(game_dir_key.length(), L' ');
-		std::copy(game_dir_key.begin(), game_dir_key.end(), temp.begin());
-
-		game_dir = temp;
+		game_dir = std::wstring(game_dir_key.begin(), game_dir_key.end());
 
 		return true;
 	};
@@ -187,6 +191,8 @@ int main()
 			return 69;
 		load_game("");
 	};
+
+	g_registry.destroy();
 
 	//std::this_thread::sleep_for(std::chrono::seconds(1));
 

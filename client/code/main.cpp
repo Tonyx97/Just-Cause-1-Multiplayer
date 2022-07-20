@@ -12,6 +12,7 @@
 
 #include <patches/patches.h>
 
+#include <registry/registry.h>
 #include <core/clean_dbg.h>
 #include <core/keycode.h>
 #include <core/test_units.h>
@@ -31,6 +32,8 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 {
 	if (!initialized)
 	{
+		g_registry.init();
+
 		char nick[256] = { 0 };
 
 		auto len = DWORD(256);
@@ -168,6 +171,8 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		JC_FREE(g_key);
 		JC_FREE(g_ui);
 		JC_FREE(g_net);
+
+		g_registry.destroy();
 
 		log(GREEN, "Unloaded from hook successfully");
 
