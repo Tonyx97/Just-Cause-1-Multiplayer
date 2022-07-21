@@ -175,13 +175,13 @@ void Character::rebuild_skeleton()
 {
 	const auto skeleton = get_skeleton();
 
-	jc::this_call<ptr>(jc::character::fn::DESTROY_SKELETON, skeleton);
-	jc::this_call<ptr>(jc::character::fn::CREATE_SKELETON, skeleton);
+	jc::this_call(jc::character::fn::DESTROY_SKELETON, skeleton);
+	jc::this_call(jc::character::fn::CREATE_SKELETON, skeleton);
 }
 
 void Character::respawn()
 {
-	jc::this_call<ptr>(jc::character::fn::RESPAWN, this, 1.f);
+	jc::this_call(jc::character::fn::RESPAWN, this, 1.f);
 }
 
 void Character::set_grenades_ammo(int32_t v)
