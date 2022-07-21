@@ -10,38 +10,34 @@
 
 void jc::mp::logic::on_tick()
 {
-	struct LocalInfo
-	{
-		Player* player = nullptr;
+	// send and update our local player info
 
-		Character* character = nullptr;
+	static TimerRaw transform_timer(enet::TICKS_MS);
+	static TimerRaw head_rotation_timer(enet::TICKS_MS);
 
-		operator bool() const { return player && character; }
-	};
-
-	auto get_local_instances = []() -> LocalInfo
-	{
-		if (auto localplayer = g_net->get_localplayer())
-			if (const auto local_char = g_world->get_localplayer_character())
-				return { localplayer, local_char };
-
-		return { nullptr, nullptr };
-	};
-
-	//static auto transform_sync = timer::add_timer(10, [&get_local_instances]()
-	//{
-		if (const auto info = get_local_instances())
+	if (auto localplayer = g_net->get_localplayer())
+		if (const auto local_char = localplayer->get_character())
 		{
-			g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Transform, info.character->get_transform());
-			g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Velocity, info.character->get_velocity());
-		}
-	//});
+			const auto transform = local_char->get_transform();
+			const auto skeleton = local_char->get_skeleton();
+			const auto head_rotation = skeleton->get_head_euler_rotation();
 
-	//static auto head_rotation_sync = timer::add_timer(30, [&get_local_instances]()
-	//{
-		if (const auto info = get_local_instances())
-			g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_HeadRotation, info.character->get_skeleton()->get_head_euler_rotation());
-	//});
+			if (transform != localplayer->get_transform() && transform_timer.ready())
+			{
+				g_net->send_reliable(
+					PlayerPID_DynamicInfo,
+					PlayerDynInfo_Transform, transform);
+
+				localplayer->set_transform(transform);
+			}
+
+			if (glm::distance2(head_rotation, localplayer->get_head_rotation()) > 7.5f && head_rotation_timer.ready())
+			{
+				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_HeadRotation, head_rotation);
+
+				localplayer->set_head_rotation(head_rotation);
+			}
+		}
 }
 
 void jc::mp::logic::on_update_objects()
@@ -74,13 +70,7 @@ void jc::mp::logic::on_update_objects()
 
 			// interpolate the previous transform with the target one
 
-			const auto interpolated = previous_transform.interpolate(target_transform, 0.5f, 0.5f);
-
-			player_char->set_transform(target_transform);
-
-			/*if (glm::length(player_char->get_velocity()) < 0.1f && GetAsyncKeyState(VK_F1))
-			{
-			}*/
+			player_char->set_transform(previous_transform.interpolate(target_transform, 0.4f, 0.4f));
 
 			break;
 		}

@@ -33,7 +33,6 @@ void GameControl::on_tick()
 
 	g_net->tick();
 	g_net->update_objects();
-	g_key->clear_states();
 	g_task->process();
 
 	timer::dispatch();

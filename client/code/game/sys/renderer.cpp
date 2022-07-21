@@ -22,6 +22,7 @@
 DEFINE_HOOK_FASTCALL(game_present, 0x40FB70, int, void* _this)
 {
 	g_renderer->on_present();
+	g_key->clear_states();
 
 	return game_present_hook.call(_this);
 }

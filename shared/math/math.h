@@ -69,6 +69,11 @@ namespace tvg::prefetch
 
 namespace jc::math
 {
+	inline float quat_diff(const quat& a, const quat& b)
+	{
+		return std::asinf(glm::length(glm::normalize(glm::conjugate(a) * b))) * 2.f;
+	}
+
 	inline void mat4_mul_internal(
 		const _128& m10, const _128& m11,
 		const _128& m12, const _128& m13,

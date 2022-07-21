@@ -113,11 +113,11 @@ void Net::tick()
 
 	// process packets from the players
 
-	int packets_received_this_tick = 0;
+	static int packets_per_sec = 0;
 
 	enet::dispatch_packets([&](ENetEvent& e)
 	{
-		++packets_received_this_tick;
+		++packets_per_sec;
 
 		switch (e.type)
 		{
@@ -148,7 +148,12 @@ void Net::tick()
 		}
 	});
 
-	//log(RED, "Packets this tick: {}", packets_received_this_tick);
+	static auto packet_per_sec_printer = timer::add_timer(1000, [&]()
+	{
+		log(RED, "Packets / sec: {}", packets_per_sec);
+
+		packets_per_sec = 0;
+	});
 
 	std::this_thread::sleep_for(std::chrono::microseconds(8333));
 }

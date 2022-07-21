@@ -143,10 +143,8 @@ void UI::destroy()
 
 void UI::dispatch()
 {
-#ifdef JC_DBG
 	if (g_key->is_key_pressed(VK_INSERT))
 		toggle_debug();
-#endif
 
 	begin();
 	render();

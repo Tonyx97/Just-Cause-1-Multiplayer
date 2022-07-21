@@ -30,6 +30,18 @@ void Transform::translate(const vec3& v)
 	m = glm::translate(m, v);
 }
 
+bool Transform::compare_position_and_rotation(const Transform& right, float position_threshold, float rotation_threshold)
+{
+	vec3 t0, t1, s0, s1;
+	quat q0, q1;
+
+	decompose(t0, q0, s0);
+	right.decompose(t1, q1, s1);
+
+	return	glm::distance2(t0, t1) > position_threshold ||
+			jc::math::quat_diff(q0, q1) > rotation_threshold;
+}
+
 Transform& Transform::interpolate(const Transform& transform, float tf, float rf, float sf)
 {
 	vec3 t0, t1, s0, s1;

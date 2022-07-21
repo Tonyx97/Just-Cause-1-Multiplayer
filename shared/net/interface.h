@@ -26,8 +26,10 @@ class PlayerClient;
 
 namespace enet
 {
-	static constexpr uint32_t GAME_PORT	   = 19971;
-	static constexpr uint32_t MAX_PLAYERS  = 128;
+	static constexpr uint32_t GAME_PORT		= 19971;
+	static constexpr uint32_t MAX_PLAYERS	= 128;
+	static constexpr uint32_t TICKS			= 62;
+	static constexpr uint32_t TICKS_MS		= 16;
 #ifdef JC_REL
 	static constexpr uint32_t PEER_TIMEOUT = 20 * 1000;
 #else
@@ -99,6 +101,8 @@ namespace enet
 		{
 			offset += sizeof(T);
 		}
+
+		bool is_empty() const { return data.empty(); };
 
 		ENetPeer* get_peer() const { return peer; }
 

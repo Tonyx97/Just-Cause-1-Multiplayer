@@ -40,54 +40,59 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 	const auto player = pc->get_player();
 #endif
 
-	switch (const auto type = p.get_uint())
-	{
-	case PlayerDynInfo_Transform:
-	{
-		auto transform = p.get_raw<Transform>();
+	// dispatch all dynamic infos sent in this packet
 
-		player->set_transform(transform);
+	while (!p.is_empty())
+	{
+		switch (const auto type = p.get_uint())
+		{
+		case PlayerDynInfo_Transform:
+		{
+			auto transform = p.get_raw<Transform>();
+
+			player->set_transform(transform);
 
 #ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, transform);
+			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, transform);
 #endif
 
-		break;
-	}
-	case PlayerDynInfo_Velocity:
-	{
-		const auto velocity = p.get_raw<vec3>();
+			break;
+		}
+		case PlayerDynInfo_Velocity:
+		{
+			const auto velocity = p.get_raw<vec3>();
 
-		//player->get_character()->get_physical()->set_velocity(velocity);
+			//player->get_character()->get_physical()->set_velocity(velocity);
 
 #ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, velocity);
+			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, velocity);
 #endif
 
-		break;
-	}
-	case PlayerDynInfo_HeadRotation:
-	{
-		const auto rotation = p.get_raw<vec3>();
+			break;
+		}
+		case PlayerDynInfo_HeadRotation:
+		{
+			const auto rotation = p.get_raw<vec3>();
 
-		player->set_head_rotation(rotation);
+			player->set_head_rotation(rotation);
 
 #ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, rotation);
+			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, rotation);
 #endif
 
-		break;
-	}
-	case PlayerDynInfo_Skin:
-	{
-		const auto skin_id = p.get_uint();
+			break;
+		}
+		case PlayerDynInfo_Skin:
+		{
+			const auto skin_id = p.get_uint();
 
-		player->set_skin(skin_id);
+			player->set_skin(skin_id);
 
 #ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, skin_id);
+			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, skin_id);
 #endif
-	}
+		}
+		}
 	}
 
 	return enet::PacketRes_Ok;
@@ -167,6 +172,7 @@ enet::PacketResult nh::player::health(const enet::Packet& p)
 
 	if (!player)
 		return enet::PacketRes_BadArgs;
+
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();

@@ -54,12 +54,19 @@ namespace jc::character::hook
 		{
 			if (character == local_char)
 			{
-				//log(RED, "{} {} {} {}", angle, right, forward, aiming);
+				const auto localplayer = g_net->get_localplayer();
+				const auto& move_info = localplayer->get_movement_info();
 
-				if (g_test_char)
-					dispatch_movement_hook.call(g_test_char, angle, right, forward, aiming);
+				const bool was_moving = move_info.right != 0.f || move_info.forward != 0.f || move_info.aiming;
+				const bool is_moving = right != 0.f || forward != 0.f || aiming;
+				const bool is_diff = right != move_info.right || forward != move_info.forward || aiming != move_info.aiming;
 
-				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, angle, right, forward, aiming);
+				if (is_diff || (was_moving && !is_moving || !was_moving && is_moving))
+				{
+					localplayer->set_movement_info(angle, right, forward, aiming);
+
+					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, angle, right, forward, aiming);
+				}
 			}
 			else if (g_net->get_player_by_character(character))
 				return;
