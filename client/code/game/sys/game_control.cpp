@@ -11,6 +11,7 @@
 #include <game/object/character_handle/character_handle.h>
 #include <game/sys/world.h>
 #include <game/sys/factory_system.h>
+#include <core/task_system/task_system.h>
 #include <core/keycode.h>
 #include <core/test_units.h>
 
@@ -33,6 +34,7 @@ void GameControl::on_tick()
 	g_net->tick();
 	g_net->update_objects();
 	g_key->clear_states();
+	g_task->process();
 
 	timer::dispatch();
 }

@@ -4,6 +4,8 @@
 
 #include <game/object/resource/ee_resource.h>
 
+#include <core/task_system/task_system.h>
+
 void ResourceStreamer::init()
 {
 }
@@ -52,30 +54,25 @@ bool ResourceStreamer::request_exported_entity(uint32_t id, const ee_resource_ca
 
 	bool ok = false;
 
-	check(now, "Deferred exported entity request not supported yet"); // todojc - add task system to handle this case
+	check(!now, "Type of request not supported yet");
 
-	// we have to make sure all queues are empty because other parts of the code might be loading stuff
-	// and we would stall that resource loading with this loop (happens with other loops like this 
-	// inside the actual game)
-	
-	if (all_queues_empty())
+	g_task->launch_sync_task([=](Task*)
 	{
-		while (!ee_resource->is_loaded())
-		{
-			dispatch();
+		dispatch();
 
-			ee_resource->check();
-		}
+		ee_resource->check();
 
+		return ee_resource->is_loaded();
+	}, [=](Task*)
+	{
 		callback(ee_resource);
 
-		ok = true;
-	}
-	else log(RED, "Could not request exported entity '{}'", ee_name.c_str()); // todojc - add defer loading for this case
+		ee_resource->free();
 
-	ee_resource->free();
+		return true;
+	});
 
-	return ok;
+	return true;
 }
 
 std::deque<void*>* ResourceStreamer::get_pending_queue() const

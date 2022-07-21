@@ -17,6 +17,7 @@
 #include <game/object/sound/sound_game_obj.h>
 #include <game/object/mission/objective.h>
 #include <game/object/ui/map_icon.h>
+#include <game/object/localplayer/localplayer.h>
 #include <game/sys/all.h>
 
 DEFINE_HOOK_CCALL(_test, 0x407FD0, void, ptr a1, ptr a2)
@@ -36,6 +37,8 @@ void jc::test_units::destroy()
 
 void jc::test_units::test_0()
 {
+	auto localplayer = g_world->get_localplayer();
+
 	auto local_char = g_world->get_localplayer_character();
 
 	if (!local_char)
@@ -64,6 +67,9 @@ void jc::test_units::test_0()
 	static CharacterHandle* handle = nullptr;
 
 	static AnimatedRigidObject* garage_door = nullptr;
+
+	if (g_key->is_key_pressed(VK_F5))
+		localplayer->respawn();
 
 	if (g_key->is_key_pressed(VK_NUMPAD2))
 	{

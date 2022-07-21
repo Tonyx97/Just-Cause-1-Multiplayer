@@ -126,6 +126,218 @@ namespace util
 		std::string get_str_time();
 	}
 
+	namespace container
+	{
+		template <typename T, typename Fn>
+		void for_each_safe_ptr(T& container, const Fn& fn)
+		{
+			for (auto it = container.begin(); it != container.end();)
+			{
+				if (fn(&(*it)))
+					++it;
+				else it = container.erase(it);
+			}
+		}
+
+		template <typename T, typename Fn>
+		void for_each_safe(T& container, const Fn& fn)
+		{
+			for (auto it = container.begin(); it != container.end();)
+			{
+				if (fn(*it))
+					++it;
+				else it = container.erase(it);
+			}
+		}
+
+		template <typename T, typename Fn>
+		void remove_all(T& container, const Fn& fn)
+		{
+			auto it = container.begin();
+
+			while (it != container.end())
+			{
+				fn(*it);
+
+				it = container.erase(it);
+			}
+
+			container.clear();
+		}
+
+		template <typename Tx, typename Ty>
+		auto remove_element(Tx& container, Ty element)
+		{
+			if (auto it = std::remove(container.begin(), container.end(), element); it != container.end())
+				return container.erase(it);
+			return container.end();
+		}
+
+		template <typename Tx, typename Ty>
+		bool remove_check(Tx& container, Ty element)
+		{
+			if (auto it = std::remove(container.begin(), container.end(), element); it != container.end())
+			{
+				container.erase(it);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		template <typename T, typename Fn>
+		auto remove_if(T& container, const Fn& fn)
+		{
+			if (auto it = std::remove_if(container.begin(), container.end(), fn); it != container.end())
+				return container.erase(it);
+			return container.end();
+		}
+
+		namespace stack
+		{
+			template <typename T>
+			void free_all(T& container)
+			{
+				while (!container.empty())
+				{
+					JC_FREE(container.top());
+
+					container.pop();
+				}
+			}
+
+			template <typename T, typename Fn>
+			void for_each_clear(T& container, const Fn& fn)
+			{
+				while (!container.empty())
+				{
+					fn(container.top());
+
+					container.pop();
+				}
+			}
+
+			template <typename T>
+			T::value_type get_and_pop(T& container)
+			{
+				if (container.empty())
+					return nullptr;
+
+				auto e = container.top();
+
+				container.pop();
+
+				return e;
+			}
+		}
+
+		namespace vector
+		{
+			template <typename T>
+			inline void free_all(T& container)
+			{
+				if (container.empty())
+					return;
+
+				for (const auto& value : container)
+					JC_FREE(value);
+
+				container.clear();
+			}
+
+			template <typename T, typename Fn>
+			inline void remove_and_free_if(T& container, const Fn& fn)
+			{
+				for (auto it = container.begin(); it != container.end();)
+				{
+					auto e = *it;
+
+					if (fn(e))
+						++it;
+					else
+					{
+						JC_FREE(e);
+
+						it = container.erase(it);
+					}
+				}
+			}
+
+			template <typename T, typename Fn>
+			inline void single_remove_and_free_if(T& container, const Fn& fn)
+			{
+				for (auto e : container)
+					if (!fn(e))
+					{
+						JC_FREE(e);
+
+						return;
+					}
+			}
+		}
+
+		namespace map
+		{
+			template <typename T>
+			inline void free_all(T& container)
+			{
+				if (container.empty())
+					return;
+
+				for (const auto& [key, value] : container)
+					TVG_FREE(value);
+
+				container.clear();
+			}
+
+			template <typename T, typename Fn>
+			inline void remove_and_free_if(T& container, const Fn& fn)
+			{
+				for (auto it = container.begin(); it != container.end();)
+				{
+					if (fn(it->first, it->second))
+						++it;
+					else
+					{
+						TVG_FREE(it->second);
+
+						it = container.erase(it);
+					}
+				}
+			}
+
+			template <typename T, typename Fn>
+			inline void remove_if(T& container, const Fn& fn)
+			{
+				for (auto it = container.begin(); it != container.end();)
+				{
+					if (fn(it->first, it->second))
+						++it;
+					else it = container.erase(it);
+				}
+			}
+
+			template <typename T, typename Fn>
+			inline void remove_free_any_if(T& container, const Fn& fn)
+			{
+				for (auto it = container.begin(); it != container.end();)
+				{
+					if (fn(it->first, it->second))
+						++it;
+					else
+					{
+						TVG_FREE(it->second);
+
+						container.erase(it);
+
+						return;
+					}
+				}
+			}
+		}
+	}
+
 	namespace hash
 	{
 		// jenkins hashing algorithm (std::string and std::wstring)

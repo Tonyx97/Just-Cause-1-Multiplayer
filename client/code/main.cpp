@@ -13,6 +13,8 @@
 #include <patches/patches.h>
 
 #include <registry/registry.h>
+#include <core/task_system/task_system.h>
+#include <core/thread_system/thread_system.h>
 #include <core/clean_dbg.h>
 #include <core/keycode.h>
 #include <core/test_units.h>
@@ -70,6 +72,8 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		g_explosion = JC_ALLOC(ExplosionManager);
 		g_net = JC_ALLOC(Net);
 		g_chat = JC_ALLOC(Chat);
+		g_task = JC_ALLOC(TaskSystem);
+		g_thread_system = JC_ALLOC(ThreadSystem);
 
 		// initializing MH
 
@@ -113,71 +117,80 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 	}
 	else if (unload_mod)
 	{
-		// clear timers
+		// wait until all tasks are processed before destroying everything
+		
+		g_task->process();
 
-		timer::clear_timers();
+		if (g_task->can_be_destroyed())
+		{
+			// clear timers
 
-		// unhook the present since we cleaned the ui system data
+			timer::clear_timers();
 
-		g_game_status->unhook_dispatcher();
-		g_renderer->unhook_present();
+			// unhook the present since we cleaned the ui system data
 
-		jc::hooks::unhook_game_fns();
+			g_game_status->unhook_dispatcher();
+			g_renderer->unhook_present();
 
-		// uninitialize MH
+			jc::hooks::unhook_game_fns();
 
-		jc::test_units::destroy();
-		jc::patches::undo();
-		jc::clean_dbg::destroy();
+			// uninitialize MH
 
-		// unhook all
+			jc::test_units::destroy();
+			jc::patches::undo();
+			jc::clean_dbg::destroy();
 
-		jc::hooks::unhook_queued();
+			// unhook all
 
-		// destroy net after all hooks are done
+			jc::hooks::unhook_queued();
 
-		g_net->pre_destroy();
-		g_net->destroy();
+			// destroy net after all hooks are done
 
-		// destroy the rest of the mod systems
+			g_net->pre_destroy();
+			g_net->destroy();
 
-		g_explosion->destroy();
-		g_key->destroy();
-		g_ui->destroy();
+			// destroy the rest of the mod systems
 
-		// destroy game systems
+			g_explosion->destroy();
+			g_key->destroy();
+			g_ui->destroy();
 
-		g_rsrc_streamer->destroy();
-		g_game_status->destroy();
-		g_ai->destroy();
-		g_factory->destroy();
-		g_weapon->destroy();
-		g_day_cycle->destroy();
-		g_particle->destroy();
-		g_time->destroy();
-		g_sound->destroy();
-		g_ammo->destroy();
-		g_vehicle->destroy();
-		g_physics->destroy();
-		g_camera->destroy();
-		g_world->destroy();
-		g_renderer->destroy();
-		g_game_control->destroy();
+			// destroy game systems
 
-		// free mod systems
+			g_rsrc_streamer->destroy();
+			g_game_status->destroy();
+			g_ai->destroy();
+			g_factory->destroy();
+			g_weapon->destroy();
+			g_day_cycle->destroy();
+			g_particle->destroy();
+			g_time->destroy();
+			g_sound->destroy();
+			g_ammo->destroy();
+			g_vehicle->destroy();
+			g_physics->destroy();
+			g_camera->destroy();
+			g_world->destroy();
+			g_renderer->destroy();
+			g_game_control->destroy();
 
-		JC_FREE(g_chat);
-		JC_FREE(g_explosion);
-		JC_FREE(g_key);
-		JC_FREE(g_ui);
-		JC_FREE(g_net);
+			// free mod systems
 
-		g_registry.destroy();
+			JC_FREE(g_thread_system);
+			JC_FREE(g_task);
+			JC_FREE(g_chat);
+			JC_FREE(g_explosion);
+			JC_FREE(g_key);
+			JC_FREE(g_ui);
+			JC_FREE(g_net);
 
-		log(GREEN, "Unloaded from hook successfully");
+			g_registry.destroy();
 
-		unload_mod = false;
-		mod_unloaded = true;
+			log(GREEN, "Unloaded from hook successfully");
+
+			unload_mod = false;
+			mod_unloaded = true;
+		}
 	}
 	else if (g_game_control)
 		g_game_control->on_tick();

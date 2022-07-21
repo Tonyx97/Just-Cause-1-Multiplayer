@@ -503,9 +503,6 @@ void UI::render()
 					if (g_key->is_key_pressed(VK_F4))
 						localp->get_character()->set_hp(1.f);
 
-					if (g_key->is_key_pressed(VK_F5))
-						localp->respawn();
-
 					if (g_key->is_key_pressed(VK_F6))
 					{
 						if (!g_test_char)
