@@ -8,9 +8,7 @@ bool ExportedEntity::load_class_properties(object_base_map*& map)
 {
 	jc::stl::string type_name;
 
-	const bool ok = jc::this_call<bool>(jc::exported_entity::fn::LOAD_CLASS_PROPERTIES, this, &type_name, &map);
-
-	return ok;
+	return jc::this_call<bool>(jc::exported_entity::fn::LOAD_CLASS_PROPERTIES, this, &type_name, &map);
 }
 
 bool ExportedEntity::is_loaded() const
