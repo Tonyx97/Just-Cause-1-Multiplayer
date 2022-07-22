@@ -6,10 +6,12 @@ namespace jc::vehicle_controller
 	static constexpr uint32_t VEHICLE	= 0x4C; // Vehicle*
 }
 
+class Vehicle;
+
 class VehicleController
 {
 public:
 	Transform* get_transform();
 
-	void* get_vehicle();
+	Vehicle* get_vehicle();
 };

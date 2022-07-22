@@ -165,7 +165,7 @@ void Net::send_global_packets()
 		static float test = 0.f;
 		static bool enabled = false;
 
-		//test += 0.05f;
+		test += 0.01f;
 
 		g_net->send_broadcast_reliable<ChannelID_World>(DayCyclePID_SetTime, enabled, test);
 	});

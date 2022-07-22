@@ -52,6 +52,11 @@ CharacterHandle* CharacterHandle::create(CharacterInfo* info, Transform* transfo
 	return this;
 }
 
+CharacterHandleBase* CharacterHandle::get_base() const
+{
+    return REF(CharacterHandleBase*, this, jc::character_handle::HANDLE_BASE);
+}
+
 Character* CharacterHandle::get_character() const
 {
 	const auto character = get_character_unsafe();

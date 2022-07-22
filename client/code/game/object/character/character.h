@@ -11,6 +11,7 @@ class hkCharacterProxy;
 class BodyStanceController;
 class ArmsStanceController;
 class NPCVariant;
+class CharacterHandleBase;
 
 namespace jc::character
 {
@@ -26,6 +27,7 @@ namespace jc::character
 	static constexpr uint32_t FLAGS						= 0x884; // uint32_t
 	static constexpr uint32_t GRENADE_TIMEOUT			= 0x914; // float
 	static constexpr uint32_t GRENADE_TIME				= 0x918; // float
+	static constexpr uint32_t HANDLE_ENTRY				= 0x91C; // CharacterHandleEntry
 	static constexpr uint32_t INFO						= 0x924; // CharacterInfo*
 	static constexpr uint32_t ROLL_CLAMP				= 0xA34; // float
 
@@ -114,6 +116,8 @@ public:
 	float get_grenade_time() const;
 	float get_death_time() const;
 	float get_roll_clamp() const;
+
+	CharacterHandleBase* get_handle_base() const;
 
 	Character* get_facing_object() const;
 

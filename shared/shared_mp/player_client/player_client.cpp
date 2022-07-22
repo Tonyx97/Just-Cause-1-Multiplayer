@@ -86,28 +86,30 @@ void PlayerClient::set_joined(bool v)
 			g_net->send_broadcast_joined_reliable(p);
 		}
 
-		// sync player's static info
+		// sync player's basic info
 
 		{
-			PlayerClientStaticInfoPacket p;
+			PlayerClientBasicInfoPacket p;
 
 			g_net->for_each_joined_player_client([&](NID, PlayerClient* pc)
 			{
 				if (auto player = pc->get_player())
 				{
-					const auto& static_info = player->get_static_info();
+					const auto& dyn_info = player->get_dyn_info();
 
-					p.info.emplace_back(player, PlayerClientStaticInfoPacket::Info
+					p.info.emplace_back(player, PlayerClientBasicInfoPacket::Info
 					{
-						.nick = static_info.nick,
-						.skin = static_info.skin
+						.nick = dyn_info.nick,
+						.skin = dyn_info.skin,
+						.hp = dyn_info.hp,
+						.max_hp = dyn_info.max_hp
 					});
 
-					log(PURPLE, "Updating player static info with NID {:x} ({})", player->get_nid(), player->get_nick());
+					log(PURPLE, "Updating player basic info with NID {:x} ({})", player->get_nid(), player->get_nick());
 				}
 			});
 
-			// send the static info of each player to all players
+			// send the basic info of each player to all players
 
 			g_net->send_broadcast_joined_reliable(p);
 		}
@@ -115,6 +117,8 @@ void PlayerClient::set_joined(bool v)
 		// let the other players know this player joined
 
 		g_net->send_broadcast_joined_reliable<ChannelID_PlayerClient>(this, PlayerClientPID_Join, player);
+
+		//player->spawn();
 	}
 #endif
 }

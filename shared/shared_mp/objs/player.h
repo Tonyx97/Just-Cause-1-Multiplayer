@@ -9,13 +9,6 @@
 class PlayerClient;
 class CharacterHandle;
 
-struct PlayerStaticInfo
-{
-	std::string nick;
-
-	uint32_t skin = 0u;
-};
-
 enum PlayerDynamicInfoID : uint32_t
 {
 	PlayerDynInfo_Transform,
@@ -38,14 +31,18 @@ public:
 
 	struct DynamicInfo
 	{
+		std::string nick;
+
 		Transform transform {};
 
 		vec3 head_rotation {};
 
-		uint32_t body_stance_id = 0u,
+		uint32_t skin = 0u,
+				 body_stance_id = 0u,
 				 arms_stance_id = 0u;
 
-		float hp = 0.f;
+		float hp = 0.f,
+			  max_hp = 0.f;
 	};
 
 	struct MovementInfo
@@ -57,7 +54,6 @@ public:
 
 private:
 
-	PlayerStaticInfo static_info{};
 	DynamicInfo dyn_info {};
 	MovementInfo move_info {};
 
@@ -96,6 +92,7 @@ public:
 	// dynamic info getters/setters
 
 	void set_hp(float v);
+	void set_max_hp(float v);
 	void set_transform(const Transform& transform);
 	void set_movement_info(float angle, float right, float forward, bool aiming);
 	void set_body_stance_id(uint32_t id);
@@ -108,13 +105,14 @@ public:
 	uint32_t get_body_stance_id() const { return dyn_info.body_stance_id; }
 	uint32_t get_arms_stance_id() const { return dyn_info.arms_stance_id; }
 
-	float get_hp() const { return dyn_info.hp; }
+	float get_hp() const;
+	float get_max_hp() const;
 
 	const vec3& get_head_rotation() const { return dyn_info.head_rotation; }
 
 	const Transform& get_transform() const { return dyn_info.transform; }
 
-	// static info getters/setters
+	// basic info getters/setters
 
 	void set_nick(const std::string& v);
 	void set_skin(uint32_t v);
@@ -129,11 +127,9 @@ public:
 
 	uint32_t get_skin() const;
 
-	const std::string& get_nick() const { return static_info.nick; }
+	const std::string& get_nick() const { return dyn_info.nick; }
 
 	const DynamicInfo& get_dyn_info() const { return dyn_info; }
-
-	const PlayerStaticInfo& get_static_info() const { return static_info; }
 
 	const MovementInfo& get_movement_info() const { return move_info; }
 };

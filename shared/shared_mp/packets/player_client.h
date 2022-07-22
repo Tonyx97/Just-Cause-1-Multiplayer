@@ -45,9 +45,9 @@ struct PlayerClientSyncInstancesPacket
 #endif
 };
 
-struct PlayerClientStaticInfoPacket
+struct PlayerClientBasicInfoPacket
 {
-	static constexpr uint32_t ID = PlayerClientPID_StaticInfo;
+	static constexpr uint32_t ID = PlayerClientPID_BasicInfo;
 	static constexpr uint32_t CHANNEL = ChannelID_PlayerClient;
 
 	struct Info
@@ -55,6 +55,9 @@ struct PlayerClientStaticInfoPacket
 		std::string nick;
 
 		uint32_t skin;
+
+		float hp,
+			  max_hp;
 	};
 
 	std::vector<std::pair<Player*, Info>> info;
@@ -70,14 +73,16 @@ struct PlayerClientStaticInfoPacket
 			enet::serialize_params(data,
 				player,
 				_info.nick,
-				_info.skin);
+				_info.skin,
+				_info.hp,
+				_info.max_hp);
 
 		return data;
 	}
 
 	PacketHolder serialize_as_packet() const { return { serialize() }; }
 
-	PlayerClientStaticInfoPacket& deserialize(vec<uint8_t>& data)
+	PlayerClientBasicInfoPacket& deserialize(vec<uint8_t>& data)
 	{
 		const auto size = enet::deserialize_int<size_t>(data);
 
@@ -88,7 +93,9 @@ struct PlayerClientStaticInfoPacket
 			Info _info
 			{
 				.nick = enet::deserialize_string(data),
-				.skin = enet::deserialize_int<uint32_t>(data)
+				.skin = enet::deserialize_int<uint32_t>(data),
+				.hp = enet::deserialize_float(data),
+				.max_hp = enet::deserialize_float(data),
 			};
 
 			info.emplace_back(player, _info);

@@ -14,11 +14,23 @@
 #include <game/object/resource/ee_resource.h>
 #include <game/object/agent_type/npc_variant.h>
 #include <game/object/rigid_object/animated_rigid_object.h>
+#include <game/object/character/comps/vehicle_controller.h>
 #include <game/object/sound/sound_game_obj.h>
 #include <game/object/mission/objective.h>
+#include <game/object/vehicle/vehicle.h>
 #include <game/object/ui/map_icon.h>
 #include <game/object/localplayer/localplayer.h>
 #include <game/sys/all.h>
+
+DEFINE_HOOK_THISCALL(_is_key_pressed, 0x48C850, bool, int _this, int key)
+{
+	const auto res = _is_key_pressed_hook.call(_this, key);
+
+	if (res)
+		log(RED, "{:x} -> {} from {:x}", key, res, ptr(_ReturnAddress()));
+
+	return res;
+};
 
 DEFINE_HOOK_CCALL(_test, 0x407FD0, void, ptr a1, ptr a2)
 {
@@ -27,11 +39,13 @@ DEFINE_HOOK_CCALL(_test, 0x407FD0, void, ptr a1, ptr a2)
 
 void jc::test_units::init()
 {
+	_is_key_pressed_hook.hook();
 	//_test_hook.hook();
 }
 
 void jc::test_units::destroy()
 {
+	_is_key_pressed_hook.unhook();
 	//_test_hook.unhook();
 }
 
@@ -47,21 +61,63 @@ void jc::test_units::test_0()
 	auto	  local_pos = local_char->get_position();
 	Transform local_t(local_pos);
 
-	if (g_key->is_key_pressed(VK_NUMPAD8))
+	struct TestInfo
 	{
-		g_factory->spawn_damageable_object(local_pos + vec3(2.f, 0.f, 0.f), "building_blocks\\general\\oil_barrel_red.lod", "models\\building_blocks\\general\\oil_barrel.pfx");
-		// g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "building_blocks\\general\\coca_pakage_box.lod", "coca_package_box.pfx");
+		CharacterHandle* handle = nullptr;
+		Character* character = nullptr;
+		Vehicle* vehicle = nullptr;
+	} static info;
+
+	if (auto veh_controller = local_char->get_vehicle_controller())
+		if (auto veh = veh_controller->get_vehicle())
+			info.vehicle = veh;
+
+	if (g_key->is_key_pressed(VK_NUMPAD8) && info.vehicle)
+	{
+		//g_factory->spawn_damageable_object(local_pos + vec3(2.f, 0.f, 0.f), "building_blocks\\general\\oil_barrel_red.lod", "models\\building_blocks\\general\\oil_barrel.pfx");
+		//g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "building_blocks\\general\\coca_pakage_box.lod", "coca_package_box.pfx");
+
+		auto _char = info.character ? info.character : local_char;
+
+		auto r = info.vehicle->get_driver_seat();
+
+		log(RED, "{:x} {:x}", ptr(info.vehicle), ptr(r.obj));
+
+		if (r && _char)
+		{
+			/*(*(void(__thiscall**)(VehicleSeat*, Character*, CharacterHandleBase*, int))(*(ptr*)r.obj + 8))(
+				*r,
+				_char,
+				info.character ? info.handle->get_base() : g_player_global_info->get_localplayer_handle_base(),
+				0);*/
+
+			r->warp_character(_char);
+
+			//info.vehicle->set_velocity(vec3(0.f, 10.f, 0.f));
+
+			log(GREEN, "warped? {:x}", jc::read<ptr>(ptr(*r), 0x48));
+		}
 	}
 
 	if (g_key->is_key_pressed(VK_ADD))
 	{
-		g_factory->create_objective(local_pos + vec3(20.f, 0.f, 0.f), { util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), 255 });
+		if (!info.handle)
+		{
+			info.handle = g_factory->spawn_character("female1", g_world->get_localplayer_character()->get_position());
+			info.character = info.handle->get_character();
 
-		/*static int i = 0;
+			log(CYAN, "handle {:x}", ptr(info.handle));
+			log(CYAN, "handle base {:x}", ptr(info.handle->get_base()));
+			log(CYAN, "handle base from character {:x}", ptr(info.character->get_handle_base()));
+			log(CYAN, "char {:x}", ptr(info.character));
+		}
+		else
+		{
+			g_factory->destroy_character_handle(info.handle);
 
-		i = ++i % 16;
-
-		g_factory->create_map_icon(local_pos + vec3(20.f, 0.f, 0.f), i);*/
+			info.handle = nullptr;
+			info.character = nullptr;
+		}
 	}
 
 	static CharacterHandle* handle = nullptr;
@@ -192,7 +248,7 @@ void jc::test_units::test_0()
 		{
 			ptr dummy[2] = { 0 };
 
-			anim_ptr = jc::this_call<ptr>(0x55EE80, jc::read<void*>(0xD84D14), dummy, &anim_name);
+			anim_ptr = jc::this_call(0x55EE80, jc::read<void*>(0xD84D14), dummy, &anim_name);
 			anim	 = *(ptr*)anim_ptr;
 
 			// ptr dummy2[2] = { 0 };

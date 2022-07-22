@@ -22,10 +22,10 @@ public:
 
 	Transform& interpolate(const Transform& transform, float tf = 1.f, float rf = 1.f, float sf = 1.f);
 
-	vec3 right();
-	vec3 up();
-	vec3 forward();
-	vec3 position();
+	vec3 right() const { return m[0]; }
+	vec3 up() const { return m[1]; }
+	vec3 forward() const { return m[2]; }
+	vec3 position() const { return m[3]; }
 
 	bool operator != (const Transform& v) const { return m != v.m; }
 

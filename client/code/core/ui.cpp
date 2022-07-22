@@ -20,6 +20,7 @@
 #include <game/object/localplayer/localplayer.h>
 
 #include <mp/chat/chat.h>
+#include <mp/net.h>
 
 uintptr_t original_functions[43];
 uintptr_t return_address;
@@ -241,24 +242,29 @@ void UI::render()
 								  ImGuiWindowFlags_NoSavedSettings |
 								  ImGuiWindowFlags_NoFocusOnAppearing |
 								  ImGuiWindowFlags_NoNav;
+
 	ImGui::SetNextWindowBgAlpha(0.10f);
+
 	if (ImGui::Begin("overlay", &open_overlay, window_flags))
 	{
 		const auto v_list	   = ImGui::GetBackgroundDrawList();
 		const auto red_color   = ImColor(255, 0, 0);
 		const auto green_color = ImColor(0, 255, 0);
 
+		render_players();
+
 		g_chat->update();
 
 		g_ammo->for_each_bullet([&](int i, Bullet* bullet)
+		{
+			if (show_bullets)
 			{
-				if (show_bullets)
-				{
-					vec2 sp_root;
+				vec2 sp_root;
 
-					if (camera->w2s(bullet->get_position(), sp_root))
-						v_list->AddText({ sp_root.x, sp_root.y }, green_color, "BULLET");
-				} });
+				if (camera->w2s(bullet->get_position(), sp_root))
+					v_list->AddText({ sp_root.x, sp_root.y }, green_color, "BULLET");
+			}
+		});
 
 		const auto character_list = g_world->get_characters();
 
@@ -551,6 +557,58 @@ void UI::render()
 		}
 	}
 	ImGui::End();
+}
+
+void UI::render_players()
+{
+	const auto main_cam = g_camera->get_main_camera();
+	if (!main_cam)
+		return;
+
+	const auto localplayer = g_net->get_localplayer();
+	if (!localplayer)
+		return;
+
+	const auto local_char = localplayer->get_character();
+	if (!local_char)
+		return;
+
+	g_net->for_each_player([&](Player* player)
+	{
+		const auto player_char = player->get_character();
+		const auto player_pos = player->get_transform().position();
+
+		if (auto distance_to_player = glm::distance2(local_char->get_position(), player_pos); distance_to_player > -1.f && distance_to_player < 10000.f)
+		{
+			const auto head_pos = player_char->get_bone_position(BoneID::Head);
+
+			if (vec2 out; main_cam->w2s(head_pos + vec3(0.f, 0.25f, 0.f), out))
+			{
+				const float name_size_adjust = 1.f - (distance_to_player / 10000.f),
+							hp_bar_size_adjust = 1.f - (distance_to_player / 10000.f),
+							hp = player->get_hp() * hp_bar_size_adjust,
+							hp_color = hp * hp_bar_size_adjust,
+							hp_bar_size_x = 100.f * hp_bar_size_adjust,
+							hp_border_size = 2.f;
+
+				g_ui->draw_filled_rect(
+					out.x - hp_border_size - (hp_bar_size_x / 2.f + hp_border_size / 2.f),
+					out.y - 2.f,
+					hp_bar_size_x + hp_border_size * 2.f,
+					2.5f * hp_bar_size_adjust + hp_border_size * 2.f,
+					{ 0.f, 0.f, 0.f, 1.f });
+
+				g_ui->draw_filled_rect(
+					out.x - (hp_bar_size_x / 2.f + hp_border_size / 2.f),
+					out.y,
+					hp * 100.f,
+					2.5f * hp_bar_size_adjust,
+					{ 1.f - hp_color, hp_color, 0.f, 1.f });
+
+				g_ui->add_text(player->get_nick().c_str(), out.x, out.y - 40.f, 18.f * name_size_adjust, { 1.f, 1.f, 1.f, 1.f }, true);
+			}
+		}
+	});
 }
 
 void UI::build_debug()

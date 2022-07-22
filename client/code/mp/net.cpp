@@ -134,7 +134,11 @@ void Net::set_joined(bool v)
 	joined = v;
 
 	if (joined)
-		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Join);
+	{
+		const auto local_char = local->get_player()->get_character();
+
+		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Join, local_char->get_hp(), local_char->get_max_hp());
+	}
 }
 
 void Net::setup_channels()
@@ -149,7 +153,7 @@ void Net::setup_channels()
 		case PlayerClientPID_Join:				return nh::player_client::join(p);
 		case PlayerClientPID_Quit:				return nh::player_client::quit(p);
 		case PlayerClientPID_SyncInstances:		return nh::player_client::sync_instances(p);
-		case PlayerClientPID_StaticInfo:		return nh::player_client::static_info(p);
+		case PlayerClientPID_BasicInfo:			return nh::player_client::basic_info(p);
 		case PlayerClientPID_Nick:				return nh::player_client::nick(p);
 		}
 

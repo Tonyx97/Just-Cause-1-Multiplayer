@@ -294,6 +294,12 @@
     <ClCompile Include="code\core\thread_system\thread_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\game\sys\player_global_info.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\game\object\vehicle\comps\vehicle_seat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\game\sys\renderer.h">
@@ -606,6 +612,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\core\thread_system\stl\vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\sys\player_global_info.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\vehicle\comps\vehicle_seat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

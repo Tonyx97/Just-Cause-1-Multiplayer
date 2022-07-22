@@ -3,11 +3,14 @@
 #include "character.h"
 
 #include "../weapon/weapon_belt.h"
+#include "../character_handle/character_handle.h"
 
 #include <game/transform/transform.h>
 #include <game/sys/world.h>
 #include <game/sys/physics.h>
+#include <game/sys/ai_core.h>
 #include <game/sys/resource_streamer.h>
+#include <game/sys/player_global_info.h>
 
 #include <havok/character_proxy.h>
 #include <havok/motion_state.h>
@@ -21,7 +24,6 @@
 
 // hooks
 
-#include <core/test_units.h>
 #include "comps/stance_controller.h"
 
 namespace jc::character::hook
@@ -50,11 +52,10 @@ namespace jc::character::hook
 
 	DEFINE_HOOK_THISCALL(dispatch_movement, 0x5A45D0, void, Character* character, float angle, float right, float forward, bool aiming)
 	{
-		if (const auto local_char = g_world->get_localplayer_character())
+		if (const auto localplayer = g_net->get_localplayer())
 		{
-			if (character == local_char)
+			if (const auto local_char = localplayer->get_character(); character == local_char)
 			{
-				const auto localplayer = g_net->get_localplayer();
 				const auto& move_info = localplayer->get_movement_info();
 
 				const bool was_moving = move_info.right != 0.f || move_info.forward != 0.f || move_info.aiming;
@@ -201,7 +202,7 @@ void Character::set_grenade_timeout(float v)
 
 void Character::set_model(uint32_t id, bool sync)
 {
-	g_rsrc_streamer->request_exported_entity(id, [&](ExportedEntityResource* eer)
+	g_rsrc_streamer->request_exported_entity(id, [=](ExportedEntityResource* eer)
 	{
 		if (object_base_map* map = nullptr; eer->get_exported_entity()->load_class_properties(map) && map)
 		{
@@ -333,6 +334,23 @@ float Character::get_death_time() const
 float Character::get_roll_clamp() const
 {
 	return jc::read<float>(this, jc::character::ROLL_CLAMP);
+}
+
+CharacterHandleBase* Character::get_handle_base() const
+{
+	CharacterHandleBase* handle_base = nullptr;
+
+	if (this == g_world->get_localplayer_character())
+		handle_base = g_player_global_info->get_localplayer_handle_base();
+
+	if (!handle_base)
+		if (const auto handle_entry = REF(CharacterHandleEntry*, this, jc::character::HANDLE_ENTRY))
+			if (const auto handle = g_ai->get_character_handle_from_entry(handle_entry))
+				handle_base = handle->get_base();
+
+	check(handle_base, "Invalid handle base");
+
+	return handle_base;
 }
 
 Character* Character::get_facing_object() const

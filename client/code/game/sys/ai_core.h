@@ -9,7 +9,9 @@ namespace jc::ai_core
 
 	namespace fn
 	{
-		static constexpr uint32_t INSERT_CHARACTER_HANDLE = 0x584740;
+		static constexpr uint32_t INSERT_CHARACTER_HANDLE		= 0x584740;
+		static constexpr uint32_t GET_CHARACTER_HANDLE_FROM_ID	= 0x683200;
+		
 	}
 }
 
@@ -34,6 +36,8 @@ public:
 	void init();
 	void destroy();
 	void insert_character_handle(CharacterHandle* handle);
+
+	CharacterHandle* get_character_handle_from_entry(const CharacterHandleEntry* v) const;
 };
 
 inline Singleton<AiCore, jc::ai_core::SINGLETON> g_ai;

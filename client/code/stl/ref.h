@@ -4,9 +4,10 @@ namespace jc::reference
 {
 	namespace fn
 	{
-		static constexpr ptr INC_REF = 0x40E6F0;
-		static constexpr ptr DEC_REF = 0x40E840;
-		static constexpr ptr UNK_REF = 0x41F890;
+		static constexpr ptr INC		= 0x41FCE0;
+		static constexpr ptr INC_REF	= 0x40E6F0;
+		static constexpr ptr DEC_REF	= 0x40E840;
+		static constexpr ptr UNK_REF	= 0x41F890;
 	}
 }
 
@@ -14,8 +15,8 @@ namespace jc::big_reference
 {
 	namespace fn
 	{
-		static constexpr ptr DEC_REF = 0x4C45F0;
-		static constexpr ptr INIT	 = 0x4D8310;
+		static constexpr ptr DEC_REF	= 0x4C45F0;
+		static constexpr ptr INIT		= 0x4D8310;
 	}
 }
 
@@ -80,6 +81,13 @@ struct ref
 			return;
 
 		dec();
+	}
+
+	void inc()
+	{
+		decltype(counter) counter_ptr;
+
+		jc::this_call(jc::reference::fn::INC, &counter_ptr, &counter);
 	}
 
 	void dec()

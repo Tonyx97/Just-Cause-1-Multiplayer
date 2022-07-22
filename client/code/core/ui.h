@@ -39,6 +39,7 @@ private:
 
 	void begin();
 	void render();
+	void render_players();
 	void build_debug();
 	void end();
 

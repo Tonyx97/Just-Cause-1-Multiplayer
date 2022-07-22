@@ -16,19 +16,26 @@ namespace jc::alive_object::hook
 		{
 		case Character::CLASS_ID():
 		{
-			if (const auto local_char = g_world->get_localplayer_character())
+			if (const auto localplayer = g_net->get_localplayer())
 			{
-				// if the character is our local one then we will send a packet to the server
-				// to update and let all players know our new health, otherwise
-				// if character is owned by a player then we don't want the engine
-				// to remove any of his health, we will sync the health of other players
-				// from packets from them or the server. if the player is local then we will
-				// send a packet to the server updating our health
+				if (const auto local_char = g_world->get_localplayer_character())
+				{
+					// if the character is our local one then we will send a packet to the server
+					// to update and let all players know our new health, otherwise
+					// if character is owned by a player then we don't want the engine
+					// to remove any of his health, we will sync the health of other players
+					// from packets from them or the server. if the player is local then we will
+					// send a packet to the server updating our health
 
-				if (const auto character = BITCAST(Character*, obj); character == local_char)
-					g_net->send_reliable(PlayerPID_Health, hp);
-				else if (g_net->get_player_by_character(character))
-					return;
+					if (const auto character = BITCAST(Character*, obj); character == local_char)
+					{
+						localplayer->set_hp(hp);
+
+						g_net->send_reliable(PlayerPID_Health, hp);
+					}
+					else if (g_net->get_player_by_character(character))
+						return;
+				}
 			}
 
 			break;

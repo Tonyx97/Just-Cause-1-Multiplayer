@@ -43,7 +43,7 @@ using namespace jc::factory_system::v;
 void FactorySystem::init()
 {
 	set_max_character_spawns(0);
-	set_max_vehicle_spawns(0);
+	//set_max_vehicle_spawns(0);
 }
 
 void FactorySystem::destroy()

@@ -20,7 +20,15 @@ void jc::mp::logic::on_tick()
 		{
 			const auto transform = local_char->get_transform();
 			const auto skeleton = local_char->get_skeleton();
+			const auto hp = local_char->get_real_hp();
+			const auto max_hp = local_char->get_max_hp();
 			const auto head_rotation = skeleton->get_head_euler_rotation();
+
+			if (hp != localplayer->get_hp())
+				localplayer->set_hp(hp);
+
+			if (max_hp != localplayer->get_max_hp())
+				localplayer->set_max_hp(max_hp);
 
 			if (transform != localplayer->get_transform() && transform_timer.ready())
 			{

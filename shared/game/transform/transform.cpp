@@ -62,26 +62,6 @@ Transform& Transform::interpolate(const Transform& transform, float tf, float rf
 	return *this;
 }
 
-vec3 Transform::right()
-{
-	return m[0];
-}
-
-vec3 Transform::up()
-{
-	return m[1];
-}
-
-vec3 Transform::forward()
-{
-	return m[2];
-}
-
-vec3 Transform::position()
-{
-	return m[3];
-}
-
 #ifdef JC_CLIENT
 vec3 Transform::rotate_point(vec3 p) const
 {

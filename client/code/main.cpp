@@ -62,6 +62,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		g_ai->init();
 		g_game_status->init();
 		g_rsrc_streamer->init();
+		g_player_global_info->init();
 
 		// initialize mod systems
 
@@ -157,6 +158,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 			// destroy game systems
 
+			g_player_global_info->destroy();
 			g_rsrc_streamer->destroy();
 			g_game_status->destroy();
 			g_ai->destroy();

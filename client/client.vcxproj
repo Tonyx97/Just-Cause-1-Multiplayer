@@ -149,6 +149,7 @@
     <ClCompile Include="code\game\object\vehicle\air_vehicle.cpp" />
     <ClCompile Include="code\game\object\vehicle\boat.cpp" />
     <ClCompile Include="code\game\object\vehicle\car.cpp" />
+    <ClCompile Include="code\game\object\vehicle\comps\vehicle_seat.cpp" />
     <ClCompile Include="code\game\object\vehicle\helicopter.cpp" />
     <ClCompile Include="code\game\object\vehicle\land_vehicle.cpp" />
     <ClCompile Include="code\game\object\vehicle\motorbike.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="code\game\object\vehicle\tank.cpp" />
     <ClCompile Include="code\game\object\vehicle\vehicle.cpp" />
     <ClCompile Include="code\game\sys\game_status.cpp" />
+    <ClCompile Include="code\game\sys\player_global_info.cpp" />
     <ClCompile Include="code\game\sys\resource_streamer.cpp" />
     <ClCompile Include="code\mp\chat\chat.cpp" />
     <ClCompile Include="code\mp\cmd\cmd.cpp" />
@@ -250,6 +252,7 @@
     <ClInclude Include="code\game\object\vehicle\air_vehicle.h" />
     <ClInclude Include="code\game\object\vehicle\boat.h" />
     <ClInclude Include="code\game\object\vehicle\car.h" />
+    <ClInclude Include="code\game\object\vehicle\comps\vehicle_seat.h" />
     <ClInclude Include="code\game\object\vehicle\helicopter.h" />
     <ClInclude Include="code\game\object\vehicle\land_vehicle.h" />
     <ClInclude Include="code\game\object\vehicle\motorbike.h" />
@@ -258,6 +261,7 @@
     <ClInclude Include="code\game\object\vehicle\tank.h" />
     <ClInclude Include="code\game\object\vehicle\vehicle.h" />
     <ClInclude Include="code\game\sys\game_status.h" />
+    <ClInclude Include="code\game\sys\player_global_info.h" />
     <ClInclude Include="code\game\sys\resource_streamer.h" />
     <ClInclude Include="code\mp\chat\chat.h" />
     <ClInclude Include="code\mp\cmd\cmd.h" />

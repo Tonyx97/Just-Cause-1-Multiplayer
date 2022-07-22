@@ -87,7 +87,7 @@ bool Player::spawn()
 
 	log(GREEN, "Sync spawning for player {:x} {}", get_nid(), get_nick());
 #else
-	g_net->send_broadcast_reliable<ChannelID_Generic>(get_client(), PlayerPID_Spawn, this);
+	g_net->send_broadcast_reliable<ChannelID_Generic>(get_client(), PlayerPID_Spawn, this, get_hp(), get_max_hp());
 
 	set_spawned(true);
 #endif
@@ -99,6 +99,8 @@ bool Player::spawn()
 
 void Player::set_hp(float v)
 {
+	dyn_info.hp = v;
+
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c)
 	{
@@ -110,8 +112,15 @@ void Player::set_hp(float v)
 		c->set_hp(v);
 	});
 #endif
+}
 
-	dyn_info.hp = v;
+void Player::set_max_hp(float v)
+{
+	dyn_info.max_hp = v;
+
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->set_max_hp(v); });
+#endif
 }
 
 void Player::set_transform(const Transform& transform)
@@ -161,16 +170,26 @@ void Player::do_punch()
 #endif
 }
 
+float Player::get_hp() const
+{
+	return dyn_info.hp / get_max_hp();
+}
+
+float Player::get_max_hp() const
+{
+	return dyn_info.max_hp;
+}
+
 // static info getters/setters
 
 void Player::set_nick(const std::string& v)
 {
-	static_info.nick = v;
+	dyn_info.nick = v;
 }
 
 void Player::set_skin(uint32_t v)
 {
-	static_info.skin = v;
+	dyn_info.skin = v;
 
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->set_model(v, false); });
@@ -179,7 +198,7 @@ void Player::set_skin(uint32_t v)
 
 uint32_t Player::get_skin() const
 {
-	return static_info.skin;
+	return dyn_info.skin;
 }
 
 bool Player::must_skip_engine_stances() const

@@ -16,4 +16,5 @@
 #include "game_status.h"
 #include "factory_system.h"
 #include "weapon_system.h"
+#include "player_global_info.h"
 #include "world.h"

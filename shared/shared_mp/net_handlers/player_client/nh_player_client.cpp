@@ -39,9 +39,18 @@ enet::PacketResult nh::player_client::join(const enet::Packet& p)
 	}
 #elif JC_SERVER
 	// sync net objects instances when this player loads
-	// and also sync all players static info and spawning
+	// and also sync all players basic info and spawning
 
-	p.get_pc()->set_joined(true);
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+
+	const float hp = p.get_float(),
+				max_hp = p.get_float();
+
+	player->set_hp(hp);
+	player->set_max_hp(max_hp);
+
+	pc->set_joined(true);
 #endif
 
 	return enet::PacketRes_Ok;
@@ -109,13 +118,13 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 	return enet::PacketRes_Ok;
 }
 
-enet::PacketResult nh::player_client::static_info(const enet::Packet& p)
+enet::PacketResult nh::player_client::basic_info(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto localplayer = g_net->get_localplayer();
-	const auto info = p.get<PlayerClientStaticInfoPacket>();
+	const auto info = p.get<PlayerClientBasicInfoPacket>();
 
-	log(YELLOW, "Updating {} player static info...", info.info.size());
+	log(YELLOW, "Updating {} player basic info...", info.info.size());
 
 	for (const auto& [player, _info] : info.info)
 	{
@@ -131,8 +140,10 @@ enet::PacketResult nh::player_client::static_info(const enet::Packet& p)
 
 		player->set_nick(_info.nick);
 		player->set_skin(_info.skin);
+		player->set_hp(_info.hp);
+		player->set_max_hp(_info.max_hp);
 
-		log(PURPLE, "Updated static info for player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
+		log(PURPLE, "Updated basic info for player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
 	}
 #else
 #endif

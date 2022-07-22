@@ -17,10 +17,15 @@
 enet::PacketResult nh::player::spawn(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
-	// todojc
+	if (const auto player = p.get_net_object<Player>())
+	{
+		const auto hp = p.get_float(),
+				   max_hp = p.get_float();
 
-	/*if (const auto player = p.get_net_object<Player>())
-		player->spawn();*/
+		player->spawn();
+		player->set_hp(hp);
+		player->set_max_hp(max_hp);
+	}
 #else
 	// maybe we need this at some point (receive spawn packet from client)
 #endif
