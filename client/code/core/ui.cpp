@@ -578,34 +578,40 @@ void UI::render_players()
 		const auto player_char = player->get_character();
 		const auto player_pos = player->get_transform().position();
 
-		if (auto distance_to_player = glm::distance2(local_char->get_position(), player_pos); distance_to_player > -1.f && distance_to_player < 10000.f)
+		constexpr float MAX_DISTANCE = 1000.f;
+
+		if (auto distance_to_player = glm::distance(local_char->get_position(), player_pos); distance_to_player > -1.f && distance_to_player < MAX_DISTANCE)
 		{
 			const auto head_pos = player_char->get_bone_position(BoneID::Head);
 
 			if (vec2 out; main_cam->w2s(head_pos + vec3(0.f, 0.25f, 0.f), out))
 			{
-				const float name_size_adjust = 1.f - (distance_to_player / 10000.f),
-							hp_bar_size_adjust = 1.f - (distance_to_player / 10000.f),
+				const float name_size_adjust = 1.f - (distance_to_player / MAX_DISTANCE),
+							hp_bar_size_adjust = 1.f - (distance_to_player / MAX_DISTANCE),
 							hp = player->get_hp() * hp_bar_size_adjust,
-							hp_color = hp * hp_bar_size_adjust,
 							hp_bar_size_x = 100.f * hp_bar_size_adjust,
 							hp_border_size = 2.f;
 
 				g_ui->draw_filled_rect(
 					out.x - hp_border_size - (hp_bar_size_x / 2.f + hp_border_size / 2.f),
-					out.y - 2.f,
+					out.y - 2.f - 2.5f * hp_bar_size_adjust,
 					hp_bar_size_x + hp_border_size * 2.f,
 					2.5f * hp_bar_size_adjust + hp_border_size * 2.f,
 					{ 0.f, 0.f, 0.f, 1.f });
 
-				g_ui->draw_filled_rect(
-					out.x - (hp_bar_size_x / 2.f + hp_border_size / 2.f),
-					out.y,
-					hp * 100.f,
-					2.5f * hp_bar_size_adjust,
-					{ 1.f - hp_color, hp_color, 0.f, 1.f });
+				// don't try to draw this bar if the health is 0 lmao
 
-				g_ui->add_text(player->get_nick().c_str(), out.x, out.y - 40.f, 18.f * name_size_adjust, { 1.f, 1.f, 1.f, 1.f }, true);
+				if (hp > 0.f)
+				{
+					g_ui->draw_filled_rect(
+						out.x - (hp_bar_size_x / 2.f + hp_border_size / 2.f),
+						out.y - 2.5f * hp_bar_size_adjust,
+						hp * 100.f,
+						2.5f * hp_bar_size_adjust,
+						{ 1.f - hp, hp, 0.f, 1.f });
+				}
+
+				g_ui->add_text(player->get_nick().c_str(), out.x, out.y - 10.f - 18.f * name_size_adjust, 18.f * name_size_adjust, { 1.f, 1.f, 1.f, 1.f }, true);
 			}
 		}
 	});

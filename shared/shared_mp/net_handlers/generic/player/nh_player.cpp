@@ -14,7 +14,7 @@
 #include <game/object/base/comps/physical.h>
 #endif
 
-enet::PacketResult nh::player::spawn(const enet::Packet& p)
+enet::PacketResult nh::player::respawn(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
@@ -22,12 +22,16 @@ enet::PacketResult nh::player::spawn(const enet::Packet& p)
 		const auto hp = p.get_float(),
 				   max_hp = p.get_float();
 
-		player->spawn();
-		player->set_hp(hp);
-		player->set_max_hp(max_hp);
+		player->respawn(hp, max_hp, false);
 	}
 #else
-	// maybe we need this at some point (receive spawn packet from client)
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+
+	const auto hp = p.get_float(),
+			   max_hp = p.get_float();
+
+	player->respawn(hp, max_hp);
 #endif
 
 	return enet::PacketRes_Ok;
@@ -157,9 +161,9 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	{
 		const auto stance_id = p.get_uint();
 
-#ifdef JC_CLIENT
 		player->set_body_stance_id(stance_id);
-#else
+
+#ifdef JC_SERVER
 		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, stance_id);
 #endif
 

@@ -58,7 +58,7 @@ void jc::mp::logic::on_update_objects()
 		{
 			const auto player = obj->cast<Player>();
 
-			if (player->is_local())
+			if (player->is_local() || !player->is_spawned())
 				break;
 
 			const auto player_char = player->get_character();

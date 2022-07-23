@@ -35,30 +35,15 @@ PlayerClient::~PlayerClient()
 	JC_FREE(player);
 }
 
+#ifdef JC_SERVER
 void PlayerClient::startup_sync()
 {
-}
+	// sync net object instances
 
-void PlayerClient::set_initialized(bool v)
-{
-	initialized = v;
-}
-
-void PlayerClient::set_joined(bool v)
-{
-	joined = v;
-
-#ifdef JC_CLIENT
-
-#else
-	if (joined)
 	{
-		// sync net object instances
+		PlayerClientSyncInstancesPacket p;
 
-		{
-			PlayerClientSyncInstancesPacket p;
-
-			g_net->for_each_net_object([&](NID, NetObject* obj)
+		g_net->for_each_net_object([&](NID, NetObject* obj)
 			{
 				if (auto casted_player = obj->cast<Player>())
 				{
@@ -77,49 +62,66 @@ void PlayerClient::set_joined(bool v)
 				}
 			});
 
-			// send all net object main info to all players who joined to sync instances
-			// this creates and spawns the players that are not in other players'
-			// game, for example, if a player just joined, it will create the player for 
-			// the other players who already joined and it will also create those players for
-			// this player
+		// send all net object main info to all players who joined to sync instances
+		// this creates and spawns the players that are not in other players'
+		// game, for example, if a player just joined, it will create the player for 
+		// the other players who already joined and it will also create those players for
+		// this player
 
-			g_net->send_broadcast_joined_reliable(p);
-		}
+		g_net->send_broadcast_joined_reliable(p);
+	}
 
-		// sync player's basic info
+	// sync player's basic info
 
-		{
-			PlayerClientBasicInfoPacket p;
+	{
+		PlayerClientBasicInfoPacket p;
 
-			g_net->for_each_joined_player_client([&](NID, PlayerClient* pc)
+		g_net->for_each_joined_player_client([&](NID, PlayerClient* pc)
 			{
 				if (auto player = pc->get_player())
 				{
 					const auto& dyn_info = player->get_dyn_info();
 
 					p.info.emplace_back(player, PlayerClientBasicInfoPacket::Info
-					{
-						.nick = dyn_info.nick,
-						.skin = dyn_info.skin,
-						.hp = dyn_info.hp,
-						.max_hp = dyn_info.max_hp
-					});
+						{
+							.nick = dyn_info.nick,
+							.skin = dyn_info.skin,
+							.hp = dyn_info.hp,
+							.max_hp = dyn_info.max_hp
+						});
 
 					log(PURPLE, "Updating player basic info with NID {:x} ({})", player->get_nid(), player->get_nick());
 				}
 			});
 
-			// send the basic info of each player to all players
+		// send the basic info of each player to all players
 
-			g_net->send_broadcast_joined_reliable(p);
-		}
-
-		// let the other players know this player joined
-
-		g_net->send_broadcast_joined_reliable<ChannelID_PlayerClient>(this, PlayerClientPID_Join, player);
-
-		//player->spawn();
+		g_net->send_broadcast_joined_reliable(p);
 	}
+
+	// let the other players know this player joined
+
+	g_net->send_broadcast_joined_reliable<ChannelID_PlayerClient>(this, PlayerClientPID_Join, player);
+
+	// set the player as spawned
+	
+	player->spawn();
+}
+#endif
+
+void PlayerClient::set_initialized(bool v)
+{
+	initialized = v;
+}
+
+void PlayerClient::set_joined(bool v)
+{
+	joined = v;
+
+#ifdef JC_CLIENT
+#else
+	if (joined)
+		startup_sync();
 #endif
 }
 

@@ -85,6 +85,12 @@ public:
 #endif
 	~Player();
 
+#ifdef JC_CLIENT
+	void respawn(float hp, float max_hp, bool sync = true);
+#else
+	void respawn(float hp, float max_hp);
+#endif
+
 	bool spawn() override;
 
 	PlayerClient* get_client() const { return client; }

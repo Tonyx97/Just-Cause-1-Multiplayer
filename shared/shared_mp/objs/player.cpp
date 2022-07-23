@@ -19,20 +19,6 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 {
 	set_nid(nid);
 	set_player_client(pc);
-
-	if (const auto localplayer = g_net->get_localplayer())
-	{
-		if (!localplayer->equal(this))
-		{
-			// create and spawn the character if it's not the localplayer
-
-			handle = g_factory->spawn_character("female1", { 3393.f, 180.04f, 8997.96f });
-
-			set_spawned(true);
-
-			log(PURPLE, "Player {:x} spawned now", get_nid());
-		}
-	}
 }
 
 void Player::verify_exec(const std::function<void(Character*)>& fn)
@@ -49,7 +35,7 @@ Character* Player::get_character() const
 	if (is_local())
 		return g_world->get_localplayer_character();
 
-	return handle->get_character();
+	return handle ? handle->get_character() : nullptr;
 }
 #else
 Player::Player(PlayerClient* pc) : client(pc)
@@ -63,7 +49,9 @@ Player::~Player()
 #ifdef JC_CLIENT
 	if (!is_local() && handle)
 	{
-		check(handle, "Invalid agent spawn point when destroying a remote player");
+		check(handle, "Invalid handle when destroying a remote player");
+
+		set_spawned(false);
 
 		g_factory->destroy_character_handle(handle);
 
@@ -75,22 +63,61 @@ Player::~Player()
 #endif
 }
 
+#ifdef JC_CLIENT
+void Player::respawn(float hp, float max_hp, bool sync)
+{
+	check(is_spawned(), "Cannot respawn a player that wasn't spawned before");
+
+	if (sync)
+	{
+		check(is_local(), "Only localplayer respawning can be synced from client");
+
+		g_net->send_reliable(PlayerPID_Respawn, hp, max_hp);
+	}
+	else
+	{
+		// update important information like position and health
+
+		set_hp(hp);
+		set_max_hp(max_hp);
+
+		// respawn the character of this player
+		
+		get_character()->respawn();
+	}
+}
+#else
+void Player::respawn(float hp, float max_hp)
+{
+	g_net->send_broadcast_reliable(get_client(), PlayerPID_Respawn, this, hp, max_hp);
+}
+#endif
+
 bool Player::spawn()
 {
 	// if it's already spawned then do nothing
 
 	if (is_spawned())
+	{
+		log(RED, "Player {:x} was already spawned, where are you calling this from?", get_nid());
+
 		return false;
+	}
 
 #ifdef JC_CLIENT
-	// create agent spawn point if this player is not a local one
+	// create and spawn the character if it's not the localplayer
 
-	log(GREEN, "Sync spawning for player {:x} {}", get_nid(), get_nick());
-#else
-	g_net->send_broadcast_reliable<ChannelID_Generic>(get_client(), PlayerPID_Spawn, this, get_hp(), get_max_hp());
+	if (!is_local())
+	{
+		handle = g_factory->spawn_character("female1", { 3393.f, 180.04f, 8997.96f });
+
+		check(handle, "Could not create the player's character");
+
+		log(PURPLE, "Player {:x} spawned now", get_nid());
+	}
+#endif
 
 	set_spawned(true);
-#endif
 
 	return true;
 }
@@ -102,15 +129,7 @@ void Player::set_hp(float v)
 	dyn_info.hp = v;
 
 #ifdef JC_CLIENT
-	verify_exec([&](Character* c)
-	{
-		// todojc - probably not a good idea to do this here but it's fine for now
-
-		if (!is_alive() && v > 0.f)
-			c->respawn();
-
-		c->set_hp(v);
-	});
+	verify_exec([&](Character* c) { c->set_hp(v); });
 #endif
 }
 

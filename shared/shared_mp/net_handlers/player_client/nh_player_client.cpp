@@ -33,14 +33,14 @@ enet::PacketResult nh::player_client::init(const enet::Packet& p)
 enet::PacketResult nh::player_client::join(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
-	if (const auto player = p.get_net_object<Player>())
-	{
-		log(GREEN, "Player with NID {:x} ({}) joined", player->get_nid(), player->get_nick());
-	}
-#elif JC_SERVER
-	// sync net objects instances when this player loads
-	// and also sync all players basic info and spawning
+	const auto player = p.get_net_object<Player>();
 
+	if (!player)
+		return enet::PacketRes_BadArgs;
+
+	const auto pc = player->get_player_client();
+
+#elif JC_SERVER
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
 
@@ -50,8 +50,13 @@ enet::PacketResult nh::player_client::join(const enet::Packet& p)
 	player->set_hp(hp);
 	player->set_max_hp(max_hp);
 
-	pc->set_joined(true);
+	// sync net objects instances when this player loads
+	// and also sync all players basic info and spawning
 #endif
+
+	pc->set_joined(true);
+
+	log(GREEN, "Player with NID {:x} ({}) joined", player->get_nid(), player->get_nick());
 
 	return enet::PacketRes_Ok;
 }
@@ -133,9 +138,7 @@ enet::PacketResult nh::player_client::basic_info(const enet::Packet& p)
 		// if this is the localplayer then we skip,
 		// we already know our local info
 
-		const auto nid = player->get_nid();
-
-		if (localplayer->equal(nid))
+		if (localplayer->equal(player->get_nid()))
 			continue;
 
 		player->set_nick(_info.nick);

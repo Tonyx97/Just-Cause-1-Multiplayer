@@ -135,9 +135,16 @@ void Net::set_joined(bool v)
 
 	if (joined)
 	{
-		const auto local_char = local->get_player()->get_character();
+		const auto localplayer = local->get_player();
+		const auto local_char = localplayer->get_character();
 
-		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Join, local_char->get_hp(), local_char->get_max_hp());
+		// make sure we mark our localplayer as spawned
+
+		localplayer->spawn();
+
+		// let everyone know that we entered the world and spawned
+
+		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Join, local_char->get_real_hp(), local_char->get_max_hp());
 	}
 }
 
@@ -197,22 +204,22 @@ void Net::setup_channels()
 	// world packet dispatcher
 
 	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::Packet& p)
+	{
+		// if localplayer is not in game then we don't want any of these packets
+
+		if (!g_game_status->is_in_game())
+			return enet::PacketRes_NotUsable;
+
+		switch (auto id = p.get_id())
 		{
-			// if localplayer is not in game then we don't want any of these packets
+		case PlayerPID_Respawn:					return nh::player::respawn(p);
+		case PlayerPID_DynamicInfo:				return nh::player::dynamic_info(p);
+		case PlayerPID_StanceAndMovement:		return nh::player::stance_and_movement(p);
+		case PlayerPID_Health:					return nh::player::health(p);
+		}
 
-			if (!g_game_status->is_in_game())
-				return enet::PacketRes_NotUsable;
-
-			switch (auto id = p.get_id())
-			{
-			case PlayerPID_Spawn:					return nh::player::spawn(p);
-			case PlayerPID_DynamicInfo:				return nh::player::dynamic_info(p);
-			case PlayerPID_StanceAndMovement:		return nh::player::stance_and_movement(p);
-			case PlayerPID_Health:					return nh::player::health(p);
-			}
-
-			return enet::PacketRes_NotFound;
-		});
+		return enet::PacketRes_NotFound;
+	});
 }
 
 void Net::tick()

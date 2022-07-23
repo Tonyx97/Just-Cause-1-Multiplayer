@@ -32,11 +32,6 @@ public:
 #endif
 	~PlayerClient();
 
-	/**
-	* syncs everything we need for this player, we also sync stuff from this
-	* player to other players so they know about the existence and data of the player
-	*/
-	void startup_sync();
 	void set_initialized(bool v);
 	void set_joined(bool v);
 	void set_nick(const std::string& v);
@@ -51,6 +46,12 @@ public:
 	const std::string& get_nick() const;
 
 #ifdef JC_SERVER
+	/**
+	* syncs everything we need for this player, we also sync stuff from this
+	* player to other players so they know about the existence and data of the player
+	*/
+	void startup_sync();
+
 	template <typename T>
 	inline void send_reliable(const T& packet)
 	{
