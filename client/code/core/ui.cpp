@@ -320,6 +320,25 @@ void UI::render_players()
 
 void UI::render_admin_panel()
 {
+	const auto main_cam = g_camera->get_main_camera();
+	if (!main_cam)
+		return;
+
+	const auto localplayer = g_net->get_localplayer();
+	if (!localplayer)
+		return;
+
+	const auto local_char = localplayer->get_character();
+	if (!local_char)
+		return;
+
+	// weapon stuff
+
+	if (auto current_weapon = local_char->get_weapon_belt()->get_current_weapon())
+	{
+		current_weapon->get_info()->set_infinite_ammo(infinite_ammo);
+	}
+
 	g_key->hijack_engine_io(show_admin_panel);
 
 	if (!show_admin_panel)
@@ -333,7 +352,7 @@ void UI::render_admin_panel()
 	{
 		float day_time = g_day_cycle->get_hour();
 
-		if (ImGui::SliderFloat("Day Hour##sv.hour", &day_time, 0.f, 24.f))
+		if (ImGui::SliderFloat("Day Hour##ap.sv.time", &day_time, 0.f, 24.f))
 		{
 			g_net->send_reliable<ChannelID_Debug>(DbgPID_SetTime, day_time);
 		}
@@ -345,6 +364,9 @@ void UI::render_admin_panel()
 	{
 		ImGui::Checkbox("No clip", &no_clip);
 
+		if (ImGui::Button("Toggle world lighting"))
+			g_day_cycle->set_night_time_enabled(!g_day_cycle->is_night_time_enabled());
+
 		ImGui::TreePop();
 	}
 
@@ -355,6 +377,65 @@ void UI::render_admin_panel()
 		ImGui::Checkbox("Distance", &show_distance);
 		ImGui::Checkbox("Health", &show_health);
 		ImGui::Checkbox("View direction", &show_view_direction);
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Weapons"))
+	{
+		ImGui::Checkbox("Bullets", &show_bullets);
+		ImGui::Checkbox("Muzzle", &show_muzzle);
+		ImGui::Checkbox("Last muzzle", &show_last_muzzle);
+		ImGui::Checkbox("Grip", &show_grip);
+		ImGui::Checkbox("Last grip", &show_last_grip);
+		ImGui::Checkbox("Infinite Ammos", &infinite_ammo);
+		ImGui::SliderInt("Bullets per shoot", &bullets_per_shoot, 1, 100);
+
+		static int weapon_to_give = 0;
+
+		ImGui::SliderInt("Weapon to give##ap.weap.tgiv", &weapon_to_give, 1, 43);
+
+		if (ImGui::Button("Give weapon##ap.weap.giv"))
+			local_char->set_weapon(weapon_to_give, false);
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Day Cycle"))
+	{
+		auto hour = g_day_cycle->get_hour();
+
+		bool enabled = g_day_cycle->is_enabled();
+
+		if (ImGui::Checkbox("Enabled", &enabled))
+			g_day_cycle->set_enabled(enabled);
+
+		if (ImGui::SliderFloat("Time##daycycle", &hour, 0.f, static_cast<float>(g_day_cycle->get_hours_per_day())))
+			g_day_cycle->set_time(hour);
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Vehicles"))
+	{
+		static int veh_to_spawn = 0;
+		static int veh_faction = 0;
+
+		ImGui::SliderInt("Vehicle to spawn##ap.veh.tspw", &veh_to_spawn, 0, 109);
+		ImGui::SliderInt("Vehicle faction ##ap.veh.tfac", &veh_faction, 0, 8);
+
+		if (ImGui::Button("Spawn Vehicle##ap.veh.spw"))
+		{
+			static VehicleSpawnPoint* spawn_point = nullptr;
+
+			if (!spawn_point)
+				spawn_point = g_factory->create_vehicle_spawn_point(g_world->get_localplayer_character()->get_position() + vec3(2.5f, 0.5f, 0.f), veh_to_spawn, veh_faction);
+			else
+			{
+				g_factory->destroy_vehicle_spawn_point(spawn_point);
+				spawn_point = nullptr;
+			}
+		}
 
 		ImGui::TreePop();
 	}
@@ -461,51 +542,6 @@ void UI::render_admin_panel()
 			}
 		}
 
-		if (ImGui::Button("Spawn vehicle"))
-		{
-			static VehicleSpawnPoint* spawn_point = nullptr;
-			if (!spawn_point)
-			{
-				auto spawn_point = g_factory->create_vehicle_spawn_point(g_world->get_localplayer_character()->get_position());
-			}
-			else
-			{
-				spawn_point->spawn();
-			}
-		}
-
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("Weapons"))
-	{
-		ImGui::Checkbox("Bullets", &show_bullets);
-		ImGui::Checkbox("Muzzle", &show_muzzle);
-		ImGui::Checkbox("Last muzzle", &show_last_muzzle);
-		ImGui::Checkbox("Grip", &show_grip);
-		ImGui::Checkbox("Last grip", &show_last_grip);
-		ImGui::SliderInt("Bullets per shoot", &bullets_per_shoot, 1, 100);
-
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("Day Cycle"))
-	{
-		auto hour = g_day_cycle->get_hour();
-
-		bool enabled = g_day_cycle->is_enabled();
-
-		if (ImGui::Checkbox("Enabled", &enabled))
-			g_day_cycle->set_enabled(enabled);
-
-		if (ImGui::SliderFloat("Time##daycycle", &hour, 0.f, static_cast<float>(g_day_cycle->get_hours_per_day())))
-			g_day_cycle->set_time(hour);
-
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("Vehicles"))
-	{
 		ImGui::TreePop();
 	}
 

@@ -130,7 +130,7 @@ void jc::mp::logic::on_update_objects()
 				auto previous_aim_target = player_char->get_aim_target(),
 					 target_aim_target = player->get_aim_target();
 
-				player_char->set_aim_target(glm::lerp(previous_aim_target, target_aim_target, 0.25f));
+				player_char->set_aim_target(glm::lerp(previous_aim_target, target_aim_target, 0.1f));
 			}
 
 			// firing weapon

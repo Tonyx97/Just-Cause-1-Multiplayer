@@ -90,6 +90,14 @@ void FactorySystem::destroy_agent_spawn_point(AgentSpawnPoint* v)
 	agent_spawns.erase(std::remove_if(agent_spawns.begin(), agent_spawns.end(), [&](const auto& r) { return r.obj == v; }));
 }
 
+void FactorySystem::destroy_vehicle_spawn_point(VehicleSpawnPoint* v)
+{
+	if (!v)
+		return;
+
+	vehicle_spawns.erase(std::remove_if(vehicle_spawns.begin(), vehicle_spawns.end(), [&](const auto& r) { return r.obj == v; }));
+}
+
 int16_t FactorySystem::get_max_character_spawns() const
 {
 	return jc::read<int16_t>(this, jc::spawn_system::MAX_CHARACTER_SPAWNS);
@@ -195,7 +203,7 @@ AgentSpawnPoint* FactorySystem::create_agent_spawn_point(const vec3& position)
 	return nullptr;
 }
 
-VehicleSpawnPoint* FactorySystem::create_vehicle_spawn_point(const vec3& position)
+VehicleSpawnPoint* FactorySystem::create_vehicle_spawn_point(const vec3& position, int32_t id, int32_t faction)
 {
 	if (auto rf = g_game_control->create_object<VehicleSpawnPoint>())
 	{
@@ -219,14 +227,14 @@ VehicleSpawnPoint* FactorySystem::create_vehicle_spawn_point(const vec3& positio
 		map.insert<object_base_map::String>(0x7c87224d, R"(rm_respawn rm_11_release)");
 		map.insert<object_base_map::String>(0x6ea4cb25, R"(rm_11_release)");
 		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(rm_11_vehicle)");
-		map.insert<object_base_map::String>(0x8eb5aff2, jc::vars::exported_entities_vehicles[61]);
+		map.insert<object_base_map::String>(0x8eb5aff2, jc::vars::exported_entities_vehicles[id]);
 		// map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, {});
 
 		log(RED, "VehicleSpawnPoint: {:x}", ptr(*rf));
 
 		rf->init_from_map(&map);
 		rf->set_position(position);
-		rf->set_faction(VehFaction_BlackHand);
+		rf->set_faction(faction);
 
 		return rf.move_to(vehicle_spawns);
 	}

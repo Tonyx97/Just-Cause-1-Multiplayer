@@ -107,15 +107,15 @@ namespace jc::character::hook
 
 			if (character == local_char)
 			{
-				switch (const auto ret_add = ptr(_ReturnAddress()))
+				/*switch (const auto ret_add = ptr(_ReturnAddress()))
 				{
 				default:
 				{
-					/*switch (id)
+					switch (id)
 					{
-					}*/
+					}
 				}
-				}
+				}*/
 			}
 		}
 
@@ -415,7 +415,7 @@ void Character::setup_punch()
 	jc::character::hook::setup_punch_hook.call(this);
 }
 
-void Character::set_weapon(int32_t id, bool is_player)
+void Character::set_weapon(int32_t id, bool is_remote_player)
 {
 	if (id == 0)
 		return save_current_weapon();
@@ -440,7 +440,7 @@ void Character::set_weapon(int32_t id, bool is_player)
 
 		// do a few adjustments to the weapon if it's owned by a remote player
 
-		if (is_player)
+		if (is_remote_player)
 		{
 			if (const auto weapon_info = rf->get_info())
 			{

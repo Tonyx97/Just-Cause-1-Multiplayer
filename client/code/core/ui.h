@@ -28,6 +28,7 @@ private:
 		 show_grip			 = true,
 		 show_last_muzzle	 = false,
 		 show_last_grip		 = false,
+		 infinite_ammo = true,
 		 no_clip			 = true,
 		 spawn_vtable_hooked = false;
 

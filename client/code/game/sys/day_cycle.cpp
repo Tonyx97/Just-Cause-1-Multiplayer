@@ -62,8 +62,8 @@ bool DayCycle::is_enabled() const
 
 bool DayCycle::is_night_time_enabled()
 {
-	return jc::read<double>(jc::day_cycle::g::NIGHT_TIME_ON) < 0.0 &&
-		   jc::read<double>(jc::day_cycle::g::NIGHT_TIME_OFF) < 0.0;
+	return jc::read<double>(jc::day_cycle::g::NIGHT_TIME_ON) < -1000.0 &&
+		   jc::read<double>(jc::day_cycle::g::NIGHT_TIME_OFF) > 1000.0;
 }
 
 int DayCycle::get_hours_per_day() const

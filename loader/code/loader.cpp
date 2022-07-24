@@ -113,7 +113,11 @@ int main()
 
 		const std::wstring full_game_path	= game_dir + L"JustCause.exe",
 						   current_dll_path = std::wstring(current_parent_path.begin(), current_parent_path.end()) + L"jcmp_client.dll",
+#ifdef _DEBUG
 						   cmd_line			= L"/windowed";
+#else
+						   cmd_line			= L"";
+#endif
 
 		log(CYAN, "Launching Just Cause...");
 

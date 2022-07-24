@@ -112,7 +112,7 @@ public:
 	void set_body_stance(uint32_t id);
 	void set_arms_stance(uint32_t id);
 	void setup_punch();
-	void set_weapon(int32_t id, bool is_player = true);
+	void set_weapon(int32_t id, bool is_remote_player = true);
 	void set_draw_weapon(int32_t slot);
 	void set_draw_weapon(ref<Weapon>& weapon);
 	void save_current_weapon();

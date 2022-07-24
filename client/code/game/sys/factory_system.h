@@ -33,6 +33,7 @@ public:
 	void set_max_vehicle_spawns(int v);
 	void destroy_character_handle(CharacterHandle* v);
 	void destroy_agent_spawn_point(AgentSpawnPoint* v);
+	void destroy_vehicle_spawn_point(VehicleSpawnPoint* v);
 
 	int16_t get_max_character_spawns() const;
 	int16_t get_max_vehicle_spawns() const;
@@ -41,7 +42,7 @@ public:
 	SimpleRigidObject*		spawn_simple_rigid_object(const vec3& position, const std::string& model_name, const std::string& pfx_name);
 	DamageableObject*		spawn_damageable_object(const vec3& position, const std::string& model_name, const std::string& pfx_name);
 	AgentSpawnPoint*		create_agent_spawn_point(const vec3& position);
-	VehicleSpawnPoint*		create_vehicle_spawn_point(const vec3& position);
+	VehicleSpawnPoint*		create_vehicle_spawn_point(const vec3& position, int32_t id, int32_t faction);
 	MountedGun*				spawn_mounted_gun(const vec3& position);
 	Ladder*					spawn_ladder(const vec3& position, const std::string& model, float length = 10.f);
 	ItemPickup*				spawn_general_item_pickup(const vec3& position, uint32_t type, const std::string& model, const std::string& description = {});
