@@ -7,10 +7,12 @@
 #ifdef JC_CLIENT
 #include <game/sys/factory_system.h>
 #include <game/sys/world.h>
+#include <game/sys/weapon_system.h>
 #include <game/object/spawn_point/spawn_point.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
+#include <game/object/weapon/weapon_belt.h>
 #else
 #endif
 
@@ -186,6 +188,29 @@ void Player::do_punch()
 {
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->setup_punch(); });
+#endif
+}
+
+void Player::set_weapon_id(int32_t id)
+{
+	dyn_info.weapon_id = id;
+
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->set_weapon(id); });
+#endif
+}
+
+void Player::set_aim_info(bool hip, bool full, const vec3& target)
+{
+	dyn_info.hip_aim = hip;
+	dyn_info.full_aim = full;
+	dyn_info.aim_target = target;
+}
+
+void Player::fire_weapon()
+{
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->fire_weapon(); });
 #endif
 }
 

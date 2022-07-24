@@ -31,7 +31,7 @@ namespace jc::alive_object::hook
 					{
 						localplayer->set_hp(hp);
 
-						g_net->send_reliable(PlayerPID_Health, hp);
+						g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Health, hp);
 					}
 					else if (g_net->get_player_by_character(character))
 						return;

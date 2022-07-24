@@ -18,7 +18,9 @@ namespace jc::weapon
 
 namespace jc::weapon_info
 {
-	static constexpr uint32_t SLOT				= 0x10; // int
+	static constexpr uint32_t ID				= 0x0; // int32_t
+	static constexpr uint32_t TYPE_ID			= 0xC; // int32_t
+	static constexpr uint32_t BULLET_TYPE		= 0x10; // int
 	static constexpr uint32_t MAX_MAG_AMMO		= 0x38; // int
 	static constexpr uint32_t BULLETS_TO_FIRE	= 0x44; // int
 	static constexpr uint32_t TYPE_NAME			= 0x54; // char[28]
@@ -46,7 +48,8 @@ public:
 
 	bool can_create_shells();
 
-	int32_t get_slot();
+	int32_t get_id() const;
+	int32_t get_type_id() const;
 	int32_t get_max_mag_ammo();
 	int32_t get_bullets_to_fire();
 	int32_t get_fire_sound_id();

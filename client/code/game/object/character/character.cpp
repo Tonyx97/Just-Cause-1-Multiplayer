@@ -2,6 +2,7 @@
 
 #include "character.h"
 
+#include "../weapon/weapon.h"
 #include "../weapon/weapon_belt.h"
 #include "../character_handle/character_handle.h"
 
@@ -28,54 +29,6 @@
 
 namespace jc::character::hook
 {
-	DEFINE_HOOK_THISCALL_S(can_be_destroyed, 0x595F10, bool, Character* character)
-	{
-		// if our local player is being checked here, it means PlayerSettings is trying to
-		// get us to the game continue menu, we will return false all the time so we can implement our
-		// own spawing and also we avoid the stupid menu that serves no purpose, same for remote players
-		// obviously...
-
-		if (g_net->get_player_by_character(character))
-			return false;
-
-		// we implement our own logic of this function, we can modify the amount of time
-		// a character can stay death before its destruction or we can just skip it in the future
-		// and so on, this will vary in future development
-
-		const auto stance_controller = character->get_body_stance();
-		const auto movement_id = stance_controller->get_movement_id();
-
-		return character->get_max_hp() <= std::numeric_limits<float>::max() &&
-			(movement_id == 0x34 || movement_id == 0x62) &&
-			character->get_death_time() > 10.f;
-	}
-
-	DEFINE_HOOK_THISCALL(dispatch_movement, 0x5A45D0, void, Character* character, float angle, float right, float forward, bool aiming)
-	{
-		if (const auto localplayer = g_net->get_localplayer())
-		{
-			if (const auto local_char = localplayer->get_character(); character == local_char)
-			{
-				const auto& move_info = localplayer->get_movement_info();
-
-				const bool was_moving = move_info.right != 0.f || move_info.forward != 0.f || move_info.aiming;
-				const bool is_moving = right != 0.f || forward != 0.f || aiming;
-				const bool is_diff = right != move_info.right || forward != move_info.forward || aiming != move_info.aiming;
-
-				if (is_diff || (was_moving && !is_moving || !was_moving && is_moving))
-				{
-					localplayer->set_movement_info(angle, right, forward, aiming);
-
-					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, angle, right, forward, aiming);
-				}
-			}
-			else if (g_net->get_player_by_character(character))
-				return;
-		}
-
-		dispatch_movement_hook.call(character, angle, right, forward, aiming);
-	}
-
 	DEFINE_HOOK_THISCALL(set_body_stance, 0x625750, void, BodyStanceController* stance, uint32_t id)
 	{
 		if (const auto local_char = g_world->get_localplayer_character())
@@ -124,13 +77,66 @@ namespace jc::character::hook
 				// this is useful because we want to ignore all stances that the game sets to remote players
 				// like falling and stuff like that, which will be controlled by packets sent by remote players
 				// containg such information (summary: to avoid desync)
-				
+
 				if (player->must_skip_engine_stances())
 					return;
 			}
 		}
 
 		set_body_stance_hook.call(stance, id);
+	}
+
+	DEFINE_HOOK_THISCALL(set_arms_stance, 0x744230, void, ArmsStanceController* stance, uint32_t id)
+	{
+		set_arms_stance_hook.call(stance, id);
+	}
+
+	DEFINE_HOOK_THISCALL_S(can_be_destroyed, 0x595F10, bool, Character* character)
+	{
+		// if our local player is being checked here, it means PlayerSettings is trying to
+		// get us to the game continue menu, we will return false all the time so we can implement our
+		// own spawing and also we avoid the stupid menu that serves no purpose, same for remote players
+		// obviously...
+
+		if (g_net->get_player_by_character(character))
+			return false;
+
+		// we implement our own logic of this function, we can modify the amount of time
+		// a character can stay death before its destruction or we can just skip it in the future
+		// and so on, this will vary in future development
+
+		const auto stance_controller = character->get_body_stance();
+		const auto movement_id = stance_controller->get_movement_id();
+
+		return character->get_max_hp() <= std::numeric_limits<float>::max() &&
+			(movement_id == 0x34 || movement_id == 0x62) &&
+			character->get_death_time() > 10.f;
+	}
+
+	DEFINE_HOOK_THISCALL(dispatch_movement, 0x5A45D0, void, Character* character, float angle, float right, float forward, bool aiming)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+		{
+			if (const auto local_char = localplayer->get_character(); character == local_char)
+			{
+				const auto& move_info = localplayer->get_movement_info();
+
+				const bool was_moving = move_info.right != 0.f || move_info.forward != 0.f || move_info.aiming;
+				const bool is_moving = right != 0.f || forward != 0.f || aiming;
+				const bool is_diff = right != move_info.right || forward != move_info.forward || aiming != move_info.aiming;
+
+				if (is_diff || (was_moving && !is_moving || !was_moving && is_moving))
+				{
+					localplayer->set_movement_info(angle, right, forward, aiming);
+
+					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, angle, right, forward, aiming);
+				}
+			}
+			else if (g_net->get_player_by_character(character))
+				return;
+		}
+
+		dispatch_movement_hook.call(character, angle, right, forward, aiming);
 	}
 
 	DEFINE_HOOK_THISCALL_S(setup_punch, 0x5A4380, Character*, Character* character)
@@ -144,20 +150,61 @@ namespace jc::character::hook
 		return res;
 	}
 
+	DEFINE_HOOK_THISCALL_S(update_mid, 0x591AD0, void, Character* character)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto local_char = localplayer->get_character(); character == local_char)
+			{
+				const auto was_hip_aim = localplayer->is_hip_aiming(),
+						   was_full_aim = localplayer->is_full_aiming(),
+						   is_hip_aim = local_char->has_flag(CharacterFlag_HipAiming),
+						   is_full_aim = local_char->has_flag(CharacterFlag_FullAiming);
+
+				const auto aim_target = local_char->get_aim_target();
+
+				if (was_hip_aim != is_hip_aim || was_full_aim != is_full_aim)
+					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Aiming, is_hip_aim, is_full_aim, aim_target);
+
+				localplayer->set_aim_info(is_hip_aim, is_full_aim, aim_target);
+			}
+
+		update_mid_hook.call(character);
+	}
+
+	DEFINE_HOOK_THISCALL(fire_weapon, 0x59FD20, bool, Character* character, bool a2)
+	{
+		const auto res = fire_weapon_hook.call(character, a2);
+
+		if (res)
+			if (const auto localplayer = g_net->get_localplayer())
+				if (const auto local_char = localplayer->get_character(); character == local_char)
+				{
+					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Fire);
+				}
+
+		return res;
+	}
+
 	void apply()
 	{
+		set_body_stance_hook.hook();
+		set_arms_stance_hook.hook();
 		can_be_destroyed_hook.hook();
 		dispatch_movement_hook.hook();
-		set_body_stance_hook.hook();
 		setup_punch_hook.hook();
+		update_mid_hook.hook();
+		fire_weapon_hook.hook();
 	}
 
 	void undo()
 	{
+		fire_weapon_hook.unhook();
+		update_mid_hook.unhook();
 		setup_punch_hook.unhook();
-		set_body_stance_hook.unhook();
 		dispatch_movement_hook.unhook();
 		can_be_destroyed_hook.unhook();
+		set_arms_stance_hook.unhook();
+		set_body_stance_hook.unhook();
 	}
 }
 
@@ -267,7 +314,12 @@ void Character::set_npc_variant(NPCVariant* v)
 
 void Character::set_flag(uint32_t mask)
 {
-	jc::write(get_flags() & mask, this, jc::character::FLAGS);
+	set_flags(get_flags() | mask);
+}
+
+void Character::set_flags(uint32_t mask)
+{
+	jc::write(mask, this, jc::character::FLAGS);
 }
 
 void Character::remove_flag(uint32_t mask)
@@ -292,13 +344,73 @@ void Character::set_body_stance(uint32_t id)
 
 void Character::set_arms_stance(uint32_t id)
 {
-	check(false, "todojc");
-	//jc::character::hook::set_body_stance_hook.call(get_arms_stance(), id);
+	jc::character::hook::set_arms_stance_hook.call(get_arms_stance(), id);
 }
 
 void Character::setup_punch()
 {
 	jc::character::hook::setup_punch_hook.call(this);
+}
+
+void Character::set_weapon(int32_t id)
+{
+	if (const auto weapon_belt = get_weapon_belt())
+	{
+		for (int i = 0; i < WeaponBelt::MAX_SLOTS(); ++i)
+			if (auto rf = weapon_belt->get_weapon_from_slot(i))
+			{
+				if (rf->get_info()->get_id() == id)
+				{
+					set_draw_weapon(rf);
+					draw_weapon_now();
+
+					log(CYAN, "Weapon already exists so we just draw it");
+
+					return;
+				}
+			}
+
+		log(CYAN, "Weapon doesn't exist so we add it and draw it");
+
+		auto rf = weapon_belt->add_weapon(id);
+
+		set_draw_weapon(rf);
+		draw_weapon_now();
+	}
+}
+
+void Character::set_draw_weapon(int32_t slot)
+{
+	jc::this_call(jc::character::fn::SET_DRAW_WEAPON, this, slot);
+}
+
+void Character::set_draw_weapon(ref<Weapon>& weapon)
+{
+	if (const auto weapon_belt = get_weapon_belt())
+	{
+		const auto slot = weapon_belt->get_weapon_slot(*weapon);
+		const auto is_local = this == g_world->get_localplayer_character();
+
+		set_draw_weapon(slot);
+	}
+}
+
+void Character::draw_weapon_now()
+{
+	jc::this_call(jc::character::fn::DRAW_WEAPON_NOW, this);
+}
+
+void Character::set_aim_target(const vec3& v)
+{
+	jc::write(v, this, jc::character::AIM_TARGET);
+}
+
+void Character::fire_weapon()
+{
+	jc::write(true, *get_weapon_belt()->get_current_weapon(), 0x188);
+	jc::write(10.f, *get_weapon_belt()->get_current_weapon(), 0x18C);
+
+	jc::character::hook::fire_weapon_hook.call(this, true);
 }
 
 bool Character::has_flag(uint32_t mask) const
@@ -391,6 +503,11 @@ ArmsStanceController* Character::get_arms_stance() const
 vec3 Character::get_velocity()
 {
 	return *REF(vec3*, this, jc::character::VELOCITY);
+}
+
+vec3 Character::get_aim_target() const
+{
+	return jc::read<vec3>(this, jc::character::AIM_TARGET);
 }
 
 vec3 Character::get_bone_position(BoneID index) const

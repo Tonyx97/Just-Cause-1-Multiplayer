@@ -53,6 +53,15 @@ struct ref
 		obj = counter->obj;
 	}
 
+	template <typename X>
+	ref(X ptr)
+	{
+		obj = jc::read<T*>(ptr, offsetof(ref<T>, obj));
+		counter = jc::read<ref_count<T>*>(ptr, offsetof(ref<T>, counter));
+
+		inc_ref();
+	}
+
 	// avoid copies
 
 	ref(const ref&) = delete;
@@ -80,7 +89,7 @@ struct ref
 		if (!obj || !counter)
 			return;
 
-		dec();
+		dec_ref();
 	}
 
 	void inc()
@@ -90,7 +99,12 @@ struct ref
 		jc::this_call(jc::reference::fn::INC, &counter_ptr, &counter);
 	}
 
-	void dec()
+	void inc_ref()
+	{
+		jc::this_call(jc::reference::fn::INC_REF, counter);
+	}
+
+	void dec_ref()
 	{
 		bool destroyed = counter->uses == 1;
 

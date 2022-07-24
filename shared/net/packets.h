@@ -41,7 +41,7 @@ enum PlayerPacketID : unsigned int
 	PlayerPID_Respawn = GenericPID_Max,
 	PlayerPID_DynamicInfo,
 	PlayerPID_StanceAndMovement,
-	PlayerPID_Health,
+	PlayerPID_SetWeapon,
 	PlayerPID_Max
 };
 

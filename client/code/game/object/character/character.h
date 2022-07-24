@@ -4,6 +4,8 @@
 
 #include "comps/skeleton.h"
 
+#include <game/shared/character.h>
+
 class Transform;
 class WeaponBelt;
 class VehicleController;
@@ -12,6 +14,7 @@ class BodyStanceController;
 class ArmsStanceController;
 class NPCVariant;
 class CharacterHandleBase;
+class Weapon;
 
 namespace jc::character
 {
@@ -24,6 +27,7 @@ namespace jc::character
 	static constexpr uint32_t VEHICLE_CONTROLLER		= 0x878; // VehicleController*
 	static constexpr uint32_t DEATH_TIME				= 0x8E4; // float
 	static constexpr uint32_t VELOCITY					= 0x7DC; // vec3
+	static constexpr uint32_t AIM_TARGET				= 0x824; // vec3
 	static constexpr uint32_t FLAGS						= 0x884; // uint32_t
 	static constexpr uint32_t GRENADE_TIMEOUT			= 0x914; // float
 	static constexpr uint32_t GRENADE_TIME				= 0x918; // float
@@ -47,7 +51,8 @@ namespace jc::character
 		static constexpr uint32_t CAN_BE_DESTROYED			= 0x595F10;
 		static constexpr uint32_t RESPAWN					= 0x598420;
 		static constexpr uint32_t GET_FACING_OBJECT			= 0x596DC0;
-		
+		static constexpr uint32_t SET_DRAW_WEAPON			= 0x5A09A0;
+		static constexpr uint32_t DRAW_WEAPON_NOW			= 0x59F8E0;
 	}
 
 	namespace g
@@ -99,12 +104,19 @@ public:
 	void set_model(uint32_t id, bool sync = true);
 	void set_npc_variant(NPCVariant* v);
 	void set_flag(uint32_t mask);
+	void set_flags(uint32_t mask);
 	void remove_flag(uint32_t mask);
 	void set_roll_clamp_enabled(bool v);
 	void dispatch_movement(float angle, float right, float forward, bool aiming);
 	void set_body_stance(uint32_t id);
 	void set_arms_stance(uint32_t id);
 	void setup_punch();
+	void set_weapon(int32_t id);
+	void set_draw_weapon(int32_t slot);
+	void set_draw_weapon(ref<Weapon>& weapon);
+	void draw_weapon_now();
+	void set_aim_target(const vec3& v);
+	void fire_weapon();
 
 	bool has_flag(uint32_t mask) const;
 
@@ -133,6 +145,7 @@ public:
 	ArmsStanceController* get_arms_stance() const;
 
 	vec3 get_velocity();
+	vec3 get_aim_target() const;
 	vec3 get_bone_position(BoneID index) const;
 	vec3 get_head_bone_position();
 	vec3 get_pelvis_bone_position();

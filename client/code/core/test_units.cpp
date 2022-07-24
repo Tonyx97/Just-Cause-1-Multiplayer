@@ -15,6 +15,7 @@
 #include <game/object/agent_type/npc_variant.h>
 #include <game/object/rigid_object/animated_rigid_object.h>
 #include <game/object/character/comps/vehicle_controller.h>
+#include <game/object/weapon/weapon_belt.h>
 #include <game/object/sound/sound_game_obj.h>
 #include <game/object/mission/objective.h>
 #include <game/object/vehicle/vehicle.h>
@@ -27,10 +28,20 @@ DEFINE_HOOK_THISCALL(_is_key_pressed, 0x48C850, bool, int _this, int key)
 	const auto res = _is_key_pressed_hook.call(_this, key);
 
 	if (res)
-		log(RED, "{:x} -> {} from {:x}", key, res, ptr(_ReturnAddress()));
+		log(RED, "[KEY PRESS] {:x} -> {} from {:x}", key, res, ptr(_ReturnAddress()));
 
 	return res;
-};
+}
+
+DEFINE_HOOK_THISCALL(_is_key_down, 0x48C800, bool, int _this, int key)
+{
+	const auto res = _is_key_down_hook.call(_this, key);
+
+	if (res && key != 0x24 && key != 0x26 && key != 0x27)
+		log(RED, "[KEY DOWN] {:x} -> {} from {:x}", key, res, ptr(_ReturnAddress()));
+
+	return res;
+}
 
 DEFINE_HOOK_CCALL(_test, 0x407FD0, void, ptr a1, ptr a2)
 {
@@ -40,12 +51,14 @@ DEFINE_HOOK_CCALL(_test, 0x407FD0, void, ptr a1, ptr a2)
 void jc::test_units::init()
 {
 	_is_key_pressed_hook.hook();
+	//_is_key_down_hook.hook();
 	//_test_hook.hook();
 }
 
 void jc::test_units::destroy()
 {
 	_is_key_pressed_hook.unhook();
+	//_is_key_down_hook.unhook();
 	//_test_hook.unhook();
 }
 
@@ -61,6 +74,9 @@ void jc::test_units::test_0()
 	auto	  local_pos = local_char->get_position();
 	Transform local_t(local_pos);
 
+	if (g_key->is_key_pressed(VK_F5))
+		localplayer->respawn();
+
 	struct TestInfo
 	{
 		CharacterHandle* handle = nullptr;
@@ -71,6 +87,17 @@ void jc::test_units::test_0()
 	if (auto veh_controller = local_char->get_vehicle_controller())
 		if (auto veh = veh_controller->get_vehicle())
 			info.vehicle = veh;
+
+	if (g_key->is_key_pressed(VK_F8))
+	{
+		if (info.character)
+		{
+			g_factory->destroy_character_handle(info.handle);
+
+			info.handle = nullptr;
+			info.character = nullptr;
+		}
+	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD8) && info.vehicle)
 	{
@@ -85,12 +112,6 @@ void jc::test_units::test_0()
 
 		if (r && _char)
 		{
-			/*(*(void(__thiscall**)(VehicleSeat*, Character*, CharacterHandleBase*, int))(*(ptr*)r.obj + 8))(
-				*r,
-				_char,
-				info.character ? info.handle->get_base() : g_player_global_info->get_localplayer_handle_base(),
-				0);*/
-
 			r->warp_character(_char);
 
 			//info.vehicle->set_velocity(vec3(0.f, 10.f, 0.f));
@@ -110,6 +131,12 @@ void jc::test_units::test_0()
 			log(CYAN, "handle base {:x}", ptr(info.handle->get_base()));
 			log(CYAN, "handle base from character {:x}", ptr(info.character->get_handle_base()));
 			log(CYAN, "char {:x}", ptr(info.character));
+
+			if (auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_1H_SMG)) // Weapon_1H_SMG - Weapon_Grenade_Launcher
+			{
+				info.character->set_draw_weapon(weapon);
+				info.character->draw_weapon_now();
+			}
 		}
 		else
 		{
@@ -124,32 +151,38 @@ void jc::test_units::test_0()
 
 	static AnimatedRigidObject* garage_door = nullptr;
 
-	if (g_key->is_key_pressed(VK_F5))
-		localplayer->respawn();
-
-	if (g_key->is_key_pressed(VK_NUMPAD2))
+	if (g_key->is_key_down(VK_NUMPAD2) && info.character)
 	{
-		//handle = g_factory->spawn_character("female1", local_pos + vec3(2.f, 0.f, 0.f), Weapon_Pistol);
+		//garage_door->call_event(0x284);
 
-		//log(RED, "handle {} (char {})", (void*)handle, (void*)handle->get_character());
+		// fire character's weapon
 
-		/*for (const auto& t : temp_vec)
-		{
-			jc::write<uint16_t>(jc::game::float_to_i16(1.f), *t, 0x130);
-			jc::this_call(0x783250, *t, jc::this_call<float>(0x7845B0, *t));
-		}*/
+		//jc::this_call(0x5A50E0, info.character);
+		jc::this_call(0x59FD20, info.character, true);
 
-		garage_door->call_event(0x284);
+		/*auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_Grenade_Launcher);
+
+		info.character->set_draw_weapon(weapon);
+		info.character->draw_weapon_now();*/
 	}
 
-	if (g_key->is_key_pressed(VK_NUMPAD9))
+	if (g_key->is_key_down(VK_NUMPAD9) && info.character)
 	{
-		garage_door->call_event(0x288);
+		// aim character's weapon
+
+		auto local_head_pos = local_char->get_bone_position(BoneID::Head);
+
+		if (g_key->is_key_down(VK_NUMPAD1))
+			info.character->set_flag(CharacterFlag_FullAiming);
+
+		jc::this_call(0x59F7E0, info.character, &local_head_pos);
+
+		//garage_door->call_event(0x288);
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		if (garage_door = g_factory->spawn_animated_rigid_object(
+		/*if (garage_door = g_factory->spawn_animated_rigid_object(
 			local_pos,
 			R"(building_blocks\general\safehouse_guer_garage_door.lod)",
 			R"(models\building_blocks\general\safehouse_guer_garage_door_col.pfx)"))
@@ -168,7 +201,7 @@ void jc::test_units::test_0()
 			close_sound->setup_event_and_subscribe(0xA8, "custom::closedoor");
 			close_sound->setup_event_and_subscribe(0xAC, "custom::opendoor");
 			close_sound->setup_event_and_subscribe(0xB0, "custom::anim_end");
-		}
+		}*/
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD7))
@@ -185,7 +218,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD1))
 	{
-		struct vel_test
+		/*struct vel_test
 		{
 			vec3  dir;
 			vec3  pos;
@@ -213,7 +246,7 @@ void jc::test_units::test_0()
 
 		jc::this_call(0x744B20, physical.obj, &ay.dir, ptr(local_char) + 0x608);
 
-		*(ptr*)(ptr(local_char) + 0x884) =  *(ptr*)(ptr(local_char) + 0x884) & 0xFFFBFFFF;
+		*(ptr*)(ptr(local_char) + 0x884) =  *(ptr*)(ptr(local_char) + 0x884) & 0xFFFBFFFF;*/
 
 		/*auto variant = NPCVariant::CREATE();
 

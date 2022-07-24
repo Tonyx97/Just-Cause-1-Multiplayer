@@ -42,9 +42,14 @@ bool WeaponInfo::can_create_shells()
 	return jc::read<bool>(this, jc::weapon_info::CAN_CREATE_SHELLS);
 }
 
-int32_t WeaponInfo::get_slot()
+int32_t WeaponInfo::get_id() const
 {
-	return jc::read<int32_t>(this, jc::weapon_info::SLOT);
+	return jc::read<int32_t>(this, jc::weapon_info::ID);
+}
+
+int32_t WeaponInfo::get_type_id() const
+{
+	return jc::read<int32_t>(this, jc::weapon_info::TYPE_ID);
 }
 
 int32_t WeaponInfo::get_max_mag_ammo()

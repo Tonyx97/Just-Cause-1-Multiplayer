@@ -266,6 +266,9 @@ void UI::render()
 			}
 		});
 
+		for (int i = 0; i < 10; ++i)
+			ImGui::Spacing();
+
 		const auto character_list = g_world->get_characters();
 
 		if (const auto local_player_pawn = g_world->get_localplayer_character())
@@ -298,6 +301,12 @@ void UI::render()
 				if (const auto weapon_info = weapon->get_info())
 				{
 					weapon_info->set_bullets_to_fire(bullets_per_shoot);
+
+					ImGui::Text("------------------");
+					ImGui::Text("Ptr: 0x%x", *weapon);
+					ImGui::Text("ID: %i", weapon_info->get_type_id());
+					ImGui::Text("Slot: %i", weapon_belt->get_weapon_slot(*weapon));
+					ImGui::Text("Weapon from slot: 0x%x", *weapon_belt->get_weapon_from_slot(weapon_belt->get_weapon_slot(*weapon)));
 				}
 
 				if (show_grip)

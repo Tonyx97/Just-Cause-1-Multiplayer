@@ -5,6 +5,7 @@
 #include <game/transform/transform.h>
 
 #include <game/shared/stances.h>
+#include <game/shared/character.h>
 
 class PlayerClient;
 class CharacterHandle;
@@ -14,7 +15,8 @@ enum PlayerDynamicInfoID : uint32_t
 	PlayerDynInfo_Transform,
 	PlayerDynInfo_Velocity,
 	PlayerDynInfo_HeadRotation,
-	PlayerDynInfo_Skin
+	PlayerDynInfo_Skin,
+	PlayerDynInfo_Health,
 };
 
 enum PlayerStanceID : uint32_t
@@ -23,6 +25,8 @@ enum PlayerStanceID : uint32_t
 	PlayerStanceID_Jump,
 	PlayerStanceID_Punch,
 	PlayerStanceID_BodyStance,
+	PlayerStanceID_Aiming,
+	PlayerStanceID_Fire,
 };
 
 class Player : public NetObject
@@ -35,14 +39,20 @@ public:
 
 		Transform transform {};
 
-		vec3 head_rotation {};
+		vec3 head_rotation {},
+			 aim_target {};
 
 		uint32_t skin = 0u,
 				 body_stance_id = 0u,
 				 arms_stance_id = 0u;
 
+		int32_t weapon_id = 0u;
+
 		float hp = 0.f,
 			  max_hp = 0.f;
+
+		bool hip_aim = false,
+			 full_aim = false;
 	};
 
 	struct MovementInfo
@@ -105,8 +115,15 @@ public:
 	void set_arms_stance_id(uint32_t id);
 	void set_head_rotation(const vec3& v);
 	void do_punch();
+	void set_weapon_id(int32_t id);
+	void set_aim_info(bool hip, bool full, const vec3& target);
+	void fire_weapon();
 
 	bool is_alive() const { return get_hp() > 0.f; }
+	bool is_hip_aiming() const { return dyn_info.hip_aim; }
+	bool is_full_aiming() const { return dyn_info.full_aim; }
+
+	int32_t get_weapon_id() const { return dyn_info.weapon_id; }
 
 	uint32_t get_body_stance_id() const { return dyn_info.body_stance_id; }
 	uint32_t get_arms_stance_id() const { return dyn_info.arms_stance_id; }
@@ -115,6 +132,7 @@ public:
 	float get_max_hp() const;
 
 	const vec3& get_head_rotation() const { return dyn_info.head_rotation; }
+	const vec3& get_aim_target() const { return dyn_info.aim_target; }
 
 	const Transform& get_transform() const { return dyn_info.transform; }
 

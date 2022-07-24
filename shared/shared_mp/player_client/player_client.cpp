@@ -44,23 +44,23 @@ void PlayerClient::startup_sync()
 		PlayerClientSyncInstancesPacket p;
 
 		g_net->for_each_net_object([&](NID, NetObject* obj)
+		{
+			if (auto casted_player = obj->cast<Player>())
 			{
-				if (auto casted_player = obj->cast<Player>())
-				{
-					if (casted_player->get_client()->is_joined())
-					{
-						p.net_objects.push_back(obj);
-
-						log(PURPLE, "Syncing player with NID {:x} ({})", casted_player->get_nid(), casted_player->get_nick());
-					}
-				}
-				else
+				if (casted_player->get_client()->is_joined())
 				{
 					p.net_objects.push_back(obj);
 
-					log(PURPLE, "Syncing net object with NID {:x}", obj->get_nid());
+					log(PURPLE, "Syncing player with NID {:x} ({})", casted_player->get_nid(), casted_player->get_nick());
 				}
-			});
+			}
+			else
+			{
+				p.net_objects.push_back(obj);
+
+				log(PURPLE, "Syncing net object with NID {:x}", obj->get_nid());
+			}
+		});
 
 		// send all net object main info to all players who joined to sync instances
 		// this creates and spawns the players that are not in other players'
@@ -77,22 +77,22 @@ void PlayerClient::startup_sync()
 		PlayerClientBasicInfoPacket p;
 
 		g_net->for_each_joined_player_client([&](NID, PlayerClient* pc)
+		{
+			if (auto player = pc->get_player())
 			{
-				if (auto player = pc->get_player())
+				const auto& dyn_info = player->get_dyn_info();
+
+				p.info.emplace_back(player, PlayerClientBasicInfoPacket::Info
 				{
-					const auto& dyn_info = player->get_dyn_info();
+					.nick = dyn_info.nick,
+					.skin = dyn_info.skin,
+					.hp = dyn_info.hp,
+					.max_hp = dyn_info.max_hp
+				});
 
-					p.info.emplace_back(player, PlayerClientBasicInfoPacket::Info
-						{
-							.nick = dyn_info.nick,
-							.skin = dyn_info.skin,
-							.hp = dyn_info.hp,
-							.max_hp = dyn_info.max_hp
-						});
-
-					log(PURPLE, "Updating player basic info with NID {:x} ({})", player->get_nid(), player->get_nick());
-				}
-			});
+				log(PURPLE, "Updating player basic info with NID {:x} ({})", player->get_nid(), player->get_nick());
+			}
+		});
 
 		// send the basic info of each player to all players
 
@@ -100,7 +100,7 @@ void PlayerClient::startup_sync()
 	}
 
 	// let the other players know this player joined
-
+		
 	g_net->send_broadcast_joined_reliable<ChannelID_PlayerClient>(this, PlayerClientPID_Join, player);
 
 	// set the player as spawned

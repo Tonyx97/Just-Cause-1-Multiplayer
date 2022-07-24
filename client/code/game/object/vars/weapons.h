@@ -10,6 +10,8 @@ enum WeaponSlot
 	WeaponSlot_F,
 	WeaponSlot_G,
 	WeaponSlot_H,
+	WeaponSlot_I,
+	WeaponSlot_J,
 };
 
 enum WeaponID

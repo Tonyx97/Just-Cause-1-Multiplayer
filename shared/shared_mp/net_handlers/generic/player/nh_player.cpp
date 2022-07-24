@@ -100,6 +100,20 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 #ifdef JC_SERVER
 			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, skin_id);
 #endif
+
+			break;
+		}
+		case PlayerDynInfo_Health:
+		{
+			const auto hp = p.get_float();
+
+			player->set_hp(hp);
+
+#ifdef JC_SERVER
+			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, hp);
+#endif
+
+			break;
 		}
 		}
 	}
@@ -169,12 +183,37 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 
 		break;
 	}
+	case PlayerStanceID_Aiming:
+	{
+		const auto hip_aiming = p.get_bool(),
+				   full_aiming = p.get_bool();
+
+		const auto target_pos = p.get_raw<vec3>();
+
+		player->set_aim_info(hip_aiming, full_aiming, target_pos);
+
+#ifdef JC_SERVER
+		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, hip_aiming, full_aiming, target_pos);
+#endif
+
+		break;
+	}
+	case PlayerStanceID_Fire:
+	{
+		player->fire_weapon();
+
+#ifdef JC_SERVER
+		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type);
+#endif
+
+		break;
+	}
 	}
 
 	return enet::PacketRes_Ok;
 }
 
-enet::PacketResult nh::player::health(const enet::Packet& p)
+enet::PacketResult nh::player::set_weapon(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto player = p.get_net_object<Player>();
@@ -187,12 +226,14 @@ enet::PacketResult nh::player::health(const enet::Packet& p)
 	const auto player = pc->get_player();
 #endif
 
-	const float new_hp = p.get_float();
+	const auto weapon_id = p.get_int();
 
-	player->set_hp(new_hp);
+	log(GREEN, "A player changed weapon from {} to {}", player->get_weapon_id(), weapon_id);
+
+	player->set_weapon_id(weapon_id);
 
 #ifdef JC_SERVER
-	g_net->send_broadcast_reliable(pc, PlayerPID_Health, player, new_hp);
+	g_net->send_broadcast_reliable(pc, PlayerPID_SetWeapon, player, weapon_id);
 #endif
 
 	return enet::PacketRes_Ok;

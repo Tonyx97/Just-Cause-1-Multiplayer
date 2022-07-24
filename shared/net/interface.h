@@ -33,7 +33,7 @@ namespace enet
 #ifdef JC_REL
 	static constexpr uint32_t PEER_TIMEOUT = 20 * 1000;
 #else
-	static constexpr uint32_t PEER_TIMEOUT = 10 * 1000;
+	static constexpr uint32_t PEER_TIMEOUT = 10000 * 1000;
 #endif
 
 	enum PacketResult

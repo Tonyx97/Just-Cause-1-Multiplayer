@@ -44,13 +44,13 @@ public:
 	void destroy();
 	void dump();
 
-	int for_each_weapon_template(const weapon_template_iteration_t& fn);
+	int32_t for_each_weapon_template(const weapon_template_iteration_t& fn);
 
-	std::string get_weapon_typename(uint32_t id);
-	std::string get_weapon_model(uint32_t id);
+	std::string get_weapon_typename(int32_t id);
+	std::string get_weapon_model(int32_t id);
 
-	//sptr<Weapon> create_weapon_instance(const std::string& name);
-	//sptr<Weapon> create_weapon_instance(WeaponID id);
+	ref<Weapon> create_weapon_instance(const std::string& name);
+	ref<Weapon> create_weapon_instance(int32_t id);
 };
 
 inline Singleton<WeaponSystem, jc::weapon_system::SINGLETON> g_weapon;
