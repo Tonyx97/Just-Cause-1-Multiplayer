@@ -7,12 +7,8 @@
         "id": "7dd7218ee928210e",
         "type": "leaf",
         "state": {
-          "type": "markdown",
-          "state": {
-            "file": "tony_daily/2022/7 July/24-07-2022.md",
-            "mode": "source",
-            "source": false
-          }
+          "type": "empty",
+          "state": {}
         }
       }
     ],
@@ -69,7 +65,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "tony_daily/2022/7 July/24-07-2022.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -87,17 +82,17 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "7dd7218ee928210e",
+  "active": "3b73bd8a29319710",
   "lastOpenFiles": [
-    "tony_daily/2022/7 July/23-07-2022.md",
     "tony_daily/2022/7 July/24-07-2022.md",
+    "tony_daily/24-07-2022.md",
+    "tony_daily/2022/7 July/23-07-2022.md",
     "tony_daily/2022/7 July/22-07-2022.md",
     "tony_daily/2022/7 July/21-07-2022.md",
     "tony_daily/2022/7 July/18-07-2022.md",
     "tony_daily/2022/7 July/16-07-2022.md",
     "tony_daily/2022/7 July/15-07-2022.md",
     "tony_daily/2022/7 July/13-07-2022.md",
-    "tony_daily/2022/7 July/14-07-2022.md",
-    "tony_daily/20-07-2022.md"
+    "tony_daily/2022/7 July/14-07-2022.md"
   ]
 }
