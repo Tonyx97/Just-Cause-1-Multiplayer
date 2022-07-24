@@ -32,6 +32,46 @@ void Player::verify_exec(const std::function<void(Character*)>& fn)
 		fn(character);
 }
 
+void Player::respawn(float hp, float max_hp, bool sync)
+{
+	check(is_spawned(), "Cannot respawn a player that wasn't spawned before");
+
+	if (sync)
+	{
+		check(is_local(), "Only localplayer respawning can be synced from client");
+
+		g_net->send_reliable(PlayerPID_Respawn, hp, max_hp);
+	}
+	else
+	{
+		// update important information like position and health
+
+		set_hp(hp);
+		set_max_hp(max_hp);
+
+		// respawn the character of this player
+
+		get_character()->respawn();
+	}
+}
+
+void Player::dispatch_movement()
+{
+	verify_exec([&](Character* c)
+	{
+		// todojc - improve the bool setting 
+
+		dispatching_movement = true;
+		c->dispatch_movement(move_info.angle, move_info.right, move_info.forward, move_info.aiming);
+		dispatching_movement = !is_alive();
+	});
+}
+
+bool Player::is_dispatching_movement() const
+{
+	return dispatching_movement;
+}
+
 Character* Player::get_character() const
 {
 	if (is_local())
@@ -43,6 +83,11 @@ Character* Player::get_character() const
 Player::Player(PlayerClient* pc) : client(pc)
 {
 	set_player_client(pc);
+}
+
+void Player::respawn(float hp, float max_hp)
+{
+	g_net->send_broadcast_reliable(get_client(), PlayerPID_Respawn, this, hp, max_hp);
 }
 #endif
 
@@ -64,36 +109,6 @@ Player::~Player()
 #else
 #endif
 }
-
-#ifdef JC_CLIENT
-void Player::respawn(float hp, float max_hp, bool sync)
-{
-	check(is_spawned(), "Cannot respawn a player that wasn't spawned before");
-
-	if (sync)
-	{
-		check(is_local(), "Only localplayer respawning can be synced from client");
-
-		g_net->send_reliable(PlayerPID_Respawn, hp, max_hp);
-	}
-	else
-	{
-		// update important information like position and health
-
-		set_hp(hp);
-		set_max_hp(max_hp);
-
-		// respawn the character of this player
-		
-		get_character()->respawn();
-	}
-}
-#else
-void Player::respawn(float hp, float max_hp)
-{
-	g_net->send_broadcast_reliable(get_client(), PlayerPID_Respawn, this, hp, max_hp);
-}
-#endif
 
 bool Player::spawn()
 {
@@ -249,9 +264,4 @@ void Player::set_skin(uint32_t v)
 uint32_t Player::get_skin() const
 {
 	return dyn_info.skin;
-}
-
-bool Player::must_skip_engine_stances() const
-{
-	return skip_engine_stances;
 }

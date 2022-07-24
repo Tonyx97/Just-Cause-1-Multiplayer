@@ -106,9 +106,7 @@ void jc::mp::logic::on_update_objects()
 
 			// update the player movement
 
-			player->skip_engine_stances = false;
-			player_char->dispatch_movement(move_info.angle, move_info.right, move_info.forward, move_info.aiming);
-			player->skip_engine_stances = player->is_alive();
+			player->dispatch_movement();
 
 			// interpolate the previous transform with the target one
 

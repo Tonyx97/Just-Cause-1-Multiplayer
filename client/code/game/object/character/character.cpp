@@ -72,13 +72,13 @@ namespace jc::character::hook
 			}
 			else if (const auto player = g_net->get_player_by_character(character))
 			{
-				// if we are trying to set the stance from a top-hooked function such as dispatch_movement_t
+				// if we are trying to set the stance from a top-hooked function such as dispatch_movement
 				// then we want to make sure this player's stance can be changed from this local player,
 				// this is useful because we want to ignore all stances that the game sets to remote players
 				// like falling and stuff like that, which will be controlled by packets sent by remote players
 				// containg such information (summary: to avoid desync)
 
-				if (player->must_skip_engine_stances())
+				if (!player->is_dispatching_movement())
 					return;
 			}
 		}

@@ -78,12 +78,11 @@ private:
 #ifdef JC_CLIENT
 	CharacterHandle* handle = nullptr;
 
-	bool local = false;
+	bool local = false,
+		 dispatching_movement = true;
 #endif
 
 public:
-
-	bool skip_engine_stances = true;
 
 	static constexpr uint32_t TYPE() { return NetObject_Player; }
 
@@ -93,19 +92,21 @@ public:
 	Player(PlayerClient* pc, NID nid);
 
 	void verify_exec(const std::function<void(Character*)>& fn);
+	void respawn(float hp, float max_hp, bool sync = true);
+	void dispatch_movement();
 	void set_local() { local = true; }
+
+	bool is_dispatching_movement() const;
+	bool is_local() const { return local; }
+
+	Character* get_character() const;
 #else
 	Player(PlayerClient* pc);
 
 	void verify_exec(auto fn) {}
-#endif
-	~Player();
-
-#ifdef JC_CLIENT
-	void respawn(float hp, float max_hp, bool sync = true);
-#else
 	void respawn(float hp, float max_hp);
 #endif
+	~Player();
 
 	bool spawn() override;
 
@@ -152,14 +153,6 @@ public:
 
 	void set_nick(const std::string& v);
 	void set_skin(uint32_t v);
-
-#ifdef JC_CLIENT
-	Character* get_character() const;
-
-	bool is_local() const { return local; }
-#endif
-
-	bool must_skip_engine_stances() const;
 
 	uint32_t get_skin() const;
 
