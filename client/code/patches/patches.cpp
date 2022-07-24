@@ -10,6 +10,8 @@
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
 
+#include <mp/net.h>
+
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
 {
 	const auto res = play_ambience_2d_sounds_hook.call(a1, a2);
@@ -27,7 +29,7 @@ namespace jc::patches
 	// setting its own values (we load 1.0 and jump straight to the
 	// head interpolation writing instruction)
 	//
-	patch<8> head_rotation_patch(0x64B1F4);
+	patch<13> head_rotation_patch(0x64B1F4);
 
 	// avoids the trashy blur that happens when the localplayer dies,
 	// but most importantly, the state is not reset such as the UI etc
@@ -43,6 +45,25 @@ namespace jc::patches
 	// do not make the death camera slower, just keep rotating baby
 	//
 	patch<2> death_camera_velocity(0x605755);
+}
+
+void __fastcall hk_head_rotation_patch(Skeleton* skeleton, ptr _)
+{
+	// process the head interpolation and movement logic if
+	// it's local player or it's aiming, we need to set our own head rotation
+	// for remote players who aren't aiming, only looking
+
+	if (const auto player = g_net->get_player_by_character(skeleton->get_character()))
+		if (player->is_local() || player->is_hip_aiming() || player->is_full_aiming())
+		{
+			const auto delta = g_time->get_delta();
+
+			const float head_interpolation = skeleton->get_head_interpolation();
+
+			if (skeleton->get_head_interpolation_factor() == 0.f)
+				skeleton->set_head_interpolation(head_interpolation - 1.f * delta);
+			else skeleton->set_head_interpolation(1.f * delta + head_interpolation);
+		}
 }
 
 void jc::patches::apply()
@@ -66,10 +87,17 @@ void jc::patches::apply()
 
 	// apply head rotation patch
 
+	auto head_rotation_patch_offset = jc::calc_call_offset(0x64B1F4 + 6, hk_head_rotation_patch);
+
 	head_rotation_patch._do(
 	{
-		0xD9, 0x05, 0xB4, 0xD2, 0xAE, 0x00,	// fld dword ptr [0xAED2B4]
-		0xEB, 0x49							// jmp
+		0x8B, 0x8D, 0xBC, 0xFD, 0xFF, 0xFF, // mov ecx, [ebp-244h]
+		0xE8,								// call hook
+		head_rotation_patch_offset.b0,
+		head_rotation_patch_offset.b1,
+		head_rotation_patch_offset.b2,
+		head_rotation_patch_offset.b3,
+		0xEB, 0x50							// jmp
 	});
 
 	// apply death state hiding patch

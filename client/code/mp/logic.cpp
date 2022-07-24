@@ -31,6 +31,7 @@ void jc::mp::logic::on_tick()
 			const auto hp = local_char->get_real_hp();
 			const auto max_hp = local_char->get_max_hp();
 			const auto head_rotation = skeleton->get_head_euler_rotation();
+			const auto head_interpolation = skeleton->get_head_interpolation();
 			const bool hip_aiming = localplayer->is_hip_aiming();
 			const bool full_aiming = localplayer->is_full_aiming();
 			const auto aim_target = local_char->get_aim_target();
@@ -54,11 +55,15 @@ void jc::mp::logic::on_tick()
 
 			// head rotation
 
-			if (glm::distance2(head_rotation, localplayer->get_head_rotation()) > 7.5f && head_rotation_timer.ready())
+			if (!hip_aiming &&
+				!full_aiming &&
+				(glm::distance2(head_rotation, localplayer->get_head_rotation()) > 10.f ||
+				head_interpolation != localplayer->get_head_interpolation()) &&
+				head_rotation_timer.ready())
 			{
-				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_HeadRotation, head_rotation);
+				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_HeadRotation, head_rotation, head_interpolation);
 
-				localplayer->set_head_rotation(head_rotation);
+				localplayer->set_head_rotation(head_rotation, head_interpolation);
 			}
 
 			// current weapon id switching
@@ -74,8 +79,6 @@ void jc::mp::logic::on_tick()
 
 			if ((hip_aiming || full_aiming) && aiming_timer.ready())
 				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Aiming, hip_aiming, full_aiming, aim_target);
-
-			//localplayer->set_aim_info(hip_aiming, full_aiming, aim_target);
 		}
 }
 

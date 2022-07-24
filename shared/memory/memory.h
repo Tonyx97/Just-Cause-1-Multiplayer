@@ -47,6 +47,30 @@ namespace jc
 		memset(BITCAST(void*, address), 0x90, size);
 	}
 
+	struct Address
+	{
+		union
+		{
+			struct
+			{
+				uint8_t b0 : 8;
+				uint8_t b1 : 8;
+				uint8_t b2 : 8;
+				uint8_t b3 : 8;
+			};
+
+			ptr value;
+		};
+
+		Address(ptr value) : value(value) {}
+	};
+
+	template <typename Tx, typename Ty>
+	inline Address calc_call_offset(Tx from, Ty to)
+	{
+		return Address((ptr(to) - ptr(from)) - 5);
+	}
+
 	template <typename T, typename X>
 	inline void write_protect(T value, X x, ptr offset = 0u)
 	{

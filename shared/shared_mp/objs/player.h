@@ -53,7 +53,8 @@ public:
 				firing_weapon_id = 0u;
 
 		float hp = 0.f,
-			  max_hp = 0.f;
+			  max_hp = 0.f,
+			  head_interpolation = 0.f;
 
 		bool hip_aim = false,
 			 full_aim = false,
@@ -118,7 +119,7 @@ public:
 	void set_movement_info(float angle, float right, float forward, bool aiming);
 	void set_body_stance_id(uint32_t id);
 	void set_arms_stance_id(uint32_t id);
-	void set_head_rotation(const vec3& v);
+	void set_head_rotation(const vec3& v, float interpolation);
 	void do_punch();
 	void set_weapon_id(int32_t id);
 	void set_aim_info(bool hip, bool full, const vec3& target);
@@ -136,8 +137,9 @@ public:
 	uint32_t get_body_stance_id() const { return dyn_info.body_stance_id; }
 	uint32_t get_arms_stance_id() const { return dyn_info.arms_stance_id; }
 
-	float get_hp() const;
-	float get_max_hp() const;
+	float get_hp() const { return dyn_info.hp / get_max_hp(); }
+	float get_max_hp() const { return dyn_info.max_hp; }
+	float get_head_interpolation() const { return dyn_info.head_interpolation; }
 
 	const vec3& get_head_rotation() const { return dyn_info.head_rotation; }
 	const vec3& get_aim_target() const { return dyn_info.aim_target; }

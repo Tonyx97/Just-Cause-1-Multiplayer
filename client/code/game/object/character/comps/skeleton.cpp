@@ -4,6 +4,8 @@
 
 #include <game/transform/transform.h>
 
+#include "../character.h"
+
 void* SkeletonInstance::get_animator() const
 {
 	return jc::read<void*>(this, jc::skeleton_instance::ANIMATOR);
@@ -40,6 +42,16 @@ bool Skeleton::get_bone_transform(const BoneID index, Transform& out)
 float Skeleton::get_head_interpolation() const
 {
 	return jc::read<float>(this, jc::skeleton::HEAD_INTERPOLATION);
+}
+
+float Skeleton::get_head_interpolation_factor() const
+{
+	return jc::read<float>(this, jc::skeleton::HEAD_INTERPOLATION_FACTOR);
+}
+
+Character* Skeleton::get_character() const
+{
+	return REFB(Character*, this, jc::character::SKELETON);
 }
 
 SkeletonInstance* Skeleton::get_skeleton_0() const

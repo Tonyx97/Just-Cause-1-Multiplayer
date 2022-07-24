@@ -29,7 +29,7 @@ std::atomic_bool g_record_object_map = false;
 
 std::map<std::string, std::pair<uint32_t, ptr>> g_hashes;
 
-constexpr bool ENABLE_HOOKS = false;
+constexpr bool ENABLE_HOOKS = true;
 constexpr bool ENABLE_DUMPING = false;
 constexpr bool ENABLE_STR_DEBUG = false;
 constexpr bool ENABLE_MAP_DEBUG = false;

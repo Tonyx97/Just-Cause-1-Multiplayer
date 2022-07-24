@@ -83,10 +83,12 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 		{
 			const auto rotation = p.get_raw<vec3>();
 
-			player->set_head_rotation(rotation);
+			const float interpolation = p.get_float();
+
+			player->set_head_rotation(rotation, interpolation);
 
 #ifdef JC_SERVER
-			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, rotation);
+			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, rotation, interpolation);
 #endif
 
 			break;

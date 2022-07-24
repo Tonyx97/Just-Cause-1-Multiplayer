@@ -175,12 +175,20 @@ void Player::set_arms_stance_id(uint32_t id)
 #endif
 }
 
-void Player::set_head_rotation(const vec3& v)
+void Player::set_head_rotation(const vec3& v, float interpolation)
 {
 	dyn_info.head_rotation = v;
+	dyn_info.head_interpolation = interpolation;
 
 #ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->get_skeleton()->set_head_euler_rotation(v); });
+	if (!is_hip_aiming() && !is_full_aiming())
+		verify_exec([&](Character* c)
+		{
+			const auto skeleton = c->get_skeleton();
+
+			skeleton->set_head_euler_rotation(v);
+			skeleton->set_head_interpolation(interpolation);
+		});
 #endif
 }
 
@@ -220,16 +228,6 @@ void Player::reload()
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->reload_current_weapon(); });
 #endif
-}
-
-float Player::get_hp() const
-{
-	return dyn_info.hp / get_max_hp();
-}
-
-float Player::get_max_hp() const
-{
-	return dyn_info.max_hp;
 }
 
 // static info getters/setters
