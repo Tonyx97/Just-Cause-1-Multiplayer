@@ -52,6 +52,9 @@ namespace jc::character::hook
 					switch (id)
 					{
 					case 1:
+					case 3:
+					case 4:
+					case 6:
 					case 9: break; // ignore
 					case 85:
 					case 86:
@@ -64,7 +67,7 @@ namespace jc::character::hook
 					}
 					default:
 					{
-						//log(GREEN, "[DBG] Localplayer stance set to: {} from {:x}", id, ret_add);
+						//log(GREEN, "[DBG] Localplayer body stance set to: {} from {:x}", id, ret_add);
 					}
 					}
 				}
@@ -78,8 +81,18 @@ namespace jc::character::hook
 				// like falling and stuff like that, which will be controlled by packets sent by remote players
 				// containg such information (summary: to avoid desync)
 
-				if (!player->is_dispatching_movement())
-					return;
+				switch (id)
+				{
+				case 1:
+				case 3:
+				case 6: break; // allow these to be set to remote players by the engine itself
+				default:
+				{
+					if (!player->is_dispatching_movement())
+						return;
+				}
+				}
+
 			}
 		}
 
@@ -88,6 +101,24 @@ namespace jc::character::hook
 
 	DEFINE_HOOK_THISCALL(set_arms_stance, 0x744230, void, ArmsStanceController* stance, uint32_t id)
 	{
+		if (const auto local_char = g_world->get_localplayer_character())
+		{
+			const auto character = stance->get_character();
+
+			if (character == local_char)
+			{
+				switch (const auto ret_add = ptr(_ReturnAddress()))
+				{
+				default:
+				{
+					/*switch (id)
+					{
+					}*/
+				}
+				}
+			}
+		}
+
 		set_arms_stance_hook.call(stance, id);
 	}
 

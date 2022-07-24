@@ -2,9 +2,13 @@
 
 #include <shared_mp/object_lists.h>
 
+#include "settings.h"
+
 class Net : public ObjectLists
 {
 private:
+	Settings settings {};
+
 	ENetHost* sv = nullptr;
 
 	inline void send_broadcast_reliable(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc = nullptr)
@@ -30,7 +34,6 @@ public:
 	void destroy();
 	void setup_channels();
 	void tick();
-	void send_global_packets();
 
 	template <typename T>
 	inline void send_broadcast_reliable(const T& data)
@@ -70,7 +73,9 @@ public:
 		send_broadcast_joined_reliable(channel, PacketHolder(data), ignore_pc);
 	}
 
-	ENetHost* get_host() const { return sv; };
+	ENetHost* get_host() const { return sv; }
+
+	Settings& get_settings() { return settings; }
 };
 
 inline Net* g_net = nullptr;

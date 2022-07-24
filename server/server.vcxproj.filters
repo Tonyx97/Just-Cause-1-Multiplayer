@@ -21,9 +21,15 @@
     <ClCompile Include="code\mp\net.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\mp\settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\mp\net.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\mp\settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

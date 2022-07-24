@@ -144,8 +144,8 @@ void UI::destroy()
 
 void UI::dispatch()
 {
-	if (g_key->is_key_pressed(VK_INSERT))
-		toggle_debug();
+	if (g_key->is_key_pressed(VK_F1))
+		toggle_admin_panel();
 
 	begin();
 	render();
@@ -221,12 +221,12 @@ void UI::begin()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::GetIO().MouseDrawCursor = show_debug;
+	ImGui::GetIO().MouseDrawCursor = show_admin_panel;
 }
 
 void UI::render()
 {
-	build_debug();
+	render_admin_panel();
 
 	const auto camera = g_camera->get_main_camera();
 
@@ -273,6 +273,9 @@ void UI::render_players()
 
 	g_net->for_each_player([&](Player* player)
 	{
+		if (player->is_local())
+			return;
+
 		const auto player_char = player->get_character();
 		const auto player_pos = player->get_transform().position();
 
@@ -315,42 +318,58 @@ void UI::render_players()
 	});
 }
 
-void UI::build_debug()
+void UI::render_admin_panel()
 {
-	g_key->hijack_engine_io(show_debug);
+	g_key->hijack_engine_io(show_admin_panel);
 
-	if (!show_debug)
+	if (!show_admin_panel)
 		return;
 
-	ImGui::Begin("JC Debug");
+	ImGui::Begin("Admin Panel");
 
-	ImGui::Checkbox("Overlay Debug", &show_overlay_debug);
+	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 
-	if (ImGui::CollapsingHeader("General"))
+	if (ImGui::TreeNode("Server"))
 	{
-		ImGui::Checkbox("No clip", &no_clip);
+		float day_time = g_day_cycle->get_hour();
+
+		if (ImGui::SliderFloat("Day Hour##sv.hour", &day_time, 0.f, 24.f))
+		{
+			g_net->send_reliable<ChannelID_Debug>(DbgPID_SetTime, day_time);
+		}
+
+		ImGui::TreePop();
 	}
 
-	if (ImGui::CollapsingHeader("Characters"))
+	if (ImGui::TreeNode("General"))
+	{
+		ImGui::Checkbox("No clip", &no_clip);
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Characters"))
 	{
 		ImGui::Checkbox("Skeleton", &show_skeleton);
 		ImGui::Checkbox("Velocity", &show_velocity);
 		ImGui::Checkbox("Distance", &show_distance);
 		ImGui::Checkbox("Health", &show_health);
 		ImGui::Checkbox("View direction", &show_view_direction);
+
+		ImGui::TreePop();
 	}
 
-	if (ImGui::CollapsingHeader("Spawning"))
+	if (ImGui::TreeNode("Spawning"))
 	{
 		if (ImGui::Button(spawn_vtable_hooked ? "Unhook" : "Hook"))
 		{
 			// Hook CAgentSpawnPoint vtable.
 			//
 			constexpr auto table_start = static_cast<uintptr_t>(0x00A69340);
-			constexpr auto table_end   = static_cast<uintptr_t>(0x00A693EC);
-			const auto	   p_table	   = reinterpret_cast<uintptr_t*>(table_start);
+			constexpr auto table_end = static_cast<uintptr_t>(0x00A693EC);
+			const auto	   p_table = reinterpret_cast<uintptr_t*>(table_start);
 
-			const auto	size	  = (table_end - table_start) / sizeof uintptr_t;
+			const auto	size = (table_end - table_start) / sizeof uintptr_t;
 			static auto only_once = true;
 			for (auto i = 0; i < size; i++)
 			{
@@ -373,14 +392,15 @@ void UI::build_debug()
 					p_table[i] = original_functions[i];
 				}
 			}
-			only_once			= false;
+			only_once = false;
 			spawn_vtable_hooked = !spawn_vtable_hooked;
 		}
+
 		if (ImGui::Button("Dump CASPs"))
 		{
 			const auto			   start_address = 0x00400000u;
-			const auto			   end_address	 = 0x7FFFFFFFu;
-			auto				   address		 = start_address;
+			const auto			   end_address = 0x7FFFFFFFu;
+			auto				   address = start_address;
 			std::vector<uintptr_t> spawn_points;
 			while (address < end_address)
 			{
@@ -425,6 +445,7 @@ void UI::build_debug()
 				//printf("0x%p\n", spawn_point_address);
 			}
 		}
+
 		if (ImGui::Button("Spawn agent"))
 		{
 			static AgentSpawnPoint* spawn_point = nullptr;
@@ -439,6 +460,7 @@ void UI::build_debug()
 				spawn_point->spawn();
 			}
 		}
+
 		if (ImGui::Button("Spawn vehicle"))
 		{
 			static VehicleSpawnPoint* spawn_point = nullptr;
@@ -451,9 +473,11 @@ void UI::build_debug()
 				spawn_point->spawn();
 			}
 		}
+
+		ImGui::TreePop();
 	}
 
-	if (ImGui::CollapsingHeader("Weapons"))
+	if (ImGui::TreeNode("Weapons"))
 	{
 		ImGui::Checkbox("Bullets", &show_bullets);
 		ImGui::Checkbox("Muzzle", &show_muzzle);
@@ -461,9 +485,11 @@ void UI::build_debug()
 		ImGui::Checkbox("Grip", &show_grip);
 		ImGui::Checkbox("Last grip", &show_last_grip);
 		ImGui::SliderInt("Bullets per shoot", &bullets_per_shoot, 1, 100);
+
+		ImGui::TreePop();
 	}
 
-	if (ImGui::CollapsingHeader("Day Cycle"))
+	if (ImGui::TreeNode("Day Cycle"))
 	{
 		auto hour = g_day_cycle->get_hour();
 
@@ -474,25 +500,27 @@ void UI::build_debug()
 
 		if (ImGui::SliderFloat("Time##daycycle", &hour, 0.f, static_cast<float>(g_day_cycle->get_hours_per_day())))
 			g_day_cycle->set_time(hour);
+
+		ImGui::TreePop();
 	}
 
-	if (ImGui::CollapsingHeader("Vehicles"))
+	if (ImGui::TreeNode("Vehicles"))
 	{
+		ImGui::TreePop();
 	}
+
 	if (ImGui::Button("Load Game"))
 	{
 		static constexpr uintptr_t load_manager = 0x00D32F10;
 
 		static constexpr uintptr_t load_game_address = 0x00493400;
 
-		typedef void(__fastcall * load_game_t)(void* ecx);
+		typedef void(__fastcall* load_game_t)(void* ecx);
 
 		static const auto load_game = reinterpret_cast<load_game_t>(load_game_address);
 
 		load_game(reinterpret_cast<void*>(load_manager));
 	}
-
-	ImGui::Text("Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	ImGui::End();
 }
@@ -508,15 +536,15 @@ void UI::overlay_debug()
 	const auto green_color = ImColor(0, 255, 0);
 
 	g_ammo->for_each_bullet([&](int i, Bullet* bullet)
+	{
+		if (show_bullets)
 		{
-			if (show_bullets)
-			{
-				vec2 sp_root;
+			vec2 sp_root;
 
-				if (camera->w2s(bullet->get_position(), sp_root))
-					v_list->AddText({ sp_root.x, sp_root.y }, green_color, "BULLET");
-			}
-		});
+			if (camera->w2s(bullet->get_position(), sp_root))
+				v_list->AddText({ sp_root.x, sp_root.y }, green_color, "BULLET");
+		}
+	});
 
 	const auto character_list = g_world->get_characters();
 

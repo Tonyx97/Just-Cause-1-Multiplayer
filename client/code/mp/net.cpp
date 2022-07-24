@@ -201,7 +201,7 @@ void Net::setup_channels()
 		return enet::PacketRes_NotFound;
 	});
 
-	// world packet dispatcher
+	// generic packet dispatcher
 
 	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::Packet& p)
 	{
@@ -217,6 +217,18 @@ void Net::setup_channels()
 		case PlayerPID_StanceAndMovement:		return nh::player::stance_and_movement(p);
 		case PlayerPID_SetWeapon:				return nh::player::set_weapon(p);
 		}
+
+		return enet::PacketRes_NotFound;
+	});
+
+	// debug packet dispatcher
+
+	enet::add_channel_dispatcher(ChannelID_Debug, [&](const enet::Packet& p)
+	{
+		// if localplayer is not in game then we don't want any of these packets
+
+		if (!g_game_status->is_in_game())
+			return enet::PacketRes_NotUsable;
 
 		return enet::PacketRes_NotFound;
 	});

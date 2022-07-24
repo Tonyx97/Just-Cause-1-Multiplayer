@@ -100,16 +100,27 @@ void Net::setup_channels()
 
 		return enet::PacketRes_NotFound;
 	});
+
+	// generic packet dispatcher
+
+	enet::add_channel_dispatcher(ChannelID_Debug, [&](const enet::Packet& p)
+	{
+		switch (auto id = p.get_id())
+		{
+		case DbgPID_SetTime:		return nh::dbg::set_time(p);
+		}
+
+		return enet::PacketRes_NotFound;
+	});
 }
 
 void Net::tick()
 {
 	SetWindowText(GetConsoleWindow(), std::format(L"JC:MP Server ({} players connected)", get_player_clients_count()).c_str());
 
-	// send all independent packets to all clients
-	// such as day cycle time etc
+	// process settings and server environment
 	
-	send_global_packets();
+	settings.process();
 
 	// process packets from the players
 
@@ -156,17 +167,4 @@ void Net::tick()
 	});
 
 	std::this_thread::sleep_for(std::chrono::microseconds(8333));
-}
-
-void Net::send_global_packets()
-{
-	static auto day_cycle_timer = timer::add_timer(1000, [&]()
-	{
-		static float test = 0.f;
-		static bool enabled = false;
-
-		test += 0.01f;
-
-		g_net->send_broadcast_reliable<ChannelID_World>(DayCyclePID_SetTime, enabled, test);
-	});
 }

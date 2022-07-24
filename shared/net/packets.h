@@ -48,4 +48,12 @@ enum PlayerPacketID : unsigned int
 enum DayCyclePacketID : unsigned int
 {
 	DayCyclePID_SetTime = PlayerPID_Max,	// day cycle set hour time (0.0-24.0)
+	DayCyclePID_Max
+};
+
+// debug packets
+
+enum DbgPacketID : unsigned int
+{
+	DbgPID_SetTime = DayCyclePID_Max,
 };

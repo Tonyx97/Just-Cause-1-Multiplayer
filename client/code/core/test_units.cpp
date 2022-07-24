@@ -132,7 +132,7 @@ void jc::test_units::test_0()
 			log(CYAN, "handle base from character {:x}", ptr(info.character->get_handle_base()));
 			log(CYAN, "char {:x}", ptr(info.character));
 
-			if (auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_1H_SMG)) // Weapon_1H_SMG - Weapon_Grenade_Launcher
+			if (auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_2H_SMG)) // Weapon_1H_SMG - Weapon_Grenade_Launcher
 			{
 				info.character->set_draw_weapon(weapon);
 				info.character->apply_weapon_switch();

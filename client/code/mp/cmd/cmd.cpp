@@ -10,34 +10,6 @@ namespace cmd
 
 	std::string last_error;
 
-	void register_commands()
-	{
-		// debug commands
-
-		g_cmds.insert({ "debug", toggle_debug });
-		g_cmds.insert({ "netstat", toggle_netstats });
-
-		// player commands
-
-		g_cmds.insert({ "register", register_user });
-		g_cmds.insert({ "login", login });
-		g_cmds.insert({ "logout", logout });
-		g_cmds.insert({ "name", name });
-		g_cmds.insert({ "set_flags", set_flags });
-
-		// resource commands
-
-		g_cmds.insert({ "start", start_resource });
-		g_cmds.insert({ "stop", stop_resource });
-		g_cmds.insert({ "restart", restart_resource });
-		g_cmds.insert({ "refresh", refresh });
-	}
-
-	void destroy_all_commands()
-	{
-		g_cmds.clear();
-	}
-
 	CmdExecRes execute_command(const std::string& cmd, cmd_params params)
 	{
 		if (auto it = g_cmds.find(cmd); it != g_cmds.end())
@@ -207,5 +179,33 @@ namespace cmd
 	const std::string& get_last_error()
 	{
 		return last_error;
+	}
+
+	void register_commands()
+	{
+		// debug commands
+
+		g_cmds.insert({ "debug", toggle_debug });
+		g_cmds.insert({ "netstat", toggle_netstats });
+
+		// player commands
+
+		g_cmds.insert({ "register", register_user });
+		g_cmds.insert({ "login", login });
+		g_cmds.insert({ "logout", logout });
+		g_cmds.insert({ "name", name });
+		g_cmds.insert({ "set_flags", set_flags });
+
+		// resource commands
+
+		g_cmds.insert({ "start", start_resource });
+		g_cmds.insert({ "stop", stop_resource });
+		g_cmds.insert({ "restart", restart_resource });
+		g_cmds.insert({ "refresh", refresh });
+	}
+
+	void destroy_all_commands()
+	{
+		g_cmds.clear();
 	}
 }

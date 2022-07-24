@@ -13,8 +13,8 @@ private:
 	std::once_flag initialize_flag;
 
 	bool initialized = false,
-		 show_debug	 = false,
-		 show_overlay_debug = true;
+		 show_overlay_debug = true,
+		 show_admin_panel = false;
 
 	// ImGui bindings.
 	//
@@ -41,7 +41,7 @@ private:
 	void begin();
 	void render();
 	void render_players();
-	void build_debug();
+	void render_admin_panel();
 	void overlay_debug();
 	void end();
 
@@ -53,10 +53,7 @@ public:
 	void end_window();
 	void draw_filled_rect(float x, float y, float w, float h, const ImVec4& color);
 
-	void toggle_debug()
-	{
-		show_debug = !show_debug;
-	}
+	void toggle_admin_panel() { show_admin_panel = !show_admin_panel; }
 
 	bool is_destroying() const { return destroying; }
 	bool is_destroyed() const { return destroyed; }
