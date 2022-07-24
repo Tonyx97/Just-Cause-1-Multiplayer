@@ -178,11 +178,41 @@ namespace jc::character::hook
 		if (res)
 			if (const auto localplayer = g_net->get_localplayer())
 				if (const auto local_char = localplayer->get_character(); character == local_char)
-				{
-					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Fire);
-				}
-
+					if (auto weapon = local_char->get_weapon_belt()->get_current_weapon())
+						g_net->send_reliable(
+							PlayerPID_StanceAndMovement,
+							PlayerStanceID_Fire,
+							true,
+							weapon->get_info()->get_id(),
+							weapon->get_grip_transform()->position(),
+							weapon->get_aim_target());
+		
 		return res;
+	}
+
+	// hook the localplayer's key dispatch to reload weapon so we know if we should send
+	// the reload msg or not
+	//
+	DEFINE_HOOK_THISCALL_S(reload_current_weapon, 0x5A0220, void, Character* character)
+	{
+		if (const auto lp = g_net->get_localplayer())
+			if (const auto local_char = lp->get_character())
+				if (const auto weapon_belt = local_char->get_weapon_belt())
+					if (auto current_weapon = weapon_belt->get_current_weapon())
+					{
+						const auto was_reloading = current_weapon->is_reloading();
+
+						reload_current_weapon_hook.call(character);
+
+						const auto is_reloading = current_weapon->is_reloading();
+
+						if (is_reloading && was_reloading != is_reloading)
+							g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Reload);
+
+						return;
+					}
+
+		reload_current_weapon_hook.call(character);
 	}
 
 	void apply()
@@ -194,10 +224,12 @@ namespace jc::character::hook
 		setup_punch_hook.hook();
 		update_mid_hook.hook();
 		fire_weapon_hook.hook();
+		reload_current_weapon_hook.hook();
 	}
 
 	void undo()
 	{
+		reload_current_weapon_hook.unhook();
 		fire_weapon_hook.unhook();
 		update_mid_hook.unhook();
 		setup_punch_hook.unhook();
@@ -352,8 +384,11 @@ void Character::setup_punch()
 	jc::character::hook::setup_punch_hook.call(this);
 }
 
-void Character::set_weapon(int32_t id)
+void Character::set_weapon(int32_t id, bool is_player)
 {
+	if (id == 0)
+		return save_current_weapon();
+
 	if (const auto weapon_belt = get_weapon_belt())
 	{
 		for (int i = 0; i < WeaponBelt::MAX_SLOTS(); ++i)
@@ -362,20 +397,31 @@ void Character::set_weapon(int32_t id)
 				if (rf->get_info()->get_id() == id)
 				{
 					set_draw_weapon(rf);
-					draw_weapon_now();
 
-					log(CYAN, "Weapon already exists so we just draw it");
-
-					return;
+					return apply_weapon_switch();
 				}
 			}
 
-		log(CYAN, "Weapon doesn't exist so we add it and draw it");
+		// this character does not have the weapon we want to set so
+		// we create and add it to the weapon belt
 
 		auto rf = weapon_belt->add_weapon(id);
 
+		// do a few adjustments to the weapon if it's owned by a remote player
+
+		if (is_player)
+		{
+			if (const auto weapon_info = rf->get_info())
+			{
+				weapon_info->set_infinite_ammo(true);
+				weapon_info->set_accuracy(true, weapon_info->get_accuracy(false));
+			}
+		}
+
+		// draw the weapon
+
 		set_draw_weapon(rf);
-		draw_weapon_now();
+		apply_weapon_switch();
 	}
 }
 
@@ -395,7 +441,13 @@ void Character::set_draw_weapon(ref<Weapon>& weapon)
 	}
 }
 
-void Character::draw_weapon_now()
+void Character::save_current_weapon()
+{
+	set_draw_weapon(1);
+	apply_weapon_switch();
+}
+
+void Character::apply_weapon_switch()
 {
 	jc::this_call(jc::character::fn::DRAW_WEAPON_NOW, this);
 }
@@ -405,12 +457,24 @@ void Character::set_aim_target(const vec3& v)
 	jc::write(v, this, jc::character::AIM_TARGET);
 }
 
-void Character::fire_weapon()
+void Character::fire_current_weapon(int32_t weapon_id, const vec3& muzzle, const vec3& aim_target)
 {
-	jc::write(true, *get_weapon_belt()->get_current_weapon(), 0x188);
-	jc::write(10.f, *get_weapon_belt()->get_current_weapon(), 0x18C);
+	// let's make sure the weapon id we want to fire is the actual current weapon
 
-	jc::character::hook::fire_weapon_hook.call(this, true);
+	if (const auto weapon_belt = get_weapon_belt())
+		if (auto weapon = weapon_belt->get_current_weapon())
+			if (const auto weapon_info = weapon->get_info(); weapon_info && weapon_info->get_id() == weapon_id)
+			{
+				weapon->set_last_shot_time(jc::nums::MAXF);
+				weapon->set_muzzle_position(muzzle);
+				weapon->set_aim_target(aim_target);
+				weapon->force_fire();
+			}
+}
+
+void Character::reload_current_weapon()
+{
+	jc::this_call<bool>(jc::character::fn::RELOAD_CURRENT_WEAPON, this);
 }
 
 bool Character::has_flag(uint32_t mask) const

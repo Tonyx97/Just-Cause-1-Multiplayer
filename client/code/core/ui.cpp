@@ -230,11 +230,11 @@ void UI::render()
 
 	const auto camera = g_camera->get_main_camera();
 
-	static bool	   open_overlay = true;
-	constexpr auto window_pos	= ImVec2(0.0f, 0.0f);
+	static bool open_overlay = true;
 
-	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always);
+	ImGui::SetNextWindowPos({ 0.f, 0.f }, ImGuiCond_Always);
 	ImGui::SetNextWindowSize({ static_cast<float>(camera->get_width()), static_cast<float>(camera->get_height()) });
+
 	constexpr auto window_flags = ImGuiWindowFlags_NoBackground |
 								  ImGuiWindowFlags_NoCollapse |
 								  ImGuiWindowFlags_NoDecoration |
@@ -247,324 +247,13 @@ void UI::render()
 
 	if (ImGui::Begin("overlay", &open_overlay, window_flags))
 	{
-		const auto v_list	   = ImGui::GetBackgroundDrawList();
-		const auto red_color   = ImColor(255, 0, 0);
-		const auto green_color = ImColor(0, 255, 0);
+		overlay_debug();
 
 		render_players();
 
 		g_chat->update();
-
-		g_ammo->for_each_bullet([&](int i, Bullet* bullet)
-		{
-			if (show_bullets)
-			{
-				vec2 sp_root;
-
-				if (camera->w2s(bullet->get_position(), sp_root))
-					v_list->AddText({ sp_root.x, sp_root.y }, green_color, "BULLET");
-			}
-		});
-
-		for (int i = 0; i < 10; ++i)
-			ImGui::Spacing();
-
-		const auto character_list = g_world->get_characters();
-
-		if (const auto local_player_pawn = g_world->get_localplayer_character())
-		{
-			const auto local_head = local_player_pawn->get_head_bone_position();
-
-			const auto weapon_belt = local_player_pawn->get_weapon_belt();
-
-			const auto local_pos = local_player_pawn->get_position();
-
-			auto local_transform = local_player_pawn->get_transform();
-
-			if (no_clip)
-			{
-				if (g_key->is_key_down(VK_F2))
-				{
-					constexpr auto magnitude	 = 3.0001f;
-					const auto fp		 = g_camera->get_main_camera()->get_model_forward_vector();
-					vec3 forward_position		 = {};
-					forward_position.x			 = local_pos.x + (-fp.x * magnitude);
-					forward_position.y			 = local_pos.y + (-fp.y * magnitude);
-					forward_position.z			 = local_pos.z + (-fp.z * magnitude);
-
-					local_player_pawn->set_position(forward_position);
-				}
-			}
-
-			if (const auto weapon = weapon_belt->get_current_weapon())
-			{
-				if (const auto weapon_info = weapon->get_info())
-				{
-					weapon_info->set_bullets_to_fire(bullets_per_shoot);
-
-					ImGui::Text("------------------");
-					ImGui::Text("Ptr: 0x%x", *weapon);
-					ImGui::Text("ID: %i", weapon_info->get_type_id());
-					ImGui::Text("Slot: %i", weapon_belt->get_weapon_slot(*weapon));
-					ImGui::Text("Weapon from slot: 0x%x", *weapon_belt->get_weapon_from_slot(weapon_belt->get_weapon_slot(*weapon)));
-				}
-
-				if (show_grip)
-				{
-					if (vec2 out_sp; camera->w2s(weapon->get_grip_transform()->position(), out_sp))
-						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFFFF, 30, 2.f);
-				}
-
-				if (show_last_muzzle)
-				{
-					if (vec2 out_sp; camera->w2s(weapon->get_last_muzzle_transform()->position(), out_sp))
-						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFF00, 30, 2.f);
-				}
-
-				if (show_muzzle)
-				{
-					if (vec2 out_sp; camera->w2s(weapon->get_muzzle_transform()->position(), out_sp))
-						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFF00FF, 30, 2.f);
-				}
-
-				if (show_last_grip)
-				{
-					if (vec2 out_sp; camera->w2s(weapon->get_last_ejector_transform()->position(), out_sp))
-						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFF00FFFF, 30, 2.f);
-				}
-			}
-
-			if (const auto vehicle_controller = local_player_pawn->get_vehicle_controller())
-			{
-				ImGui::Text("VehicleController: 0x%x", vehicle_controller);
-
-				if (vec2 out_sp; camera->w2s(vehicle_controller->get_transform()->position(), out_sp))
-					v_list->AddCircle({ out_sp.x, out_sp.y }, 20.f, 0xFFFFFFFF, 30, 5.f);
-
-				if (const auto vehicle = vehicle_controller->get_vehicle())
-				{
-					ImGui::Text("Vehicle: 0x%x", vehicle);
-				}
-			}
-
-			ptr			   closest_hp_ptr		= 0;
-			static Weapon* closest_weapon		= nullptr;
-			float		   closest_ped_distance = FLT_MAX;
-
-			for (const auto pawn : character_list)
-			{
-				if (pawn == local_player_pawn)
-					continue;
-
-				/*if (!pawn->is_alive())
-					continue;*/
-
-				const auto pawn_position	  = pawn->get_position();
-				const auto pawn_head_position = pawn->get_head_bone_position();
-
-				vec2 sp_root, sp_head;
-
-				// Skip if behind a screen.
-				//
-				if (!camera->w2s(pawn_position, sp_root))
-					continue;
-				if (!camera->w2s(pawn_head_position, sp_head))
-					continue;
-
-				ray_hit_info hit_info;
-
-				bool res = g_physics->raycast(local_head, pawn_head_position, hit_info);
-
-				auto is_visible = false;
-
-				if (hit_info.object)
-					is_visible = true;
-
-				const auto pawn_transform = pawn->get_transform();
-
-				if (g_key->is_key_pressed(VK_F3))
-					jc::this_call(0x60E110, pawn->get_weapon_belt(), &pawn_transform);
-
-				const float distance = glm::distance(local_player_pawn->get_position(), pawn_position);
-
-				/*if (g_key->is_key_pressed(VK_MULTIPLY))
-					pawn->set_animation(R"(Models\Characters\Animations\Special\plant_bomb.anim)", 0.1f);*/
-
-				if (distance <= closest_ped_distance)
-				{
-					closest_ped_distance = distance;
-					// closest_weapon = pawn->get_weapon_belt() ? pawn->get_weapon_belt()->get_current_weapon() : nullptr;
-				}
-
-				const auto root_screen_position = ImVec2(sp_root.x, sp_root.y);
-
-				auto pad = 0;
-				if (show_health)
-				{
-					v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.1f}%", pawn->get_hp()).c_str());
-					pad += 1;
-				}
-				if (show_velocity)
-				{
-					const auto vel = pawn->get_velocity();
-					v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.1f} ({:.1f}, {:.1f}, {:.1f})", glm::length(vel), vel.x, vel.y, vel.z).c_str());
-					pad += 1;
-				}
-				if (show_distance)
-				{
-					v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.4f}", distance).c_str());
-					pad += 1;
-				}
-				//if (show_distance)
-				{
-					//v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:x}", ptr(pawn)).c_str());
-					pad += 1;
-				}
-				if (show_skeleton)
-				{
-					static std::vector<std::pair<BoneID, BoneID>> connections = {
-						{ BoneID::Head, BoneID::Neck },
-
-						{ BoneID::Neck, BoneID::ClavicleL },
-						{ BoneID::Neck, BoneID::ClavicleR },
-						{ BoneID::Neck, BoneID::Stomach },
-						{ BoneID::Stomach, BoneID::Waist },
-						{ BoneID::Waist, BoneID::Pelvis },
-						{ BoneID::Pelvis, BoneID::LegL },
-						{ BoneID::Pelvis, BoneID::LegR },
-
-						{ BoneID::ClavicleL, BoneID::ShoulderArmL },
-						{ BoneID::ShoulderArmL, BoneID::ElbowL },
-						{ BoneID::ElbowL, BoneID::HandL },
-						{ BoneID::HandL, BoneID::FingersL },
-
-						{ BoneID::ClavicleR, BoneID::ShoulderArmR },
-						{ BoneID::ShoulderArmR, BoneID::ElbowR },
-						{ BoneID::ElbowR, BoneID::HandR },
-						{ BoneID::HandR, BoneID::FingersR },
-
-						{ BoneID::LegL, BoneID::KneeL },
-						{ BoneID::KneeL, BoneID::FootL },
-
-						{ BoneID::LegR, BoneID::KneeR },
-						{ BoneID::KneeR, BoneID::FootR },
-					};
-
-					for (const auto& [from, to] : connections)
-					{
-						const auto bone_from = pawn->get_bone_position(from),
-								   bone_to	 = pawn->get_bone_position(to);
-
-						vec2 bone_from_sp,
-							bone_to_sp;
-
-						camera->w2s(bone_from, bone_from_sp);
-						camera->w2s(bone_to, bone_to_sp);
-
-						v_list->AddLine(ImVec2(bone_from_sp.x, bone_from_sp.y), ImVec2(bone_to_sp.x, bone_to_sp.y), is_visible ? green_color : red_color);
-					}
-				}
-
-				if (show_view_direction)
-				{
-					const auto fp = pawn->get_view_direction();
-					vec3 view_dir_position = {};
-					view_dir_position.x	   = pawn_head_position.x + fp.x * 1.5f;
-					view_dir_position.y	   = pawn_head_position.y + fp.y * 1.5f;
-					view_dir_position.z	   = pawn_head_position.z + fp.z * 1.5f;
-
-					vec2 sp_view_dir;
-
-					// Skip if behind a screen.
-					//
-					if (!camera->w2s(view_dir_position, sp_view_dir))
-						continue;
-
-					v_list->AddLine({ sp_head.x, sp_head.y }, { sp_view_dir.x, sp_view_dir.y }, is_visible ? green_color : red_color);
-				}
-			}
-
-			ImGui::Text("------------------");
-			ImGui::Text("Closest HP ptr: 0x%x", closest_hp_ptr);
-			ImGui::Text("Facing object: 0x%x", ptr(local_player_pawn->get_facing_object()));
-
-			if (closest_weapon)
-				ImGui::Text("Closest Weapon: 0x%x", ptr(closest_weapon));
-			ImGui::Text("------------------");
-
-			vec3 lt;
-			quat lr;
-			vec3 ls;
-
-			{
-				local_transform.decompose(lt, lr, ls);
-
-				ImGui::Text("Position: %.2f %.2f %.2f", lt.x, lt.y, lt.z);
-				ImGui::Text("Rotation: %.2f %.2f %.2f %.2f", lr.w, lr.x, lr.y, lr.z);
-				ImGui::Text("Scale: %.2f %.2f %.2f", ls.x, ls.y, ls.z);
-			}
-
-			{
-				if (auto local_char = g_world->get_localplayer_character())
-				{
-					auto localp = g_world->get_localplayer();
-
-					auto local_transform = local_char->get_transform();
-
-					static CharacterHandle* cc_h = nullptr;
-
-					if (g_key->is_key_pressed(VK_F4))
-						localp->get_character()->set_hp(1.f);
-
-					if (g_key->is_key_pressed(VK_F6))
-					{
-						if (!g_test_char)
-						{
-							g_factory->create_objective(local_pos + vec3(20.f, 0.f, 0.f), { util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), 255 });
-
-							cc_h = g_factory->spawn_character("female1", g_world->get_localplayer_character()->get_position());
-							g_test_char = cc_h->get_character();
-							g_test_char->set_model(126);
-							g_test_char->set_invincible(true);
-						}
-						else
-						{
-							//cc->respawn();
-							g_factory->destroy_character_handle(cc_h);
-							cc_h = nullptr;
-							g_test_char = nullptr;
-						}
-
-						log(RED, "{:x}", ptr(g_test_char));
-					}
-
-					/*if (g_test_char && g_test_char->is_alive())
-					{
-						// interpolate main transform
-
-						auto previous_t = g_test_char->get_transform();
-
-						local_transform.translate(vec3(0.f, 0.f, 2.f));
-
-						previous_t.interpolate(local_transform, 0.2f, 0.05f);
-
-						g_test_char->set_transform(previous_t);
-
-						vec3 vel = {};
-
-						// interpolate head rotation
-
-						const auto target = local_char->get_skeleton()->get_head_euler_rotation();
-
-						if (glm::length(target) > 0.f)
-						{
-							g_test_char->get_skeleton()->set_head_euler_rotation(target);
-						}
-					}*/
-				}
-			}
-		}
 	}
+
 	ImGui::End();
 }
 
@@ -634,6 +323,8 @@ void UI::build_debug()
 		return;
 
 	ImGui::Begin("JC Debug");
+
+	ImGui::Checkbox("Overlay Debug", &show_overlay_debug);
 
 	if (ImGui::CollapsingHeader("General"))
 	{
@@ -804,6 +495,327 @@ void UI::build_debug()
 	ImGui::Text("Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	ImGui::End();
+}
+
+void UI::overlay_debug()
+{
+	if (!show_overlay_debug)
+		return;
+
+	const auto camera = g_camera->get_main_camera();
+	const auto v_list = ImGui::GetBackgroundDrawList();
+	const auto red_color = ImColor(255, 0, 0);
+	const auto green_color = ImColor(0, 255, 0);
+
+	g_ammo->for_each_bullet([&](int i, Bullet* bullet)
+		{
+			if (show_bullets)
+			{
+				vec2 sp_root;
+
+				if (camera->w2s(bullet->get_position(), sp_root))
+					v_list->AddText({ sp_root.x, sp_root.y }, green_color, "BULLET");
+			}
+		});
+
+	const auto character_list = g_world->get_characters();
+
+	if (const auto local_player_pawn = g_world->get_localplayer_character())
+	{
+		for (int i = 0; i < 10; ++i)
+			ImGui::Spacing();
+
+		const auto local_head = local_player_pawn->get_head_bone_position();
+
+		const auto weapon_belt = local_player_pawn->get_weapon_belt();
+
+		const auto local_pos = local_player_pawn->get_position();
+
+		auto local_transform = local_player_pawn->get_transform();
+
+		if (no_clip)
+		{
+			if (g_key->is_key_down(VK_F2))
+			{
+				constexpr auto magnitude = 3.0001f;
+				const auto fp = g_camera->get_main_camera()->get_model_forward_vector();
+				vec3 forward_position = {};
+				forward_position.x = local_pos.x + (-fp.x * magnitude);
+				forward_position.y = local_pos.y + (-fp.y * magnitude);
+				forward_position.z = local_pos.z + (-fp.z * magnitude);
+
+				local_player_pawn->set_position(forward_position);
+			}
+		}
+
+		if (const auto weapon = weapon_belt->get_current_weapon())
+		{
+			if (const auto weapon_info = weapon->get_info())
+			{
+				weapon_info->set_bullets_to_fire(bullets_per_shoot);
+
+				ImGui::Text("------------------");
+				ImGui::Text("Ptr: 0x%x", *weapon);
+				ImGui::Text("ID: %i", weapon_info->get_type_id());
+				ImGui::Text("Slot: %i", weapon_belt->get_weapon_slot(*weapon));
+				ImGui::Text("Weapon from slot: 0x%x", *weapon_belt->get_weapon_from_slot(weapon_belt->get_weapon_slot(*weapon)));
+			}
+
+			if (show_grip)
+			{
+				if (vec2 out_sp; camera->w2s(weapon->get_grip_transform()->position(), out_sp))
+					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFFFF, 30, 2.f);
+			}
+
+			if (show_last_muzzle)
+			{
+				if (vec2 out_sp; camera->w2s(weapon->get_last_muzzle_transform()->position(), out_sp))
+					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFF00, 30, 2.f);
+			}
+
+			if (show_muzzle)
+			{
+				if (vec2 out_sp; camera->w2s(weapon->get_muzzle_transform()->position(), out_sp))
+					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFF00FF, 30, 2.f);
+			}
+
+			if (show_last_grip)
+			{
+				if (vec2 out_sp; camera->w2s(weapon->get_last_ejector_transform()->position(), out_sp))
+					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFF00FFFF, 30, 2.f);
+			}
+		}
+
+		if (const auto vehicle_controller = local_player_pawn->get_vehicle_controller())
+		{
+			ImGui::Text("VehicleController: 0x%x", vehicle_controller);
+
+			if (vec2 out_sp; camera->w2s(vehicle_controller->get_transform()->position(), out_sp))
+				v_list->AddCircle({ out_sp.x, out_sp.y }, 20.f, 0xFFFFFFFF, 30, 5.f);
+
+			if (const auto vehicle = vehicle_controller->get_vehicle())
+			{
+				ImGui::Text("Vehicle: 0x%x", vehicle);
+			}
+		}
+
+		ptr			   closest_hp_ptr = 0;
+		static Weapon* closest_weapon = nullptr;
+		float		   closest_ped_distance = FLT_MAX;
+
+		for (const auto pawn : character_list)
+		{
+			if (pawn == local_player_pawn)
+				continue;
+
+			/*if (!pawn->is_alive())
+				continue;*/
+
+			const auto pawn_position = pawn->get_position();
+			const auto pawn_head_position = pawn->get_head_bone_position();
+
+			vec2 sp_root, sp_head;
+
+			// Skip if behind a screen.
+			//
+			if (!camera->w2s(pawn_position, sp_root))
+				continue;
+			if (!camera->w2s(pawn_head_position, sp_head))
+				continue;
+
+			ray_hit_info hit_info;
+
+			bool res = g_physics->raycast(local_head, pawn_head_position, hit_info);
+
+			auto is_visible = false;
+
+			if (hit_info.object)
+				is_visible = true;
+
+			const auto pawn_transform = pawn->get_transform();
+
+			if (g_key->is_key_pressed(VK_F3))
+				jc::this_call(0x60E110, pawn->get_weapon_belt(), &pawn_transform);
+
+			const float distance = glm::distance(local_player_pawn->get_position(), pawn_position);
+
+			/*if (g_key->is_key_pressed(VK_MULTIPLY))
+				pawn->set_animation(R"(Models\Characters\Animations\Special\plant_bomb.anim)", 0.1f);*/
+
+			if (distance <= closest_ped_distance)
+			{
+				closest_ped_distance = distance;
+				// closest_weapon = pawn->get_weapon_belt() ? pawn->get_weapon_belt()->get_current_weapon() : nullptr;
+			}
+
+			const auto root_screen_position = ImVec2(sp_root.x, sp_root.y);
+
+			auto pad = 0;
+			if (show_health)
+			{
+				v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.1f}%", pawn->get_hp()).c_str());
+				pad += 1;
+			}
+			if (show_velocity)
+			{
+				const auto vel = pawn->get_velocity();
+				v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.1f} ({:.1f}, {:.1f}, {:.1f})", glm::length(vel), vel.x, vel.y, vel.z).c_str());
+				pad += 1;
+			}
+			if (show_distance)
+			{
+				v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.4f}", distance).c_str());
+				pad += 1;
+			}
+			//if (show_distance)
+			{
+				//v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:x}", ptr(pawn)).c_str());
+				pad += 1;
+			}
+			if (show_skeleton)
+			{
+				static std::vector<std::pair<BoneID, BoneID>> connections = {
+					{ BoneID::Head, BoneID::Neck },
+
+					{ BoneID::Neck, BoneID::ClavicleL },
+					{ BoneID::Neck, BoneID::ClavicleR },
+					{ BoneID::Neck, BoneID::Stomach },
+					{ BoneID::Stomach, BoneID::Waist },
+					{ BoneID::Waist, BoneID::Pelvis },
+					{ BoneID::Pelvis, BoneID::LegL },
+					{ BoneID::Pelvis, BoneID::LegR },
+
+					{ BoneID::ClavicleL, BoneID::ShoulderArmL },
+					{ BoneID::ShoulderArmL, BoneID::ElbowL },
+					{ BoneID::ElbowL, BoneID::HandL },
+					{ BoneID::HandL, BoneID::FingersL },
+
+					{ BoneID::ClavicleR, BoneID::ShoulderArmR },
+					{ BoneID::ShoulderArmR, BoneID::ElbowR },
+					{ BoneID::ElbowR, BoneID::HandR },
+					{ BoneID::HandR, BoneID::FingersR },
+
+					{ BoneID::LegL, BoneID::KneeL },
+					{ BoneID::KneeL, BoneID::FootL },
+
+					{ BoneID::LegR, BoneID::KneeR },
+					{ BoneID::KneeR, BoneID::FootR },
+				};
+
+				for (const auto& [from, to] : connections)
+				{
+					const auto bone_from = pawn->get_bone_position(from),
+						bone_to = pawn->get_bone_position(to);
+
+					vec2 bone_from_sp,
+						bone_to_sp;
+
+					camera->w2s(bone_from, bone_from_sp);
+					camera->w2s(bone_to, bone_to_sp);
+
+					v_list->AddLine(ImVec2(bone_from_sp.x, bone_from_sp.y), ImVec2(bone_to_sp.x, bone_to_sp.y), is_visible ? green_color : red_color);
+				}
+			}
+
+			if (show_view_direction)
+			{
+				const auto fp = pawn->get_view_direction();
+				vec3 view_dir_position = {};
+				view_dir_position.x = pawn_head_position.x + fp.x * 1.5f;
+				view_dir_position.y = pawn_head_position.y + fp.y * 1.5f;
+				view_dir_position.z = pawn_head_position.z + fp.z * 1.5f;
+
+				vec2 sp_view_dir;
+
+				// Skip if behind a screen.
+				//
+				if (!camera->w2s(view_dir_position, sp_view_dir))
+					continue;
+
+				v_list->AddLine({ sp_head.x, sp_head.y }, { sp_view_dir.x, sp_view_dir.y }, is_visible ? green_color : red_color);
+			}
+		}
+
+		ImGui::Text("------------------");
+		ImGui::Text("Closest HP ptr: 0x%x", closest_hp_ptr);
+		ImGui::Text("Facing object: 0x%x", ptr(local_player_pawn->get_facing_object()));
+
+		if (closest_weapon)
+			ImGui::Text("Closest Weapon: 0x%x", ptr(closest_weapon));
+		ImGui::Text("------------------");
+
+		vec3 lt;
+		quat lr;
+		vec3 ls;
+
+		{
+			local_transform.decompose(lt, lr, ls);
+
+			ImGui::Text("Position: %.2f %.2f %.2f", lt.x, lt.y, lt.z);
+			ImGui::Text("Rotation: %.2f %.2f %.2f %.2f", lr.w, lr.x, lr.y, lr.z);
+			ImGui::Text("Scale: %.2f %.2f %.2f", ls.x, ls.y, ls.z);
+		}
+
+		{
+			if (auto local_char = g_world->get_localplayer_character())
+			{
+				auto localp = g_world->get_localplayer();
+
+				auto local_transform = local_char->get_transform();
+
+				static CharacterHandle* cc_h = nullptr;
+
+				if (g_key->is_key_pressed(VK_F4))
+					localp->get_character()->set_hp(1.f);
+
+				if (g_key->is_key_pressed(VK_F6))
+				{
+					if (!g_test_char)
+					{
+						g_factory->create_objective(local_pos + vec3(20.f, 0.f, 0.f), { util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), 255 });
+
+						cc_h = g_factory->spawn_character("female1", g_world->get_localplayer_character()->get_position());
+						g_test_char = cc_h->get_character();
+						g_test_char->set_model(126);
+						g_test_char->set_invincible(true);
+					}
+					else
+					{
+						//cc->respawn();
+						g_factory->destroy_character_handle(cc_h);
+						cc_h = nullptr;
+						g_test_char = nullptr;
+					}
+
+					log(RED, "{:x}", ptr(g_test_char));
+				}
+
+				/*if (g_test_char && g_test_char->is_alive())
+				{
+					// interpolate main transform
+
+					auto previous_t = g_test_char->get_transform();
+
+					local_transform.translate(vec3(0.f, 0.f, 2.f));
+
+					previous_t.interpolate(local_transform, 0.2f, 0.05f);
+
+					g_test_char->set_transform(previous_t);
+
+					vec3 vel = {};
+
+					// interpolate head rotation
+
+					const auto target = local_char->get_skeleton()->get_head_euler_rotation();
+
+					if (glm::length(target) > 0.f)
+					{
+						g_test_char->get_skeleton()->set_head_euler_rotation(target);
+					}
+				}*/
+			}
+		}
+	}
 }
 
 void UI::end()

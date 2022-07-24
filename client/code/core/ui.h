@@ -13,7 +13,8 @@ private:
 	std::once_flag initialize_flag;
 
 	bool initialized = false,
-		 show_debug	 = false;
+		 show_debug	 = false,
+		 show_overlay_debug = true;
 
 	// ImGui bindings.
 	//
@@ -41,6 +42,7 @@ private:
 	void render();
 	void render_players();
 	void build_debug();
+	void overlay_debug();
 	void end();
 
 public:

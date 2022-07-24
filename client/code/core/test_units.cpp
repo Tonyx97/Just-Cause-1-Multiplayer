@@ -50,14 +50,14 @@ DEFINE_HOOK_CCALL(_test, 0x407FD0, void, ptr a1, ptr a2)
 
 void jc::test_units::init()
 {
-	_is_key_pressed_hook.hook();
+	//_is_key_pressed_hook.hook();
 	//_is_key_down_hook.hook();
 	//_test_hook.hook();
 }
 
 void jc::test_units::destroy()
 {
-	_is_key_pressed_hook.unhook();
+	//_is_key_pressed_hook.unhook();
 	//_is_key_down_hook.unhook();
 	//_test_hook.unhook();
 }
@@ -135,7 +135,7 @@ void jc::test_units::test_0()
 			if (auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_1H_SMG)) // Weapon_1H_SMG - Weapon_Grenade_Launcher
 			{
 				info.character->set_draw_weapon(weapon);
-				info.character->draw_weapon_now();
+				info.character->apply_weapon_switch();
 			}
 		}
 		else
@@ -158,12 +158,15 @@ void jc::test_units::test_0()
 		// fire character's weapon
 
 		//jc::this_call(0x5A50E0, info.character);
-		jc::this_call(0x59FD20, info.character, true);
+		//jc::this_call(0x59FD20, info.character, true);
+
+		jc::write<int16_t>(1, info.character->get_weapon_belt(), 0xF4);
+		info.character->apply_weapon_switch();
 
 		/*auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_Grenade_Launcher);
 
 		info.character->set_draw_weapon(weapon);
-		info.character->draw_weapon_now();*/
+		info.character->apply_weapon_switch();*/
 	}
 
 	if (g_key->is_key_down(VK_NUMPAD9) && info.character)

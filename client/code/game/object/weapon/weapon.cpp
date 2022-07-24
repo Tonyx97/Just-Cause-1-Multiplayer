@@ -37,6 +37,18 @@ void WeaponInfo::set_can_create_shells(bool v)
 	jc::write(v, this, jc::weapon_info::CAN_CREATE_SHELLS);
 }
 
+void WeaponInfo::set_accuracy(bool ai, float v)
+{
+	if (ai)
+		jc::write(v, this, jc::weapon_info::ACCURACY_AI);
+	else jc::write(v, this, jc::weapon_info::ACCURACY_PLAYER);
+}
+
+void WeaponInfo::set_infinite_ammo(bool v)
+{
+	jc::write(v, this, jc::weapon_info::INFINITE_AMMO);
+}
+
 bool WeaponInfo::can_create_shells()
 {
 	return jc::read<bool>(this, jc::weapon_info::CAN_CREATE_SHELLS);
@@ -67,14 +79,20 @@ int32_t WeaponInfo::get_fire_sound_id()
 	return jc::read<int32_t>(this, jc::weapon_info::FIRE_SOUND_ID);
 }
 
-float WeaponInfo::get_bullet_force1()
+float WeaponInfo::get_bullet_force1() const
 {
 	return jc::read<float>(this, jc::weapon_info::BULLET_FORCE1);
 }
 
-float WeaponInfo::get_bullet_force2()
+float WeaponInfo::get_bullet_force2() const
 {
 	return jc::read<float>(this, jc::weapon_info::BULLET_FORCE2);
+}
+
+float WeaponInfo::get_accuracy(bool ai) const
+{
+	return ai ? jc::read<float>(this, jc::weapon_info::ACCURACY_AI) :
+				jc::read<float>(this, jc::weapon_info::ACCURACY_PLAYER);
 }
 
 vec3 WeaponInfo::get_muzzle_offset()
@@ -97,9 +115,39 @@ void Weapon::set_ammo(int32_t v)
 	jc::write(v, this, jc::weapon::AMMO);
 }
 
-bool Weapon::is_firing()
+void Weapon::set_last_shot_time(float v)
 {
-	return jc::read<bool>(this, jc::weapon::FIRING);
+	jc::write(v, this, jc::weapon::LAST_SHOT_TIME);
+}
+
+void Weapon::set_muzzle_position(const vec3& v)
+{
+	jc::write(v, this, jc::weapon::MUZZLE_POSITION);
+}
+
+void Weapon::set_aim_target(const vec3& v)
+{
+	jc::write(v, this, jc::weapon::AIM_TARGET);
+}
+
+void Weapon::force_fire()
+{
+	jc::write(true, this, jc::weapon::CAN_FIRE);
+}
+
+bool Weapon::is_reloading() const
+{
+	return jc::read<bool>(this, jc::weapon::RELOADING);
+}
+
+bool Weapon::is_firing() const
+{
+	return jc::read<bool>(this, jc::weapon::CAN_FIRE);
+}
+
+bool Weapon::is_trigger_pulled() const
+{
+	return jc::read<bool>(this, jc::weapon::TRIGGER_PULLED);
 }
 
 int32_t Weapon::get_ammo()
@@ -132,9 +180,9 @@ Character* Weapon::get_owner()
 	return jc::read<Character*>(this, jc::weapon::CHARACTER_OWNER);
 }
 
-vec3 Weapon::get_aim_hit_position()
+vec3 Weapon::get_aim_target()
 {
-	return jc::read<vec3>(this, jc::weapon::AIM_HIT_POSITION);
+	return jc::read<vec3>(this, jc::weapon::AIM_TARGET);
 }
 
 Transform* Weapon::get_grip_transform()

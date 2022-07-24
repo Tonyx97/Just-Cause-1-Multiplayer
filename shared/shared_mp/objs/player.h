@@ -27,6 +27,7 @@ enum PlayerStanceID : uint32_t
 	PlayerStanceID_BodyStance,
 	PlayerStanceID_Aiming,
 	PlayerStanceID_Fire,
+	PlayerStanceID_Reload,
 };
 
 class Player : public NetObject
@@ -40,19 +41,23 @@ public:
 		Transform transform {};
 
 		vec3 head_rotation {},
-			 aim_target {};
+			 aim_target {},
+			 fire_muzzle {},
+			 fire_target {};
 
 		uint32_t skin = 0u,
 				 body_stance_id = 0u,
 				 arms_stance_id = 0u;
 
-		int32_t weapon_id = 0u;
+		int32_t weapon_id = 0u,
+				firing_weapon_id = 0u;
 
 		float hp = 0.f,
 			  max_hp = 0.f;
 
 		bool hip_aim = false,
-			 full_aim = false;
+			 full_aim = false,
+			 fire_weapon = false;
 	};
 
 	struct MovementInfo
@@ -117,12 +122,15 @@ public:
 	void do_punch();
 	void set_weapon_id(int32_t id);
 	void set_aim_info(bool hip, bool full, const vec3& target);
-	void fire_weapon();
+	void set_fire_weapon_info(bool fire, int32_t weapon_id = 0, const vec3& muzzle = {}, const vec3& target = {});
+	void reload();
 
 	bool is_alive() const { return get_hp() > 0.f; }
 	bool is_hip_aiming() const { return dyn_info.hip_aim; }
 	bool is_full_aiming() const { return dyn_info.full_aim; }
+	bool is_firing() const { return dyn_info.fire_weapon; }
 
+	int32_t get_firing_weapon_id() const { return dyn_info.firing_weapon_id; }
 	int32_t get_weapon_id() const { return dyn_info.weapon_id; }
 
 	uint32_t get_body_stance_id() const { return dyn_info.body_stance_id; }
@@ -133,6 +141,8 @@ public:
 
 	const vec3& get_head_rotation() const { return dyn_info.head_rotation; }
 	const vec3& get_aim_target() const { return dyn_info.aim_target; }
+	const vec3& get_fire_muzzle() const { return dyn_info.fire_muzzle; }
+	const vec3& get_fire_target() const { return dyn_info.fire_target; }
 
 	const Transform& get_transform() const { return dyn_info.transform; }
 

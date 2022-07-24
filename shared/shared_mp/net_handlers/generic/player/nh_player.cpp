@@ -200,7 +200,36 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	}
 	case PlayerStanceID_Fire:
 	{
-		player->fire_weapon();
+		const auto firing = p.get_bool();
+
+		if (firing)
+		{
+			const auto weapon_id = p.get_int();
+			const auto muzzle_pos = p.get_raw<vec3>();
+			const auto target_pos = p.get_raw<vec3>();
+
+			player->set_fire_weapon_info(firing, weapon_id, muzzle_pos, target_pos);
+
+#ifdef JC_SERVER
+			g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, firing, weapon_id, muzzle_pos, target_pos);
+#endif
+		}
+		else
+		{
+			player->set_fire_weapon_info(firing);
+
+#ifdef JC_SERVER
+			g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, firing);
+#endif
+		}
+
+		break;
+	}
+	case PlayerStanceID_Reload:
+	{
+		log(GREEN, "reloading...");
+
+		player->reload();
 
 #ifdef JC_SERVER
 		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type);

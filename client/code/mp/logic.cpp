@@ -111,7 +111,7 @@ void jc::mp::logic::on_update_objects()
 
 			player_char->set_transform(previous_transform.interpolate(target_transform, 0.4f, 0.4f));
 
-			// aiming
+			// aiming weapon
 
 			bool hip_aim = false,
 				 full_aim = false;
@@ -130,6 +130,18 @@ void jc::mp::logic::on_update_objects()
 					 target_aim_target = player->get_aim_target();
 
 				player_char->set_aim_target(glm::lerp(previous_aim_target, target_aim_target, 0.25f));
+			}
+
+			// firing weapon
+
+			if (player->is_firing())
+			{
+				player_char->fire_current_weapon(
+					player->get_firing_weapon_id(),
+					player->get_fire_muzzle(),
+					player->get_fire_target());
+				
+				player->set_fire_weapon_info(false);
 			}
 
 			break;

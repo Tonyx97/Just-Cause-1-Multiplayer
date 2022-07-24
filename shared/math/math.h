@@ -65,7 +65,26 @@ namespace tvg::prefetch
 		if constexpr (sizeof...(args) > 0)
 			prefetch(args...);
 	}
-};
+}
+
+namespace jc::nums
+{
+	static constexpr auto EPSILON = std::numeric_limits<float>::epsilon();
+	static constexpr auto LOWF = std::numeric_limits<float>::lowest();
+	static constexpr auto MINF = std::numeric_limits<float>::min();
+	static constexpr auto MAXF = std::numeric_limits<float>::max();
+	static constexpr auto MINI = std::numeric_limits<int32_t>::min();
+	static constexpr auto MAXI = std::numeric_limits<int32_t>::max();
+	static constexpr auto PI = std::numbers::pi_v<float>;
+	static constexpr auto PI_DBL = std::numbers::pi_v<double>;
+	static constexpr auto DOUBLE_PI = static_cast<float>(PI_DBL * 2.0);
+	static constexpr auto HALF_PI = static_cast<float>(PI_DBL * 0.5);
+	static constexpr auto QUARTER_PI = static_cast<float>(PI_DBL * 0.25);
+	static constexpr auto ALMOST_DOUBLE_PI = DOUBLE_PI - EPSILON;
+	static constexpr auto ALMOST_DOUBLE_PI_N = -DOUBLE_PI + EPSILON;
+	static constexpr auto ALMOST_PI = PI - EPSILON;
+	static constexpr auto ALMOST_HALF_PI = HALF_PI - EPSILON;
+}
 
 namespace jc::math
 {

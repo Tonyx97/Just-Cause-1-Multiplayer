@@ -53,6 +53,7 @@ namespace jc::character
 		static constexpr uint32_t GET_FACING_OBJECT			= 0x596DC0;
 		static constexpr uint32_t SET_DRAW_WEAPON			= 0x5A09A0;
 		static constexpr uint32_t DRAW_WEAPON_NOW			= 0x59F8E0;
+		static constexpr uint32_t RELOAD_CURRENT_WEAPON		= 0x5A0220;
 	}
 
 	namespace g
@@ -111,12 +112,14 @@ public:
 	void set_body_stance(uint32_t id);
 	void set_arms_stance(uint32_t id);
 	void setup_punch();
-	void set_weapon(int32_t id);
+	void set_weapon(int32_t id, bool is_player = true);
 	void set_draw_weapon(int32_t slot);
 	void set_draw_weapon(ref<Weapon>& weapon);
-	void draw_weapon_now();
+	void save_current_weapon();
+	void apply_weapon_switch();
 	void set_aim_target(const vec3& v);
-	void fire_weapon();
+	void fire_current_weapon(int32_t weapon_id, const vec3& muzzle, const vec3& aim_target);
+	void reload_current_weapon();
 
 	bool has_flag(uint32_t mask) const;
 

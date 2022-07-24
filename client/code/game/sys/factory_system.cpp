@@ -43,7 +43,7 @@ using namespace jc::factory_system::v;
 void FactorySystem::init()
 {
 	set_max_character_spawns(0);
-	//set_max_vehicle_spawns(0);
+	set_max_vehicle_spawns(0);
 }
 
 void FactorySystem::destroy()
@@ -59,8 +59,8 @@ void FactorySystem::destroy()
 
 	// set the default amount of spawns for characters and vehicles
 
-	set_max_character_spawns(20);
-	set_max_vehicle_spawns(20);
+	set_max_character_spawns(8);
+	set_max_vehicle_spawns(4);
 }
 
 void FactorySystem::set_max_character_spawns(int v)
