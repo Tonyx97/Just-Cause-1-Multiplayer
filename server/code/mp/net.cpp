@@ -144,8 +144,6 @@ void Net::tick()
 		}
 		case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
 		{
-			log(RED, "some time out");
-
 			AS_PC(e.peer->data)->set_timed_out();
 
 			[[fallthrough]];

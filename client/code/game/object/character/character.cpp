@@ -415,6 +415,11 @@ void Character::setup_punch()
 	jc::character::hook::setup_punch_hook.call(this);
 }
 
+void Character::clear_weapon_belt()
+{
+	get_weapon_belt()->clear();
+}
+
 void Character::set_weapon(int32_t id, bool is_remote_player)
 {
 	if (id == 0)

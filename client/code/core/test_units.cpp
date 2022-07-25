@@ -169,16 +169,9 @@ void jc::test_units::test_0()
 		info.character->apply_weapon_switch();*/
 	}
 
-	if (g_key->is_key_down(VK_NUMPAD9) && info.character)
+	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
-		// aim character's weapon
-
-		auto local_head_pos = local_char->get_bone_position(BoneID::Head);
-
-		if (g_key->is_key_down(VK_NUMPAD1))
-			info.character->set_flag(CharacterFlag_FullAiming);
-
-		jc::this_call(0x59F7E0, info.character, &local_head_pos);
+		local_char->get_weapon_belt()->remove_weapon(8);
 
 		//garage_door->call_event(0x288);
 	}
