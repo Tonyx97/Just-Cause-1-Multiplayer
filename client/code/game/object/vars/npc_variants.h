@@ -55,4 +55,26 @@ namespace jc::vars::npc_variants
 		{ 25,	"f2_npc_049_nun.dds" },
 		{ 26,	"f2_npc_050_indian.dds" },
 	};
+
+	inline std::unordered_map<uint32_t, std::string> props =
+	{
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+		{ 0000,	"aaaaaaaaaaaaaaaaa.dds" },
+	};
 }
