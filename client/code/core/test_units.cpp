@@ -151,6 +151,9 @@ void jc::test_units::test_0()
 
 	static AnimatedRigidObject* garage_door = nullptr;
 
+	if (g_key->is_key_pressed(KEY_F))
+		local_char->play_idle_stance();
+
 	if (g_key->is_key_down(VK_NUMPAD2) && info.character)
 	{
 		//garage_door->call_event(0x284);

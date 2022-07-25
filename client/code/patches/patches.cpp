@@ -36,6 +36,11 @@ namespace jc::patches
 	//
 	patch<2> drop_weapon_on_death_patch(0x590810);
 
+	// avoids the idle animation when the local player is standing still
+	// and not moving
+	//
+	patch<2> no_idle_animation(0x591443);
+
 	// avoids the trashy blur that happens when the localplayer dies,
 	// but most importantly, the state is not reset such as the UI etc
 	// this allows us to directly respawn our localplayer's character
@@ -112,6 +117,13 @@ void jc::patches::apply()
 		0xEB, 0x2E
 	});
 
+	// apply no idle stance patch
+
+	no_idle_animation._do(
+	{
+		0xEB, 0x19
+	});
+
 	// apply death state hiding patch
 
 	death_state._do(
@@ -143,6 +155,7 @@ void jc::patches::undo()
 	death_camera_velocity._undo();
 	set_health_red_fx._undo();
 	death_state._undo();
+	no_idle_animation._undo();
 	drop_weapon_on_death_patch._undo();
 	head_rotation_patch._undo();
 

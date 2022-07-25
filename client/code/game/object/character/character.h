@@ -33,6 +33,8 @@ namespace jc::character
 	static constexpr uint32_t GRENADE_TIME				= 0x918; // float
 	static constexpr uint32_t HANDLE_ENTRY				= 0x91C; // CharacterHandleEntry
 	static constexpr uint32_t INFO						= 0x924; // CharacterInfo*
+	static constexpr uint32_t IDLE_STANCE_TIME			= 0xA14; // float
+	static constexpr uint32_t IDLE_STANCE_INTERVAL		= 0xA18; // float
 	static constexpr uint32_t ROLL_CLAMP				= 0xA34; // float
 
 	namespace fn
@@ -107,6 +109,7 @@ public:
 	void set_flag(uint32_t mask);
 	void set_flags(uint32_t mask);
 	void remove_flag(uint32_t mask);
+	void play_idle_stance();
 	void set_roll_clamp_enabled(bool v);
 	void dispatch_movement(float angle, float right, float forward, bool aiming);
 	void set_body_stance(uint32_t id);

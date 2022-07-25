@@ -390,6 +390,11 @@ void Character::remove_flag(uint32_t mask)
 	jc::write(get_flags() & ~mask, this, jc::character::FLAGS);
 }
 
+void Character::play_idle_stance()
+{
+	jc::write(-1.f, this, jc::character::IDLE_STANCE_TIME);
+}
+
 void Character::set_roll_clamp_enabled(bool v)
 {
 	jc::write(v ? 0.f : 1.f, this, jc::character::ROLL_CLAMP);
