@@ -620,5 +620,8 @@
     <ClInclude Include="code\game\object\vehicle\comps\vehicle_seat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="code\game\object\vars\npc_variants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

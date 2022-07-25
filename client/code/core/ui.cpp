@@ -18,6 +18,7 @@
 #include <game/object/spawn_point/agent_spawn_point.h>
 #include <game/object/spawn_point/vehicle_spawn_point.h>
 #include <game/object/localplayer/localplayer.h>
+#include <game/object/agent_type/npc_variant.h>
 
 #include <mp/chat/chat.h>
 #include <mp/net.h>
@@ -404,11 +405,51 @@ void UI::render_admin_panel()
 	if (ImGui::TreeNode("Skins"))
 	{
 		static int skin_to_set = 0;
+		static int head_skin = 0;
+		static int cloth_skin = 0;
 
 		ImGui::SliderInt("Skin to set##ap.skn.tset", &skin_to_set, 0, 153);
 
 		if (ImGui::Button("Set Skin##ap.skn.set"))
 			local_char->set_model(skin_to_set);
+
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Spacing();
+
+		if (ImGui::SliderInt("Head Skin##ap.hskn.set", &head_skin, 0, 8))
+		{
+			object_base_map map {};
+
+			map.insert<object_base_map::String>(NPCVariant::Hash_HeadSkinSlot1, jc::vars::npc_variants::head_skins[head_skin]);
+			map.insert<object_base_map::Int>(0x937af6a, 1);
+
+			auto npc_variant = NPCVariant::CREATE();
+
+			npc_variant->init_from_map(&map);
+
+			local_char->set_npc_variant(*npc_variant);
+		}
+
+		if (ImGui::SliderInt("Cloth Skin##ap.cskn.set", &cloth_skin, 0, 26))
+		{
+			object_base_map map {};
+
+			map.insert<object_base_map::String>(NPCVariant::Hash_ClothSkinSlot1, jc::vars::npc_variants::cloth_skins[cloth_skin]);
+			map.insert<object_base_map::Int>(NPCVariant::Hash_ForceAccessory1, 0);
+			map.insert<object_base_map::Int>(NPCVariant::Hash_ForceAccessory2, 0);
+			map.insert<object_base_map::Int>(NPCVariant::Hash_ForceAccessory3, 0);
+			map.insert<object_base_map::Int>(NPCVariant::Hash_ForceAccessory4, 0);
+			map.insert<object_base_map::Int>(NPCVariant::Hash_ForceAccessory5, 0);
+			map.insert<object_base_map::Int>(0x937af6a, 1);
+
+			auto npc_variant = NPCVariant::CREATE();
+
+			npc_variant->init_from_map(&map);
+
+			local_char->set_npc_variant(*npc_variant);
+		}
+
 
 		ImGui::TreePop();
 	}

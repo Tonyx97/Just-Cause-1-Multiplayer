@@ -246,6 +246,7 @@
     <ClInclude Include="code\game\object\ui\target_indicator.h" />
     <ClInclude Include="code\game\object\ui\map_icon.h" />
     <ClInclude Include="code\game\object\vars\exported_entities.h" />
+    <ClInclude Include="code\game\object\vars\npc_variants.h" />
     <ClInclude Include="code\game\object\vars\ui.h" />
     <ClInclude Include="code\game\object\vars\weapons.h" />
     <ClInclude Include="code\game\object\vehicle\airplane.h" />

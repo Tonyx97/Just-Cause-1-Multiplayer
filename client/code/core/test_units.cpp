@@ -174,7 +174,44 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
-		local_char->clear_weapon_belt();
+		object_base_map map {};
+
+		//map.insert<object_base_map::String>(0x1f56a843, R"(npc_montano.dds)");
+		//map.insert<object_base_map::String>(0xB7FC2EEB, R"(characters\paperdolls\m5_npc_056_elitesoldier.dds)");
+		//map.insert<object_base_map::String>(0x35AD5990, R"(characters\paperdolls\m3_npc_030_bigmodciv.dds)");
+		//map.insert<object_base_map::String>(0x4B69F7A8, R"(characters\paperdolls\m1_npc_044_worker.dds)");
+		map.insert<object_base_map::String>(NPCVariant::Hash_HeadSkinSlot1, R"(f_npc_head2.dds)");
+		//map.insert<object_base_map::String>(NPCVariant::Hash_ClothColor, R"(yellow.bmp)");
+
+		/*map.insert<object_base_map::String>(NPCVariant::Hash_Accessory1_Slot1, R"(prop_camohat.lod)");
+		map.insert<object_base_map::String>(NPCVariant::Hash_Accessory1_Slot2, R"(prop_capbackward.lod)");
+		map.insert<object_base_map::String>(NPCVariant::Hash_Accessory1_Slot3, R"(prop_cowboyhat.lod)");
+		map.insert<object_base_map::String>(NPCVariant::Hash_Accessory1_Slot4, R"(prop_bandana.lod)");*/
+
+		/*map.insert<object_base_map::String>(NPCVariant::Hash_Accessory2_Slot1, R"(PROP_brownglasses.lod)");
+		map.insert<object_base_map::String>(NPCVariant::Hash_Accessory2_Slot2, R"(PROP_blacksunglasses.lod)");
+
+		map.insert<object_base_map::String>(NPCVariant::Hash_Accessory3_Slot1, R"(prop_cigar.lod)");
+		map.insert<object_base_map::String>(NPCVariant::Hash_Accessory3_Slot2, R"(prop_bottle.lod)");*/
+
+		//map.insert<object_base_map::String>(NPCVariant::Hash_Accessory1_Loc, R"(head)");
+		//map.insert<object_base_map::String>(NPCVariant::Hash_Accessory2_Loc, R"(head)");
+		//map.insert<object_base_map::String>(NPCVariant::Hash_Accessory3_Loc, R"(attach_right)");
+
+		map.insert<object_base_map::Int>(0x571ca15f, 0);
+		map.insert<object_base_map::Int>(0xa9af310b, 0);
+		map.insert<object_base_map::Int>(0xdcd3fd50, 0);
+		map.insert<object_base_map::Int>(0x3bd8220c, 0);
+		map.insert<object_base_map::Int>(0xd6ecd709, 0);
+		map.insert<object_base_map::Int>(0x937af6a, 1);
+
+		//map.insert<object_base_map::String>(0xdfe26313, R"(characters\paperdolls\paperdoll_male5.lod)");
+
+		auto npc_variant = NPCVariant::CREATE();
+
+		npc_variant->init_from_map(&map);
+
+		local_char->set_npc_variant(*npc_variant);
 
 		//garage_door->call_event(0x288);
 	}

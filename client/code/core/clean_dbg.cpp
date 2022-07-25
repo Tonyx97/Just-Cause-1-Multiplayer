@@ -29,8 +29,10 @@ std::atomic_bool g_record_object_map = false;
 
 std::map<std::string, std::pair<uint32_t, ptr>> g_hashes;
 
-constexpr bool ENABLE_HOOKS = false;
+constexpr bool ENABLE_HOOKS = true;
+constexpr bool ENABLE_RAYCAST_DEBUG = false;
 constexpr bool ENABLE_DUMPING = false;
+constexpr bool ENABLE_INIT_FROM_MAP_DUMP = false;
 constexpr bool ENABLE_STR_DEBUG = false;
 constexpr bool ENABLE_MAP_DEBUG = false;
 
@@ -201,15 +203,25 @@ DEFINE_HOOK_THISCALL(raycast, jc::physics::fn::RAYCAST, void*, uintptr_t _this, 
 	return raycast_hook.call(_this, r, a1, distance, hit_info, a3, a4, a5);
 }
 
-DEFINE_HOOK_THISCALL(object_init_from_map, 0x6D8E30, void, ObjectBase* object, object_base_map* map)
+DEFINE_HOOK_THISCALL(object_init_from_map, 0x816660, void, ObjectBase* object, object_base_map* map)
 {
-	if (g_record_object_map)
+	if (ENABLE_INIT_FROM_MAP_DUMP)
 	{
 		log(WHITE, "------------------ {:x} --------------------------", ptr(object));
 
 		map->walk();
 
 		log(WHITE, "---------------------------------------------------");
+	}
+	else
+	{
+		g_record_object_map = true;
+
+		object_init_from_map_hook.call(object, map);
+
+		g_record_object_map = false;
+
+		return;
 	}
 
 	object_init_from_map_hook.call(object, map);
@@ -303,8 +315,8 @@ DEFINE_HOOK_THISCALL(object_map_find_string, 0x46ADD0, bool, object_base_map* ma
 {
 	auto res = object_map_find_string_hook.call(map, hash, out);
 
-	if (res && g_record_object_map)
-		log(GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\");", *hash, out->c_str());
+	if (res && g_record_object_map && out->unk > 0)
+		log(*hash == 0xFBA08D60 ? RED : GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\");", *hash, out->c_str());
 
 	return res;
 }
@@ -313,7 +325,7 @@ DEFINE_HOOK_CCALL(object_map_find_event, 0x987DD0, bool, object_base_map* map, u
 {
 	auto res = object_map_find_event_hook.call(map, hash, out_ptr, out);
 
-	if (res && g_record_object_map)
+	if (res && g_record_object_map && out->length > 0)
 		log(GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\"); // weird string 1", hash, out->c_str());
 
 	return res;
@@ -323,7 +335,7 @@ DEFINE_HOOK_CCALL(object_map_find_event2, 0x987E80, bool, object_base_map* map, 
 {
 	auto res = object_map_find_event2_hook.call(map, hash, out_ptr, out);
 
-	if (res && g_record_object_map)
+	if (res && g_record_object_map && out->length > 0)
 		log(GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\"); // weird string 2", hash, out->c_str());
 
 	return res;
@@ -355,7 +367,9 @@ void jc::clean_dbg::init()
 	{
 		// general debug
 
-		raycast_hook.hook();
+		if (ENABLE_RAYCAST_DEBUG)
+			raycast_hook.hook();
+
 		print_error_hook.hook();
 		initialize_string_hook.hook();
 		hash_str_hook.hook();
@@ -495,7 +509,9 @@ void jc::clean_dbg::destroy()
 		hash_str_hook.unhook();
 		initialize_string_hook.unhook();
 		print_error_hook.unhook();
-		raycast_hook.unhook();
+
+		if (ENABLE_RAYCAST_DEBUG)
+			raycast_hook.unhook();
 
 		// string dumper
 
