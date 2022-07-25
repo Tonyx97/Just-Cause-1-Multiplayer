@@ -31,6 +31,11 @@ namespace jc::patches
 	//
 	patch<13> head_rotation_patch(0x64B1F4);
 
+	// avoids the engine to drop the current weapon upon a character's death
+	// because this causes issues with the weapon sync
+	//
+	patch<2> drop_weapon_on_death_patch(0x590810);
+
 	// avoids the trashy blur that happens when the localplayer dies,
 	// but most importantly, the state is not reset such as the UI etc
 	// this allows us to directly respawn our localplayer's character
@@ -100,6 +105,13 @@ void jc::patches::apply()
 		0xEB, 0x50							// jmp
 	});
 
+	// apply drop weapon on death patch
+
+	drop_weapon_on_death_patch._do(
+	{
+		0xEB, 0x2E
+	});
+
 	// apply death state hiding patch
 
 	death_state._do(
@@ -131,6 +143,7 @@ void jc::patches::undo()
 	death_camera_velocity._undo();
 	set_health_red_fx._undo();
 	death_state._undo();
+	drop_weapon_on_death_patch._undo();
 	head_rotation_patch._undo();
 
 	play_ambience_2d_sounds_hook.unhook();

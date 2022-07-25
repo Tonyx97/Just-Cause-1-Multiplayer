@@ -28,3 +28,20 @@ struct mat4 {
         float m[4][4];
     };
 };
+
+template <typename T>
+struct ref_count
+{
+	void* vt;
+	int	  uses, weaks;
+	int	  unk1;
+	T*	  obj;
+	int	  unk2;
+};
+
+template <typename T>
+struct ref
+{
+	T*			  obj	  = nullptr;
+	ref_count<T>* counter = nullptr;
+};

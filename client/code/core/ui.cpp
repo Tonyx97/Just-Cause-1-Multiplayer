@@ -401,6 +401,18 @@ void UI::render_admin_panel()
 		ImGui::TreePop();
 	}
 
+	if (ImGui::TreeNode("Skins"))
+	{
+		static int skin_to_set = 0;
+
+		ImGui::SliderInt("Skin to set##ap.skn.tset", &skin_to_set, 0, 153);
+
+		if (ImGui::Button("Set Skin##ap.skn.set"))
+			local_char->set_model(skin_to_set);
+
+		ImGui::TreePop();
+	}
+
 	if (ImGui::TreeNode("Day Cycle"))
 	{
 		auto hour = g_day_cycle->get_hour();

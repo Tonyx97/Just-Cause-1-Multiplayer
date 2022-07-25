@@ -15,7 +15,7 @@ void jc::mp::logic::on_tick()
 	// send and update our local player info
 
 	static TimerRaw transform_timer(enet::TICKS_MS);
-	static TimerRaw head_rotation_timer(enet::TICKS_MS);
+	static TimerRaw head_rotation_timer(enet::TICKS_MS * 25);
 	static TimerRaw aiming_timer(enet::TICKS_MS * 5);
 
 	if (auto localplayer = g_net->get_localplayer())
@@ -57,7 +57,8 @@ void jc::mp::logic::on_tick()
 
 			if (!hip_aiming &&
 				!full_aiming &&
-				(glm::distance2(head_rotation, localplayer->get_head_rotation()) > 10.f ||
+				head_interpolation == 1.f &&
+				(glm::distance(head_rotation, localplayer->get_head_rotation()) > 5.f ||
 				head_interpolation != localplayer->get_head_interpolation()) &&
 				head_rotation_timer.ready())
 			{

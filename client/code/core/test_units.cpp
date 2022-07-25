@@ -171,7 +171,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
-		local_char->get_weapon_belt()->remove_weapon(8);
+		local_char->clear_weapon_belt();
 
 		//garage_door->call_event(0x288);
 	}
