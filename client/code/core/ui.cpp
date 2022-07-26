@@ -136,7 +136,7 @@ void UI::destroy()
 	ImGui::DestroyContext();
 
 	g_key->reset_wnd_proc(jc_hwnd);
-	g_key->hijack_engine_io(false);
+	g_key->block_input(false);
 
 	initialized = false;
 	destroyed	= true;
@@ -340,7 +340,7 @@ void UI::render_admin_panel()
 		current_weapon->get_info()->set_infinite_ammo(infinite_ammo);
 	}
 
-	g_key->hijack_engine_io(show_admin_panel);
+	g_key->block_input(show_admin_panel);
 
 	if (!show_admin_panel)
 		return;
@@ -354,9 +354,7 @@ void UI::render_admin_panel()
 		float day_time = g_day_cycle->get_hour();
 
 		if (ImGui::SliderFloat("Day Hour##ap.sv.time", &day_time, 0.f, 24.f))
-		{
 			g_net->send_reliable<ChannelID_Debug>(DbgPID_SetTime, day_time);
-		}
 
 		ImGui::TreePop();
 	}
@@ -408,6 +406,34 @@ void UI::render_admin_panel()
 		static int head_skin = 0;
 		static int cloth_skin = 0;
 
+		static std::vector<VariantPropInfo> accessories =
+		{
+			{
+				.prop = -1,
+				.loc = 0,
+			},
+
+			{
+				.prop = -1,
+				.loc = 0,
+			},
+
+			{
+				.prop = -1,
+				.loc = 0,
+			},
+
+			{
+				.prop = -1,
+				.loc = 0,
+			},
+
+			{
+				.prop = -1,
+				.loc = 0,
+			},
+		};
+
 		ImGui::SliderInt("Skin to set##ap.skn.tset", &skin_to_set, 0, 153);
 
 		if (ImGui::Button("Set Skin##ap.skn.set"))
@@ -417,39 +443,28 @@ void UI::render_admin_panel()
 		ImGui::Spacing();
 		ImGui::Spacing();
 
-		if (ImGui::SliderInt("Head Skin##ap.hskn.set", &head_skin, 0, 8))
+		if (ImGui::SliderInt("Cloth Skin##ap.cskn.set", &cloth_skin, -1, 26))
+			local_char->set_npc_variant(cloth_skin, head_skin, -1, accessories);
+
+		if (ImGui::SliderInt("Head Skin##ap.hskn.set", &head_skin, -1, 8))
+			local_char->set_npc_variant(cloth_skin, head_skin, -1, accessories);
+
+		for (int i = 0; i < 5; ++i)
 		{
-			object_base_map map {};
+			ImGui::Text(("Prop: " + jc::vars::npc_variants::props[accessories[i].prop]).c_str());
+			ImGui::Text(("Location: " + jc::vars::npc_variants::prop_locs[accessories[i].loc]).c_str());
 
-			map.insert<object_base_map::String>(NPCVariant::Hash_HeadSkinSlot1, jc::vars::npc_variants::head_skins[head_skin]);
-			map.insert<object_base_map::Int>(0x937af6a, 1);
+			bool any_changed = false;
 
-			auto npc_variant = NPCVariant::CREATE();
+			if (ImGui::SliderInt(("Prop##ap.prop.set" + std::to_string(i)).c_str(), &accessories[i].prop, -1, 74))
+				any_changed = true;
 
-			npc_variant->init_from_map(&map);
+			if (ImGui::SliderInt(("Prop Location##ap.propl.set" + std::to_string(i)).c_str(), &accessories[i].loc, 0, 19))
+				any_changed = true;
 
-			local_char->set_npc_variant(*npc_variant);
+			if (any_changed)
+				local_char->set_npc_variant(cloth_skin, head_skin, -1, accessories);
 		}
-
-		if (ImGui::SliderInt("Cloth Skin##ap.cskn.set", &cloth_skin, 0, 26))
-		{
-			object_base_map map {};
-
-			map.insert<object_base_map::String>(NPCVariant::Hash_ClothSkinSlot1, jc::vars::npc_variants::cloth_skins[cloth_skin]);
-			map.insert<object_base_map::Int>(NPCVariant::Hash_ForceAccessory1, 0);
-			map.insert<object_base_map::Int>(NPCVariant::Hash_ForceAccessory2, 0);
-			map.insert<object_base_map::Int>(NPCVariant::Hash_ForceAccessory3, 0);
-			map.insert<object_base_map::Int>(NPCVariant::Hash_ForceAccessory4, 0);
-			map.insert<object_base_map::Int>(NPCVariant::Hash_ForceAccessory5, 0);
-			map.insert<object_base_map::Int>(0x937af6a, 1);
-
-			auto npc_variant = NPCVariant::CREATE();
-
-			npc_variant->init_from_map(&map);
-
-			local_char->set_npc_variant(*npc_variant);
-		}
-
 
 		ImGui::TreePop();
 	}

@@ -6,6 +6,21 @@
 
 namespace util
 {
+	namespace stl
+	{
+		template <typename T>
+		struct is_vector
+		{
+			static constexpr bool value = false;
+		};
+
+		template <typename T, typename Alloc>
+		struct is_vector<std::vector<T, Alloc>>
+		{
+			static constexpr bool value = true;
+		};
+	}
+
 	namespace string
 	{
 		inline std::vector<std::string> split(const std::string& str, char delimiter)

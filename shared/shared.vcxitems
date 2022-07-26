@@ -19,6 +19,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)defs\libs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)defs\standard.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)game\shared\character.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)game\shared\npc_variant.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)game\shared\stances.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)game\transform\transform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)math\math.h" />

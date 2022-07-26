@@ -245,6 +245,18 @@ void Player::reload()
 #endif
 }
 
+void Player::set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props)
+{
+	skin_info.cloth_skin = cloth_skin;
+	skin_info.head_skin = head_skin;
+	skin_info.cloth_color = cloth_color;
+	skin_info.props = props;
+
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->set_npc_variant(cloth_skin, head_skin, cloth_color, props, false); });
+#endif
+}
+
 // static info getters/setters
 
 void Player::set_nick(const std::string& v)

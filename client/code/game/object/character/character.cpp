@@ -21,7 +21,6 @@
 
 #include "../exported_entity/exported_entity.h"
 #include "../resource/ee_resource.h"
-#include "../agent_type/npc_variant.h"
 
 // hooks
 
@@ -373,6 +372,61 @@ void Character::set_model(uint32_t id, bool sync)
 void Character::set_npc_variant(NPCVariant* v)
 {
 	jc::this_call<bool>(jc::character::fn::SET_NPC_VARIANT, this, v);
+}
+
+void Character::set_npc_variant(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props, bool sync)
+{
+	auto get_hashes = [](int index) -> std::tuple<uint32_t, uint32_t, uint32_t>
+	{
+		switch (index)
+		{
+		case 0: return { NPCVariant::Hash_Accessory1_Slot1, NPCVariant::Hash_Accessory1_Loc, NPCVariant::Hash_ForceAccessory1 };
+		case 1: return { NPCVariant::Hash_Accessory2_Slot1, NPCVariant::Hash_Accessory2_Loc, NPCVariant::Hash_ForceAccessory2 };
+		case 2: return { NPCVariant::Hash_Accessory3_Slot1, NPCVariant::Hash_Accessory3_Loc, NPCVariant::Hash_ForceAccessory3 };
+		case 3: return { NPCVariant::Hash_Accessory4_Slot1, NPCVariant::Hash_Accessory4_Loc, NPCVariant::Hash_ForceAccessory4 };
+		case 4: return { NPCVariant::Hash_Accessory5_Slot1, NPCVariant::Hash_Accessory5_Loc, NPCVariant::Hash_ForceAccessory5 };
+		}
+
+		return { 0u, 0u, 0u };
+	};
+
+	object_base_map map {};
+
+	if (cloth_skin != -1)
+		map.insert<object_base_map::String>(NPCVariant::Hash_ClothSkinSlot1, jc::vars::npc_variants::cloth_skins[cloth_skin]);
+
+	if (head_skin != -1)
+		map.insert<object_base_map::String>(NPCVariant::Hash_HeadSkinSlot1, jc::vars::npc_variants::head_skins[head_skin]);
+	
+	if (cloth_color != -1)
+		map.insert<object_base_map::String>(NPCVariant::Hash_ClothColor, jc::vars::npc_variants::cloth_color[cloth_color]);
+
+	for (int i = 0; const auto& prop : props)
+	{
+		const auto hashes = get_hashes(i++);
+
+		if (prop.prop != -1)
+		{
+			map.insert<object_base_map::String>(std::get<0>(hashes), jc::vars::npc_variants::props[prop.prop]);
+			map.insert<object_base_map::String>(std::get<1>(hashes), jc::vars::npc_variants::prop_locs[prop.loc]);
+			map.insert<object_base_map::Int>(std::get<2>(hashes), 1);
+		}
+	}
+	
+	map.insert<object_base_map::Int>(0x937af6a, 1);
+
+	auto npc_variant = NPCVariant::CREATE();
+
+	npc_variant->init_from_map(&map);
+
+	set_npc_variant(*npc_variant);
+
+	if (sync)
+	{
+		// sync the variant info with other players
+
+		g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_NPCVariant, cloth_skin, head_skin, cloth_color, props);
+	}
 }
 
 void Character::set_flag(uint32_t mask)

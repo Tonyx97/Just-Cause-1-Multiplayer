@@ -7,6 +7,10 @@
 
 #include <mp/chat/chat.h>
 
+// avoids the cursor centering
+//
+patch<2> reset_cursor_patch(0x40346E);
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT WINAPI wnd_proc_callback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -125,50 +129,20 @@ void Keycode::set_mouse_wheel_value(const std::tuple<float, float>& val)
 	std::tie(mouse_wheel_x, mouse_wheel_y) = val;
 }
 
-void Keycode::hijack_engine_io(bool hijack)
+void Keycode::block_input(bool block)
 {
 	// Engine sets the mouse position to the center of the working screen every tick.
 	// Since SetCursorPos can be legitimately use, we will disable engine call to the
 	// function rather than hooking exported function.
 	//
 
-	// Engine input worker.
-	//
-	constexpr auto input_stub = static_cast<uintptr_t>(0x00403494);
+	if (block)
+		reset_cursor_patch._do({ 0xEB, 0x49 });
+	else reset_cursor_patch._undo();
 
-	// Backup original state.
-	//
-	static uint8_t original_code[0x15] = {};
-	if (original_code[0] == 0x0)
-	{
-		memcpy_s(&original_code, sizeof original_code, reinterpret_cast<const void*>(input_stub), sizeof original_code);
-	}
-
-	const auto is_nop = *reinterpret_cast<uint8_t*>(input_stub) == 0x90;
-	if (hijack && !is_nop)
-	{
-		*(uint8_t*)0x00403494 = 0x90;
-		*(uint8_t*)0x004034A2 = 0x90;
-
-		*(uint8_t*)0x004034A3 = 0x90;
-		*(uint8_t*)0x004034A4 = 0x90;
-		*(uint8_t*)0x004034A5 = 0x90;
-		*(uint8_t*)0x004034A6 = 0x90;
-		*(uint8_t*)0x004034A7 = 0x90;
-		*(uint8_t*)0x004034A8 = 0x90;
-	}
-	else if (!hijack && is_nop)
-	{
-		memcpy_s(reinterpret_cast<void*>(input_stub), sizeof original_code, &original_code, sizeof original_code);
-	}
-	else
-	{
-		// No need for extra work :).
-		//
-	}
-
-	// TODO: block character rotation.
-	//
+	// block keys and mouse input
+	
+	jc::write(!block, 0xAEC00C);
 }
 
 bool Keycode::is_key_down(uint32_t key) const

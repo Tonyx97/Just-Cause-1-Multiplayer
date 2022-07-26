@@ -117,6 +117,22 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 
 			break;
 		}
+		case PlayerDynInfo_NPCVariant:
+		{
+			const auto cloth_skin = p.get_int(),
+					   head_skin = p.get_int(),
+					   cloth_color = p.get_int();
+
+			auto accessories = p.get_vector<VariantPropInfo>();
+
+			player->set_skin_info(cloth_skin, head_skin, cloth_color, accessories);
+
+#ifdef JC_SERVER
+			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, cloth_skin, head_skin, cloth_color, std::move(accessories));
+#endif
+
+			break;
+		}
 		}
 	}
 

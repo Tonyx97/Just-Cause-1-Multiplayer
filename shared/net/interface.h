@@ -143,6 +143,12 @@ namespace enet
 
 			return nullptr;
 		}
+
+		template <typename T>
+		std::vector<T> get_vector() const
+		{
+			return deserialize_vector<T>(data);
+		}
 	};
 
 	using channel_dispatch_t = std::function<PacketResult(const Packet&)>;

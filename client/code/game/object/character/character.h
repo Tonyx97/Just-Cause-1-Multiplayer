@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../alive_object/alive_object.h"
+#include "../agent_type/npc_variant.h"
 
 #include "comps/skeleton.h"
 
@@ -106,6 +107,7 @@ public:
 	void set_grenade_timeout(float v);
 	void set_model(uint32_t id, bool sync = true);
 	void set_npc_variant(NPCVariant* v);
+	void set_npc_variant(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& accessories, bool sync = true);
 	void set_flag(uint32_t mask);
 	void set_flags(uint32_t mask);
 	void remove_flag(uint32_t mask);

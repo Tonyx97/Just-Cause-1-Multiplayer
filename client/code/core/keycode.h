@@ -121,7 +121,7 @@ private:
 	} keys_input[512] {};
 
 	std::vector<bool*> pressed_keys,
-		released_keys;
+					   released_keys;
 
 	WNDPROC wnd_proc = nullptr;
 
@@ -137,7 +137,7 @@ public:
 	void set_wnd_proc(HWND wnd);
 	void reset_wnd_proc(HWND wnd);
 	void set_mouse_wheel_value(const std::tuple<float, float>& val);
-	void hijack_engine_io(bool hijack);
+	void block_input(bool block);
 
 	bool is_key_down(uint32_t key) const;
 	bool is_key_pressed(uint32_t key) const;

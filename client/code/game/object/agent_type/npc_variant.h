@@ -3,6 +3,8 @@
 #include "../base/base.h"
 #include "../vars/npc_variants.h"
 
+#include <game/shared/npc_variant.h>
+
 namespace jc::npc_variant
 {
 	// type 1 (starts at 0xC)

@@ -6,6 +6,7 @@
 
 #include <game/shared/stances.h>
 #include <game/shared/character.h>
+#include <game/shared/npc_variant.h>
 
 class PlayerClient;
 class CharacterHandle;
@@ -17,6 +18,7 @@ enum PlayerDynamicInfoID : uint32_t
 	PlayerDynInfo_HeadRotation,
 	PlayerDynInfo_Skin,
 	PlayerDynInfo_Health,
+	PlayerDynInfo_NPCVariant,
 };
 
 enum PlayerStanceID : uint32_t
@@ -68,10 +70,20 @@ public:
 		bool aiming;
 	};
 
+	struct SkinInfo
+	{
+		std::vector<VariantPropInfo> props;
+
+		int32_t cloth_skin = 0,
+				head_skin = 0,
+				cloth_color = 0;
+	};
+
 private:
 
 	DynamicInfo dyn_info {};
-	MovementInfo move_info {};
+	MovementInfo move_info{};
+	SkinInfo skin_info {};
 
 	PlayerClient* client = nullptr;
 
@@ -126,6 +138,7 @@ public:
 	void set_aim_info(bool hip, bool full, const vec3& target);
 	void set_fire_weapon_info(bool fire, int32_t weapon_id = 0, const vec3& muzzle = {}, const vec3& target = {});
 	void reload();
+	void set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);
 
 	bool is_alive() const { return get_hp() > 0.f; }
 	bool is_hip_aiming() const { return dyn_info.hip_aim; }

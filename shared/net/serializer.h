@@ -43,7 +43,6 @@ namespace enet
 		return value;
 	}
 
-
 	template <typename T = float>
 	inline T deserialize_float(std::vector<uint8_t>& data)
 	{
@@ -71,6 +70,29 @@ namespace enet
 		data.erase(data.begin(), data.begin() + len);
 
 		return out;
+	}
+
+	template <typename T>
+	inline std::vector<T> deserialize_vector(std::vector<uint8_t>& data)
+	{
+		const auto size = deserialize_int<uint32_t>(data);
+
+		std::vector<T> vec;
+
+		for (size_t i = 0u; i < size; ++i)
+		{
+			if constexpr (std::is_same_v<T, std::string>)
+				vec.push_back(deserialize_string(data));
+			else if constexpr (std::is_integral_v<T>)
+				vec.push_back(deserialize_int(data));
+			else if constexpr (std::is_floating_point_v<T>)
+				vec.push_back(deserialize_float(data));
+			else if constexpr (std::derived_from<std::remove_pointer_t<std::remove_reference_t<T>>, NetObject>)
+				vec.push_back(deserialize_net_object(data));
+			else vec.push_back(deserialize_general_data<T>(data));
+		}
+
+		return vec;
 	}
 
 	// puts data into the buffer
@@ -143,6 +165,13 @@ namespace enet
 			serialize_int(data, value);
 		else if constexpr (std::is_floating_point_v<T>)
 			serialize_float(data, value);
+		else if constexpr (util::stl::is_vector<T>::value)
+		{
+			serialize_int(data, value.size());
+
+			for (const auto& e : value)
+				serialize_params(data, e);
+		}
 		else if constexpr (std::derived_from<std::remove_pointer_t<std::remove_reference_t<T>>, NetObject>)
 			serialize_net_object(data, value);
 		else serialize_general_data(data, &value, sizeof(value));
