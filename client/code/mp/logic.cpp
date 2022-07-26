@@ -14,7 +14,7 @@ void jc::mp::logic::on_tick()
 {
 	// send and update our local player info
 
-	static TimerRaw transform_timer(enet::TICKS_MS);
+	static TimerRaw transform_timer(enet::TICKS_MS * 2);
 	static TimerRaw head_rotation_timer(enet::TICKS_MS * 25);
 	static TimerRaw aiming_timer(enet::TICKS_MS * 5);
 

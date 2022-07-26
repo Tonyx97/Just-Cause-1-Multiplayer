@@ -249,8 +249,8 @@ void UI::render()
 	if (ImGui::Begin("overlay", &open_overlay, window_flags))
 	{
 		overlay_debug();
-
 		render_players();
+		net_debug();
 
 		g_chat->update();
 	}
@@ -948,6 +948,24 @@ void UI::overlay_debug()
 			}
 		}
 	}
+}
+
+void UI::net_debug()
+{
+	const auto stat_level = g_net->get_net_stat();
+	const auto peer = g_net->get_peer();
+
+	ImGui::SetCursorPos({ 10.f, io->DisplaySize.y / 2.f + 100.f });
+
+	ImGui::Text(FORMATV("Packet Loss: {}%", float(peer->packetLoss)).c_str());
+	ImGui::Text(FORMATV("RTT / Ping: {}", peer->roundTripTime).c_str());
+	ImGui::Text(FORMATV("Incoming Total Data: {}", peer->incomingDataTotal).c_str());
+	ImGui::Text(FORMATV("Outgoing Total Data: {}", peer->outgoingDataTotal).c_str());
+	ImGui::Text(FORMATV("Total Data Received: {}", peer->totalDataReceived).c_str());
+	ImGui::Text(FORMATV("Total Data Sent: {}", peer->totalDataSent).c_str());
+	ImGui::Text(FORMATV("Packets Lost: {}", peer->packetsLost).c_str());
+	ImGui::Text(FORMATV("Total Packets Sent: {}", peer->totalPacketsSent).c_str());
+	ImGui::Text(FORMATV("Total Packets Lost: {}", peer->totalPacketsLost).c_str());
 }
 
 void UI::end()

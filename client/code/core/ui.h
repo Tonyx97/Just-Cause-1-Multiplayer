@@ -44,6 +44,7 @@ private:
 	void render_players();
 	void render_admin_panel();
 	void overlay_debug();
+	void net_debug();
 	void end();
 
 public:

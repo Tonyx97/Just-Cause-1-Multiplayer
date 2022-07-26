@@ -66,6 +66,8 @@ public:
 	bool is_initialized() const { return initialized; }
 	bool is_joined() const { return joined; }
 
+	int get_net_stat() const { return net_stat; }
+
 	PlayerClient* get_local() const { return local; }
 	Player* get_localplayer() const { return local ? local->get_player() : nullptr; }
 
