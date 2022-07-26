@@ -45,6 +45,10 @@ void jc::mp::logic::on_tick()
 				localplayer->set_max_hp(max_hp);
 
 			// transform
+			// todojc - for future prediction and avoiding sending the transform to the server every tick
+			// we want to send the velocity and transform from time to time to calculate the future position in remote
+			// players and then, correct the position if it differs a lot from the one we calculated.
+			// pseudo = current_transform - future_position_calculated_using_velocity > threshold then correct position
 
 			if (transform != localplayer->get_transform() && transform_timer.ready())
 			{
