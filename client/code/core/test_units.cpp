@@ -14,6 +14,7 @@
 #include <game/object/resource/ee_resource.h>
 #include <game/object/agent_type/npc_variant.h>
 #include <game/object/rigid_object/animated_rigid_object.h>
+#include <game/object/rigid_object/traffic_light.h>
 #include <game/object/character/comps/vehicle_controller.h>
 #include <game/object/weapon/weapon_belt.h>
 #include <game/object/sound/sound_game_obj.h>
@@ -172,14 +173,21 @@ void jc::test_units::test_0()
 		info.character->apply_weapon_switch();*/
 	}
 
+	static TrafficLight* tl = nullptr;
+
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
-		
+		tl = g_factory->create_traffic_light(local_pos + vec3(0.f, 3.f, 0.f));
+
+		log(RED, "{:x}", ptr(tl));
+
 		//garage_door->call_event(0x288);
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
+		tl->set_light(TrafficLight_Green);
+
 		/*if (garage_door = g_factory->spawn_animated_rigid_object(
 			local_pos,
 			R"(building_blocks\general\safehouse_guer_garage_door.lod)",
@@ -204,14 +212,9 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD7))
 	{
-		static int id = 0;
+		tl->set_light(TrafficLight_Red);
 
-		local_char->set_model(id++);
-
-		if (id >= jc::vars::exported_entities.size())
-			id = 0;
-
-		//local_char->set_model(7);
+		log(RED, "called");
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD1))

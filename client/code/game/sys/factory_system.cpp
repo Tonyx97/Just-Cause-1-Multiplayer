@@ -11,6 +11,7 @@
 #include <game/object/damageable_object/damageable_object.h>
 #include <game/object/rigid_object/simple_rigid_object.h>
 #include <game/object/rigid_object/animated_rigid_object.h>
+#include <game/object/rigid_object/traffic_light.h>
 #include <game/object/spawn_point/agent_spawn_point.h>
 #include <game/object/spawn_point/vehicle_spawn_point.h>
 #include <game/object/mounted_gun/mounted_gun.h>
@@ -35,6 +36,7 @@ namespace jc::factory_system
 		vec<ref<AnimatedRigidObject>>			animated_rigid_objects;
 		vec<ref<UIMapIcon>>						ui_map_icons;
 		vec<ref<Objective>>						objectives;
+		vec<ref<TrafficLight>>					traffic_lights;
 	}
 }
 
@@ -56,6 +58,13 @@ void FactorySystem::destroy()
 	damageables.clear();
 	agent_spawns.clear();
 	vehicle_spawns.clear();
+	mounted_guns.clear();
+	ladders.clear();
+	item_pickups.clear();
+	animated_rigid_objects.clear();
+	ui_map_icons.clear();
+	objectives.clear();
+	traffic_lights.clear();
 
 	// set the default amount of spawns for characters and vehicles
 
@@ -405,6 +414,19 @@ Objective* FactorySystem::create_objective(const vec3& position, const u8vec4& c
 			return nullptr;
 
 		return rf.move_to(objectives);
+	}
+
+	return nullptr;
+}
+
+TrafficLight* FactorySystem::create_traffic_light(const vec3& position)
+{
+	if (auto rf = g_game_control->create_object<TrafficLight>(false))
+	{
+		if (!rf->setup(position))
+			return nullptr;
+
+		return rf.move_to(traffic_lights);
 	}
 
 	return nullptr;

@@ -300,6 +300,9 @@
     <ClCompile Include="code\game\object\vehicle\comps\vehicle_seat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\game\object\rigid_object\traffic_light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\game\sys\renderer.h">
@@ -621,6 +624,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\vars\npc_variants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\rigid_object\traffic_light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

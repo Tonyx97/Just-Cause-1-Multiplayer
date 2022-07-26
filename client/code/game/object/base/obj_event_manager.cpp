@@ -37,5 +37,5 @@ void ObjectEventManager::setup_event_and_subscribe(ptr offset, const std::string
 
 void ObjectEventManager::call_event(ptr offset, void* userdata)
 {
-	jc::this_call(jc::obj_event_manager::fn::CALL_EVENT, REF(Event**, this, offset), userdata); // not tested
+	jc::this_call(jc::obj_event_manager::fn::CALL_EVENT, REF(Event**, this, offset), userdata);
 }

@@ -19,6 +19,7 @@ class Ladder;
 class ItemPickup;
 class UIMapIcon;
 class Objective;
+class TrafficLight;
 
 /*
 * Factory/SpawnSystem to create and spawn game objects
@@ -50,6 +51,7 @@ public:
 	AnimatedRigidObject*	spawn_animated_rigid_object(const vec3& position, const std::string& model, const std::string& pfx_name);
 	UIMapIcon*				create_map_icon(const vec3& position, uint32_t icon);
 	Objective*				create_objective(const vec3& position, const u8vec4& color);
+	TrafficLight*			create_traffic_light(const vec3& position);
 };
 
 inline Singleton<FactorySystem, jc::spawn_system::SINGLETON> g_factory;
