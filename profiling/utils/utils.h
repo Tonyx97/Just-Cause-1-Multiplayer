@@ -139,6 +139,8 @@ namespace util
 	{
 		std::string get_str_date();
 		std::string get_str_time();
+
+		float get_time();
 	}
 
 	namespace container
@@ -437,4 +439,6 @@ namespace util
 			return out;
 		}
 	}
+
+	void init();
 }

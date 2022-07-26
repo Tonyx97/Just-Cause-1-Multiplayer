@@ -4,6 +4,8 @@
 
 namespace util::time
 {
+	std::chrono::high_resolution_clock::time_point process_startup_tp;
+	
 	tm get_tm_date()
 	{
 		auto tick = ::time(0);
@@ -29,4 +31,16 @@ namespace util::time
 
 		return hour_prefix + ':' + minute_prefix + ':' + second_prefix;
 	}
+
+	float get_time()
+	{
+		return static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - process_startup_tp).count());
+	}
+}
+
+void util::init()
+{
+	rand::init_seed();
+
+	time::process_startup_tp = std::chrono::high_resolution_clock::now();
 }

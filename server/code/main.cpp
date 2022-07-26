@@ -14,7 +14,7 @@ int main()
 {
 	jc::prof::init("JC:MP Server");
 
-	util::rand::init_seed();
+	util::init();
 
 	// initialize the server
 

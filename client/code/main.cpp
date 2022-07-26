@@ -206,7 +206,7 @@ void dll_thread()
 
 	log(GREEN, "Initializing at {:x}...", ptr(g_module));
 
-	util::rand::init_seed();
+	util::init();
 
 	// patch multi instance shit
 

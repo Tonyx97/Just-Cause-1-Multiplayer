@@ -56,6 +56,7 @@ namespace enet
 	class Packet
 	{
 	private:
+
 		mutable std::vector<uint8_t> data;
 
 #ifdef JC_SERVER
@@ -65,15 +66,19 @@ namespace enet
 		ENetPacket*	   packet  = nullptr;
 		mutable size_t offset  = 0u;
 		uint32_t	   id	   = 0u;
+		float		   time	   = 0.f;
 		uint8_t		   channel = 0u;
-		bool		   as_view = false;
+		bool		   as_view = false,
+					   destroyed = false;
 
 	public:
+
 		Packet(const ENetEvent& e, bool view = false)
 			: peer(e.peer)
 			, packet(e.packet)
 			, channel(e.channelID)
 			, as_view(view)
+			, time(util::time::get_time())
 		{
 			::check(!view, "Not supported yet");
 
@@ -92,8 +97,52 @@ namespace enet
 
 		~Packet()
 		{
+			if (destroyed)
+				return;
+
 			if (!as_view)
+			{
+				check(packet, "Packet was already destroyed or it's invalid");
+
 				enet_packet_destroy(packet);
+
+				destroyed = true;
+				packet = nullptr;
+			}
+		}
+
+		// avoid copies
+
+		Packet(const Packet&) = delete;
+
+		// force copy elision
+
+		Packet(Packet&& other)
+		{
+			*this = std::move(other);
+		}
+
+		// implement move operator
+
+		Packet& operator=(Packet&& other)
+		{
+#ifdef JC_SERVER
+			pc = other.pc;
+#endif
+
+			data = other.data;
+			peer = other.peer;
+			packet = other.packet;
+			offset = other.offset;
+			id = other.id;
+			time = other.time;
+			channel = other.channel;
+			as_view = other.as_view;
+
+			other.destroyed = true;
+			other.packet = nullptr;
+
+			return *this;
 		}
 
 		template <typename T>
@@ -103,6 +152,8 @@ namespace enet
 		}
 
 		bool is_empty() const { return data.empty(); };
+
+		float get_time() const { return time; }
 
 		ENetPeer* get_peer() const { return peer; }
 
@@ -156,6 +207,10 @@ namespace enet
 	void init();
 	void add_channel_dispatcher(uint8_t id, const channel_dispatch_t& fn);
 	void call_channel_dispatcher(const ENetEvent& id);
+	void set_fake_lag(int value);
+	void process_lagged_packets();
+
+	int get_fake_lag();
 
 	inline bool send_packet(ENetPeer* peer, const void* data, size_t size, uint32_t flags = ENET_PACKET_FLAG_RELIABLE, uint8_t channel = ChannelID_Generic)
 	{
@@ -182,6 +237,10 @@ namespace enet
 
 		while (enet_host_service(GET_HOST(), &e, timeout) > 0)
 			fn(e);
+
+#ifdef JC_CLIENT
+		enet::process_lagged_packets();
+#endif
 	}
 
 	template <typename Fn>

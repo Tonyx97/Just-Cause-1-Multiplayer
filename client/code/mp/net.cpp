@@ -261,6 +261,8 @@ void Net::tick()
 		}
 	});
 
+	// do the net logic now
+
 	jc::mp::logic::on_tick();
 }
 

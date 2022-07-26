@@ -70,8 +70,7 @@ struct ref
 
 	ref(ref&& other)
 	{
-		obj		= std::exchange(other.obj, nullptr);
-		counter = std::exchange(other.counter, nullptr);
+		*this = std::move(other);
 	}
 
 	// implement move operator
