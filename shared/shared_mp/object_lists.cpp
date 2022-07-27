@@ -88,7 +88,7 @@ NetObject* ObjectLists::add_net_object(NetObject* net_obj)
 	{
 	case NetObject_Player:
 	{
-		player_clients.insert({ nid, net_obj->get_player_client()});
+		player_clients.insert({ nid, BITCAST(Player*, net_obj)->get_client()});
 		break;
 	}
 	default:

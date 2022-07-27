@@ -24,15 +24,12 @@ enum NetObjectType : uint32_t
 };
 
 class PlayerClient;
-class Player;
 
 class NetObject
 {
 private:
 
-	PlayerClient* player_client = nullptr;
-
-	Player* streamer = nullptr;
+	PlayerClient* streamer_pc = nullptr;
 
 	NID nid = INVALID_NID;
 
@@ -51,17 +48,10 @@ public:
 #ifdef JC_CLIENT
 	void set_nid(NID v) { nid = v; }
 #else
-	void set_streamer(Player* v) { streamer = v; }
+	void set_streamer(PlayerClient* v) { streamer_pc = v; }
 #endif
 
 	void set_spawned(bool v) { spawned = v; }
-
-	void set_player_client(PlayerClient* pc)
-	{
-		check(get_type() == NetObject_Player, "NetObject must be a player");
-
-		player_client = pc;
-	}
 
 	bool is_spawned() const { return spawned; }
 	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
@@ -69,9 +59,7 @@ public:
 
 	NID get_nid() const { return nid; }
 
-	Player* get_streamer() const { return streamer; }
-
-	PlayerClient* get_player_client() const { return player_client; }
+	PlayerClient* get_streamer() const { return streamer_pc; }
 
 	template <typename T>
 	T* cast() const

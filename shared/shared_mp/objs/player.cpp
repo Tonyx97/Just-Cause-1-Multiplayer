@@ -20,7 +20,6 @@
 Player::Player(PlayerClient* pc, NID nid) : client(pc)
 {
 	set_nid(nid);
-	set_player_client(pc);
 }
 
 void Player::verify_exec(const std::function<void(Character*)>& fn)
@@ -82,7 +81,6 @@ Character* Player::get_character() const
 #else
 Player::Player(PlayerClient* pc) : client(pc)
 {
-	set_player_client(pc);
 }
 
 void Player::respawn(float hp, float max_hp)

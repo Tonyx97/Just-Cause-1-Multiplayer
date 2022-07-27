@@ -38,7 +38,7 @@ enet::PacketResult nh::player_client::join(const enet::Packet& p)
 	if (!player)
 		return enet::PacketRes_BadArgs;
 
-	const auto pc = player->get_player_client();
+	const auto pc = player->get_client();
 
 #elif JC_SERVER
 	const auto pc = p.get_pc();
