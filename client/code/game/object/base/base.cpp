@@ -172,7 +172,7 @@ void ObjectBase::set_model(uint32_t id)
 	{
 	case Character::CLASS_ID():
 	{
-		BITCAST(Character*, this)->set_model(id);
+		BITCAST(Character*, this)->set_skin(id);
 
 		break;
 	}

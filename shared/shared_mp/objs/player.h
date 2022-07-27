@@ -126,6 +126,8 @@ public:
 
 	// dynamic info getters/setters
 
+	void set_nick(const std::string& v);
+	void set_skin(uint32_t v);
 	void set_hp(float v);
 	void set_max_hp(float v);
 	void set_transform(const Transform& transform);
@@ -148,6 +150,7 @@ public:
 	int32_t get_firing_weapon_id() const { return dyn_info.firing_weapon_id; }
 	int32_t get_weapon_id() const { return dyn_info.weapon_id; }
 
+	uint32_t get_skin() const { return dyn_info.skin; }
 	uint32_t get_body_stance_id() const { return dyn_info.body_stance_id; }
 	uint32_t get_arms_stance_id() const { return dyn_info.arms_stance_id; }
 
@@ -160,16 +163,11 @@ public:
 	const vec3& get_fire_muzzle() const { return dyn_info.fire_muzzle; }
 	const vec3& get_fire_target() const { return dyn_info.fire_target; }
 
+	const std::string& get_nick() const { return dyn_info.nick; }
+
 	const Transform& get_transform() const { return dyn_info.transform; }
 
 	// basic info getters/setters
-
-	void set_nick(const std::string& v);
-	void set_skin(uint32_t v);
-
-	uint32_t get_skin() const;
-
-	const std::string& get_nick() const { return dyn_info.nick; }
 
 	const DynamicInfo& get_dyn_info() const { return dyn_info; }
 

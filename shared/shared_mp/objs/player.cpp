@@ -141,6 +141,20 @@ bool Player::spawn()
 
 // info getters/setters
 
+void Player::set_nick(const std::string& v)
+{
+	dyn_info.nick = v;
+}
+
+void Player::set_skin(uint32_t v)
+{
+	dyn_info.skin = v;
+
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->set_skin(v, false); });
+#endif
+}
+
 void Player::set_hp(float v)
 {
 	dyn_info.hp = v;
@@ -255,25 +269,4 @@ void Player::set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->set_npc_variant(cloth_skin, head_skin, cloth_color, props, false); });
 #endif
-}
-
-// static info getters/setters
-
-void Player::set_nick(const std::string& v)
-{
-	dyn_info.nick = v;
-}
-
-void Player::set_skin(uint32_t v)
-{
-	dyn_info.skin = v;
-
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_model(v, false); });
-#endif
-}
-
-uint32_t Player::get_skin() const
-{
-	return dyn_info.skin;
 }

@@ -437,7 +437,7 @@ void UI::render_admin_panel()
 		ImGui::SliderInt("Skin to set##ap.skn.tset", &skin_to_set, 0, 153);
 
 		if (ImGui::Button("Set Skin##ap.skn.set"))
-			local_char->set_model(skin_to_set);
+			local_char->set_skin(skin_to_set);
 
 		ImGui::Spacing();
 		ImGui::Spacing();
@@ -908,7 +908,7 @@ void UI::overlay_debug()
 
 						cc_h = g_factory->spawn_character("female1", g_world->get_localplayer_character()->get_position());
 						g_test_char = cc_h->get_character();
-						g_test_char->set_model(126);
+						g_test_char->set_skin(126);
 						g_test_char->set_invincible(true);
 					}
 					else
@@ -957,7 +957,7 @@ void UI::net_debug()
 
 	ImGui::SetCursorPos({ 10.f, io->DisplaySize.y / 2.f + 100.f });
 
-	ImGui::Text(FORMATV("Packet Loss: {}%", float(peer->packetLoss)).c_str());
+	ImGui::Text(FORMATV("Packet Loss: {} %%", float(peer->packetLoss) / 65535.f).c_str());
 	ImGui::Text(FORMATV("RTT / Ping: {}", peer->roundTripTime).c_str());
 	ImGui::Text(FORMATV("Incoming Total Data: {}", peer->incomingDataTotal).c_str());
 	ImGui::Text(FORMATV("Outgoing Total Data: {}", peer->outgoingDataTotal).c_str());

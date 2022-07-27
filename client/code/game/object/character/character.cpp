@@ -309,7 +309,7 @@ void Character::set_grenade_timeout(float v)
 	jc::write(v, this, jc::character::GRENADE_TIMEOUT);
 }
 
-void Character::set_model(uint32_t id, bool sync)
+void Character::set_skin(uint32_t id, bool sync)
 {
 	g_rsrc_streamer->request_exported_entity(id, [=](ExportedEntityResource* eer)
 	{
