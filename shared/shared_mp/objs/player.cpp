@@ -126,7 +126,7 @@ bool Player::spawn()
 
 	if (!is_local())
 	{
-		handle = g_factory->spawn_character("female1", { 3393.f, 180.04f, 8997.96f });
+		handle = g_factory->spawn_character("female1");
 
 		check(handle, "Could not create the player's character");
 

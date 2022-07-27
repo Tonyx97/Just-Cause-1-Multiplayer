@@ -39,7 +39,7 @@ public:
 	int16_t get_max_character_spawns() const;
 	int16_t get_max_vehicle_spawns() const;
 
-	CharacterHandle*		spawn_character(const std::string& model_name, const vec3& position, int weapon_id = 0);
+	CharacterHandle*		spawn_character(const std::string& model_name, const vec3& position = {}, int weapon_id = 0);
 	SimpleRigidObject*		spawn_simple_rigid_object(const vec3& position, const std::string& model_name, const std::string& pfx_name);
 	DamageableObject*		spawn_damageable_object(const vec3& position, const std::string& model_name, const std::string& pfx_name);
 	AgentSpawnPoint*		create_agent_spawn_point(const vec3& position);
