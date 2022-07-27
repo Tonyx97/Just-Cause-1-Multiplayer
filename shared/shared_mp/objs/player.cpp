@@ -28,7 +28,7 @@ void Player::verify_exec(const std::function<void(Character*)>& fn)
 	if (local || !handle)
 		return;
 
-	if (const auto character = handle->get_character())
+	if (const auto character = get_character())
 		fn(character);
 }
 
