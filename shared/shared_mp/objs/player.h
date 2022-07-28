@@ -43,9 +43,7 @@ public:
 		Transform transform {};
 
 		vec3 head_rotation {},
-			 aim_target {},
-			 fire_muzzle {},
-			 fire_target {};
+			 aim_target {};
 
 		uint32_t skin = 0u,
 				 body_stance_id = 0u,
@@ -59,8 +57,7 @@ public:
 			  head_interpolation = 0.f;
 
 		bool hip_aim = false,
-			 full_aim = false,
-			 fire_weapon = false;
+			 full_aim = false;
 	};
 
 	struct MovementInfo
@@ -138,14 +135,13 @@ public:
 	void do_punch();
 	void set_weapon_id(int32_t id);
 	void set_aim_info(bool hip, bool full, const vec3& target);
-	void set_fire_weapon_info(bool fire, int32_t weapon_id = 0, const vec3& muzzle = {}, const vec3& target = {});
+	void fire_current_weapon(int32_t weapon_id = 0, const vec3& muzzle = {}, const vec3& target = {});
 	void reload();
 	void set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);
 
 	bool is_alive() const { return get_hp() > 0.f; }
 	bool is_hip_aiming() const { return dyn_info.hip_aim; }
 	bool is_full_aiming() const { return dyn_info.full_aim; }
-	bool is_firing() const { return dyn_info.fire_weapon; }
 
 	int32_t get_firing_weapon_id() const { return dyn_info.firing_weapon_id; }
 	int32_t get_weapon_id() const { return dyn_info.weapon_id; }
@@ -160,8 +156,6 @@ public:
 
 	const vec3& get_head_rotation() const { return dyn_info.head_rotation; }
 	const vec3& get_aim_target() const { return dyn_info.aim_target; }
-	const vec3& get_fire_muzzle() const { return dyn_info.fire_muzzle; }
-	const vec3& get_fire_target() const { return dyn_info.fire_target; }
 
 	const std::string& get_nick() const { return dyn_info.nick; }
 

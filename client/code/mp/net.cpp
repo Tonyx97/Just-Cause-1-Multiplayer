@@ -239,6 +239,12 @@ void Net::tick()
 	if (!connected || !client)
 		return;
 
+	// do the net logic now
+
+	jc::mp::logic::on_tick();
+
+	// send queued packets and dispatch the incoming ones
+
 	enet::dispatch_packets([this](ENetEvent& e)
 	{
 		switch (e.type)
@@ -260,10 +266,6 @@ void Net::tick()
 		}
 		}
 	});
-
-	// do the net logic now
-
-	jc::mp::logic::on_tick();
 }
 
 void Net::update_objects()

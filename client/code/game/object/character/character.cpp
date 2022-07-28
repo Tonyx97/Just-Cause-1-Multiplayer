@@ -212,7 +212,6 @@ namespace jc::character::hook
 						g_net->send_reliable(
 							PlayerPID_StanceAndMovement,
 							PlayerStanceID_Fire,
-							true,
 							weapon->get_info()->get_id(),
 							weapon->get_grip_transform()->position(),
 							weapon->get_aim_target());

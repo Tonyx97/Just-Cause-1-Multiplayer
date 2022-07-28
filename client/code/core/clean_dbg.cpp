@@ -246,7 +246,7 @@ DEFINE_HOOK_THISCALL(object_map_find_int16, 0x4C0030, bool, object_base_map* map
 	auto res = object_map_find_int16_hook.call(map, hash, out);
 
 	if (res && g_record_object_map)
-		log(GREEN, "map.insert<ValueType_Float>(0x{:x}, {:.2f}f);", *hash, jc::game::i16_to_float(*out));
+		log(GREEN, "map.insert<ValueType_Float>(0x{:x}, {:.2f}f);", *hash, jc::game::decode_float(*out));
 
 	return res;
 }
@@ -286,7 +286,7 @@ DEFINE_HOOK_THISCALL(object_map_find_u16vec3, 0x7A96A0, bool, object_base_map* m
 	auto res = object_map_find_u16vec3_hook.call(map, hash, out);
 
 	if (res && g_record_object_map)
-		log(GREEN, "map.insert<ValueType_Vec3>(0x{:x}, vec3 {{ {}, {}, {} }});", *hash, jc::game::i16_to_float(out->x), jc::game::i16_to_float(out->y), jc::game::i16_to_float(out->z));
+		log(GREEN, "map.insert<ValueType_Vec3>(0x{:x}, vec3 {{ {}, {}, {} }});", *hash, jc::game::decode_float(out->x), jc::game::decode_float(out->y), jc::game::decode_float(out->z));
 
 	return res;
 }

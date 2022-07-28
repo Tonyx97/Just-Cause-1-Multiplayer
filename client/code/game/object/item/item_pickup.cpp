@@ -88,20 +88,20 @@ bool ItemPickup::setup(const Transform& transform, uint32_t type, uint32_t weapo
 
 void ItemPickup::set_respawn_time(float v)
 {
-	jc::write(jc::game::float_to_i16(v), this, jc::item_pickup::RESPAWN_TIME);
+	jc::write(jc::game::encode_float(v), this, jc::item_pickup::RESPAWN_TIME);
 }
 
 void ItemPickup::set_respawn_time_left(float v)
 {
-	jc::write(jc::game::float_to_i16(v), this, jc::item_pickup::RESPAWN_TIME_LEFT);
+	jc::write(jc::game::encode_float(v), this, jc::item_pickup::RESPAWN_TIME_LEFT);
 }
 
 float ItemPickup::get_respawn_time() const
 {
-	return jc::game::i16_to_float(jc::read<uint16_t>(this, jc::item_pickup::RESPAWN_TIME));
+	return jc::game::decode_float(jc::read<uint16_t>(this, jc::item_pickup::RESPAWN_TIME));
 }
 
 float ItemPickup::get_respawn_time_left() const
 {
-	return jc::game::i16_to_float(jc::read<uint16_t>(this, jc::item_pickup::RESPAWN_TIME_LEFT));
+	return jc::game::decode_float(jc::read<uint16_t>(this, jc::item_pickup::RESPAWN_TIME_LEFT));
 }

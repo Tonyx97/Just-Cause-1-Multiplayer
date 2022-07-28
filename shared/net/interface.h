@@ -52,6 +52,9 @@ namespace enet
 
 	/**
 	 * Class used to read a packet
+	 * this class could be improved by allowing the server to access the serialized data directly
+	 * instead of deserializing and serializing again to send it to the clients, for now we will keep
+	 * it like this
 	 */
 	class Packet
 	{

@@ -38,13 +38,13 @@ namespace jc::game
 		return BITCAST(T*, malloc_internal(size));
 	}
 
-	inline float i16_to_float(uint16_t v)
+	inline float decode_float(uint16_t v)
 	{
 		const auto i = read<int>(0xA1EAA0, 3 * v) << 8;
 		return *BITCAST(float*, &i);
 	}
 
-	inline uint16_t float_to_i16(float v)
+	inline uint16_t encode_float(float v)
 	{
 		uint16_t out;
 		return *jc::this_call<uint16_t*>(jc::g::math::fn::FLOAT_TO_INT16, &out, v);
@@ -52,11 +52,11 @@ namespace jc::game
 
 	inline u16vec3 to_u16vec3(const vec3& v)
 	{
-		return u16vec3(jc::game::float_to_i16(v.x), jc::game::float_to_i16(v.y), jc::game::float_to_i16(v.z));
+		return u16vec3(jc::game::encode_float(v.x), jc::game::encode_float(v.y), jc::game::encode_float(v.z));
 	}
 
 	inline vec3 to_vec3(const u16vec3& v)
 	{
-		return vec3(jc::game::i16_to_float(v.x), jc::game::i16_to_float(v.y), jc::game::i16_to_float(v.z));
+		return vec3(jc::game::decode_float(v.x), jc::game::decode_float(v.y), jc::game::decode_float(v.z));
 	}
 }

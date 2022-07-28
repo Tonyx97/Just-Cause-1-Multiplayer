@@ -242,12 +242,11 @@ void Player::set_aim_info(bool hip, bool full, const vec3& target)
 	dyn_info.aim_target = target;
 }
 
-void Player::set_fire_weapon_info(bool fire, int32_t weapon_id, const vec3& muzzle, const vec3& target)
+void Player::fire_current_weapon(int32_t weapon_id, const vec3& muzzle, const vec3& target)
 {
-	dyn_info.firing_weapon_id = weapon_id;
-	dyn_info.fire_weapon = fire;
-	dyn_info.fire_muzzle = muzzle;
-	dyn_info.fire_target = target;
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->fire_current_weapon(weapon_id, muzzle, target); });
+#endif
 }
 
 void Player::reload()
