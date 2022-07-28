@@ -10,11 +10,15 @@
 #include <game/object/weapon/weapon.h>
 #include <game/object/weapon/weapon_belt.h>
 
+#include <game/sys/time_system.h>
+
 void jc::mp::logic::on_tick()
 {
 	// send and update our local player info
 
-	static TimerRaw transform_timer(enet::TICKS_MS * 2);
+	static TimerRaw transform_timer(500);
+	static TimerRaw velocity_timer(16);
+	static TimerRaw angle_timer(16);
 	static TimerRaw head_rotation_timer(enet::TICKS_MS * 25);
 	static TimerRaw aiming_timer(enet::TICKS_MS * 5);
 
@@ -28,6 +32,9 @@ void jc::mp::logic::on_tick()
 			const auto current_weapon_id = current_weapon_info->get_id();
 			const auto flags = local_char->get_flags();
 			const auto transform = local_char->get_transform();
+			const auto velocity = local_char->get_velocity();
+			const auto position = transform.position();
+			const auto rotation = glm::quat_cast(transform.get_matrix());
 			const auto hp = local_char->get_real_hp();
 			const auto max_hp = local_char->get_max_hp();
 			const auto head_rotation = skeleton->get_head_euler_rotation();
@@ -35,6 +42,8 @@ void jc::mp::logic::on_tick()
 			const bool hip_aiming = localplayer->is_hip_aiming();
 			const bool full_aiming = localplayer->is_full_aiming();
 			const auto aim_target = local_char->get_aim_target();
+			const auto& move_info = localplayer->get_movement_info();
+			const auto move_angle = move_info.angle;
 
 			// health
 
@@ -44,21 +53,35 @@ void jc::mp::logic::on_tick()
 			if (max_hp != localplayer->get_max_hp())
 				localplayer->set_max_hp(max_hp);
 
-			// transform
-			// todojc - for future prediction and avoiding sending the transform to the server every tick
-			// we want to send the velocity and transform from time to time to calculate the future position in remote
-			// players and then, correct the position if it differs a lot from the one we calculated.
-			// pseudo = current_transform - future_position_calculated_using_velocity > threshold then correct position
-
-			if (transform != localplayer->get_transform() && transform_timer.ready())
+			// transform (we upload it every 500 ms for now to correct the position in remote players)
+			
+			if (transform_timer.ready())
 			{
-				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Transform, transform);
+				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Transform, position, jc::math::pack_quat(rotation));
 
-				localplayer->set_transform(transform);
+				localplayer->set_transform(position, rotation);
+			}
+
+			// velocity
+
+			if (velocity != localplayer->get_velocity() && velocity_timer.ready())
+			{
+				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Velocity, velocity);
+
+				localplayer->set_velocity(velocity);
+			}
+
+			// movement angle
+
+			if (localplayer->should_sync_angle_only() && angle_timer.ready())
+			{
+				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_MovementAngle, util::pack::pack_pi_angle(move_angle));
+
+				localplayer->set_movement_angle(move_angle, false);
 			}
 
 			// head rotation
-
+			
 			if (!hip_aiming &&
 				!full_aiming &&
 				head_interpolation == 1.f &&
@@ -66,7 +89,7 @@ void jc::mp::logic::on_tick()
 				head_interpolation != localplayer->get_head_interpolation()) &&
 				head_rotation_timer.ready())
 			{
-				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_HeadRotation, head_rotation, head_interpolation);
+				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_HeadRotation, head_rotation, util::pack::pack_norm(head_interpolation));
 
 				localplayer->set_head_rotation(head_rotation, head_interpolation);
 			}
@@ -104,18 +127,15 @@ void jc::mp::logic::on_update_objects()
 
 			check(player_char, "Player's character must be valid");
 
-			const auto& move_info = player->get_movement_info();
+			auto previous_position = player_char->get_position(),
+				 target_position = player->get_position();
 
-			auto previous_transform = player_char->get_transform(),
-				 target_transform = player->get_transform();
+			auto previous_rotation = player_char->get_rotation(),
+				 target_rotation = player->get_rotation();
 
 			// update the player movement
 
 			player->dispatch_movement();
-
-			// interpolate the previous transform with the target one
-
-			player_char->set_transform(previous_transform.interpolate(target_transform, 0.4f, 0.4f));
 
 			// aiming weapon
 

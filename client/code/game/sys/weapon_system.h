@@ -46,11 +46,11 @@ public:
 
 	int32_t for_each_weapon_template(const weapon_template_iteration_t& fn);
 
-	std::string get_weapon_typename(int32_t id);
-	std::string get_weapon_model(int32_t id);
+	std::string get_weapon_typename(uint8_t id);
+	std::string get_weapon_model(uint8_t id);
 
 	ref<Weapon> create_weapon_instance(const std::string& name);
-	ref<Weapon> create_weapon_instance(int32_t id);
+	ref<Weapon> create_weapon_instance(uint8_t id);
 };
 
 inline Singleton<WeaponSystem, jc::weapon_system::SINGLETON> g_weapon;

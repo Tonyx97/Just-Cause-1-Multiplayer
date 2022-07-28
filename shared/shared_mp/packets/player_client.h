@@ -2,8 +2,8 @@
 
 struct PlayerClientSyncInstancesPacket
 {
-	static constexpr uint32_t ID = PlayerClientPID_SyncInstances;
-	static constexpr uint32_t CHANNEL = ChannelID_PlayerClient;
+	static constexpr PacketID ID = PlayerClientPID_SyncInstances;
+	static constexpr PacketID CHANNEL = ChannelID_PlayerClient;
 
 #ifdef JC_CLIENT
 	std::vector<std::pair<NID, uint32_t>> net_objects;
@@ -47,8 +47,8 @@ struct PlayerClientSyncInstancesPacket
 
 struct PlayerClientBasicInfoPacket
 {
-	static constexpr uint32_t ID = PlayerClientPID_BasicInfo;
-	static constexpr uint32_t CHANNEL = ChannelID_PlayerClient;
+	static constexpr PacketID ID = PlayerClientPID_BasicInfo;
+	static constexpr PacketID CHANNEL = ChannelID_PlayerClient;
 
 	struct Info
 	{

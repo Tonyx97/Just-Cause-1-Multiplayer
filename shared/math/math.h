@@ -29,7 +29,9 @@ using vec2 = glm::vec2;
 using vec1 = glm::vec1;
 using ivec4 = glm::i32vec4;
 using u8vec4 = glm::u8vec4;
+using i16vec4 = glm::i16vec4;
 using ivec3 = glm::i32vec3;
+using i16vec3 = glm::i16vec3;
 using u16vec3 = glm::u16vec3;
 using ivec2 = glm::i32vec2;
 using ivec1 = glm::i32vec1;
@@ -88,9 +90,34 @@ namespace jc::nums
 
 namespace jc::math
 {
+	inline i16vec4 pack_quat(const quat& q)
+	{
+		const auto _q = glm::normalize(q);
+
+		return i16vec4(
+			util::pack::pack_float(q.x, 32767.f),
+			util::pack::pack_float(q.y, 32767.f),
+			util::pack::pack_float(q.z, 32767.f),
+			util::pack::pack_float(q.w, 32767.f));
+	}
+
+	inline quat unpack_quat(const i16vec4& q)
+	{
+		return quat(
+			util::pack::unpack_float(q.w, 32767.f),
+			util::pack::unpack_float(q.x, 32767.f),
+			util::pack::unpack_float(q.y, 32767.f),
+			util::pack::unpack_float(q.z, 32767.f));
+	}
+
 	inline float quat_diff(const quat& a, const quat& b)
 	{
 		return std::asinf(glm::length(glm::normalize(glm::conjugate(a) * b))) * 2.f;
+	}
+
+	inline float quat_cos_theta(const quat& a, const quat& b)
+	{
+		return glm::dot(glm::quat(a), glm::quat(b));
 	}
 
 	inline void mat4_mul_internal(

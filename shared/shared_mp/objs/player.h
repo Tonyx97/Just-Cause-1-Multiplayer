@@ -11,7 +11,7 @@
 class PlayerClient;
 class CharacterHandle;
 
-enum PlayerDynamicInfoID : uint32_t
+enum PlayerDynamicInfoID : uint8_t
 {
 	PlayerDynInfo_Transform,
 	PlayerDynInfo_Velocity,
@@ -21,9 +21,10 @@ enum PlayerDynamicInfoID : uint32_t
 	PlayerDynInfo_NPCVariant,
 };
 
-enum PlayerStanceID : uint32_t
+enum PlayerStanceID : uint8_t
 {
 	PlayerStanceID_Movement,
+	PlayerStanceID_MovementAngle,
 	PlayerStanceID_Jump,
 	PlayerStanceID_Punch,
 	PlayerStanceID_BodyStance,
@@ -40,9 +41,11 @@ public:
 	{
 		std::string nick;
 
-		Transform transform {};
+		quat rotation;
 
-		vec3 head_rotation {},
+		vec3 position {},
+			 velocity {},
+			 head_rotation{},
 			 aim_target {};
 
 		uint32_t skin = 0u,
@@ -62,9 +65,12 @@ public:
 
 	struct MovementInfo
 	{
-		float angle, right, forward;
+		float angle = 0.f,
+			  right = 0.f,
+			  forward = 0.f;
 
-		bool aiming;
+		bool sync_angle_next_tick = false,
+			 aiming = false;
 	};
 
 	struct SkinInfo
@@ -109,6 +115,8 @@ public:
 	bool is_local() const { return local; }
 
 	Character* get_character() const;
+
+	CharacterHandle* get_character_handle() const;
 #else
 	Player(PlayerClient* pc);
 
@@ -127,7 +135,9 @@ public:
 	void set_skin(uint32_t v);
 	void set_hp(float v);
 	void set_max_hp(float v);
-	void set_transform(const Transform& transform);
+	void set_transform(const vec3& position, const quat& rotation);
+	void set_velocity(const vec3& v);
+	void set_movement_angle(float angle, bool send_angle_only_next_tick);
 	void set_movement_info(float angle, float right, float forward, bool aiming);
 	void set_body_stance_id(uint32_t id);
 	void set_arms_stance_id(uint32_t id);
@@ -142,6 +152,7 @@ public:
 	bool is_alive() const { return get_hp() > 0.f; }
 	bool is_hip_aiming() const { return dyn_info.hip_aim; }
 	bool is_full_aiming() const { return dyn_info.full_aim; }
+	bool should_sync_angle_only() const { return move_info.sync_angle_next_tick; }
 
 	int32_t get_firing_weapon_id() const { return dyn_info.firing_weapon_id; }
 	int32_t get_weapon_id() const { return dyn_info.weapon_id; }
@@ -159,7 +170,10 @@ public:
 
 	const std::string& get_nick() const { return dyn_info.nick; }
 
-	const Transform& get_transform() const { return dyn_info.transform; }
+	const vec3& get_position() const { return dyn_info.position; }
+	const vec3& get_velocity() const { return dyn_info.velocity; }
+
+	const quat& get_rotation() const { return dyn_info.rotation; }
 
 	// basic info getters/setters
 

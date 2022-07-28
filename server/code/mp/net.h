@@ -42,13 +42,13 @@ public:
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_broadcast_reliable(uint32_t id, const A&... args)
+	inline void send_broadcast_reliable(PacketID id, const A&... args)
 	{
 		send_broadcast_reliable<channel>(nullptr, id, args...);
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_broadcast_reliable(PlayerClient* ignore_pc, uint32_t id, const A&... args)
+	inline void send_broadcast_reliable(PlayerClient* ignore_pc, PacketID id, const A&... args)
 	{
 		vec<uint8_t> data;
 
@@ -64,7 +64,7 @@ public:
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_broadcast_joined_reliable(PlayerClient* ignore_pc, uint32_t id, const A&... args)
+	inline void send_broadcast_joined_reliable(PlayerClient* ignore_pc, PacketID id, const A&... args)
 	{
 		vec<uint8_t> data;
 

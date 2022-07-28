@@ -54,9 +54,9 @@ bool WeaponInfo::can_create_shells()
 	return jc::read<bool>(this, jc::weapon_info::CAN_CREATE_SHELLS);
 }
 
-int32_t WeaponInfo::get_id() const
+uint8_t WeaponInfo::get_id() const
 {
-	return jc::read<int32_t>(this, jc::weapon_info::ID);
+	return static_cast<uint8_t>(jc::read<int32_t>(this, jc::weapon_info::ID));
 }
 
 int32_t WeaponInfo::get_type_id() const
@@ -150,6 +150,11 @@ bool Weapon::is_trigger_pulled() const
 	return jc::read<bool>(this, jc::weapon::TRIGGER_PULLED);
 }
 
+uint8_t Weapon::get_id() const
+{
+    return get_info()->get_id();
+}
+
 int32_t Weapon::get_ammo()
 {
 	return jc::read<int32_t>(this, jc::weapon::AMMO);
@@ -170,12 +175,12 @@ float Weapon::get_last_shot_time()
 	return jc::read<float>(this, jc::weapon::LAST_SHOT_TIME);
 }
 
-WeaponInfo* Weapon::get_info()
+WeaponInfo* Weapon::get_info() const
 {
 	return jc::read<WeaponInfo*>(this, jc::weapon::WEAPON_INFO);
 }
 
-Character* Weapon::get_owner()
+Character* Weapon::get_owner() const
 {
 	return jc::read<Character*>(this, jc::weapon::CHARACTER_OWNER);
 }

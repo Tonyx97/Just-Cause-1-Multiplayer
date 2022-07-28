@@ -57,7 +57,8 @@ public:
 
 	bool can_create_shells();
 
-	int32_t get_id() const;
+	uint8_t get_id() const;
+
 	int32_t get_type_id() const;
 	int32_t get_max_mag_ammo();
 	int32_t get_bullets_to_fire();
@@ -86,14 +87,16 @@ public:
 	bool is_firing() const;
 	bool is_trigger_pulled() const;
 
+	uint8_t get_id() const;
+
 	int32_t get_ammo();
 	int32_t get_bullets_fired();
 	int32_t get_bullets_fired_now();
 
 	float get_last_shot_time();
 
-	WeaponInfo* get_info();
-	Character*	get_owner();
+	WeaponInfo* get_info() const;
+	Character*	get_owner() const;
 
 	vec3 get_aim_target();
 

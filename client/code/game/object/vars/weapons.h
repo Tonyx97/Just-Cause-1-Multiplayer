@@ -1,5 +1,7 @@
 #pragma once
 
+using WeaponID = uint8_t;
+
 enum WeaponSlot
 {
 	WeaponSlot_A,
@@ -14,7 +16,7 @@ enum WeaponSlot
 	WeaponSlot_J,
 };
 
-enum WeaponID
+enum WeaponID_ : WeaponID
 {
 	Weapon_None,
 	Weapon_Pistol = 1, // MORETTI P-94 | Pistol
@@ -64,7 +66,7 @@ enum WeaponID
 
 namespace jc::vars
 {
-	inline const std::unordered_map<uint32_t, std::string> weapons_id_to_type_name =
+	inline const std::unordered_map<WeaponID, std::string> weapons_id_to_type_name =
 	{
 		{ Weapon_Pistol, "Pistol" },
 		{ Weapon_Assault_Rifle, "Assault Rifle" },
@@ -111,7 +113,7 @@ namespace jc::vars
 		{ Weapon_Remote_Trigger, "Remote Trigger" },
 	};
 
-	inline const std::unordered_map<uint32_t, std::string> weapons_id_to_model_name =
+	inline const std::unordered_map<WeaponID, std::string> weapons_id_to_model_name =
 	{
 		{ Weapon_Pistol, R"(Weapons\WEAP_026_lod4.rbm)" },
 		{ Weapon_Assault_Rifle, R"(Weapons\WEAP_006_lod4.rbm)" },

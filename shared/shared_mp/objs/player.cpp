@@ -78,6 +78,11 @@ Character* Player::get_character() const
 
 	return handle ? handle->get_character() : nullptr;
 }
+
+CharacterHandle* Player::get_character_handle() const
+{
+	return is_local() ? nullptr : handle;
+}
 #else
 Player::Player(PlayerClient* pc) : client(pc)
 {
@@ -171,14 +176,38 @@ void Player::set_max_hp(float v)
 #endif
 }
 
-void Player::set_transform(const Transform& transform)
+void Player::set_transform(const vec3& position, const quat& rotation)
 {
-	dyn_info.transform = transform;
+	dyn_info.position = position;
+	dyn_info.rotation = rotation;
+
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->set_transform(Transform(position, rotation)); });
+#endif
+}
+
+void Player::set_velocity(const vec3& v)
+{
+	dyn_info.velocity = v;
+
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c)
+	{
+		c->set_proxy_velocity(v);
+	});
+#endif
+}
+
+void Player::set_movement_angle(float angle, bool send_angle_only_next_tick)
+{
+	move_info.angle = angle;
+	move_info.sync_angle_next_tick = send_angle_only_next_tick;
 }
 
 void Player::set_movement_info(float angle, float right, float forward, bool aiming)
 {
-	move_info.angle = angle;
+	set_movement_angle(angle, false);
+
 	move_info.right = right;
 	move_info.forward = forward;
 	move_info.aiming = aiming;

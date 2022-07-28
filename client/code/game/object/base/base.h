@@ -98,4 +98,6 @@ public:
 
 	vec3 get_position() const;
 	vec3 get_view_direction() const;
+
+	quat get_rotation() const;
 };

@@ -49,5 +49,5 @@ public:
 
 	ref<Weapon> get_current_weapon();
 	ref<Weapon> add_weapon(ref<Weapon>& weapon);
-	ref<Weapon> add_weapon(int32_t weapon_id);
+	ref<Weapon> add_weapon(uint8_t weapon_id);
 };

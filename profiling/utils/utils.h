@@ -415,6 +415,24 @@ namespace util
 	{
 	}
 
+	namespace pack
+	{
+		static constexpr float PI_RANGE_FACTOR = 10431.f;
+		static constexpr float NEG1_POS1_FACTOR = 127.f;
+
+		inline int16_t pack_pi_angle(float v) { return static_cast<int16_t>(v * PI_RANGE_FACTOR); }
+		inline float unpack_pi_angle(int16_t v) { return static_cast<float>(v) / PI_RANGE_FACTOR; }
+
+		inline int8_t pack_norm(float v) { return static_cast<int8_t>(v * NEG1_POS1_FACTOR); }
+		inline float unpack_norm(int8_t v) { return static_cast<float>(v) / NEG1_POS1_FACTOR; }
+
+		template <typename T = int16_t>
+		inline T pack_float(float v, float factor) { return static_cast<T>(v * factor); }
+
+		template <typename T = int16_t>
+		inline float unpack_float(T v, float factor) { return static_cast<float>(v) / factor; }
+	}
+
 	namespace win
 	{
 		inline std::wstring get_clipboard_text()

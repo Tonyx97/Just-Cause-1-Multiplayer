@@ -233,3 +233,8 @@ vec3 ObjectBase::get_view_direction() const
 {
 	return get_transform().forward();
 }
+
+quat ObjectBase::get_rotation() const
+{
+	return glm::quat_cast(get_transform().get_matrix());
+}

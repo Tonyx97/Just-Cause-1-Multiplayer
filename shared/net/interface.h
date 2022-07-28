@@ -68,8 +68,8 @@ namespace enet
 		ENetPeer*	   peer    = nullptr;
 		ENetPacket*	   packet  = nullptr;
 		mutable size_t offset  = 0u;
-		uint32_t	   id	   = 0u;
 		float		   time	   = 0.f;
+		uint8_t		   id	   = 0u;
 		uint8_t		   channel = 0u;
 		bool		   as_view = false,
 					   destroyed = false;
@@ -91,7 +91,7 @@ namespace enet
 
 			// first get the id of the packet and erase it from the vector
 
-			id = deserialize_int(data);
+			id = deserialize_int<uint8_t>(data);
 
 #ifdef JC_SERVER
 			pc = BITCAST(PlayerClient*, e.peer->data);
@@ -164,14 +164,17 @@ namespace enet
 		PlayerClient* get_pc() const { return pc; }
 #endif
 
-		uint32_t get_id() const { return id; }
+		uint8_t get_id() const { return id; }
 		uint8_t get_channel() const { return channel; }
-		
-		template <typename T = int>
-		T get_int() const { return deserialize_int(data); }
 
-		template <typename T = uint32_t>
-		T get_uint() const { return deserialize_int<T>(data); }
+		uint8_t get_u8() const { return deserialize_int<uint8_t>(data); }
+		int8_t get_i8() const { return deserialize_int<uint8_t>(data); }
+
+		uint16_t get_u16() const { return deserialize_int<uint16_t>(data); }
+		int16_t get_i16() const { return deserialize_int<int16_t>(data); }
+
+		uint32_t get_u32() const { return deserialize_int<uint32_t>(data); }
+		int32_t get_i32() const { return deserialize_int<int32_t>(data); }
 
 		bool get_bool() const { return deserialize_bool(data); }
 
@@ -256,7 +259,7 @@ namespace enet
 	}
 
 	template <typename Fn>
-	inline bool wait_until_packet(uint32_t id, uint8_t channel, const Fn& fn, uint32_t timeout = 5000)
+	inline bool wait_until_packet(uint8_t id, uint8_t channel, const Fn& fn, uint32_t timeout = 5000)
 	{
 		bool received = false;
 

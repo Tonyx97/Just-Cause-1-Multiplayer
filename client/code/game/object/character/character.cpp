@@ -155,11 +155,23 @@ namespace jc::character::hook
 				const bool is_moving = right != 0.f || forward != 0.f || aiming;
 				const bool is_diff = right != move_info.right || forward != move_info.forward || aiming != move_info.aiming;
 
-				if (is_diff || (was_moving && !is_moving || !was_moving && is_moving))
+				const bool is_move_diff = is_diff || (was_moving && !is_moving || !was_moving && is_moving);
+				const bool is_angle_diff = angle != move_info.angle;
+
+				if (is_move_diff || is_angle_diff)
 				{
 					localplayer->set_movement_info(angle, right, forward, aiming);
 
-					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, angle, right, forward, aiming);
+					if (is_move_diff)
+					{
+						const auto packed_angle = util::pack::pack_pi_angle(angle);
+						const auto packed_right = util::pack::pack_norm(right);
+						const auto packed_forward = util::pack::pack_norm(forward);
+
+						g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, packed_angle, packed_right, packed_forward, aiming);
+					}
+					else if (is_moving && is_angle_diff)
+						localplayer->set_movement_angle(angle, true);
 				}
 			}
 			else if (g_net->get_player_by_character(character))
@@ -212,7 +224,7 @@ namespace jc::character::hook
 						g_net->send_reliable(
 							PlayerPID_StanceAndMovement,
 							PlayerStanceID_Fire,
-							weapon->get_info()->get_id(),
+							weapon->get_id(),
 							weapon->get_grip_transform()->position(),
 							weapon->get_aim_target());
 		
@@ -291,6 +303,28 @@ void Character::rebuild_skeleton()
 void Character::respawn()
 {
 	jc::this_call(jc::character::fn::RESPAWN, this, 1.f);
+}
+
+void Character::set_proxy_velocity(const vec3& v)
+{
+	if (auto physical = jc::read<ptr>(this, 0x850))
+	{
+		auto _v = v;
+
+		*(ptr*)(physical + 0x4C) = *(ptr*)(physical + 0x4C);
+		*(float*)(physical + 0x40) = _v.x/* + *(float*)(physical + 0x40)*/;
+		*(float*)(physical + 0x44) = _v.y/* + *(float*)(physical + 0x44)*/;
+		*(float*)(physical + 0x48) = _v.z/* + *(float*)(physical + 0x48)*/;
+
+		/*const auto pos = get_position();
+
+		(*(void(__thiscall**)(ptr, vec3*, const vec3*))(*(ptr*)physical + 0x7C))(
+			physical,
+			&_v,
+			&pos);*/
+
+		log(RED, "{:.2f} {:.2f} {:.2f}", *(float*)(physical + 0x40), *(float*)(physical + 0x44), *(float*)(physical + 0x48));
+	}
 }
 
 void Character::set_grenades_ammo(int32_t v)
@@ -478,23 +512,29 @@ void Character::clear_weapon_belt()
 	get_weapon_belt()->clear();
 }
 
-void Character::set_weapon(int32_t id, bool is_remote_player)
+void Character::set_weapon(uint8_t id, bool is_remote_player)
 {
-	if (id == 0)
+	if (id == 0u)
 		return save_current_weapon();
 
 	if (const auto weapon_belt = get_weapon_belt())
 	{
+		const auto curr_weapon = weapon_belt->get_current_weapon();
+
+		// if we have it and we are already holding it then 
+		// do nothing
+
+		if (curr_weapon->get_id() == id)
+			return;
+
 		for (int i = 0; i < WeaponBelt::MAX_SLOTS(); ++i)
 			if (auto rf = weapon_belt->get_weapon_from_slot(i))
-			{
-				if (rf->get_info()->get_id() == id)
+				if (rf->get_id() == id)
 				{
 					set_draw_weapon(rf);
 
 					return apply_weapon_switch();
 				}
-			}
 
 		// this character does not have the weapon we want to set so
 		// we create and add it to the weapon belt

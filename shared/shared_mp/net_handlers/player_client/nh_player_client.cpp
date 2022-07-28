@@ -9,7 +9,7 @@
 enet::PacketResult nh::player_client::init(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
-	g_net->add_local(p.get_uint());
+	g_net->add_local(p.get_u32());
 	g_net->set_initialized(true);
 
 	const auto local = g_net->get_local();

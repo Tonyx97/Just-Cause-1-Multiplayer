@@ -68,7 +68,7 @@ ref<Weapon> WeaponBelt::add_weapon(ref<Weapon>& r)
 	return std::move(r);
 }
 
-ref<Weapon> WeaponBelt::add_weapon(int32_t weapon_id)
+ref<Weapon> WeaponBelt::add_weapon(uint8_t weapon_id)
 {
 	if (auto r = g_weapon->create_weapon_instance(weapon_id))
 	{
@@ -76,5 +76,6 @@ ref<Weapon> WeaponBelt::add_weapon(int32_t weapon_id)
 
 		return add_weapon(r);
 	}
+
 	return {};
 }

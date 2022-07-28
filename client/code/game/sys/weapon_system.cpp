@@ -101,13 +101,13 @@ int WeaponSystem::for_each_weapon_template(const weapon_template_iteration_t& fn
 	return count;
 }
 
-std::string WeaponSystem::get_weapon_typename(int32_t id)
+std::string WeaponSystem::get_weapon_typename(uint8_t id)
 {
 	auto it = jc::vars::weapons_id_to_type_name.find(id);
 	return it != jc::vars::weapons_id_to_type_name.end() ? it->second : "";
 }
 
-std::string WeaponSystem::get_weapon_model(int32_t id)
+std::string WeaponSystem::get_weapon_model(uint8_t id)
 {
 	auto it = jc::vars::weapons_id_to_model_name.find(id);
 	return it != jc::vars::weapons_id_to_model_name.end() ? it->second : "";
@@ -122,11 +122,11 @@ ref<Weapon> WeaponSystem::create_weapon_instance(const std::string& name)
 	return p;
 }
 
-ref<Weapon> WeaponSystem::create_weapon_instance(int32_t id)
+ref<Weapon> WeaponSystem::create_weapon_instance(uint8_t id)
 {
 	ref<Weapon> p;
 
-	jc::this_call(jc::weapon_system::fn::ALLOC_WEAPON_BY_ID, this, &p, id);
+	jc::this_call(jc::weapon_system::fn::ALLOC_WEAPON_BY_ID, this, &p, static_cast<int32_t>(id));
 
 	return p;
 }

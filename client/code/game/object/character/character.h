@@ -102,6 +102,7 @@ public:
 	static void SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai = false);
 
 	void respawn();
+	void set_proxy_velocity(const vec3& v);
 	void set_grenades_ammo(int32_t v);
 	void set_animation(const jc::stl::string& name, float speed, bool unk0 = false, bool unk1 = false);
 	void set_grenade_timeout(float v);
@@ -118,7 +119,7 @@ public:
 	void set_arms_stance(uint32_t id);
 	void setup_punch();
 	void clear_weapon_belt();
-	void set_weapon(int32_t id, bool is_remote_player = true);
+	void set_weapon(uint8_t id, bool is_remote_player = true);
 	void set_draw_weapon(int32_t slot);
 	void set_draw_weapon(ref<Weapon>& weapon);
 	void save_current_weapon();

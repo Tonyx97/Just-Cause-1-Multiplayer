@@ -50,6 +50,8 @@ bool Net::init(const std::string& ip, const std::string& nick)
 		return logb(RED, "Connection failed");
 	}
 
+	enet_peer_ping_interval(peer, 2000);
+
 	connected = true;
 
 	log(GREEN, "Connected");

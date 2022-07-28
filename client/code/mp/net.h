@@ -48,7 +48,7 @@ public:
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_reliable(uint32_t id, const A&... args)
+	inline void send_reliable(PacketID id, const A&... args)
 	{
 		vec<uint8_t> data;
 

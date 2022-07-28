@@ -10,6 +10,7 @@
 
 #ifdef JC_CLIENT
 #include <game/object/character/character.h>
+#include <game/object/character_handle/character_handle.h>
 #include <game/object/character/comps/stance_controller.h>
 #include <game/object/base/comps/physical.h>
 #endif
@@ -53,25 +54,26 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 
 	while (!p.is_empty())
 	{
-		switch (const auto type = p.get_uint())
+		switch (const auto type = p.get_u8())
 		{
 		case PlayerDynInfo_Transform:
 		{
-			auto transform = p.get_raw<Transform>();
+			auto position = p.get_raw<vec3>();
+			auto rotation = p.get_raw<i16vec4>();
 
-			player->set_transform(transform);
+			player->set_transform(position, jc::math::unpack_quat(rotation));
 
 #ifdef JC_SERVER
-			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, transform);
+			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, position, rotation);
 #endif
 
 			break;
 		}
 		case PlayerDynInfo_Velocity:
 		{
-			const auto velocity = p.get_raw<vec3>();
+			auto velocity = p.get_raw<vec3>();
 
-			//player->get_character()->get_physical()->set_velocity(velocity);
+			player->set_velocity(velocity);
 
 #ifdef JC_SERVER
 			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, velocity);
@@ -82,10 +84,9 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 		case PlayerDynInfo_HeadRotation:
 		{
 			const auto rotation = p.get_raw<vec3>();
+			const auto interpolation = p.get_i8();
 
-			const float interpolation = p.get_float();
-
-			player->set_head_rotation(rotation, interpolation);
+			player->set_head_rotation(rotation, util::pack::unpack_norm(interpolation));
 
 #ifdef JC_SERVER
 			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, rotation, interpolation);
@@ -95,7 +96,7 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 		}
 		case PlayerDynInfo_Skin:
 		{
-			const auto skin_id = p.get_uint();
+			const auto skin_id = p.get_u32();
 
 			player->set_skin(skin_id);
 
@@ -119,9 +120,9 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 		}
 		case PlayerDynInfo_NPCVariant:
 		{
-			const auto cloth_skin = p.get_int(),
-					   head_skin = p.get_int(),
-					   cloth_color = p.get_int();
+			const auto cloth_skin = p.get_i32(),
+					   head_skin = p.get_i32(),
+					   cloth_color = p.get_i32();
 
 			auto accessories = p.get_vector<VariantPropInfo>();
 
@@ -151,20 +152,31 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	const auto player = pc->get_player();
 #endif
 
-	switch (const auto type = p.get_uint())
+	switch (const auto type = p.get_u8())
 	{
 	case PlayerStanceID_Movement:
 	{
-		const float angle = p.get_float(),
-					right = p.get_float(),
-					forward = p.get_float();
+		const auto angle = p.get_i16();
+		const auto right = p.get_i8();
+		const auto forward = p.get_i8();
+		const auto aiming = p.get_bool();
 
-		const bool aiming = p.get_bool();
-
-		player->set_movement_info(angle, right, forward, aiming);
+		player->set_movement_info(util::pack::unpack_pi_angle(angle), util::pack::unpack_norm(right), util::pack::unpack_norm(forward), aiming);
 
 #ifdef JC_SERVER
 		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, angle, right, forward, aiming);
+#endif
+
+		break;
+	}
+	case PlayerStanceID_MovementAngle:
+	{
+		const auto angle = p.get_i16();
+
+		player->set_movement_angle(util::pack::unpack_pi_angle(angle), false);
+
+#ifdef JC_SERVER
+		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, angle);
 #endif
 
 		break;
@@ -191,7 +203,7 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	}
 	case PlayerStanceID_BodyStance:
 	{
-		const auto stance_id = p.get_uint();
+		const auto stance_id = p.get_u32();
 
 		player->set_body_stance_id(stance_id);
 
@@ -218,7 +230,7 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	}
 	case PlayerStanceID_Fire:
 	{
-		const auto weapon_id = p.get_int();
+		const auto weapon_id = p.get_u8();
 		const auto muzzle_pos = p.get_raw<vec3>();
 		const auto target_pos = p.get_raw<vec3>();
 
@@ -258,7 +270,7 @@ enet::PacketResult nh::player::set_weapon(const enet::Packet& p)
 	const auto player = pc->get_player();
 #endif
 
-	const auto weapon_id = p.get_int();
+	const auto weapon_id = p.get_u8();
 
 	log(GREEN, "A player changed weapon from {} to {}", player->get_weapon_id(), weapon_id);
 

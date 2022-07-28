@@ -9,6 +9,15 @@ Transform::Transform(const vec3& position)
 	m[3] = vec4(position, 1.f);
 }
 
+Transform::Transform(const vec3& position, const quat& rotation)
+{
+	m = glm::translate(m, position) * glm::mat4_cast(rotation);
+}
+
+Transform::Transform(const mat4& matrix) : m(matrix)
+{
+}
+
 void Transform::decompose(vec3& t, quat& r, vec3& s) const
 {
 	t = m[3];
@@ -52,6 +61,8 @@ Transform& Transform::interpolate(const Transform& transform, float tf, float rf
 
 	r0 = glm::normalize(r0);
 	r1 = glm::normalize(r1);
+	
+	log(RED, "{:.2f} {:.3f}", glm::distance(t0, t1), jc::math::quat_cos_theta(r0, r1));
 
 	const auto interpolated_t = glm::lerp(t0, t1, tf);
 	const auto interpolated_r = glm::normalize(glm::slerp(r0, r1, rf));

@@ -9,6 +9,8 @@ private:
 public:
 	Transform() {}
 	Transform(const vec3& position);
+	Transform(const vec3& position, const quat& rotation);
+	Transform(const mat4& matrix);
 
 	void compose(const vec3& t, const quat& r, const vec3& s);
 	void decompose(vec3& t, quat& r, vec3& s) const;

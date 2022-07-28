@@ -278,7 +278,7 @@ void UI::render_players()
 			return;
 
 		const auto player_char = player->get_character();
-		const auto player_pos = player->get_transform().position();
+		const auto player_pos = player->get_position();
 
 		constexpr float MAX_DISTANCE = 1000.f;
 
@@ -716,6 +716,9 @@ void UI::overlay_debug()
 				if (vec2 out_sp; camera->w2s(weapon->get_last_ejector_transform()->position(), out_sp))
 					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFF00FFFF, 30, 2.f);
 			}
+
+			/*if (vec2 out_sp; camera->w2s(local_player_pawn->get_aim_target(), out_sp)) /// aim target
+				v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFF00FFFF, 30, 2.f);*/
 		}
 
 		if (const auto vehicle_controller = local_player_pawn->get_vehicle_controller())
@@ -904,8 +907,6 @@ void UI::overlay_debug()
 				{
 					if (!g_test_char)
 					{
-						g_factory->create_objective(local_pos + vec3(20.f, 0.f, 0.f), { util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), util::rand::rand_int(0, 255), 255 });
-
 						cc_h = g_factory->spawn_character("female1", g_world->get_localplayer_character()->get_position());
 						g_test_char = cc_h->get_character();
 						g_test_char->set_skin(126);
@@ -922,29 +923,20 @@ void UI::overlay_debug()
 					log(RED, "{:x}", ptr(g_test_char));
 				}
 
-				/*if (g_test_char && g_test_char->is_alive())
+				if (g_test_char && g_test_char->is_alive())
 				{
 					// interpolate main transform
 
 					auto previous_t = g_test_char->get_transform();
 
-					local_transform.translate(vec3(0.f, 0.f, 2.f));
+					log(RED, "{}", jc::math::quat_diff(glm::quat_cast(previous_t.get_matrix()), local_transform.get_matrix()));
+
+					//local_transform.translate(vec3(0.f, 0.f, 1.f));
 
 					previous_t.interpolate(local_transform, 0.2f, 0.05f);
 
 					g_test_char->set_transform(previous_t);
-
-					vec3 vel = {};
-
-					// interpolate head rotation
-
-					const auto target = local_char->get_skeleton()->get_head_euler_rotation();
-
-					if (glm::length(target) > 0.f)
-					{
-						g_test_char->get_skeleton()->set_head_euler_rotation(target);
-					}
-				}*/
+				}
 			}
 		}
 	}
