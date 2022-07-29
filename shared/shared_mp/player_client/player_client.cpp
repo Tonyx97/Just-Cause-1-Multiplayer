@@ -68,7 +68,7 @@ void PlayerClient::startup_sync()
 		// the other players who already joined and it will also create those players for
 		// this player
 
-		g_net->send_broadcast_joined_reliable(p);
+		g_net->send_broadcast_joined(p);
 	}
 
 	// sync player's basic info
@@ -96,7 +96,7 @@ void PlayerClient::startup_sync()
 
 		// send the basic info of each player to all players
 
-		g_net->send_broadcast_joined_reliable(p);
+		g_net->send_broadcast_joined(p);
 	}
 
 	// let the other players know this player joined

@@ -12,13 +12,15 @@
 
 #include <game/sys/time_system.h>
 
+#include <core/keycode.h>
+
 void jc::mp::logic::on_tick()
 {
 	// send and update our local player info
 
-	static TimerRaw transform_timer(500);
-	static TimerRaw velocity_timer(16);
-	static TimerRaw angle_timer(16);
+	static TimerRaw transform_timer(100);
+	static TimerRaw velocity_timer(3000);
+	static TimerRaw angle_timer(16 * 2);
 	static TimerRaw head_rotation_timer(enet::TICKS_MS * 25);
 	static TimerRaw aiming_timer(enet::TICKS_MS * 5);
 
@@ -33,8 +35,8 @@ void jc::mp::logic::on_tick()
 			const auto flags = local_char->get_flags();
 			const auto transform = local_char->get_transform();
 			const auto velocity = local_char->get_velocity();
-			const auto position = transform.position();
-			const auto rotation = glm::quat_cast(transform.get_matrix());
+			const auto position = transform.get_position();
+			const auto rotation = transform.get_rotation();
 			const auto hp = local_char->get_real_hp();
 			const auto max_hp = local_char->get_max_hp();
 			const auto head_rotation = skeleton->get_head_euler_rotation();
@@ -55,7 +57,7 @@ void jc::mp::logic::on_tick()
 
 			// transform (we upload it every 500 ms for now to correct the position in remote players)
 			
-			if (transform_timer.ready())
+			if ((position != localplayer->get_position() || rotation != localplayer->get_rotation()) && transform_timer.ready())
 			{
 				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Transform, position, jc::math::pack_quat(rotation));
 
@@ -63,13 +65,13 @@ void jc::mp::logic::on_tick()
 			}
 
 			// velocity
-
-			if (velocity != localplayer->get_velocity() && velocity_timer.ready())
+			
+			/*if (velocity != localplayer->get_velocity() && glm::length(velocity) > 10.f && velocity_timer.ready())
 			{
 				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Velocity, velocity);
 
 				localplayer->set_velocity(velocity);
-			}
+			}*/
 
 			// movement angle
 
@@ -127,11 +129,9 @@ void jc::mp::logic::on_update_objects()
 
 			check(player_char, "Player's character must be valid");
 
-			auto previous_position = player_char->get_position(),
-				 target_position = player->get_position();
+			// correct player position with the server's transform
 
-			auto previous_rotation = player_char->get_rotation(),
-				 target_rotation = player->get_rotation();
+			player->correct_position();
 
 			// update the player movement
 

@@ -27,9 +27,11 @@ public:
 	vec3 right() const { return m[0]; }
 	vec3 up() const { return m[1]; }
 	vec3 forward() const { return m[2]; }
-	vec3 position() const { return m[3]; }
+	vec3 get_position() const { return m[3]; }
 
 	bool operator != (const Transform& v) const { return m != v.m; }
+
+	quat get_rotation() const;
 
 	const mat4& get_matrix() const { return m; }
 

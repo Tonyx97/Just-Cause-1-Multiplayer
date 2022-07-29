@@ -4,6 +4,7 @@ struct PlayerClientSyncInstancesPacket
 {
 	static constexpr PacketID ID = PlayerClientPID_SyncInstances;
 	static constexpr PacketID CHANNEL = ChannelID_PlayerClient;
+	static constexpr int RELIABILITY = ENET_PACKET_FLAG_RELIABLE;
 
 #ifdef JC_CLIENT
 	std::vector<std::pair<NID, uint32_t>> net_objects;
@@ -25,7 +26,7 @@ struct PlayerClientSyncInstancesPacket
 		return data;
 	}
 
-	PacketHolder serialize_as_packet() const { return { serialize() }; }
+	PacketHolder serialize_as_packet() const { return PacketHolder(serialize(), RELIABILITY); }
 #endif
 
 #ifdef JC_CLIENT
@@ -49,6 +50,7 @@ struct PlayerClientBasicInfoPacket
 {
 	static constexpr PacketID ID = PlayerClientPID_BasicInfo;
 	static constexpr PacketID CHANNEL = ChannelID_PlayerClient;
+	static constexpr int RELIABILITY = ENET_PACKET_FLAG_RELIABLE;
 
 	struct Info
 	{
@@ -80,7 +82,7 @@ struct PlayerClientBasicInfoPacket
 		return data;
 	}
 
-	PacketHolder serialize_as_packet() const { return { serialize() }; }
+	PacketHolder serialize_as_packet() const { return PacketHolder(serialize(), RELIABILITY); }
 
 	PlayerClientBasicInfoPacket& deserialize(vec<uint8_t>& data)
 	{

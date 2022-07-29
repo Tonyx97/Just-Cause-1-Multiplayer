@@ -219,6 +219,13 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD1))
 	{
+		if (auto p0 = jc::read<ptr>(local_char, 0x850))
+			if (auto p1 = jc::read<ptr>(p0, 0xB0))
+				if (auto p2 = jc::read<ptr>(p1, 0x4))
+				{
+					local_char->set_proxy_velocity(vec3(10.f, 10.f, 0.f));
+				}
+
 		/*struct vel_test
 		{
 			vec3  dir;

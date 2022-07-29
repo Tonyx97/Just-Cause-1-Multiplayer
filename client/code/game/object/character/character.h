@@ -57,6 +57,7 @@ namespace jc::character
 		static constexpr uint32_t SET_DRAW_WEAPON			= 0x5A09A0;
 		static constexpr uint32_t DRAW_WEAPON_NOW			= 0x59F8E0;
 		static constexpr uint32_t RELOAD_CURRENT_WEAPON		= 0x5A0220;
+		static constexpr uint32_t FORCE_LAUNCH				= 0x5A34A0;
 	}
 
 	namespace g
@@ -103,6 +104,7 @@ public:
 
 	void respawn();
 	void set_proxy_velocity(const vec3& v);
+	void set_added_velocity(const vec3& v);
 	void set_grenades_ammo(int32_t v);
 	void set_animation(const jc::stl::string& name, float speed, bool unk0 = false, bool unk1 = false);
 	void set_grenade_timeout(float v);
@@ -118,6 +120,7 @@ public:
 	void set_body_stance(uint32_t id);
 	void set_arms_stance(uint32_t id);
 	void setup_punch();
+	void force_launch(const vec3& vel, const vec3& dir, float f1, float f2);
 	void clear_weapon_belt();
 	void set_weapon(uint8_t id, bool is_remote_player = true);
 	void set_draw_weapon(int32_t slot);
@@ -155,6 +158,7 @@ public:
 	ArmsStanceController* get_arms_stance() const;
 
 	vec3 get_velocity();
+	vec3 get_added_velocity() const;
 	vec3 get_aim_target() const;
 	vec3 get_bone_position(BoneID index) const;
 	vec3 get_head_bone_position();

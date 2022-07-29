@@ -695,25 +695,25 @@ void UI::overlay_debug()
 
 			if (show_grip)
 			{
-				if (vec2 out_sp; camera->w2s(weapon->get_grip_transform()->position(), out_sp))
+				if (vec2 out_sp; camera->w2s(weapon->get_grip_transform()->get_position(), out_sp))
 					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFFFF, 30, 2.f);
 			}
 
 			if (show_last_muzzle)
 			{
-				if (vec2 out_sp; camera->w2s(weapon->get_last_muzzle_transform()->position(), out_sp))
+				if (vec2 out_sp; camera->w2s(weapon->get_last_muzzle_transform()->get_position(), out_sp))
 					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFF00, 30, 2.f);
 			}
 
 			if (show_muzzle)
 			{
-				if (vec2 out_sp; camera->w2s(weapon->get_muzzle_transform()->position(), out_sp))
+				if (vec2 out_sp; camera->w2s(weapon->get_muzzle_transform()->get_position(), out_sp))
 					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFF00FF, 30, 2.f);
 			}
 
 			if (show_last_grip)
 			{
-				if (vec2 out_sp; camera->w2s(weapon->get_last_ejector_transform()->position(), out_sp))
+				if (vec2 out_sp; camera->w2s(weapon->get_last_ejector_transform()->get_position(), out_sp))
 					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFF00FFFF, 30, 2.f);
 			}
 
@@ -725,7 +725,7 @@ void UI::overlay_debug()
 		{
 			ImGui::Text("VehicleController: 0x%x", vehicle_controller);
 
-			if (vec2 out_sp; camera->w2s(vehicle_controller->get_transform()->position(), out_sp))
+			if (vec2 out_sp; camera->w2s(vehicle_controller->get_transform()->get_position(), out_sp))
 				v_list->AddCircle({ out_sp.x, out_sp.y }, 20.f, 0xFFFFFFFF, 30, 5.f);
 
 			if (const auto vehicle = vehicle_controller->get_vehicle())

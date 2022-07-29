@@ -11,7 +11,7 @@ private:
 
 	ENetHost* sv = nullptr;
 
-	inline void send_broadcast_reliable(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc = nullptr)
+	inline void send_broadcast(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc = nullptr)
 	{
 		for_each_player_client([&](NID, PlayerClient* pc)
 		{
@@ -20,7 +20,7 @@ private:
 		});
 	}
 
-	inline void send_broadcast_joined_reliable(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc = nullptr)
+	inline void send_broadcast_joined(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc = nullptr)
 	{
 		for_each_joined_player_client([&](NID, PlayerClient* pc)
 		{
@@ -38,7 +38,7 @@ public:
 	template <typename T>
 	inline void send_broadcast_reliable(const T& data)
 	{
-		send_broadcast_reliable(T::CHANNEL, data.serialize_as_packet(), nullptr);
+		send_broadcast(T::CHANNEL, data.serialize_as_packet(), nullptr);
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>
@@ -54,13 +54,29 @@ public:
 
 		enet::serialize_params(data, id, args...);
 
-		send_broadcast_reliable(channel, PacketHolder(data), ignore_pc);
+		send_broadcast(channel, PacketHolder(data), ignore_pc);
+	}
+
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_broadcast_unreliable(PacketID id, const A&... args)
+	{
+		send_broadcast_unreliable<channel>(nullptr, id, args...);
+	}
+
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_broadcast_unreliable(PlayerClient* ignore_pc, PacketID id, const A&... args)
+	{
+		vec<uint8_t> data;
+
+		enet::serialize_params(data, id, args...);
+
+		send_broadcast(channel, PacketHolder(data, 0), ignore_pc);
 	}
 
 	template <typename T>
-	inline void send_broadcast_joined_reliable(const T& data)
+	inline void send_broadcast_joined(const T& data)
 	{
-		send_broadcast_joined_reliable(T::CHANNEL, data.serialize_as_packet(), nullptr);
+		send_broadcast_joined(T::CHANNEL, data.serialize_as_packet(), nullptr);
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>
@@ -70,7 +86,7 @@ public:
 
 		enet::serialize_params(data, id, args...);
 
-		send_broadcast_joined_reliable(channel, PacketHolder(data), ignore_pc);
+		send_broadcast_joined(channel, PacketHolder(data), ignore_pc);
 	}
 
 	ENetHost* get_host() const { return sv; }

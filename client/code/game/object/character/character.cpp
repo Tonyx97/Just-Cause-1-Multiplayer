@@ -54,11 +54,11 @@ namespace jc::character::hook
 					case 3:
 					case 4:
 					case 6:
-					case 9: break; // ignore
-					case 85:
+					case 14:
 					case 86:
 					case 88:
-					case 89:
+					case 89: break; // ignore
+					case 85:
 					{
 						g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_BodyStance, id);
 
@@ -174,7 +174,7 @@ namespace jc::character::hook
 						localplayer->set_movement_angle(angle, true);
 				}
 			}
-			else if (g_net->get_player_by_character(character))
+			else if (auto player = g_net->get_player_by_character(character))
 				return;
 		}
 
@@ -225,7 +225,7 @@ namespace jc::character::hook
 							PlayerPID_StanceAndMovement,
 							PlayerStanceID_Fire,
 							weapon->get_id(),
-							weapon->get_grip_transform()->position(),
+							weapon->get_grip_transform()->get_position(),
 							weapon->get_aim_target());
 		
 		return res;
@@ -256,6 +256,20 @@ namespace jc::character::hook
 		reload_current_weapon_hook.call(character);
 	}
 
+	DEFINE_HOOK_THISCALL(force_launch, 0x5A34A0, void, Character* character, vec3* dir, float f1, float f2)
+	{
+		if (const auto lp = g_net->get_localplayer())
+			if (const auto local_char = lp->get_character())
+			{
+				if (local_char == character)
+					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_ForceLaunch, character->get_added_velocity(), *dir, f1, f2);
+				else if (g_net->get_player_by_character(character))
+					return;
+			}
+
+		force_launch_hook.call(character, dir, f1, f2);
+	}
+
 	void apply()
 	{
 		set_body_stance_hook.hook();
@@ -266,10 +280,12 @@ namespace jc::character::hook
 		update_mid_hook.hook();
 		fire_weapon_hook.hook();
 		reload_current_weapon_hook.hook();
+		force_launch_hook.hook();
 	}
 
 	void undo()
 	{
+		force_launch_hook.unhook();
 		reload_current_weapon_hook.unhook();
 		fire_weapon_hook.unhook();
 		update_mid_hook.unhook();
@@ -308,22 +324,18 @@ void Character::respawn()
 void Character::set_proxy_velocity(const vec3& v)
 {
 	if (auto physical = jc::read<ptr>(this, 0x850))
+		if (auto p1 = jc::read<ptr>(physical, 0xB0))
+			if (auto p2 = jc::read<ptr>(p1, 0x4))
+				jc::write(vec4(v.x, v.y, v.z, 0.f), p2, 0x10);
+}
+
+void Character::set_added_velocity(const vec3& v)
+{
+	if (auto physical = jc::read<ptr>(this, 0x850))
 	{
-		auto _v = v;
+		vec4 rotation = get_transform().get_matrix()[3];
 
-		*(ptr*)(physical + 0x4C) = *(ptr*)(physical + 0x4C);
-		*(float*)(physical + 0x40) = _v.x/* + *(float*)(physical + 0x40)*/;
-		*(float*)(physical + 0x44) = _v.y/* + *(float*)(physical + 0x44)*/;
-		*(float*)(physical + 0x48) = _v.z/* + *(float*)(physical + 0x48)*/;
-
-		/*const auto pos = get_position();
-
-		(*(void(__thiscall**)(ptr, vec3*, const vec3*))(*(ptr*)physical + 0x7C))(
-			physical,
-			&_v,
-			&pos);*/
-
-		log(RED, "{:.2f} {:.2f} {:.2f}", *(float*)(physical + 0x40), *(float*)(physical + 0x44), *(float*)(physical + 0x48));
+		jc::v_call(physical, 31, &v, &rotation);
 	}
 }
 
@@ -505,6 +517,13 @@ void Character::set_arms_stance(uint32_t id)
 void Character::setup_punch()
 {
 	jc::character::hook::setup_punch_hook.call(this);
+}
+
+void Character::force_launch(const vec3& vel, const vec3& dir, float f1, float f2)
+{
+	set_added_velocity(vel);
+
+	jc::character::hook::force_launch_hook.call(this, BITCAST(vec3*, &dir), f1, f2);
 }
 
 void Character::clear_weapon_belt()
@@ -703,6 +722,14 @@ vec3 Character::get_velocity()
 	return *REF(vec3*, this, jc::character::VELOCITY);
 }
 
+vec3 Character::get_added_velocity() const
+{
+	if (auto physical = jc::read<ptr>(this, 0x850))
+		return jc::read<vec3>(physical, 0x40);
+
+	return {};
+}
+
 vec3 Character::get_aim_target() const
 {
 	return jc::read<vec3>(this, jc::character::AIM_TARGET);
@@ -720,7 +747,7 @@ vec3 Character::get_bone_position(BoneID index) const
 	if (!skeleton->get_bone_transform(index, bone_transform))
 		return {};
 
-	return get_transform().rotate_point(bone_transform.position());
+	return get_transform().rotate_point(bone_transform.get_position());
 }
 
 vec3 Character::get_head_bone_position()

@@ -31,6 +31,7 @@ enum PlayerStanceID : uint8_t
 	PlayerStanceID_Aiming,
 	PlayerStanceID_Fire,
 	PlayerStanceID_Reload,
+	PlayerStanceID_ForceLaunch,
 };
 
 class Player : public NetObject
@@ -94,7 +95,8 @@ private:
 	CharacterHandle* handle = nullptr;
 
 	bool local = false,
-		 dispatching_movement = true;
+		 dispatching_movement = true,
+		 correcting_position = false;
 #endif
 
 public:
@@ -109,6 +111,7 @@ public:
 	void verify_exec(const std::function<void(Character*)>& fn);
 	void respawn(float hp, float max_hp, bool sync = true);
 	void dispatch_movement();
+	void correct_position();
 	void set_local() { local = true; }
 
 	bool is_dispatching_movement() const;
@@ -143,6 +146,7 @@ public:
 	void set_arms_stance_id(uint32_t id);
 	void set_head_rotation(const vec3& v, float interpolation);
 	void do_punch();
+	void force_launch(const vec3& vel, const vec3& dir, float f1, float f2);
 	void set_weapon_id(int32_t id);
 	void set_aim_info(bool hip, bool full, const vec3& target);
 	void fire_current_weapon(int32_t weapon_id = 0, const vec3& muzzle = {}, const vec3& target = {});

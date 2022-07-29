@@ -57,10 +57,26 @@ public:
 		send_packet(channel, data);
 	}
 
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_unreliable(PacketID id, const A&... args)
+	{
+		vec<uint8_t> data;
+
+		enet::serialize_params(data, id, args...);
+
+		send_packet(channel, data, 0);
+	}
+
 	template <typename T>
 	inline void send_reliable(const T& packet)
 	{
 		send_packet(T::CHANNEL, packet.serialize());
+	}
+
+	template <typename T>
+	inline void send_unreliable(const T& packet)
+	{
+		send_packet(T::CHANNEL, packet.serialize(), 0);
 	}
 
 	bool is_initialized() const { return initialized; }

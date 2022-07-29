@@ -145,6 +145,12 @@ void jc::patches::apply()
 		0xEB, 0x66	// jmp
 	});
 
+	// apply character's fly stance to local's patch
+	// this avoids the engine setting the flying npc animation and will
+	// use the player one instead
+
+	jc::nop(0x5A3D83, 18);
+
 	// avoid weird 2d sounds
 
 	play_ambience_2d_sounds_hook.hook();

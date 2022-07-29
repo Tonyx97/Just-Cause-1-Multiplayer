@@ -54,7 +54,9 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 
 	while (!p.is_empty())
 	{
-		switch (const auto type = p.get_u8())
+		const auto type = p.get_u8();
+
+		switch (type)
 		{
 		case PlayerDynInfo_Transform:
 		{
@@ -152,7 +154,9 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	const auto player = pc->get_player();
 #endif
 
-	switch (const auto type = p.get_u8())
+	const auto type = p.get_u8();
+
+	switch (type)
 	{
 	case PlayerStanceID_Movement:
 	{
@@ -248,6 +252,21 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 
 #ifdef JC_SERVER
 		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type);
+#endif
+
+		break;
+	}
+	case PlayerStanceID_ForceLaunch:
+	{
+		const auto vel = p.get_raw<vec3>();
+		const auto dir = p.get_raw<vec3>();
+		const auto f1 = p.get_float();
+		const auto f2 = p.get_float();
+
+		player->force_launch(vel, dir, f1, f2);
+
+#ifdef JC_SERVER
+		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, vel, dir, f1, f2);
 #endif
 
 		break;

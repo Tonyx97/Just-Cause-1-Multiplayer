@@ -56,6 +56,9 @@ void Player::respawn(float hp, float max_hp, bool sync)
 
 void Player::dispatch_movement()
 {
+	if (move_info.right == 0.f && move_info.forward == 0.f)
+		return;
+
 	verify_exec([&](Character* c)
 	{
 		// todojc - improve the bool setting 
@@ -64,6 +67,24 @@ void Player::dispatch_movement()
 		c->dispatch_movement(move_info.angle, move_info.right, move_info.forward, move_info.aiming);
 		dispatching_movement = !is_alive();
 	});
+}
+
+void Player::correct_position()
+{
+	if (correcting_position)
+	{
+		const auto character = get_character();
+
+		const auto current_position = character->get_position();
+
+		auto interpolated_t = glm::lerp(current_position, get_position(), 0.5f);
+		auto interpolated_r = glm::slerp(character->get_rotation(), get_rotation(), 0.5f);
+
+		if (glm::distance(current_position, get_position()) < 0.05f)
+			correcting_position = false;
+
+		character->set_transform(Transform(interpolated_t, interpolated_r));
+	}
 }
 
 bool Player::is_dispatching_movement() const
@@ -182,7 +203,13 @@ void Player::set_transform(const vec3& position, const quat& rotation)
 	dyn_info.rotation = rotation;
 
 #ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_transform(Transform(position, rotation)); });
+	if (!is_local())
+	{
+		// when receiving a transform from a remote player, we want to correct it by interpolating
+		// the current transform with the one we just received
+
+		correcting_position = true;
+	}
 #endif
 }
 
@@ -252,6 +279,13 @@ void Player::do_punch()
 {
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->setup_punch(); });
+#endif
+}
+
+void Player::force_launch(const vec3& vel, const vec3& dir, float f1, float f2)
+{
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->force_launch(vel, dir, f1, f2); });
 #endif
 }
 

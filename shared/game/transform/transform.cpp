@@ -73,6 +73,11 @@ Transform& Transform::interpolate(const Transform& transform, float tf, float rf
 	return *this;
 }
 
+quat Transform::get_rotation() const
+{
+	return glm::quat_cast(m);
+}
+
 #ifdef JC_CLIENT
 vec3 Transform::rotate_point(vec3 p) const
 {

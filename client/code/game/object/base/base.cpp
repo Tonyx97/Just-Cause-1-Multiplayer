@@ -226,7 +226,7 @@ Transform ObjectBase::get_transform() const
 
 vec3 ObjectBase::get_position() const
 {
-	return get_transform().position();
+	return get_transform().get_position();
 }
 
 vec3 ObjectBase::get_view_direction() const
