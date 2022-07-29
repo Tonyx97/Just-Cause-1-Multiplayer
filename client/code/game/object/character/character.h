@@ -30,6 +30,7 @@ namespace jc::character
 	static constexpr uint32_t VELOCITY					= 0x7DC; // vec3
 	static constexpr uint32_t AIM_TARGET				= 0x824; // vec3
 	static constexpr uint32_t FLAGS						= 0x884; // uint32_t
+	static constexpr uint32_t AIR_TIME					= 0x8EC; // float
 	static constexpr uint32_t GRENADE_TIMEOUT			= 0x914; // float
 	static constexpr uint32_t GRENADE_TIME				= 0x918; // float
 	static constexpr uint32_t HANDLE_ENTRY				= 0x91C; // CharacterHandleEntry
@@ -132,6 +133,7 @@ public:
 	void reload_current_weapon();
 
 	bool has_flag(uint32_t mask) const;
+	bool is_on_ground() const;
 
 	int32_t get_grenades_ammo() const;
 
@@ -141,6 +143,7 @@ public:
 	float get_grenade_time() const;
 	float get_death_time() const;
 	float get_roll_clamp() const;
+	float get_air_time() const;
 
 	CharacterHandleBase* get_handle_base() const;
 

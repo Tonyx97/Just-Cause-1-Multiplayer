@@ -127,8 +127,6 @@ void jc::mp::logic::on_update_objects()
 
 			const auto player_char = player->get_character();
 
-			check(player_char, "Player's character must be valid");
-
 			// correct player position with the server's transform
 
 			player->correct_position();

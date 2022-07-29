@@ -61,11 +61,11 @@ void Player::dispatch_movement()
 
 	verify_exec([&](Character* c)
 	{
-		// todojc - improve the bool setting 
+		// todojc - improve the bool setting
 
 		dispatching_movement = true;
 		c->dispatch_movement(move_info.angle, move_info.right, move_info.forward, move_info.aiming);
-		dispatching_movement = !is_alive();
+		dispatching_movement = false;
 	});
 }
 
@@ -154,7 +154,7 @@ bool Player::spawn()
 
 		check(handle, "Could not create the player's character");
 
-		log(PURPLE, "Player {:x} spawned now", get_nid());
+		log(PURPLE, "Player {:x} spawned now {:x}", get_nid(), ptr(get_character()));
 	}
 #endif
 

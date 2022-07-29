@@ -56,7 +56,7 @@ namespace jc::character::hook
 					case 6:
 					case 14:
 					case 86:
-					case 88:
+					case 87:
 					case 89: break; // ignore
 					case 85:
 					{
@@ -84,7 +84,11 @@ namespace jc::character::hook
 				{
 				case 1:
 				case 3:
-				case 6: break; // allow these to be set to remote players by the engine itself
+				case 6:
+				case 9:
+				case 24:
+				case 30:
+				case 88: break; // allow these to be set to remote players by the engine itself
 				default:
 				{
 					if (!player->is_dispatching_movement())
@@ -635,6 +639,11 @@ bool Character::has_flag(uint32_t mask) const
 	return get_flags() & mask;
 }
 
+bool Character::is_on_ground() const
+{
+	return get_air_time() <= 0.f;
+}
+
 int32_t Character::get_grenades_ammo() const
 {
 	return jc::read<int32_t>(this, jc::character::GRENADES_AMMO);
@@ -663,6 +672,11 @@ float Character::get_death_time() const
 float Character::get_roll_clamp() const
 {
 	return jc::read<float>(this, jc::character::ROLL_CLAMP);
+}
+
+float Character::get_air_time() const
+{
+	return jc::read<float>(this, jc::character::AIR_TIME);
 }
 
 CharacterHandleBase* Character::get_handle_base() const
