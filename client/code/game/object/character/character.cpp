@@ -12,6 +12,7 @@
 #include <game/sys/ai_core.h>
 #include <game/sys/resource_streamer.h>
 #include <game/sys/player_global_info.h>
+#include <game/sys/weapon_system.h>
 
 #include <havok/character_proxy.h>
 #include <havok/motion_state.h>
@@ -550,14 +551,33 @@ void Character::set_weapon(uint8_t id, bool is_remote_player)
 		if (curr_weapon->get_id() == id)
 			return;
 
+		const auto target_weapon_type = g_weapon->get_weapon_type(id);
+
+		// simply draw the gun if we already have it but not
+		// in hands
+
 		for (int i = 0; i < WeaponBelt::MAX_SLOTS(); ++i)
 			if (auto rf = weapon_belt->get_weapon_from_slot(i))
+			{
 				if (rf->get_id() == id)
 				{
 					set_draw_weapon(rf);
 
 					return apply_weapon_switch();
 				}
+				else if (i == weapon_belt->get_weapon_slot(target_weapon_type))
+				{
+					// clear our hands
+
+					save_current_weapon();
+
+					// remove the weapon before adding the new one to avoid item drops and bugs
+					
+					weapon_belt->remove_weapon(i);
+
+					break;
+				}
+			}
 
 		// this character does not have the weapon we want to set so
 		// we create and add it to the weapon belt

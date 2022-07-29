@@ -16,5 +16,7 @@ namespace jc::stl
 
 		auto begin() const		{ return (T*)first; }
 		auto end() const		{ return (T*)last; }
+
+		T operator[] (int i) const { return begin() + i; }
 	};
 }

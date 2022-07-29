@@ -41,7 +41,12 @@ int16_t WeaponBelt::get_current_weapon_slot_id() const
 
 int32_t WeaponBelt::get_weapon_slot(Weapon* weapon) const
 {
-	return static_cast<int32_t>(jc::this_call<int16_t>(jc::weapon_belt::fn::GET_SLOT_BY_TYPE_ID, this, weapon->get_info()->get_type_id()));
+	return get_weapon_slot(weapon->get_info()->get_type_id());
+}
+
+int32_t WeaponBelt::get_weapon_slot(int32_t type) const
+{
+	return static_cast<int32_t>(jc::this_call<int16_t>(jc::weapon_belt::fn::GET_SLOT_BY_TYPE_ID, this, type));
 }
 
 int32_t WeaponBelt::get_slot_ammo(int32_t slot) const

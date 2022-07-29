@@ -45,6 +45,7 @@ public:
 	int16_t get_current_weapon_slot_id() const;
 
 	int32_t get_weapon_slot(Weapon* weapon) const;
+	int32_t get_weapon_slot(int32_t type) const;
 	int32_t get_slot_ammo(int32_t slot) const;
 
 	ref<Weapon> get_current_weapon();

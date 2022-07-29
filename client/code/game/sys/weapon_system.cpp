@@ -7,6 +7,11 @@ uint32_t WeaponTemplate::get_id() const
 	return jc::read<uint32_t>(this, jc::weapon_system::weapon_template::ID);
 }
 
+uint32_t WeaponTemplate::get_slot() const
+{
+	return jc::read<uint32_t>(this, jc::weapon_system::weapon_template::SLOT);
+}
+
 std::string WeaponTemplate::get_model() const
 {
 	return jc::read<std::string>(this, jc::weapon_system::weapon_template::MODEL_NAME);
@@ -87,6 +92,21 @@ void WeaponSystem::dump()
 	});
 
 	log(RED, "}};");
+
+	// weapons id to slot
+
+	log(RED, "inline const std::unordered_map<uint32_t, int32_t> weapons_id_to_type =");
+	log(RED, "{{");
+
+	for_each_weapon_template([&](int, WeaponTemplate* t)
+	{
+		auto name = t->get_type_name();
+		auto id = t->get_id();
+
+		log(GREEN, "{{ {}, {} }},", fixed_names[id], t->get_slot());
+	});
+
+	log(RED, "}};");
 }
 
 int WeaponSystem::for_each_weapon_template(const weapon_template_iteration_t& fn)
@@ -99,6 +119,12 @@ int WeaponSystem::for_each_weapon_template(const weapon_template_iteration_t& fn
 		fn(count++, weapon_template);
 
 	return count;
+}
+
+int32_t WeaponSystem::get_weapon_type(uint8_t id) const
+{
+	auto it = jc::vars::weapons_id_to_type.find(id);
+	return it != jc::vars::weapons_id_to_type.end() ? it->second : -1;
 }
 
 std::string WeaponSystem::get_weapon_typename(uint8_t id)

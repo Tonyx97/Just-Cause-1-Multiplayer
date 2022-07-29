@@ -212,7 +212,9 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD7))
 	{
-		tl->set_light(TrafficLight_Red);
+		//tl->set_light(TrafficLight_Red);
+
+		g_weapon->dump();
 
 		log(RED, "called");
 	}
