@@ -154,7 +154,9 @@ namespace enet
 			offset += sizeof(T);
 		}
 
-		bool is_empty() const { return data.empty(); };
+		bool is_empty() const { return data.empty(); }
+
+		int32_t get_flags() const { return packet->flags; }
 
 		float get_time() const { return time; }
 

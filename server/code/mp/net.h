@@ -50,11 +50,7 @@ public:
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_broadcast_reliable(PlayerClient* ignore_pc, PacketID id, const A&... args)
 	{
-		vec<uint8_t> data;
-
-		enet::serialize_params(data, id, args...);
-
-		send_broadcast(channel, PacketHolder(data), ignore_pc);
+		send_broadcast<channel>(ENET_PACKET_FLAG_RELIABLE, ignore_pc, id, args...);
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>
@@ -66,11 +62,17 @@ public:
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_broadcast_unreliable(PlayerClient* ignore_pc, PacketID id, const A&... args)
 	{
+		send_broadcast<channel>(0, ignore_pc, id, args...);
+	}
+
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_broadcast(int32_t flags, PlayerClient* ignore_pc, PacketID id, const A&... args)
+	{
 		vec<uint8_t> data;
 
 		enet::serialize_params(data, id, args...);
 
-		send_broadcast(channel, PacketHolder(data, 0), ignore_pc);
+		send_broadcast(channel, PacketHolder(data, flags), ignore_pc);
 	}
 
 	template <typename T>

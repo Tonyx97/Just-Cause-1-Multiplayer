@@ -18,6 +18,7 @@ void jc::mp::logic::on_tick()
 {
 	// send and update our local player info
 
+	static TimerRaw state_sync_timer(2500);
 	static TimerRaw transform_timer(100);
 	static TimerRaw velocity_timer(3000);
 	static TimerRaw angle_timer(16 * 2);
@@ -30,8 +31,8 @@ void jc::mp::logic::on_tick()
 			const auto skeleton = local_char->get_skeleton();
 			const auto weapon_belt = local_char->get_weapon_belt();
 			const auto current_weapon = weapon_belt->get_current_weapon();
-			const auto current_weapon_info = current_weapon->get_info();
-			const auto current_weapon_id = current_weapon_info->get_id();
+			const auto current_weapon_info = current_weapon ? current_weapon->get_info() : nullptr;
+			const auto current_weapon_id = current_weapon_info ? current_weapon_info->get_id() : 0;
 			const auto flags = local_char->get_flags();
 			const auto transform = local_char->get_transform();
 			const auto velocity = local_char->get_velocity();
@@ -55,11 +56,16 @@ void jc::mp::logic::on_tick()
 			if (max_hp != localplayer->get_max_hp())
 				localplayer->set_max_hp(max_hp);
 
+			// resync state
+
+			if (state_sync_timer.ready())
+				g_net->send_reliable(PlayerPID_StateSync, current_weapon_id);
+
 			// transform (we upload it every 500 ms for now to correct the position in remote players)
 			
-			if ((position != localplayer->get_position() || rotation != localplayer->get_rotation()) && transform_timer.ready())
+			if ((position != localplayer->get_position() || rotation != localplayer->get_rotation()) && local_char->is_on_ground() && transform_timer.ready())
 			{
-				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Transform, position, jc::math::pack_quat(rotation));
+				g_net->send_unreliable(PlayerPID_DynamicInfo, PlayerDynInfo_Transform, position, jc::math::pack_quat(rotation));
 
 				localplayer->set_transform(position, rotation);
 			}
@@ -77,7 +83,7 @@ void jc::mp::logic::on_tick()
 
 			if (localplayer->should_sync_angle_only() && angle_timer.ready())
 			{
-				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_MovementAngle, util::pack::pack_pi_angle(move_angle));
+				g_net->send_unreliable(PlayerPID_StanceAndMovement, PlayerStanceID_MovementAngle, util::pack::pack_pi_angle(move_angle));
 
 				localplayer->set_movement_angle(move_angle, false);
 			}
@@ -91,7 +97,7 @@ void jc::mp::logic::on_tick()
 				head_interpolation != localplayer->get_head_interpolation()) &&
 				head_rotation_timer.ready())
 			{
-				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_HeadRotation, head_rotation, util::pack::pack_norm(head_interpolation));
+				g_net->send_unreliable(PlayerPID_DynamicInfo, PlayerDynInfo_HeadRotation, head_rotation, util::pack::pack_norm(head_interpolation));
 
 				localplayer->set_head_rotation(head_rotation, head_interpolation);
 			}
@@ -108,7 +114,7 @@ void jc::mp::logic::on_tick()
 			// aiming
 
 			if ((hip_aiming || full_aiming) && aiming_timer.ready())
-				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Aiming, hip_aiming, full_aiming, aim_target);
+				g_net->send_unreliable(PlayerPID_StanceAndMovement, PlayerStanceID_Aiming, hip_aiming, full_aiming, aim_target);
 		}
 }
 

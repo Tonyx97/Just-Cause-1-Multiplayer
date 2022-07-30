@@ -37,7 +37,7 @@ namespace jc::character::hook
 
 			if (character == local_char)
 			{
-				switch (const auto ret_add = ptr(_ReturnAddress()))
+				switch (RET_ADDRESS)
 				{
 				case 0x59F44C: // check jump
 				{
@@ -275,6 +275,30 @@ namespace jc::character::hook
 		force_launch_hook.call(character, dir, f1, f2);
 	}
 
+	DEFINE_HOOK_THISCALL(character_proxy_add_velocity, 0x744B20, void, hkCharacterProxy* proxy, const vec3* velocity, vec4* rotation)
+	{
+		// check which parts of the engine code we want to let modify a remote player's velocity
+
+		switch (const auto ret = RET_ADDRESS)
+		{
+		case 0x5A3EAB: break;	// Character::CheckForceLaunch, modifying Y velocity for a better parabolic movement
+		default:
+		{
+			//log(RED, "[{}] {}", CURR_FN, ret);
+
+			// block the localplayer from modifying a remote player's velocity
+			
+			if (const auto lp = g_net->get_localplayer())
+				if (const auto local_char = lp->get_character())
+					if (const auto character = proxy->get_character())
+						if (character != local_char && g_net->get_player_by_character(character))
+							return;
+		}
+		}
+
+		character_proxy_add_velocity_hook.call(proxy, velocity, rotation);
+	}
+
 	void apply()
 	{
 		set_body_stance_hook.hook();
@@ -286,10 +310,12 @@ namespace jc::character::hook
 		fire_weapon_hook.hook();
 		reload_current_weapon_hook.hook();
 		force_launch_hook.hook();
+		character_proxy_add_velocity_hook.hook();
 	}
 
 	void undo()
 	{
+		character_proxy_add_velocity_hook.unhook();
 		force_launch_hook.unhook();
 		reload_current_weapon_hook.unhook();
 		fire_weapon_hook.unhook();
@@ -309,6 +335,11 @@ void Character::SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai)
 	if (ai)
 		jc::write(v, jc::character::g::AI_PUNCH_DAMAGE);
 	else jc::write(v, jc::character::g::PLAYER_PUNCH_DAMAGE);
+}
+
+void Character::SET_FLYING_Y_MODIFIER(float v)
+{
+	jc::write(v, jc::character::g::FLYING_Y_MODIFIER);
 }
 
 // character
@@ -336,11 +367,11 @@ void Character::set_proxy_velocity(const vec3& v)
 
 void Character::set_added_velocity(const vec3& v)
 {
-	if (auto physical = jc::read<ptr>(this, 0x850))
+	if (auto physical = get_proxy())
 	{
 		vec4 rotation = get_transform().get_matrix()[3];
 
-		jc::v_call(physical, 31, &v, &rotation);
+		jc::character::hook::character_proxy_add_velocity_hook.call(physical, &v, &rotation);
 	}
 }
 
@@ -526,6 +557,8 @@ void Character::setup_punch()
 
 void Character::force_launch(const vec3& vel, const vec3& dir, float f1, float f2)
 {
+	log(RED, "{} {} {}", vel.x, vel.y, vel.z);
+
 	set_added_velocity(vel);
 
 	jc::character::hook::force_launch_hook.call(this, BITCAST(vec3*, &dir), f1, f2);
@@ -556,8 +589,8 @@ void Character::set_weapon(uint8_t id, bool is_remote_player)
 		// simply draw the gun if we already have it but not
 		// in hands
 
-		for (int i = 0; i < WeaponBelt::MAX_SLOTS(); ++i)
-			if (auto rf = weapon_belt->get_weapon_from_slot(i))
+		for (int slot = 0; slot < WeaponBelt::MAX_SLOTS(); ++slot)
+			if (auto rf = weapon_belt->get_weapon_from_slot(slot))
 			{
 				if (rf->get_id() == id)
 				{
@@ -565,15 +598,15 @@ void Character::set_weapon(uint8_t id, bool is_remote_player)
 
 					return apply_weapon_switch();
 				}
-				else if (i == weapon_belt->get_weapon_slot(target_weapon_type))
+				else if (slot == weapon_belt->get_weapon_slot(target_weapon_type))
 				{
 					// clear our hands
 
 					save_current_weapon();
 
-					// remove the weapon before adding the new one to avoid item drops and bugs
+					// remove the weapon before adding the new one to avoid weapon drop and bugs
 					
-					weapon_belt->remove_weapon(i);
+					weapon_belt->remove_weapon(slot);
 
 					break;
 				}
@@ -751,6 +784,11 @@ ArmsStanceController* Character::get_arms_stance() const
 	return REF(ArmsStanceController*, this, jc::character::ARMS_STANCE_CONTROLLER);
 }
 
+hkCharacterProxy* Character::get_proxy() const
+{
+	return jc::read<hkCharacterProxy*>(this, jc::character::PHYSICAL);
+}
+
 vec3 Character::get_velocity()
 {
 	return *REF(vec3*, this, jc::character::VELOCITY);
@@ -758,7 +796,7 @@ vec3 Character::get_velocity()
 
 vec3 Character::get_added_velocity() const
 {
-	if (auto physical = jc::read<ptr>(this, 0x850))
+	if (auto physical = get_proxy())
 		return jc::read<vec3>(physical, 0x40);
 
 	return {};

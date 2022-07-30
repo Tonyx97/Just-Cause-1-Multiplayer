@@ -291,6 +291,9 @@ void Player::force_launch(const vec3& vel, const vec3& dir, float f1, float f2)
 
 void Player::set_weapon_id(int32_t id)
 {
+	if (dyn_info.weapon_id == id)
+		return;
+	
 	dyn_info.weapon_id = id;
 
 #ifdef JC_CLIENT

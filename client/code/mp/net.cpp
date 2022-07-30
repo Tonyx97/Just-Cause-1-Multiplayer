@@ -214,6 +214,7 @@ void Net::setup_channels()
 
 		switch (auto id = p.get_id())
 		{
+		case PlayerPID_StateSync:				return nh::player::state_sync(p);
 		case PlayerPID_Respawn:					return nh::player::respawn(p);
 		case PlayerPID_DynamicInfo:				return nh::player::dynamic_info(p);
 		case PlayerPID_StanceAndMovement:		return nh::player::stance_and_movement(p);

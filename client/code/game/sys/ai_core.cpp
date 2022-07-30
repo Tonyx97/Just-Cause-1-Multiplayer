@@ -6,12 +6,14 @@
 
 void AiCore::init()
 {
+	Character::SET_FLYING_Y_MODIFIER(5.f);
 	Character::SET_GLOBAL_PUNCH_DAMAGE(500.f);
 	Character::SET_GLOBAL_PUNCH_DAMAGE(500.f, true);
 }
 
 void AiCore::destroy()
 {
+	Character::SET_FLYING_Y_MODIFIER(1.f);
 	Character::SET_GLOBAL_PUNCH_DAMAGE(40.f, true);
 	Character::SET_GLOBAL_PUNCH_DAMAGE(40.f);
 }

@@ -38,10 +38,11 @@ enum GenericPacketID : PacketID
 
 enum PlayerPacketID : PacketID
 {
-	PlayerPID_Respawn = GenericPID_Max,
-	PlayerPID_DynamicInfo,
-	PlayerPID_StanceAndMovement,
-	PlayerPID_SetWeapon,
+	PlayerPID_StateSync = GenericPID_Max,			// syncs all the critical info of a player
+	PlayerPID_Respawn,								// respawns a player
+	PlayerPID_DynamicInfo,							// syncs dynamic info such as position, velocity etc
+	PlayerPID_StanceAndMovement,					// syncs stance and movement controls
+	PlayerPID_SetWeapon,							// sync weapon switching
 	PlayerPID_Max
 };
 

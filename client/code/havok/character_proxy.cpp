@@ -12,6 +12,11 @@ float hkCharacterProxy::get_mass() const
 	return jc::read<float>(this, jc::hk::character_proxy::MASS);
 }
 
+Character* hkCharacterProxy::get_character() const
+{
+	return jc::read<Character*>(this, jc::hk::character_proxy::USERDATA);
+}
+
 hkSimpleShapePhantom* hkCharacterProxy::get_shape() const
 {
 	return jc::read<hkSimpleShapePhantom*>(this, jc::hk::character_proxy::SIMPLE_SHAPE_PHANTOM);

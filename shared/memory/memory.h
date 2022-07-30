@@ -172,3 +172,4 @@ struct Singleton
 
 #define JC_ALLOC(type, ...) jc::mem::alloc<type>(std::source_location::current(), __VA_ARGS__)
 #define JC_FREE jc::mem::free
+#define RET_ADDRESS ptr(_ReturnAddress())

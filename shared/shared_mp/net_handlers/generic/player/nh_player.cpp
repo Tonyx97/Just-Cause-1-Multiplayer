@@ -15,6 +15,29 @@
 #include <game/object/base/comps/physical.h>
 #endif
 
+enet::PacketResult nh::player::state_sync(const enet::Packet& p)
+{
+#ifdef JC_CLIENT
+	const auto player = p.get_net_object<Player>();
+
+	if (!player)
+		return enet::PacketRes_BadArgs;
+#else
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+#endif
+
+	const auto curr_weapon = p.get_u8();
+
+	player->set_weapon_id(curr_weapon);
+
+#ifdef JC_SERVER
+	g_net->send_broadcast_reliable(pc, PlayerPID_StateSync, player, curr_weapon);
+#endif
+
+	return enet::PacketRes_Ok;
+}
+
 enet::PacketResult nh::player::respawn(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
@@ -66,7 +89,7 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 			player->set_transform(position, jc::math::unpack_quat(rotation));
 
 #ifdef JC_SERVER
-			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, position, rotation);
+			g_net->send_broadcast_unreliable(pc, PlayerPID_DynamicInfo, player, type, position, rotation);
 #endif
 
 			break;
@@ -78,7 +101,7 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 			player->set_velocity(velocity);
 
 #ifdef JC_SERVER
-			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, velocity);
+			g_net->send_broadcast_unreliable(pc, PlayerPID_DynamicInfo, player, type, velocity);
 #endif
 
 			break;
@@ -91,7 +114,7 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 			player->set_head_rotation(rotation, util::pack::unpack_norm(interpolation));
 
 #ifdef JC_SERVER
-			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, rotation, interpolation);
+			g_net->send_broadcast_unreliable(pc, PlayerPID_DynamicInfo, player, type, rotation, interpolation);
 #endif
 
 			break;
@@ -180,7 +203,7 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 		player->set_movement_angle(util::pack::unpack_pi_angle(angle), false);
 
 #ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, angle);
+		g_net->send_broadcast_unreliable(pc, PlayerPID_StanceAndMovement, player, type, angle);
 #endif
 
 		break;

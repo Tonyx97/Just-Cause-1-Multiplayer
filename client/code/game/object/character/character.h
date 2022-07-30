@@ -29,6 +29,7 @@ namespace jc::character
 	static constexpr uint32_t DEATH_TIME				= 0x8E4; // float
 	static constexpr uint32_t VELOCITY					= 0x7DC; // vec3
 	static constexpr uint32_t AIM_TARGET				= 0x824; // vec3
+	static constexpr uint32_t PHYSICAL					= 0x850; // hkCharacterProxy*
 	static constexpr uint32_t FLAGS						= 0x884; // uint32_t
 	static constexpr uint32_t AIR_TIME					= 0x8EC; // float
 	static constexpr uint32_t GRENADE_TIMEOUT			= 0x914; // float
@@ -63,8 +64,9 @@ namespace jc::character
 
 	namespace g
 	{
-		static constexpr uint32_t AI_PUNCH_DAMAGE	  = 0x5A43F5;
-		static constexpr uint32_t PLAYER_PUNCH_DAMAGE = 0x5A43EC;
+		static constexpr uint32_t AI_PUNCH_DAMAGE			= 0x5A43F5;
+		static constexpr uint32_t PLAYER_PUNCH_DAMAGE		= 0x5A43EC;
+		static constexpr uint32_t FLYING_Y_MODIFIER			= 0xAECBB0;
 	}
 
 	namespace hook
@@ -102,6 +104,7 @@ public:
 	IMPL_OBJECT_TYPE_ID("CCharacter");
 
 	static void SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai = false);
+	static void SET_FLYING_Y_MODIFIER(float v);
 
 	void respawn();
 	void set_proxy_velocity(const vec3& v);
@@ -159,6 +162,8 @@ public:
 
 	BodyStanceController* get_body_stance() const;
 	ArmsStanceController* get_arms_stance() const;
+
+	hkCharacterProxy* get_proxy() const;
 
 	vec3 get_velocity();
 	vec3 get_added_velocity() const;
