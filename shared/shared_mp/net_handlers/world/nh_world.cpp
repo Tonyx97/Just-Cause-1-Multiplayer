@@ -20,37 +20,38 @@ enet::PacketResult nh::world::day_time(const enet::Packet& p)
 
 enet::PacketResult nh::world::spawn_object(const enet::Packet& p)
 {
-#ifdef JC_CLIENT
-	const auto player = p.get_net_object<Player>();
-
-	if (!player)
-		return enet::PacketRes_BadArgs;
-#else
+#ifdef JC_SERVER
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
 #endif
 
-	const auto net_type = p.get_integral<NetObjectType>();
+	const auto position = p.get_raw<vec3>();
 
 #ifdef JC_CLIENT
-	switch (net_type)
+	const auto [nid, type] = p.get_nid_and_type();
+
+	switch (type)
 	{
 	case NetObject_Damageable:
 	{
-		log(GREEN, "Server wants to spawn a damageable");
+		log(GREEN, "Server spawned damageable: NID = {:x}, position = {:.2f} {:.2f} {:.2f}", nid, position.x, position.y, position.z);
+
+		g_net->spawn_damageable(nid, position);
 
 		break;
 	}
-	default: log(RED, "Unknown net object type to spawn: {}", net_type);
+	default: log(RED, "Unknown net object type to spawn: {}", type);
 	}
 #else
+	const auto net_type = p.get_integral<NetObjectType>();
+
 	switch (net_type)
 	{
 	case NetObject_Damageable:
 	{
-		log(GREEN, "A player wants to spawn a damageable");
+		const auto object = g_net->spawn_damageable(position);
 
-		g_net->send_broadcast_reliable<ChannelID_World>(WorldPID_SpawnObject, player, net_type);
+		log(GREEN, "Spawning damageable: owner = {:x}, NID = {:x}, position = {:.2f} {:.2f} {:.2f}", ptr(player), object->get_nid(), position.x, position.y, position.z);
 
 		break;
 	}

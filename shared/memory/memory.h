@@ -2,6 +2,10 @@
 
 #define ARRAY_SIZE(x) sizeof(x) / sizeof(*x)
 
+#define PRAGMA(x)				_Pragma(#x)
+#define ALIGN_PUSH(x)			PRAGMA(pack(push, x))
+#define ALIGN_POP()				PRAGMA(pack(pop))
+
 namespace jc
 {
 #ifdef JC_CLIENT

@@ -45,10 +45,12 @@ NetObject::NetObject()
 {
 	nid = enet::GET_FREE_NID();
 }
+#endif
+#endif
 
 NetObject::~NetObject()
 {
+#ifdef JC_SERVER
 	enet::FREE_NID(nid);
+#endif
 }
-#endif
-#endif

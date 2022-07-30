@@ -90,30 +90,48 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 
 	log(YELLOW, "Syncing {} player instances...", info.net_objects.size());
 
-	for (const auto& [nid, type] : info.net_objects)
+	for (const auto& _info : info.net_objects)
 	{
-		check(type == NetObject_Player, "Type must be NetObject_Player");
+		switch (_info.type)
+		{
+		case NetObject_Player:
+		{
+			// we skip the sync of this net object if:
+			// 
+			// 1. we received our own local player then we skip it,
+			// we don't want to do anything to our local player from here
+			// 
+			// 2. instance already exists then we skip this
+			// current net object
 
-		// we skip the sync of this net object if:
-		// 
-		// 1. we received our own local player then we skip it,
-		// we don't want to do anything to our local player from here
-		// 
-		// 2. instance already exists then we skip this
-		// current net object
+			if (localplayer->equal(_info.nid) || g_net->get_net_object_by_nid(_info.nid))
+				break;
 
-		if (localplayer->equal(nid) || g_net->get_net_object_by_nid(nid))
-			continue;
+			const auto new_pc = g_net->add_player_client(_info.nid);
 
-		const auto new_pc = g_net->add_player_client(nid);
+			::check(new_pc, "Could not create new player");
 
-		::check(new_pc, "Could not create new player");
+			const auto player = new_pc->get_player();
 
-		const auto player = new_pc->get_player();
+			player->spawn();
 
-		player->spawn();
+			log(PURPLE, "Created new player with NID {:x}", player->get_nid());
 
-		log(PURPLE, "Created new player with NID {:x}", player->get_nid());
+			break;
+		}
+		case NetObject_Damageable:
+		{
+			log(RED, "syncing damageable object");
+
+			if (g_net->get_net_object_by_nid(_info.nid))
+				break;
+
+			g_net->spawn_damageable(_info.nid, _info.position);
+
+			break;
+		}
+		default: log(RED, "Invalid net object type received when syncing net instances: {}", _info.type);
+		}
 	}
 
 	log(YELLOW, "All player instances synced (a total of {})", info.net_objects.size());

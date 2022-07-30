@@ -2,7 +2,9 @@
 
 #include "object_lists.h"
 
-#include <shared_mp/objs/player.h>
+#include <shared_mp/objs/all.h>
+
+#include <mp/net.h>
 
 #ifdef JC_CLIENT
 PlayerClient* ObjectLists::add_player_client(NID nid)
@@ -91,6 +93,10 @@ NetObject* ObjectLists::add_net_object(NetObject* net_obj)
 		player_clients.insert({ nid, BITCAST(Player*, net_obj)->get_client()});
 		break;
 	}
+	case NetObject_Damageable:
+	{
+		break;
+	}
 	default:
 		check(false, "Invalid net object type");
 	}
@@ -131,3 +137,31 @@ PlayerClient* ObjectLists::get_player_client_by_nid(NID nid)
 	auto it = player_clients.find(nid);
 	return it != player_clients.end() ? it->second : nullptr;
 }
+
+// spawning
+
+#ifdef JC_CLIENT
+DamageableNetObject* ObjectLists::spawn_damageable(NID nid, const vec3& position)
+{
+	const auto object = CREATE_DAMAGEABLE_NET_OBJECT(nid, position);
+
+	check(add_net_object(object), "Could not add a damageable");
+
+	object->spawn();
+
+	return object;
+}
+#else
+DamageableNetObject* ObjectLists::spawn_damageable(const vec3& position)
+{
+	const auto object = CREATE_DAMAGEABLE_NET_OBJECT(position);
+
+	check(add_net_object(object), "Could not add a damageable");
+
+	object->spawn();
+
+	g_net->send_broadcast_reliable<ChannelID_World>(WorldPID_SpawnObject, position, object);
+
+	return object;
+}
+#endif

@@ -6,11 +6,20 @@ struct PlayerClientSyncInstancesPacket
 	static constexpr PacketID CHANNEL = ChannelID_PlayerClient;
 	static constexpr int RELIABILITY = ENET_PACKET_FLAG_RELIABLE;
 
-#ifdef JC_CLIENT
-	std::vector<std::pair<NID, NetObjectType>> net_objects;
-#else
-	std::vector<NetObject*> net_objects;
-#endif
+ALIGN_PUSH(1)
+	struct Info
+	{
+		NID nid = INVALID_NID;
+
+		NetObjectType type;
+
+		vec3 position;
+
+		quat rotation;
+	};
+ALIGN_POP()
+
+	std::vector<Info> net_objects;
 
 #ifdef JC_SERVER
 	vec<uint8_t> serialize() const
@@ -20,8 +29,8 @@ struct PlayerClientSyncInstancesPacket
 		enet::serialize_int(data, ID);
 		enet::serialize_int(data, net_objects.size());
 
-		for (auto obj : net_objects)
-			enet::serialize_net_object(data, obj);
+		for (const auto& obj : net_objects)
+			enet::serialize_params(data, obj);
 
 		return data;
 	}
@@ -38,7 +47,10 @@ struct PlayerClientSyncInstancesPacket
 		{
 			DESERIALIZE_NID_AND_TYPE(data);
 
-			net_objects.emplace_back(nid, type);
+			const auto position = enet::deserialize_general_data<vec3>(data);
+			const auto rotation = enet::deserialize_general_data<quat>(data);
+
+			net_objects.emplace_back(nid, type, position, rotation);
 		}
 
 		return *this;
@@ -52,6 +64,7 @@ struct PlayerClientBasicInfoPacket
 	static constexpr PacketID CHANNEL = ChannelID_PlayerClient;
 	static constexpr int RELIABILITY = ENET_PACKET_FLAG_RELIABLE;
 
+ALIGN_PUSH(1)
 	struct Info
 	{
 		std::string nick;
@@ -61,6 +74,7 @@ struct PlayerClientBasicInfoPacket
 		float hp,
 			  max_hp;
 	};
+ALIGN_POP()
 
 	std::vector<std::pair<Player*, Info>> info;
 

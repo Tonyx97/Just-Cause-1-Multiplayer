@@ -35,6 +35,10 @@ public:
 
 	const mat4& get_matrix() const { return m; }
 
+	const vec4& row(int i) const { return m[i]; }
+
+	const vec4& operator [](int i) const { return row(i); }
+
 #ifdef JC_CLIENT
 	vec3 rotate_point(vec3 p) const;
 #endif

@@ -4,6 +4,8 @@
 
 #include <shared_mp/player_client/player_client.h>
 
+class DamageableNetObject;
+
 class ObjectLists
 {
 protected:
@@ -76,4 +78,12 @@ public:
 
 	Player* get_player_by_nid(NID nid);
 	PlayerClient* get_player_client_by_nid(NID nid);
+
+	// spawning
+	
+#ifdef JC_CLIENT
+	DamageableNetObject* spawn_damageable(NID nid, const vec3& position);
+#else
+	DamageableNetObject* spawn_damageable(const vec3& position);
+#endif
 };

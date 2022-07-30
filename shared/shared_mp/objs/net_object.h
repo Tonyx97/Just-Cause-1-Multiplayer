@@ -5,6 +5,7 @@
 using NID = uint32_t;
 
 using NetObjectType = uint8_t;
+using SyncType = uint8_t;
 
 static constexpr NID INVALID_NID = 0u;
 
@@ -26,13 +27,23 @@ enum _NetObjectType : NetObjectType
 	NetObject_Damageable,
 };
 
-class PlayerClient;
+enum _SyncType : SyncType
+{
+	SyncType_None,
+	SyncType_Global,			// global sync used by the server to sync stuff such as player blips etc
+	SyncType_Distance,			// sync reliable on distance to the closest player
+	SyncType_Locked,			// sync locked to a specific player at a given moment
+};
+
+class Player;
 
 class NetObject
 {
 private:
 
-	PlayerClient* streamer_pc = nullptr;
+	Player* streamer = nullptr;
+
+	SyncType sync_type = SyncType_None;
 
 	NID nid = INVALID_NID;
 
@@ -42,8 +53,9 @@ public:
 
 #ifdef JC_SERVER
 	NetObject();
-	~NetObject();
 #endif
+
+	virtual ~NetObject() = 0;
 
 	virtual bool spawn() = 0;
 
@@ -51,10 +63,10 @@ public:
 
 #ifdef JC_CLIENT
 	void set_nid(NID v) { nid = v; }
-#else
-	void set_streamer(PlayerClient* v) { streamer_pc = v; }
 #endif
 
+	void set_sync_type(SyncType v) { sync_type = v; }
+	void set_streamer(Player* v) { streamer = v; }
 	void set_spawned(bool v) { spawned = v; }
 
 	bool is_spawned() const { return spawned; }
@@ -63,7 +75,9 @@ public:
 
 	NID get_nid() const { return nid; }
 
-	PlayerClient* get_streamer() const { return streamer_pc; }
+	SyncType get_sync_type() const { return sync_type; }
+
+	Player* get_streamer() const { return streamer; }
 
 	template <typename T>
 	T* cast() const
@@ -83,4 +97,7 @@ public:
 
 		return casted;
 	}
+
+	virtual vec3 get_position() const = 0;
+	virtual quat get_rotation() const = 0;
 };

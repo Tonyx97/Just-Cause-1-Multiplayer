@@ -45,20 +45,33 @@ void PlayerClient::startup_sync()
 
 		g_net->for_each_net_object([&](NID, NetObject* obj)
 		{
+			NetObject* valid_net_object = nullptr;
+
 			if (auto casted_player = obj->cast<Player>())
 			{
 				if (casted_player->get_client()->is_joined())
 				{
-					p.net_objects.push_back(obj);
+					valid_net_object = casted_player;
 
 					log(PURPLE, "Syncing player with NID {:x} ({})", casted_player->get_nid(), casted_player->get_nick());
 				}
 			}
 			else
 			{
-				p.net_objects.push_back(obj);
+				valid_net_object = obj;
 
 				log(PURPLE, "Syncing net object with NID {:x}", obj->get_nid());
+			}
+
+			if (valid_net_object)
+			{
+				p.net_objects.push_back(
+				{
+					.nid = valid_net_object->get_nid(),
+					.type = valid_net_object->get_type(),
+					.position = valid_net_object->get_position(),
+					.rotation = valid_net_object->get_rotation(),
+				});
 			}
 		});
 

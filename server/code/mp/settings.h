@@ -11,6 +11,7 @@ private:
 public:
 
 	bool init();
+
 	void destroy();
 
 	void process();

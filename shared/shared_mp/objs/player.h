@@ -130,6 +130,9 @@ public:
 
 	bool spawn() override;
 
+	vec3 get_position() const override { return dyn_info.position; }
+	quat get_rotation() const override { return dyn_info.rotation; }
+
 	PlayerClient* get_client() const { return client; }
 
 	// dynamic info getters/setters
@@ -174,10 +177,7 @@ public:
 
 	const std::string& get_nick() const { return dyn_info.nick; }
 
-	const vec3& get_position() const { return dyn_info.position; }
 	const vec3& get_velocity() const { return dyn_info.velocity; }
-
-	const quat& get_rotation() const { return dyn_info.rotation; }
 
 	// basic info getters/setters
 

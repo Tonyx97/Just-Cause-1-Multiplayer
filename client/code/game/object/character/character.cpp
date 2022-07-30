@@ -359,7 +359,7 @@ void Character::respawn()
 
 void Character::set_proxy_velocity(const vec3& v)
 {
-	if (auto physical = jc::read<ptr>(this, 0x850))
+	if (auto physical = get_proxy())
 		if (auto p1 = jc::read<ptr>(physical, 0xB0))
 			if (auto p2 = jc::read<ptr>(p1, 0x4))
 				jc::write(vec4(v.x, v.y, v.z, 0.f), p2, 0x10);
@@ -369,7 +369,7 @@ void Character::set_added_velocity(const vec3& v)
 {
 	if (auto physical = get_proxy())
 	{
-		vec4 rotation = get_transform().get_matrix()[3];
+		vec4 rotation = get_transform()[3];
 
 		jc::character::hook::character_proxy_add_velocity_hook.call(physical, &v, &rotation);
 	}
@@ -557,8 +557,6 @@ void Character::setup_punch()
 
 void Character::force_launch(const vec3& vel, const vec3& dir, float f1, float f2)
 {
-	log(RED, "{} {} {}", vel.x, vel.y, vel.z);
-
 	set_added_velocity(vel);
 
 	jc::character::hook::force_launch_hook.call(this, BITCAST(vec3*, &dir), f1, f2);

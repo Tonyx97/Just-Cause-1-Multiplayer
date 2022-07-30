@@ -124,6 +124,10 @@ void Net::tick()
 	
 	settings.process();
 
+	// update the sync of all net objects
+
+	refresh_net_object_sync();
+
 	// process packets from the players
 
 	enet::dispatch_packets([&](ENetEvent& e)
@@ -164,4 +168,56 @@ void Net::tick()
 	});
 
 	std::this_thread::sleep_for(std::chrono::microseconds(8333));
+}
+
+void Net::refresh_net_object_sync()
+{
+	static TimerRaw refresh_timer(1000);
+
+	if (refresh_timer.ready())
+	{
+		std::vector<NetObject*> distance_objs;
+
+		for_each_net_object([&](NID nid, NetObject* obj)
+		{
+			switch (const auto sync_type = obj->get_sync_type())
+			{
+			case SyncType_Global:
+			case SyncType_Locked: break; // todojc - ignore global and locked for now
+			case SyncType_Distance:
+			{
+				distance_objs.push_back(obj);
+				break;
+			}
+			default: log(RED, "Unknown sync type: {}", sync_type);
+			}
+		});
+
+		log(RED, "checking distance objects: {}", distance_objs.size());
+
+		for (auto net_obj : distance_objs)
+		{
+			Player* new_streamer = nullptr;
+
+			float lowest_dist = jc::nums::MAXF;
+
+			for_each_joined_player_client([&](NID nid, PlayerClient* pc)
+			{
+				const auto player = pc->get_player();
+
+				if (const auto dist = glm::distance2(player->get_position(), net_obj->get_position()); dist < lowest_dist)
+				{
+					new_streamer = player;
+					lowest_dist = dist;
+				}
+			});
+
+			if (net_obj->get_streamer() != new_streamer)
+			{
+				log(GREEN, "New streamer for this net object {:x} -> {:x}", ptr(net_obj), ptr(new_streamer));
+
+				net_obj->set_streamer(new_streamer);
+			}
+		}
+	}
 }

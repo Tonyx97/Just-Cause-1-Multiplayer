@@ -120,7 +120,7 @@ void jc::mp::logic::on_tick()
 
 			if (g_key->is_key_pressed(VK_F3))
 			{
-				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Damageable);
+				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, position + vec3(2.f, 1.f, 0.f), NetObject_Damageable);
 			}
 		}
 }
@@ -169,6 +169,11 @@ void jc::mp::logic::on_update_objects()
 				player_char->set_aim_target(glm::lerp(previous_aim_target, target_aim_target, 0.1f));
 			}
 
+			break;
+		}
+		case NetObject_Damageable:
+		{
+			//log(GREEN, "want to update a damageable");
 			break;
 		}
 		default: log(RED, "Unknown net object type {}", type);

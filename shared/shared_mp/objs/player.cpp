@@ -13,10 +13,7 @@
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
 #include <game/object/weapon/weapon_belt.h>
-#else
-#endif
 
-#ifdef JC_CLIENT
 Player::Player(PlayerClient* pc, NID nid) : client(pc)
 {
 	set_nid(nid);
@@ -107,6 +104,7 @@ CharacterHandle* Player::get_character_handle() const
 #else
 Player::Player(PlayerClient* pc) : client(pc)
 {
+	set_sync_type(SyncType_Locked);
 }
 
 void Player::respawn(float hp, float max_hp)

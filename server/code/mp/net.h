@@ -34,6 +34,7 @@ public:
 	void destroy();
 	void setup_channels();
 	void tick();
+	void refresh_net_object_sync();
 
 	template <typename T>
 	inline void send_broadcast_reliable(const T& data)

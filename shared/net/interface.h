@@ -193,6 +193,14 @@ namespace enet
 
 		std::string get_str() const { return deserialize_string(data); }
 
+		std::pair<NID, NetObjectType> get_nid_and_type() const
+		{
+			const auto _nid = get_u32();
+			const auto _type = get_u8();
+
+			return { _nid, _type };
+		}
+
 		template <typename T = NetObject>
 		T* get_net_object() const
 		{
