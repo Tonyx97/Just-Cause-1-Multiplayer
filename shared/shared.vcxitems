@@ -28,7 +28,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\all.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\chat\nh_chat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\debug\nh_dbg.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\world\day_cycle\nh_day_cycle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\world\nh_world.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\generic\player\nh_player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\player_client\nh_player_client.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\objs\all.h" />
@@ -50,7 +50,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)net\serializer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\chat\nh_chat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\debug\nh_dbg.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\world\day_cycle\nh_day_cycle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\world\nh_world.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\generic\player\nh_player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\player_client\nh_player_client.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\objs\net_object.cpp" />

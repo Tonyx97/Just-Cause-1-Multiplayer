@@ -7,7 +7,7 @@
 NetObject* enet::deserialize_net_object(std::vector<uint8_t>& data)
 {
 	const auto nid = deserialize_int(data);
-	const auto type = deserialize_int(data);
+	const auto type = deserialize_int<NetObjectType>(data);
 
 	return g_net->get_net_object_by_nid(nid);
 }

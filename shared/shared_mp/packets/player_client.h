@@ -7,7 +7,7 @@ struct PlayerClientSyncInstancesPacket
 	static constexpr int RELIABILITY = ENET_PACKET_FLAG_RELIABLE;
 
 #ifdef JC_CLIENT
-	std::vector<std::pair<NID, uint32_t>> net_objects;
+	std::vector<std::pair<NID, NetObjectType>> net_objects;
 #else
 	std::vector<NetObject*> net_objects;
 #endif

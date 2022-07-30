@@ -4,6 +4,8 @@
 //
 using NID = uint32_t;
 
+using NetObjectType = uint8_t;
+
 static constexpr NID INVALID_NID = 0u;
 
 #ifdef JC_SERVER
@@ -17,10 +19,11 @@ namespace enet
 }
 #endif
 
-enum NetObjectType : uint32_t
+enum _NetObjectType : NetObjectType
 {
 	NetObject_Invalid,
 	NetObject_Player,
+	NetObject_Damageable,
 };
 
 class PlayerClient;
@@ -42,8 +45,9 @@ public:
 	~NetObject();
 #endif
 
-	virtual uint32_t get_type() const = 0;
 	virtual bool spawn() = 0;
+
+	virtual NetObjectType get_type() const = 0;
 
 #ifdef JC_CLIENT
 	void set_nid(NID v) { nid = v; }

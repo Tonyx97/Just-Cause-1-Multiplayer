@@ -180,5 +180,5 @@ namespace enet
 	}
 }
 
-#define DESERIALIZE_NID_AND_TYPE(p)			const auto nid = enet::deserialize_int<uint32_t>(p); \
-											const auto type = enet::deserialize_int<uint32_t>(p)
+#define DESERIALIZE_NID_AND_TYPE(p)			const auto nid = enet::deserialize_int(p); \
+											const auto type = enet::deserialize_int<NetObjectType>(p)

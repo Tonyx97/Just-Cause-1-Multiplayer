@@ -101,9 +101,9 @@ private:
 
 public:
 
-	static constexpr uint32_t TYPE() { return NetObject_Player; }
+	static constexpr NetObjectType TYPE() { return NetObject_Player; }
 
-	uint32_t get_type() const override { return TYPE(); }
+	NetObjectType get_type() const override { return TYPE(); }
 
 #ifdef JC_CLIENT
 	Player(PlayerClient* pc, NID nid);

@@ -46,15 +46,16 @@ enum PlayerPacketID : PacketID
 	PlayerPID_Max
 };
 
-enum DayCyclePacketID : PacketID
+enum WorldPacketID : PacketID
 {
-	DayCyclePID_SetTime = PlayerPID_Max,	// day cycle set hour time (0.0-24.0)
-	DayCyclePID_Max
+	WorldPID_SetTime = PlayerPID_Max,			// day cycle set hour time (0.0-24.0)
+	WorldPID_SpawnObject,						// ask and spawn an object in the server and remote players
+	WorldPID_Max
 };
 
 // debug packets
 
 enum DbgPacketID : PacketID
 {
-	DbgPID_SetTime = DayCyclePID_Max,
+	DbgPID_SetTime = WorldPID_Max,
 };

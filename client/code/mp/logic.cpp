@@ -115,6 +115,13 @@ void jc::mp::logic::on_tick()
 
 			if ((hip_aiming || full_aiming) && aiming_timer.ready())
 				g_net->send_unreliable(PlayerPID_StanceAndMovement, PlayerStanceID_Aiming, hip_aiming, full_aiming, aim_target);
+
+			// debug
+
+			if (g_key->is_key_pressed(VK_F3))
+			{
+				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Damageable);
+			}
 		}
 }
 

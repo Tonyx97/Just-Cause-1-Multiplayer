@@ -79,9 +79,10 @@ void Net::setup_channels()
 
 	enet::add_channel_dispatcher(ChannelID_World, [&](const enet::Packet& p)
 	{
-		/*switch (auto id = p.get_id())
+		switch (auto id = p.get_id())
 		{
-		}*/
+		case WorldPID_SpawnObject:		return nh::world::spawn_object(p);
+		}
 
 		return enet::PacketRes_NotFound;
 	});

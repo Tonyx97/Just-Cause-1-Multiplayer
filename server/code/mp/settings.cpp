@@ -25,6 +25,6 @@ void Settings::process()
 	{
 		day_time += 0.01f;
 
-		g_net->send_broadcast_reliable<ChannelID_World>(DayCyclePID_SetTime, day_time_enabled, day_time);
+		g_net->send_broadcast_reliable<ChannelID_World>(WorldPID_SetTime, day_time_enabled, day_time);
 	}
 }
