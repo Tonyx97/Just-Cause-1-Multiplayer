@@ -18,16 +18,15 @@ bool NetObject::sync()
 
 	// todojc - check for actual alive objects instances
 
-	const auto object_base = BITCAST(AliveObject*, get_object_base());
-
 	std::vector<uint8_t> data;
 
-	enet::serialize_int(data, WorldPID_SyncObject);
-	enet::serialize_net_object(data, this);
+	enet::serialize_params(data, WorldPID_SyncObject, this);
 
 	const auto old_size = data.size();
 
 	TransformTR real_transform;
+
+	const auto object_base = BITCAST(AliveObject*, get_object_base());
 
 	real_transform.t = object_base->get_position();
 	real_transform.r = object_base->get_rotation();
@@ -53,7 +52,7 @@ bool NetObject::sync()
 		max_hp = real_max_hp;
 	}
 
-	// only sent the packet sync if something changed
+	// only sent the packet sync if we added something
 
 	if (data.size() > old_size)
 		g_net->send_unreliable<ChannelID_World>(data);

@@ -88,6 +88,9 @@ enet::PacketResult nh::world::sync_object(const enet::Packet& p)
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
 
+	// check if the player sending this packet is actually streaming
+	// the object
+
 	if (!net_obj->is_owned_by(player))
 		return enet::PacketRes_NotAllowed;
 #endif
@@ -110,8 +113,6 @@ enet::PacketResult nh::world::sync_object(const enet::Packet& p)
 
 			net_obj->set_hp(hp);
 
-			log(GREEN, "hp: {}", net_obj->get_hp());
-
 			break;
 		}
 		case NetObjectVar_MaxHealth:
@@ -119,8 +120,6 @@ enet::PacketResult nh::world::sync_object(const enet::Packet& p)
 			const auto max_hp = p.get_float();
 
 			net_obj->set_max_hp(max_hp);
-
-			log(GREEN, "max_hp: {}", net_obj->get_max_hp());
 
 			break;
 		}
