@@ -40,7 +40,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "D32B88",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -49,7 +49,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -87,7 +88,7 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "dd83e66c589c0e7b",
+  "active": "89ddef219b9917c5",
   "lastOpenFiles": [
     "tony_daily/2022/7 July/30-07-2022.md",
     "tony_daily/2022/7 July/31-07-2022.md",
