@@ -2,8 +2,6 @@
 
 #include <shared_mp/objs/net_object.h>
 
-#include <game/transform/transform.h>
-
 #include <game/shared/stances.h>
 #include <game/shared/character.h>
 #include <game/shared/npc_variant.h>
@@ -42,10 +40,7 @@ public:
 	{
 		std::string nick;
 
-		quat rotation;
-
-		vec3 position {},
-			 velocity {},
+		vec3 velocity {},
 			 head_rotation{},
 			 aim_target {};
 
@@ -56,9 +51,7 @@ public:
 		int32_t weapon_id = 0u,
 				firing_weapon_id = 0u;
 
-		float hp = 0.f,
-			  max_hp = 0.f,
-			  head_interpolation = 0.f;
+		float head_interpolation = 0.f;
 
 		bool hip_aim = false,
 			 full_aim = false;
@@ -108,6 +101,10 @@ public:
 #ifdef JC_CLIENT
 	Player(PlayerClient* pc, NID nid);
 
+	void on_sync() override {}
+
+	class ObjectBase* get_object_base() override;
+
 	void verify_exec(const std::function<void(Character*)>& fn);
 	void respawn(float hp, float max_hp, bool sync = true);
 	void dispatch_movement();
@@ -125,13 +122,15 @@ public:
 
 	void verify_exec(auto fn) {}
 	void respawn(float hp, float max_hp);
+	void transfer_net_object_ownership_to(NetObject* obj, Player* new_streamer);
+	void set_net_object_ownership_of(NetObject* obj);
 #endif
+
 	~Player();
 
-	bool spawn() override;
+	void on_net_var_change(NetObjectVarType var_type) override;
 
-	vec3 get_position() const override { return dyn_info.position; }
-	quat get_rotation() const override { return dyn_info.rotation; }
+	bool spawn() override;
 
 	PlayerClient* get_client() const { return client; }
 
@@ -139,9 +138,6 @@ public:
 
 	void set_nick(const std::string& v);
 	void set_skin(uint32_t v);
-	void set_hp(float v);
-	void set_max_hp(float v);
-	void set_transform(const vec3& position, const quat& rotation);
 	void set_velocity(const vec3& v);
 	void set_movement_angle(float angle, bool send_angle_only_next_tick);
 	void set_movement_info(float angle, float right, float forward, bool aiming);
@@ -168,8 +164,6 @@ public:
 	uint32_t get_body_stance_id() const { return dyn_info.body_stance_id; }
 	uint32_t get_arms_stance_id() const { return dyn_info.arms_stance_id; }
 
-	float get_hp() const { return dyn_info.hp / get_max_hp(); }
-	float get_max_hp() const { return dyn_info.max_hp; }
 	float get_head_interpolation() const { return dyn_info.head_interpolation; }
 
 	const vec3& get_head_rotation() const { return dyn_info.head_rotation; }

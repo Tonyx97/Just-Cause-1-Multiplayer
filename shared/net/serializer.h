@@ -97,7 +97,7 @@ namespace enet
 
 	// puts data into the buffer
 	//
-	inline void serialize_general_data(vec<uint8_t>& buffer, const void* data, size_t size)
+	inline void serialize_general_data(std::vector<uint8_t>& buffer, const void* data, size_t size)
 	{
 		auto ptr = BITCAST(uint8_t*, data);
 
@@ -106,7 +106,7 @@ namespace enet
 
 	// puts string data into the buffer
 	//
-	inline void serialize_string(vec<uint8_t>& buffer, const void* data, size_t size)
+	inline void serialize_string(std::vector<uint8_t>& buffer, const void* data, size_t size)
 	{
 		auto ptr = BITCAST(uint8_t*, data);
 		auto len_ptr = BITCAST(uint8_t*, &size);
@@ -117,21 +117,21 @@ namespace enet
 
 	// serialize std::string
 	//
-	inline void serialize_string(vec<uint8_t>& buffer, const std::string& v)
+	inline void serialize_string(std::vector<uint8_t>& buffer, const std::string& v)
 	{
 		serialize_string(buffer, v.data(), v.length());
 	}
 
 	// serialize std::wstring
 	//
-	inline void serialize_wstring(vec<uint8_t>& buffer, const std::wstring& v)
+	inline void serialize_wstring(std::vector<uint8_t>& buffer, const std::wstring& v)
 	{
 		serialize_string(buffer, v.data(), v.length() * 2u);
 	}
 
 	// serialize floating point types
 	//
-	inline void serialize_float(vec<uint8_t>& buffer, float v)
+	inline void serialize_float(std::vector<uint8_t>& buffer, float v)
 	{
 		serialize_general_data(buffer, &v, sizeof(v));
 	}
@@ -139,14 +139,14 @@ namespace enet
 	// serialize integral types
 	//
 	template <typename T>
-	inline void serialize_int(vec<uint8_t>& buffer, T v)
+	inline void serialize_int(std::vector<uint8_t>& buffer, T v)
 	{
 		serialize_general_data(buffer, &v, sizeof(v));
 	}
 
 	// puts net object
 	//
-	inline void serialize_net_object(vec<uint8_t>& buffer, NetObject* v)
+	inline void serialize_net_object(std::vector<uint8_t>& buffer, NetObject* v)
 	{
 		serialize_int(buffer, v->get_nid());
 		serialize_int(buffer, v->get_type());

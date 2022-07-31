@@ -25,6 +25,13 @@ void Transform::decompose(vec3& t, quat& r, vec3& s) const
 	r = glm::quat_cast(mat3(vec3(m[0]) / s.x, vec3(m[1]) / s.y, vec3(m[2]) / s.z));
 }
 
+void Transform::decompose(vec3& t, quat& r) const
+{
+	vec3 dummy;
+
+	decompose(t, r, dummy);
+}
+
 void Transform::compose(const vec3& t, const quat& r, const vec3& s)
 {
 	mat4 mat_t = glm::translate(mat4(1.f), t),
@@ -76,6 +83,15 @@ Transform& Transform::interpolate(const Transform& transform, float tf, float rf
 quat Transform::get_rotation() const
 {
 	return glm::quat_cast(m);
+}
+
+TransformTR Transform::get_tr() const
+{
+	TransformTR tr {};
+
+	decompose(tr.t, tr.r);
+
+	return tr;
 }
 
 #ifdef JC_CLIENT

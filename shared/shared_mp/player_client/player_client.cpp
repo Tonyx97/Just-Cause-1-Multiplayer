@@ -99,8 +99,8 @@ void PlayerClient::startup_sync()
 				{
 					.nick = dyn_info.nick,
 					.skin = dyn_info.skin,
-					.hp = dyn_info.hp,
-					.max_hp = dyn_info.max_hp
+					.hp = player->get_hp(),
+					.max_hp = player->get_max_hp()
 				});
 
 				log(PURPLE, "Updating player basic info with NID {:x} ({})", player->get_nid(), player->get_nick());

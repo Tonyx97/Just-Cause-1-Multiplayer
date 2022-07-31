@@ -1,5 +1,11 @@
 #pragma once
 
+struct TransformTR
+{
+	vec3 t = jc::vec::ZERO;
+	quat r = jc::qua::IDENTITY;
+};
+
 class Transform
 {
 private:
@@ -14,6 +20,7 @@ public:
 
 	void compose(const vec3& t, const quat& r, const vec3& s);
 	void decompose(vec3& t, quat& r, vec3& s) const;
+	void decompose(vec3& t, quat& r) const;
 	void translate(const vec3& v);
 
 	/**
@@ -32,6 +39,8 @@ public:
 	bool operator != (const Transform& v) const { return m != v.m; }
 
 	quat get_rotation() const;
+
+	TransformTR get_tr() const;
 
 	const mat4& get_matrix() const { return m; }
 

@@ -24,6 +24,8 @@ public:
 	PlayerClient* add_player_client(NID nid);
 
 	Player* get_player_by_character(class Character* character);
+
+	NetObject* get_net_object_by_game_object(class ObjectBase* obj_base);
 #else
 	PlayerClient* add_player_client(ENetPeer* peer);
 #endif

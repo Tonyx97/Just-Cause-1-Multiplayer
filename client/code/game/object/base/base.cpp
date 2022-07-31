@@ -8,6 +8,7 @@
 #include "../spawn_point/vehicle_spawn_point.h"
 #include "../rigid_object/animated_rigid_object.h"
 #include "../sound/sound_game_obj.h"
+#include "../damageable_object/damageable_object.h"
 
 bool object_base_map::find_string(uint32_t hash, jc::stl::string& out)
 {
@@ -150,14 +151,7 @@ void ObjectBase::set_transform(const Transform& transform)
 		jc::this_call<void>(jc::character::fn::SET_TRANSFORM, this, &transform);
 		break;
 	}
-	case AgentSpawnPoint::CLASS_ID():
-	case VehicleSpawnPoint::CLASS_ID():
-	{
-		jc::write(transform, this, jc::spawn_point::TRANSFORM);
-		break;
-	}
-	default:
-		log(RED, "'ObjectBase::{}' not implemented for type '{}'", CURR_FN, get_typename());
+	default: jc::v_call(this, jc::object_base::vt::SET_TRANSFORM, &transform);
 	}
 }
 

@@ -26,17 +26,17 @@ namespace jc::factory_system
 	namespace v
 	{
 		std::unordered_set<CharacterHandle*>	character_handles;
-		vec<ref<SimpleRigidObject>>				simple_rigid_objects;
-		vec<ref<DamageableObject>>				damageables;
-		vec<ref<AgentSpawnPoint>>				agent_spawns;
-		vec<ref<VehicleSpawnPoint>>				vehicle_spawns;
-		vec<ref<MountedGun>>					mounted_guns;
-		vec<ref<Ladder>>						ladders;
-		vec<ref<ItemPickup>>					item_pickups;
-		vec<ref<AnimatedRigidObject>>			animated_rigid_objects;
-		vec<ref<UIMapIcon>>						ui_map_icons;
-		vec<ref<Objective>>						objectives;
-		vec<ref<TrafficLight>>					traffic_lights;
+		std::vector<ref<SimpleRigidObject>>		simple_rigid_objects;
+		std::vector<ref<DamageableObject>>		damageables;
+		std::vector<ref<AgentSpawnPoint>>		agent_spawns;
+		std::vector<ref<VehicleSpawnPoint>>		vehicle_spawns;
+		std::vector<ref<MountedGun>>			mounted_guns;
+		std::vector<ref<Ladder>>				ladders;
+		std::vector<ref<ItemPickup>>			item_pickups;
+		std::vector<ref<AnimatedRigidObject>>	animated_rigid_objects;
+		std::vector<ref<UIMapIcon>>				ui_map_icons;
+		std::vector<ref<Objective>>				objectives;
+		std::vector<ref<TrafficLight>>			traffic_lights;
 	}
 }
 

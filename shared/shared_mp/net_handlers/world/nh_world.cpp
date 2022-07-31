@@ -61,3 +61,78 @@ enet::PacketResult nh::world::spawn_object(const enet::Packet& p)
 
 	return enet::PacketRes_Ok;
 }
+
+enet::PacketResult nh::world::set_ownership(const enet::Packet& p)
+{
+#ifdef JC_CLIENT
+	const auto new_streamer = p.get_net_object<Player>();
+	const auto net_obj = p.get_net_object();
+
+	net_obj->set_streamer(new_streamer);
+
+	return enet::PacketRes_Ok;
+#endif
+
+	return enet::PacketRes_NotSupported;
+}
+
+enet::PacketResult nh::world::sync_object(const enet::Packet& p)
+{
+	const auto initial_data = p.get_initial_data();
+	
+	const auto net_obj = p.get_net_object();
+
+	check(net_obj, "Invalid net object");
+
+#ifdef JC_SERVER
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+
+	if (!net_obj->is_owned_by(player))
+		return enet::PacketRes_NotAllowed;
+#endif
+
+	while (!p.is_empty())
+	{
+		switch (const auto var_type = p.get_u8())
+		{
+		case NetObjectVar_Transform:
+		{
+			const auto transform = p.get_raw<TransformTR>();
+
+			net_obj->set_transform(transform.t, transform.r);
+
+			break;
+		}
+		case NetObjectVar_Health:
+		{
+			const auto hp = p.get_float();
+
+			net_obj->set_hp(hp);
+
+			log(GREEN, "hp: {}", net_obj->get_hp());
+
+			break;
+		}
+		case NetObjectVar_MaxHealth:
+		{
+			const auto max_hp = p.get_float();
+
+			net_obj->set_max_hp(max_hp);
+
+			log(GREEN, "max_hp: {}", net_obj->get_max_hp());
+
+			break;
+		}
+		default: log(RED, "Unknown net object var type: {}", var_type);
+		}
+	}
+
+#ifdef JC_SERVER
+	// send the whole data we got from the packet directly to the rest of the players
+
+	g_net->send_broadcast_unreliable<ChannelID_World>(pc, initial_data);
+#endif
+
+	return enet::PacketRes_Ok;
+}

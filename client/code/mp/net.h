@@ -50,7 +50,7 @@ public:
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_reliable(PacketID id, const A&... args)
 	{
-		vec<uint8_t> data;
+		std::vector<uint8_t> data;
 
 		enet::serialize_params(data, id, args...);
 
@@ -60,10 +60,16 @@ public:
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_unreliable(PacketID id, const A&... args)
 	{
-		vec<uint8_t> data;
+		std::vector<uint8_t> data;
 
 		enet::serialize_params(data, id, args...);
 
+		send_packet(channel, data, 0);
+	}
+
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_unreliable(const std::vector<uint8_t>& data)
+	{
 		send_packet(channel, data, 0);
 	}
 

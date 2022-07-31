@@ -8,6 +8,7 @@ namespace jc::damageable_obj
 
 	namespace fn
 	{
+		static constexpr uint32_t SET_TRANSFORM = 0x7A2020;
 	}
 }
 

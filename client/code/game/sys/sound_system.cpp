@@ -12,7 +12,7 @@ namespace jc::sound_system
 {
 	namespace v
 	{
-		vec<ref<SoundGameObject>> sound_game_objects;
+		std::vector<ref<SoundGameObject>> sound_game_objects;
 	}
 }
 

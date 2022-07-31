@@ -22,9 +22,9 @@ ALIGN_POP()
 	std::vector<Info> net_objects;
 
 #ifdef JC_SERVER
-	vec<uint8_t> serialize() const
+	std::vector<uint8_t> serialize() const
 	{
-		vec<uint8_t> data;
+		std::vector<uint8_t> data;
 
 		enet::serialize_int(data, ID);
 		enet::serialize_int(data, net_objects.size());
@@ -39,7 +39,7 @@ ALIGN_POP()
 #endif
 
 #ifdef JC_CLIENT
-	PlayerClientSyncInstancesPacket& deserialize(vec<uint8_t>& data)
+	PlayerClientSyncInstancesPacket& deserialize(std::vector<uint8_t>& data)
 	{
 		const auto size = enet::deserialize_int<size_t>(data);
 
@@ -78,9 +78,9 @@ ALIGN_POP()
 
 	std::vector<std::pair<Player*, Info>> info;
 
-	vec<uint8_t> serialize() const
+	std::vector<uint8_t> serialize() const
 	{
-		vec<uint8_t> data;
+		std::vector<uint8_t> data;
 
 		enet::serialize_int(data, ID);
 		enet::serialize_int(data, info.size());
@@ -98,7 +98,7 @@ ALIGN_POP()
 
 	PacketHolder serialize_as_packet() const { return PacketHolder(serialize(), RELIABILITY); }
 
-	PlayerClientBasicInfoPacket& deserialize(vec<uint8_t>& data)
+	PlayerClientBasicInfoPacket& deserialize(std::vector<uint8_t>& data)
 	{
 		const auto size = enet::deserialize_int<size_t>(data);
 

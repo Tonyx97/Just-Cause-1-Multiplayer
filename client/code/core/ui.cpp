@@ -290,7 +290,7 @@ void UI::render_players()
 			{
 				const float name_size_adjust = 1.f - (distance_to_player / MAX_DISTANCE),
 							hp_bar_size_adjust = 1.f - (distance_to_player / MAX_DISTANCE),
-							hp = player->get_hp() * hp_bar_size_adjust,
+							hp = (player->get_hp() / player->get_max_hp()) * hp_bar_size_adjust,
 							hp_bar_size_x = 100.f * hp_bar_size_adjust,
 							hp_border_size = 2.f;
 

@@ -24,6 +24,15 @@ Player* ObjectLists::get_player_by_character(Character* character)
 
 	return nullptr;
 }
+
+NetObject* ObjectLists::get_net_object_by_game_object(ObjectBase* obj_base)
+{
+	for (const auto& [nid, net_object] : net_objects)
+		if (net_object->get_object_base() == obj_base)
+			return net_object;
+
+	return nullptr;
+}
 #else
 PlayerClient* ObjectLists::add_player_client(ENetPeer* peer)
 {

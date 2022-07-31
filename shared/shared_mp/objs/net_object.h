@@ -1,11 +1,14 @@
 #pragma once
 
+#include <game/transform/transform.h>
+
 // network id of an object
 //
 using NID = uint32_t;
 
 using NetObjectType = uint8_t;
 using SyncType = uint8_t;
+using NetObjectVarType = uint8_t;
 
 static constexpr NID INVALID_NID = 0u;
 
@@ -35,11 +38,22 @@ enum _SyncType : SyncType
 	SyncType_Locked,			// sync locked to a specific player at a given moment
 };
 
+enum _NetObjectVarType : NetObjectVarType
+{
+	NetObjectVar_Transform,
+	NetObjectVar_Position,
+	NetObjectVar_Rotation,
+	NetObjectVar_Health,
+	NetObjectVar_MaxHealth,
+};
+
 class Player;
 
 class NetObject
 {
 private:
+
+	TransformTR transform {};
 
 	Player* streamer = nullptr;
 
@@ -47,15 +61,26 @@ private:
 
 	NID nid = INVALID_NID;
 
+	float hp = jc::nums::MAXF,
+		  max_hp = jc::nums::MAXF;
+
 	bool spawned = false;
 
 public:
 
-#ifdef JC_SERVER
+#ifdef JC_CLIENT
+	bool sync();
+
+	virtual void on_sync() = 0;
+
+	virtual class ObjectBase* get_object_base() = 0;
+#else
 	NetObject();
 #endif
 
 	virtual ~NetObject() = 0;
+
+	virtual void on_net_var_change(NetObjectVarType var_type) = 0;
 
 	virtual bool spawn() = 0;
 
@@ -63,12 +88,20 @@ public:
 
 #ifdef JC_CLIENT
 	void set_nid(NID v) { nid = v; }
+
+	bool is_owned() const;
 #endif
 
+	void set_streamer(Player* v);
 	void set_sync_type(SyncType v) { sync_type = v; }
-	void set_streamer(Player* v) { streamer = v; }
 	void set_spawned(bool v) { spawned = v; }
+	void set_transform(const vec3& t, const quat& r);
+	void set_position(const vec3& v);
+	void set_rotation(const quat& v);
+	void set_hp(float v);
+	void set_max_hp(float v);
 
+	bool is_owned_by(Player* player) const { return streamer == player; }
 	bool is_spawned() const { return spawned; }
 	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
 	bool equal(NID _nid) const { return nid == _nid; }
@@ -98,6 +131,9 @@ public:
 		return casted;
 	}
 
-	virtual vec3 get_position() const = 0;
-	virtual quat get_rotation() const = 0;
+	float get_hp() const { return hp; }
+	float get_max_hp() const { return max_hp; }
+
+	const vec3& get_position() const { return transform.t; }
+	const quat& get_rotation() const { return transform.r; }
 };

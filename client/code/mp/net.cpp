@@ -197,8 +197,10 @@ void Net::setup_channels()
 
 		switch (auto id = p.get_id())
 		{
-		case WorldPID_SpawnObject:			return nh::world::spawn_object(p);
 		case WorldPID_SetTime:				return nh::world::day_time(p);
+		case WorldPID_SpawnObject:			return nh::world::spawn_object(p);
+		case WorldPID_SetOwnership:			return nh::world::set_ownership(p);
+		case WorldPID_SyncObject:			return nh::world::sync_object(p);
 		}
 
 		return enet::PacketRes_NotFound;

@@ -2,25 +2,15 @@
 
 #include <shared_mp/objs/net_object.h>
 
-#include <game/transform/transform.h>
-
-#ifdef JC_CLIENT
-class DamageableObject;
-#endif
-
 class DamageableNetObject : public NetObject
 {
 private:
 
 #ifdef JC_CLIENT
-	DamageableObject* obj = nullptr;
+	class DamageableObject* obj = nullptr;
 #endif
 
 public:
-
-	vec3 position;
-
-	quat rotation;
 
 	static constexpr NetObjectType TYPE() { return NetObject_Damageable; }
 
@@ -28,15 +18,18 @@ public:
 
 #ifdef JC_CLIENT
 	DamageableNetObject(NID nid, const vec3& position);
+
+	void on_sync() override;
+
+	class ObjectBase* get_object_base() override;
 #else
 	DamageableNetObject(const vec3& position);
 #endif
 	~DamageableNetObject();
 
-	bool spawn() override;
+	void on_net_var_change(NetObjectVarType var_type) override;
 
-	vec3 get_position() const override { return position; }
-	quat get_rotation() const override { return rotation; }
+	bool spawn() override;
 };
 
 #define CREATE_DAMAGEABLE_NET_OBJECT(...)	JC_ALLOC(DamageableNetObject, __VA_ARGS__)

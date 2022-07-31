@@ -41,7 +41,9 @@ namespace enet
 		PacketRes_Ok,
 		PacketRes_NotFound,
 		PacketRes_NotUsable,
-		PacketRes_BadArgs
+		PacketRes_BadArgs,
+		PacketRes_NotSupported,
+		PacketRes_NotAllowed,
 	};
 
 #ifdef JC_CLIENT
@@ -61,6 +63,8 @@ namespace enet
 	private:
 
 		mutable std::vector<uint8_t> data;
+
+		std::vector<uint8_t> initial_data;
 
 #ifdef JC_SERVER
 		PlayerClient*  pc	   = nullptr;
@@ -87,7 +91,7 @@ namespace enet
 
 			// create data vector from the enet packet
 
-			data = { e.packet->data, e.packet->data + e.packet->dataLength };
+			initial_data = data = { e.packet->data, e.packet->data + e.packet->dataLength };
 
 			// first get the id of the packet and erase it from the vector
 
@@ -133,7 +137,7 @@ namespace enet
 			pc = other.pc;
 #endif
 
-			data = other.data;
+			initial_data = data = other.data;
 			peer = other.peer;
 			packet = other.packet;
 			offset = other.offset;
@@ -161,6 +165,8 @@ namespace enet
 		float get_time() const { return time; }
 
 		ENetPeer* get_peer() const { return peer; }
+
+		std::vector<uint8_t> get_initial_data() const { return initial_data; }
 
 #ifdef JC_SERVER
 		PlayerClient* get_pc() const { return pc; }

@@ -52,7 +52,7 @@ struct mat4 : public glm::mat4
 	mat4 operator * (const mat4& m) const;
 };
 
-namespace tvg::prefetch
+namespace jc::prefetch
 {
 	inline void _read(const void* p) { _mm_prefetch((const char*)p, _MM_HINT_T0); }
 	inline void _read_sized(const void* p, size_t size) { _read(p); }
@@ -67,6 +67,22 @@ namespace tvg::prefetch
 		if constexpr (sizeof...(args) > 0)
 			prefetch(args...);
 	}
+}
+
+namespace jc::vec
+{
+	static constexpr auto UP = vec3(0.f, 1.f, 0.f);
+	static constexpr auto DOWN = vec3(0.f, -1.f, 0.f);
+	static constexpr auto RIGHT = vec3(1.f, 0.f, 0.f);
+	static constexpr auto LEFT = vec3(-1.f, 0.f, 0.f);
+	static constexpr auto FORWARD = vec3(0.f, 0.f, 1.f);
+	static constexpr auto BACK = vec3(0.f, 0.f, -1.f);
+	static constexpr auto ZERO = vec3(0.f);
+}
+
+namespace jc::qua
+{
+	static constexpr auto IDENTITY = quat(1.f, 0.f, 0.f, 0.f);
 }
 
 namespace jc::nums
@@ -181,7 +197,7 @@ namespace jc::math
 		auto m1 = (float*)lhs,
 			 m2 = (float*)rhs;
 
-		tvg::prefetch::prefetch(m1, m2);
+		jc::prefetch::prefetch(m1, m2);
 
 		_128 rm0, rm1, rm2, rm3;
 
@@ -209,7 +225,7 @@ namespace jc::math
 		auto m = (float*)lhs,
 			 v = (float*)rhs;
 
-		tvg::prefetch::prefetch(m, v);
+		jc::prefetch::prefetch(m, v);
 
 		auto vl = sse_loadu(v, 0);
 

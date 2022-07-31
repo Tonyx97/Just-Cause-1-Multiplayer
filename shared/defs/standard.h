@@ -49,7 +49,4 @@
 #elif defined(JC_SERVER)
 #endif
 
-template <typename T>
-using vec = std::vector<T>;
-
 using namespace std::chrono_literals;

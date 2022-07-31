@@ -17,6 +17,7 @@ namespace jc::object_base
 		static constexpr uint32_t GET_MODEL		= 1;
 		static constexpr uint32_t GET_PHYSICAL	= 3;
 		static constexpr uint32_t GET_TRANSFORM = 4;
+		static constexpr uint32_t SET_TRANSFORM = 5;
 		static constexpr uint32_t INIT_FROM_MAP = 6;
 		static constexpr uint32_t IS_VEHICLE	= 20;
 		static constexpr uint32_t GET_TYPENAME	= 30;

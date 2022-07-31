@@ -7,18 +7,19 @@
 #include <game/sys/world.h>
 
 #include <game/object/character/character.h>
+#include <game/object/damageable_object/damageable_object.h>
 
 namespace jc::alive_object::hook
 {
 	DEFINE_HOOK_THISCALL(set_health, 0x743E30, void, AliveObject* obj, float hp)
 	{
-		switch (obj->get_typename_hash())
+		if (const auto localplayer = g_net->get_localplayer())
 		{
-		case Character::CLASS_ID():
-		{
-			if (const auto localplayer = g_net->get_localplayer())
+			if (const auto local_char = g_world->get_localplayer_character())
 			{
-				if (const auto local_char = g_world->get_localplayer_character())
+				switch (obj->get_typename_hash())
+				{
+				case Character::CLASS_ID():
 				{
 					// if the character is our local one then we will send a packet to the server
 					// to update and let all players know our new health, otherwise
@@ -35,11 +36,28 @@ namespace jc::alive_object::hook
 					}
 					else if (g_net->get_player_by_character(character))
 						return;
+
+					break;
+				}
+				default:
+				{
+					if (const auto net_obj = g_net->get_net_object_by_game_object(obj))
+					{
+						// if this object is synced and we don't stream it, then we won't let
+						// the engine damage this poor object :(
+						// NOTE: in the case of damageable objects for example, when we are not streaming
+						// the object and we shot at it, we rely on the streamer to replicate the shot
+						// and damage the barrel on the streamer's game, that way it will tell everyone
+						// that the object exploded or died
+
+						if (!net_obj->is_owned())
+							return;
+					}
+
+					break;
+				}
 				}
 			}
-
-			break;
-		}
 		}
 
 		set_health_hook.call(obj, hp);

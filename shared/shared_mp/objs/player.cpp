@@ -17,6 +17,12 @@
 Player::Player(PlayerClient* pc, NID nid) : client(pc)
 {
 	set_nid(nid);
+	set_sync_type(SyncType_Locked);
+}
+
+ObjectBase* Player::get_object_base()
+{
+	return get_character();
 }
 
 void Player::verify_exec(const std::function<void(Character*)>& fn)
@@ -111,6 +117,25 @@ void Player::respawn(float hp, float max_hp)
 {
 	g_net->send_broadcast_reliable(get_client(), PlayerPID_Respawn, this, hp, max_hp);
 }
+
+void Player::transfer_net_object_ownership_to(NetObject* obj, Player* new_streamer)
+{
+	check(obj, "Net object must be valid");
+	check(new_streamer, "New streamer must be valid");
+
+	const auto old_streamer_pc = client;
+	const auto new_streamer_pc = new_streamer->get_client();
+
+	old_streamer_pc->send_reliable<ChannelID_World>(WorldPID_SetOwnership, new_streamer, obj);
+	new_streamer_pc->send_reliable<ChannelID_World>(WorldPID_SetOwnership, new_streamer, obj);
+}
+
+void Player::set_net_object_ownership_of(NetObject* obj)
+{
+	check(obj, "Net object must be valid");
+
+	client->send_reliable<ChannelID_World>(WorldPID_SetOwnership, this, obj);
+}
 #endif
 
 Player::~Player()
@@ -129,6 +154,31 @@ Player::~Player()
 		log(RED, "Player {} character despawned", get_nid());
 	}
 #else
+#endif
+}
+
+void Player::on_net_var_change(NetObjectVarType var_type)
+{
+#ifdef JC_CLIENT
+	switch (var_type)
+	{
+	case NetObjectVar_Transform:
+	case NetObjectVar_Position:
+	case NetObjectVar_Rotation:
+	{
+		if (!is_local())
+		{
+			// when receiving a transform from a remote player, we want to correct it by interpolating
+			// the current transform with the one we just received
+
+			correcting_position = true;
+		}
+
+		break;
+	}
+	case NetObjectVar_Health: verify_exec([&](Character* c) { c->set_hp(get_hp()); }); break;
+	case NetObjectVar_MaxHealth: verify_exec([&](Character* c) { c->set_max_hp(get_max_hp()); }); break;
+	}
 #endif
 }
 
@@ -174,40 +224,6 @@ void Player::set_skin(uint32_t v)
 
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->set_skin(v, false); });
-#endif
-}
-
-void Player::set_hp(float v)
-{
-	dyn_info.hp = v;
-
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_hp(v); });
-#endif
-}
-
-void Player::set_max_hp(float v)
-{
-	dyn_info.max_hp = v;
-
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_max_hp(v); });
-#endif
-}
-
-void Player::set_transform(const vec3& position, const quat& rotation)
-{
-	dyn_info.position = position;
-	dyn_info.rotation = rotation;
-
-#ifdef JC_CLIENT
-	if (!is_local())
-	{
-		// when receiving a transform from a remote player, we want to correct it by interpolating
-		// the current transform with the one we just received
-
-		correcting_position = true;
-	}
 #endif
 }
 

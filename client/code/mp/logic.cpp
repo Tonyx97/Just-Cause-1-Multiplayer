@@ -129,13 +129,16 @@ void jc::mp::logic::on_update_objects()
 {
 	g_net->for_each_net_object([](NID, NetObject* obj)
 	{
+		if (!obj->is_spawned())
+			return;
+
 		switch (const auto type = obj->get_type())
 		{
 		case NetObject_Player:
 		{
 			const auto player = obj->cast<Player>();
 
-			if (player->is_local() || !player->is_spawned())
+			if (player->is_local())
 				break;
 
 			const auto player_char = player->get_character();
@@ -173,7 +176,16 @@ void jc::mp::logic::on_update_objects()
 		}
 		case NetObject_Damageable:
 		{
-			//log(GREEN, "want to update a damageable");
+			const auto damageable = obj->cast<DamageableNetObject>();
+
+			// check if we own this damageable, if so,
+			// let's sync it with the server and other players
+
+			if (!damageable->sync())
+			{
+				// if this object is not owned then we will simply update the needed stuff
+			}
+
 			break;
 		}
 		default: log(RED, "Unknown net object type {}", type);
