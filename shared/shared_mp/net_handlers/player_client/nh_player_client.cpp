@@ -113,11 +113,11 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 
 			const auto player = new_pc->get_player();
 
-			player->spawn();
 			player->set_position(_info.position);
 			player->set_rotation(_info.rotation);
 			player->set_hp(_info.hp);
 			player->set_max_hp(_info.max_hp);
+			player->spawn();
 
 			log(PURPLE, "Created player with NID {:x}", player->get_nid());
 
@@ -128,7 +128,7 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 			if (g_net->get_net_object_by_nid(_info.nid))
 				break;
 
-			const auto object = g_net->spawn_net_object(_info.nid, _info.type, { _info.position, _info.rotation });
+			const auto object = g_net->spawn_net_object(_info.nid, _info.type, TransformTR(_info.position, _info.rotation));
 			object->set_hp(_info.hp);
 			object->set_max_hp(_info.max_hp);
 

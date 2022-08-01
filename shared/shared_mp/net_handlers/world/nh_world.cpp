@@ -94,6 +94,20 @@ enet::PacketResult nh::world::sync_object(const enet::Packet& p)
 
 		break;
 	}
+	case NetObjectVar_Velocity:
+	{
+		const auto velocity = p.get_raw<vec3>();
+
+		net_obj->set_velocity(velocity);
+
+		log(GREEN, "{} {} {}", velocity.x, velocity.y, velocity.z);
+
+#ifdef JC_SERVER
+		g_net->send_broadcast_joined_unreliable<ChannelID_World>(pc, WorldPID_SyncObject, net_obj, NetObjectVar_Velocity, velocity);
+#endif
+
+		break;
+	}
 	case NetObjectVar_Health:
 	{
 		const auto hp = p.get_float();

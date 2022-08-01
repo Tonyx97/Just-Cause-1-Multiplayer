@@ -22,6 +22,8 @@
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/ui/map_icon.h>
 #include <game/object/localplayer/localplayer.h>
+#include <game/object/physics/pfx_collision.h>
+#include <game/object/physics/pfx_base.h>
 #include <game/sys/all.h>
 
 DEFINE_HOOK_THISCALL(_is_key_pressed, 0x48C850, bool, int _this, int key)

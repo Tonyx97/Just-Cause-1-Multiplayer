@@ -900,9 +900,6 @@ void UI::overlay_debug()
 
 				static CharacterHandle* cc_h = nullptr;
 
-				if (g_key->is_key_pressed(VK_F4))
-					localp->get_character()->set_hp(1.f);
-
 				if (g_key->is_key_pressed(VK_F6))
 				{
 					if (!g_test_char)
@@ -953,6 +950,7 @@ void UI::net_debug()
 	{
 		ImGui::SetCursorPos({ 10.f, io->DisplaySize.y / 2.f + 100.f });
 
+		ImGui::Text(FORMATV("Network ID: {:x}", g_net->get_localplayer()->get_nid()).c_str());
 		ImGui::Text(FORMATV("Packet Loss: {:.2f} %%", (float(peer->packetLoss) / 65535.f) * 100.f).c_str());
 		ImGui::Text(FORMATV("RTT / Ping: {}", peer->roundTripTime).c_str());
 		ImGui::Text(FORMATV("Incoming Total Data: {}", peer->incomingDataTotal).c_str());

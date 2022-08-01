@@ -130,6 +130,8 @@
     <ClCompile Include="code\game\object\ladder\ladder.cpp" />
     <ClCompile Include="code\game\object\mission\objective.cpp" />
     <ClCompile Include="code\game\object\mounted_gun\mounted_gun.cpp" />
+    <ClCompile Include="code\game\object\physics\pfx_base.cpp" />
+    <ClCompile Include="code\game\object\physics\pfx_collision.cpp" />
     <ClCompile Include="code\game\object\resource\ee_resource.cpp" />
     <ClCompile Include="code\game\object\resource\resource.cpp" />
     <ClCompile Include="code\game\object\rigid_object\animated_rigid_object.cpp" />
@@ -231,6 +233,8 @@
     <ClInclude Include="code\game\object\ladder\ladder.h" />
     <ClInclude Include="code\game\object\mission\objective.h" />
     <ClInclude Include="code\game\object\mounted_gun\mounted_gun.h" />
+    <ClInclude Include="code\game\object\physics\pfx_base.h" />
+    <ClInclude Include="code\game\object\physics\pfx_collision.h" />
     <ClInclude Include="code\game\object\resource\ee_resource.h" />
     <ClInclude Include="code\game\object\resource\resource.h" />
     <ClInclude Include="code\game\object\rigid_object\animated_rigid_object.h" />

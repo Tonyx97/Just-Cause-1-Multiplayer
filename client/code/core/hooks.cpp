@@ -4,6 +4,7 @@
 
 #include <game/object/character/character.h>
 #include <game/object/item/item_pickup.h>
+#include <game/object/physics/pfx_collision.h>
 
 void jc::hooks::init()
 {
@@ -61,10 +62,12 @@ void jc::hooks::hook_game_fns()
 	character::hook::apply();
 	alive_object::hook::apply();
 	item_pickup::hook::apply();
+	pfx_collision::hook::apply();
 }
 
 void jc::hooks::unhook_game_fns()
 {
+	pfx_collision::hook::undo();
 	item_pickup::hook::undo();
 	alive_object::hook::undo();
 	character::hook::undo();

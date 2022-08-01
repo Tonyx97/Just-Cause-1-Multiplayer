@@ -63,13 +63,13 @@ public:
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_broadcast_unreliable(PlayerClient* ignore_pc, PacketID id, const A&... args)
 	{
-		send_broadcast<channel>(0, ignore_pc, id, args...);
+		send_broadcast<channel>(ENET_PACKET_FLAG_UNSEQUENCED, ignore_pc, id, args...);
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_broadcast_unreliable(PlayerClient* ignore_pc, const std::vector<uint8_t>& data)
 	{
-		send_broadcast<channel>(0, ignore_pc, data);
+		send_broadcast<channel>(ENET_PACKET_FLAG_UNSEQUENCED, ignore_pc, data);
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>
@@ -111,7 +111,7 @@ public:
 
 		enet::serialize_params(data, id, args...);
 
-		send_broadcast_joined(channel, PacketHolder(data, 0), ignore_pc);
+		send_broadcast_joined(channel, PacketHolder(data, ENET_PACKET_FLAG_UNSEQUENCED), ignore_pc);
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>

@@ -200,8 +200,6 @@ Model* ObjectBase::get_model() const
 
 bref<Physical> ObjectBase::get_physical() const
 {
-	check(false, "ffs fix this function, it's making everything crash in a strange manner xd");
-
 	bref<Physical> tmp;
 
 	jc::v_call(this, jc::object_base::vt::GET_PHYSICAL, &tmp);

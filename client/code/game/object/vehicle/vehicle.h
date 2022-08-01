@@ -12,6 +12,7 @@ namespace jc::vehicle
 
 	namespace vt
 	{
+		static constexpr uint32_t GET_VELOCITY			= 48;
 		static constexpr uint32_t SET_VELOCITY			= 50;
 		static constexpr uint32_t GET_DRIVER_SEAT		= 53;
 		static constexpr uint32_t GET_PASSENGER_SEAT	= 54;
@@ -38,6 +39,8 @@ public:
 	IMPL_OBJECT_TYPE_ID("CVehicle");
 
 	void set_velocity(const vec3& v);
+
+	vec3 get_velocity() const;
 
 	ref<VehicleSeat> get_driver_seat() const;
 	ref<VehicleSeat> get_passenger_seat() const;

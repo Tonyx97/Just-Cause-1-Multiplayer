@@ -64,13 +64,13 @@ public:
 
 		enet::serialize_params(data, id, args...);
 
-		send_packet(channel, data, 0);
+		send_packet(channel, data, ENET_PACKET_FLAG_UNSEQUENCED);
 	}
 
 	template <uint8_t channel = ChannelID_Generic, typename... A>
 	inline void send_unreliable(const std::vector<uint8_t>& data)
 	{
-		send_packet(channel, data, 0);
+		send_packet(channel, data, ENET_PACKET_FLAG_UNSEQUENCED);
 	}
 
 	template <typename T>
@@ -82,7 +82,7 @@ public:
 	template <typename T>
 	inline void send_unreliable(const T& packet)
 	{
-		send_packet(T::CHANNEL, packet.serialize(), 0);
+		send_packet(T::CHANNEL, packet.serialize(), ENET_PACKET_FLAG_UNSEQUENCED);
 	}
 
 	bool is_initialized() const { return initialized; }

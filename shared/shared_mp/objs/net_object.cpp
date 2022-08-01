@@ -4,7 +4,24 @@
 
 #include <shared_mp/objs/player.h>
 
+NetObject::NetObject()
+{
 #ifdef JC_CLIENT
+	vars.transform_timer(16 * 2);
+#else
+	nid = enet::GET_FREE_NID();
+#endif
+}
+
+NetObject::~NetObject()
+{
+#ifdef JC_SERVER
+	enet::FREE_NID(nid);
+#endif
+}
+
+#ifdef JC_CLIENT
+#include <game/object/base/comps/physical.h>
 #include <game/object/alive_object/alive_object.h>
 
 #include <mp/net.h>
@@ -25,11 +42,25 @@ bool NetObject::sync()
 	real_transform.t = object_base->get_position();
 	real_transform.r = object_base->get_rotation();
 
-	const float real_hp = object_base->get_hp(),
+	const float real_hp = object_base->get_real_hp(),
 				real_max_hp = object_base->get_max_hp();
 
-	if (real_transform.t != get_position() || real_transform.r != get_rotation())
+	if ((real_transform.t != get_position() || real_transform.r != get_rotation()) && vars.transform_timer.ready())
 		g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Transform, (vars.transform = real_transform).pack());
+
+	switch (get_type())
+	{
+	case NetObject_Player: break;
+	default:
+	{
+		if (glm::length(vars.pending_velocity) > 0.f)
+		{
+			g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Velocity, vars.velocity = vars.pending_velocity);
+
+			vars.pending_velocity = {};
+		}
+	}
+	}
 
 	if (real_hp != get_hp())
 		g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Health, vars.hp = real_hp);
@@ -87,19 +118,7 @@ namespace enet
 		free_nids.insert(nid);
 	}
 }
-
-NetObject::NetObject()
-{
-	nid = enet::GET_FREE_NID();
-}
 #endif
-
-NetObject::~NetObject()
-{
-#ifdef JC_SERVER
-	enet::FREE_NID(nid);
-#endif
-}
 
 void NetObject::set_streamer(Player* v)
 {
@@ -116,6 +135,18 @@ void NetObject::set_streamer(Player* v)
 #endif
 
 	streamer = v;
+}
+
+void NetObject::set_spawned(bool v)
+{
+	spawned = v;
+
+	// if we just spawned the object then let the parent
+	// class know so they can set the basic vars
+
+	if (spawned)
+		for (uint8_t i = NetObjectVar_Begin; i < NetObjectVar_End; ++i)
+			on_net_var_change(i);
 }
 
 void NetObject::set_transform(const TransformTR& transform)
@@ -162,4 +193,17 @@ void NetObject::set_max_hp(float v)
 
 	if (spawned)
 		on_net_var_change(NetObjectVar_MaxHealth);
+}
+
+void NetObject::set_velocity(const vec3& v)
+{
+	vars.velocity = v;
+
+	if (spawned)
+		on_net_var_change(NetObjectVar_Velocity);
+}
+
+void NetObject::set_pending_velocity(const vec3& v)
+{
+	vars.pending_velocity = v;
 }

@@ -303,6 +303,12 @@
     <ClCompile Include="code\game\object\rigid_object\traffic_light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\game\object\physics\pfx_base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\game\object\physics\pfx_collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\game\sys\renderer.h">
@@ -627,6 +633,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\rigid_object\traffic_light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\physics\pfx_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\physics\pfx_collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

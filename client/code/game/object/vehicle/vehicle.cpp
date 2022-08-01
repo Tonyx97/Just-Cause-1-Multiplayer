@@ -7,6 +7,13 @@ void Vehicle::set_velocity(const vec3& v)
 	jc::v_call(this, jc::vehicle::vt::SET_VELOCITY, &v);
 }
 
+vec3 Vehicle::get_velocity() const
+{
+	vec3 out;
+
+	return *jc::v_call<vec3*>(this, jc::vehicle::vt::GET_VELOCITY, &out);
+}
+
 ref<VehicleSeat> Vehicle::get_driver_seat() const
 {
     ref<VehicleSeat> r;

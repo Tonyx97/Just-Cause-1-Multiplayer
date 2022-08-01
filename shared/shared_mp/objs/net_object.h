@@ -2,6 +2,8 @@
 
 #include <game/transform/transform.h>
 
+#include <timer/timer.h>
+
 // network id of an object
 //
 using NID = uint32_t;
@@ -40,18 +42,26 @@ enum _SyncType : SyncType
 
 enum _NetObjectVarType : NetObjectVarType
 {
-	NetObjectVar_Transform,
+	NetObjectVar_Begin,
+	NetObjectVar_Transform = NetObjectVar_Begin,
 	NetObjectVar_Position,
 	NetObjectVar_Rotation,
+	NetObjectVar_Velocity,
 	NetObjectVar_Health,
 	NetObjectVar_MaxHealth,
+	NetObjectVar_End,
 };
 
 class Player;
 
 struct NetObjectVars
 {
+	TimerRaw transform_timer;
+
 	TransformTR transform {};
+
+	vec3 velocity {},
+		 pending_velocity {};
 
 	float hp = jc::nums::MAXF,
 		  max_hp = jc::nums::MAXF;
@@ -73,17 +83,17 @@ private:
 
 public:
 
+	NetObject();
+
+	virtual ~NetObject() = 0;
+
 #ifdef JC_CLIENT
 	bool sync();
 
 	virtual void on_sync() = 0;
 
 	virtual class ObjectBase* get_object_base() = 0;
-#else
-	NetObject();
 #endif
-
-	virtual ~NetObject() = 0;
 
 	virtual void on_net_var_change(NetObjectVarType var_type) = 0;
 
@@ -98,14 +108,16 @@ public:
 #endif
 
 	void set_streamer(Player* v);
+	void set_spawned(bool v);
 	void set_sync_type(SyncType v) { sync_type = v; }
-	void set_spawned(bool v) { spawned = v; }
 	void set_transform(const TransformTR& transform);
 	void set_transform(const TransformPackedTR& packed_transform);
 	void set_position(const vec3& v);
 	void set_rotation(const quat& v);
 	void set_hp(float v);
 	void set_max_hp(float v);
+	void set_velocity(const vec3& v);
+	void set_pending_velocity(const vec3& v);
 
 	bool is_owned_by(Player* player) const { return streamer == player; }
 	bool is_spawned() const { return spawned; }
@@ -140,6 +152,9 @@ public:
 	float get_hp() const { return vars.hp; }
 	float get_max_hp() const { return vars.max_hp; }
 
+	const vec3& get_velocity() const { return vars.velocity; }
 	const vec3& get_position() const { return vars.transform.t; }
 	const quat& get_rotation() const { return vars.transform.r; }
+
+	const TransformTR& get_transform() const { return vars.transform; }
 };
