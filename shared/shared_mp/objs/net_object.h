@@ -49,20 +49,25 @@ enum _NetObjectVarType : NetObjectVarType
 
 class Player;
 
+struct NetObjectVars
+{
+	TransformTR transform {};
+
+	float hp = jc::nums::MAXF,
+		  max_hp = jc::nums::MAXF;
+};
+
 class NetObject
 {
 private:
 
-	TransformTR transform {};
+	NetObjectVars vars;
 
 	Player* streamer = nullptr;
 
 	SyncType sync_type = SyncType_None;
 
 	NID nid = INVALID_NID;
-
-	float hp = jc::nums::MAXF,
-		  max_hp = jc::nums::MAXF;
 
 	bool spawned = false;
 
@@ -95,7 +100,8 @@ public:
 	void set_streamer(Player* v);
 	void set_sync_type(SyncType v) { sync_type = v; }
 	void set_spawned(bool v) { spawned = v; }
-	void set_transform(const vec3& t, const quat& r);
+	void set_transform(const TransformTR& transform);
+	void set_transform(const TransformPackedTR& packed_transform);
 	void set_position(const vec3& v);
 	void set_rotation(const quat& v);
 	void set_hp(float v);
@@ -131,9 +137,9 @@ public:
 		return casted;
 	}
 
-	float get_hp() const { return hp; }
-	float get_max_hp() const { return max_hp; }
+	float get_hp() const { return vars.hp; }
+	float get_max_hp() const { return vars.max_hp; }
 
-	const vec3& get_position() const { return transform.t; }
-	const quat& get_rotation() const { return transform.r; }
+	const vec3& get_position() const { return vars.transform.t; }
+	const quat& get_rotation() const { return vars.transform.r; }
 };

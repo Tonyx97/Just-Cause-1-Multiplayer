@@ -111,6 +111,7 @@ CharacterHandle* Player::get_character_handle() const
 Player::Player(PlayerClient* pc) : client(pc)
 {
 	set_sync_type(SyncType_Locked);
+	set_streamer(this);
 }
 
 void Player::respawn(float hp, float max_hp)
@@ -136,6 +137,15 @@ void Player::set_net_object_ownership_of(NetObject* obj)
 
 	client->send_reliable<ChannelID_World>(WorldPID_SetOwnership, this, obj);
 }
+
+void Player::remove_all_ownerships()
+{
+	g_net->for_each_net_object([&](NID, NetObject* obj)
+	{
+		if (obj->is_owned_by(this))
+			obj->set_streamer(nullptr);
+	});
+}
 #endif
 
 Player::~Player()
@@ -154,6 +164,10 @@ Player::~Player()
 		log(RED, "Player {} character despawned", get_nid());
 	}
 #else
+	// if this player owns any net object, remove all the ownerships
+	// from the player and the objects
+
+	remove_all_ownerships();
 #endif
 }
 

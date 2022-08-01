@@ -104,6 +104,26 @@ public:
 		send_broadcast_joined(channel, PacketHolder(data), ignore_pc);
 	}
 
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_broadcast_joined_unreliable(PlayerClient* ignore_pc, PacketID id, const A&... args)
+	{
+		std::vector<uint8_t> data;
+
+		enet::serialize_params(data, id, args...);
+
+		send_broadcast_joined(channel, PacketHolder(data, 0), ignore_pc);
+	}
+
+	template <uint8_t channel = ChannelID_Generic, typename... A>
+	inline void send_broadcast_joined_reliable(PacketID id, const A&... args)
+	{
+		std::vector<uint8_t> data;
+
+		enet::serialize_params(data, id, args...);
+
+		send_broadcast_joined(channel, PacketHolder(data), nullptr);
+	}
+
 	ENetHost* get_host() const { return sv; }
 
 	Settings& get_settings() { return settings; }

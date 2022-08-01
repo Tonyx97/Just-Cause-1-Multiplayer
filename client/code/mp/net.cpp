@@ -90,6 +90,21 @@ void Net::disconnect()
 
 	enet_peer_disconnect(peer, 0);
 
+	bool disconnected = false;
+
+	enet::dispatch_packets([&](ENetEvent& e)
+	{
+		switch (e.type)
+		{
+		case ENET_EVENT_TYPE_RECEIVE:
+			enet_packet_destroy(e.packet);
+			break;
+		case ENET_EVENT_TYPE_DISCONNECT:
+			disconnected = true;
+			break;
+		}
+	}, 500);
+
 	if (peer)
 	{
 		enet_peer_reset(peer);

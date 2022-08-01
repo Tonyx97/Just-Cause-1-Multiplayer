@@ -9,10 +9,10 @@
 
 #include <game/object/damageable_object/damageable_object.h>
 
-DamageableNetObject::DamageableNetObject(NID nid, const vec3& position)
+DamageableNetObject::DamageableNetObject(NID nid, const TransformTR& transform)
 {
 	set_nid(nid);
-	set_position(position);
+	set_transform(transform);
 }
 
 void DamageableNetObject::on_sync()
@@ -24,10 +24,10 @@ ObjectBase* DamageableNetObject::get_object_base()
 	return obj;
 }
 #else
-DamageableNetObject::DamageableNetObject(const vec3& position)
+DamageableNetObject::DamageableNetObject(const TransformTR& transform)
 {
 	set_sync_type(SyncType_Distance);
-	set_position(position);
+	set_transform(transform);
 }
 #endif
 
@@ -65,7 +65,7 @@ bool DamageableNetObject::spawn()
 
 	check(obj, "Could not create damageable object");
 
-	log(PURPLE, "DamageableObject {:x} spawned now {:x}", get_nid(), ptr(obj));
+	log(PURPLE, "DamageableObject {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
 #endif
 
 	set_spawned(true);

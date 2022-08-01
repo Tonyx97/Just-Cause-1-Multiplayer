@@ -18,12 +18,6 @@ bool NetObject::sync()
 
 	// todojc - check for actual alive objects instances
 
-	std::vector<uint8_t> data;
-
-	enet::serialize_params(data, WorldPID_SyncObject, this);
-
-	const auto old_size = data.size();
-
 	TransformTR real_transform;
 
 	const auto object_base = BITCAST(AliveObject*, get_object_base());
@@ -35,27 +29,13 @@ bool NetObject::sync()
 				real_max_hp = object_base->get_max_hp();
 
 	if (real_transform.t != get_position() || real_transform.r != get_rotation())
-	{
-		enet::serialize_params(data, NetObjectVar_Transform, real_transform);
-		transform = real_transform;
-	}
+		g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Transform, (vars.transform = real_transform).pack());
 
 	if (real_hp != get_hp())
-	{
-		enet::serialize_params(data, NetObjectVar_Health, real_hp);
-		hp = real_hp;
-	}
+		g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Health, vars.hp = real_hp);
 
 	if (real_max_hp != get_max_hp())
-	{
-		enet::serialize_params(data, NetObjectVar_MaxHealth, real_max_hp);
-		max_hp = real_max_hp;
-	}
-
-	// only sent the packet sync if we added something
-
-	if (data.size() > old_size)
-		g_net->send_unreliable<ChannelID_World>(data);
+		g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_MaxHealth, vars.max_hp = real_max_hp);
 
 	// parent object sync
 
@@ -138,18 +118,23 @@ void NetObject::set_streamer(Player* v)
 	streamer = v;
 }
 
-void NetObject::set_transform(const vec3& t, const quat& r)
+void NetObject::set_transform(const TransformTR& transform)
 {
-	transform.t = t;
-	transform.r = r;
+	vars.transform.t = transform.t;
+	vars.transform.r = transform.r;
 
 	if (spawned)
 		on_net_var_change(NetObjectVar_Transform);
 }
 
+void NetObject::set_transform(const TransformPackedTR& packed_transform)
+{
+	set_transform(TransformTR(packed_transform));
+}
+
 void NetObject::set_position(const vec3& v)
 {
-	transform.t = v;
+	vars.transform.t = v;
 
 	if (spawned)
 		on_net_var_change(NetObjectVar_Position);
@@ -157,7 +142,7 @@ void NetObject::set_position(const vec3& v)
 
 void NetObject::set_rotation(const quat& v)
 {
-	transform.r = v;
+	vars.transform.r = v;
 
 	if (spawned)
 		on_net_var_change(NetObjectVar_Rotation);
@@ -165,7 +150,7 @@ void NetObject::set_rotation(const quat& v)
 
 void NetObject::set_hp(float v)
 {
-	hp = v;
+	vars.hp = v;
 
 	if (spawned)
 		on_net_var_change(NetObjectVar_Health);
@@ -173,7 +158,7 @@ void NetObject::set_hp(float v)
 
 void NetObject::set_max_hp(float v)
 {
-	max_hp = v;
+	vars.max_hp = v;
 
 	if (spawned)
 		on_net_var_change(NetObjectVar_MaxHealth);

@@ -11,11 +11,8 @@ class CharacterHandle;
 
 enum PlayerDynamicInfoID : uint8_t
 {
-	PlayerDynInfo_Transform,
-	PlayerDynInfo_Velocity,
 	PlayerDynInfo_HeadRotation,
 	PlayerDynInfo_Skin,
-	PlayerDynInfo_Health,
 	PlayerDynInfo_NPCVariant,
 };
 
@@ -124,6 +121,7 @@ public:
 	void respawn(float hp, float max_hp);
 	void transfer_net_object_ownership_to(NetObject* obj, Player* new_streamer);
 	void set_net_object_ownership_of(NetObject* obj);
+	void remove_all_ownerships();
 #endif
 
 	~Player();

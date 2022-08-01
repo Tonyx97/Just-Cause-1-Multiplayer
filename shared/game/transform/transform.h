@@ -1,9 +1,29 @@
 #pragma once
 
+struct TransformPackedTR
+{
+	vec3 t = jc::vec::IDENTITY;
+	i16vec4 r = jc::vec::IDENTITY;
+};
+
 struct TransformTR
 {
 	vec3 t = jc::vec::ZERO;
 	quat r = jc::qua::IDENTITY;
+
+	TransformTR() {}
+	TransformTR(const vec3& position) : t(position) {}
+	TransformTR(const vec3& position, const quat& rotation) : t(position), r(rotation) {}
+	TransformTR(const TransformPackedTR& v)
+	{
+		t = v.t;
+		r = jc::math::unpack_quat(v.r);
+	}
+
+	TransformPackedTR pack()
+	{
+		return { .t = t, .r = jc::math::pack_quat(r) };
+	}
 };
 
 class Transform

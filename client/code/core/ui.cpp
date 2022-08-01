@@ -274,7 +274,7 @@ void UI::render_players()
 
 	g_net->for_each_player([&](Player* player)
 	{
-		if (player->is_local())
+		if (player->is_local() || ! player->is_spawned())
 			return;
 
 		const auto player_char = player->get_character();

@@ -71,6 +71,8 @@ void PlayerClient::startup_sync()
 					.type = valid_net_object->get_type(),
 					.position = valid_net_object->get_position(),
 					.rotation = valid_net_object->get_rotation(),
+					.hp = valid_net_object->get_hp(),
+					.max_hp = valid_net_object->get_max_hp(),
 				});
 			}
 		});

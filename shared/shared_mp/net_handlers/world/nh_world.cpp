@@ -20,43 +20,21 @@ enet::PacketResult nh::world::day_time(const enet::Packet& p)
 
 enet::PacketResult nh::world::spawn_object(const enet::Packet& p)
 {
-#ifdef JC_SERVER
+#ifdef JC_CLIENT
+	const auto [nid, net_type] = p.get_nid_and_type();
+#else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
+
+	const auto net_type = p.get_integral<NetObjectType>();
 #endif
 
-	const auto position = p.get_raw<vec3>();
+	const auto transform = p.get_raw<TransformTR>();
 
 #ifdef JC_CLIENT
-	const auto [nid, type] = p.get_nid_and_type();
-
-	switch (type)
-	{
-	case NetObject_Damageable:
-	{
-		log(GREEN, "Server spawned damageable: NID = {:x}, position = {:.2f} {:.2f} {:.2f}", nid, position.x, position.y, position.z);
-
-		g_net->spawn_damageable(nid, position);
-
-		break;
-	}
-	default: log(RED, "Unknown net object type to spawn: {}", type);
-	}
+	g_net->spawn_net_object(nid, net_type, transform);
 #else
-	const auto net_type = p.get_integral<NetObjectType>();
-
-	switch (net_type)
-	{
-	case NetObject_Damageable:
-	{
-		const auto object = g_net->spawn_damageable(position);
-
-		log(GREEN, "Spawning damageable: owner = {:x}, NID = {:x}, position = {:.2f} {:.2f} {:.2f}", ptr(player), object->get_nid(), position.x, position.y, position.z);
-
-		break;
-	}
-	default: log(RED, "Unknown net object type to spawn: {}", net_type);
-	}
+	g_net->spawn_net_object(net_type, transform);
 #endif
 
 	return enet::PacketRes_Ok;
@@ -68,6 +46,9 @@ enet::PacketResult nh::world::set_ownership(const enet::Packet& p)
 	const auto new_streamer = p.get_net_object<Player>();
 	const auto net_obj = p.get_net_object();
 
+	if (!net_obj)
+		return enet::PacketRes_BadArgs;
+
 	net_obj->set_streamer(new_streamer);
 
 	return enet::PacketRes_Ok;
@@ -78,11 +59,10 @@ enet::PacketResult nh::world::set_ownership(const enet::Packet& p)
 
 enet::PacketResult nh::world::sync_object(const enet::Packet& p)
 {
-	const auto initial_data = p.get_initial_data();
-	
 	const auto net_obj = p.get_net_object();
 
-	check(net_obj, "Invalid net object");
+	if (!net_obj)
+		return enet::PacketRes_BadArgs;
 
 #ifdef JC_SERVER
 	const auto pc = p.get_pc();
@@ -91,47 +71,55 @@ enet::PacketResult nh::world::sync_object(const enet::Packet& p)
 	// check if the player sending this packet is actually streaming
 	// the object
 
-	if (!net_obj->is_owned_by(player))
+	if (net_obj->get_type() != NetObject_Player)
+	{
+		if (!net_obj->is_owned_by(player))
+			return enet::PacketRes_NotAllowed;
+	}
+	else if (net_obj != player)
 		return enet::PacketRes_NotAllowed;
 #endif
 
-	while (!p.is_empty())
+	switch (const auto var_type = p.get_u8())
 	{
-		switch (const auto var_type = p.get_u8())
-		{
-		case NetObjectVar_Transform:
-		{
-			const auto transform = p.get_raw<TransformTR>();
+	case NetObjectVar_Transform:
+	{
+		const auto transform = p.get_raw<TransformPackedTR>();
 
-			net_obj->set_transform(transform.t, transform.r);
-
-			break;
-		}
-		case NetObjectVar_Health:
-		{
-			const auto hp = p.get_float();
-
-			net_obj->set_hp(hp);
-
-			break;
-		}
-		case NetObjectVar_MaxHealth:
-		{
-			const auto max_hp = p.get_float();
-
-			net_obj->set_max_hp(max_hp);
-
-			break;
-		}
-		default: log(RED, "Unknown net object var type: {}", var_type);
-		}
-	}
+		net_obj->set_transform(transform);
 
 #ifdef JC_SERVER
-	// send the whole data we got from the packet directly to the rest of the players
-
-	g_net->send_broadcast_unreliable<ChannelID_World>(pc, initial_data);
+		g_net->send_broadcast_joined_unreliable<ChannelID_World>(pc, WorldPID_SyncObject, net_obj, NetObjectVar_Transform, transform);
 #endif
+
+		break;
+	}
+	case NetObjectVar_Health:
+	{
+		const auto hp = p.get_float();
+
+		net_obj->set_hp(hp);
+
+#ifdef JC_SERVER
+		g_net->send_broadcast_joined_reliable<ChannelID_World>(pc, WorldPID_SyncObject, net_obj, NetObjectVar_Health, hp);
+#endif
+
+		break;
+	}
+	case NetObjectVar_MaxHealth:
+	{
+		const auto max_hp = p.get_float();
+
+		net_obj->set_max_hp(max_hp);
+
+#ifdef JC_SERVER
+		g_net->send_broadcast_joined_reliable<ChannelID_World>(pc, WorldPID_SyncObject, net_obj, NetObjectVar_MaxHealth, max_hp);
+#endif
+
+		break;
+	}
+	default: log(RED, "Unknown net object var type: {}", var_type);
+	}
 
 	return enet::PacketRes_Ok;
 }

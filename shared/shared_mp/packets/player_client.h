@@ -11,11 +11,14 @@ ALIGN_PUSH(1)
 	{
 		NID nid = INVALID_NID;
 
-		NetObjectType type;
+		NetObjectType type = NetObject_Invalid;
 
 		vec3 position;
 
 		quat rotation;
+
+		float hp,
+			  max_hp;
 	};
 ALIGN_POP()
 
@@ -49,8 +52,10 @@ ALIGN_POP()
 
 			const auto position = enet::deserialize_general_data<vec3>(data);
 			const auto rotation = enet::deserialize_general_data<quat>(data);
+			const float hp = enet::deserialize_float(data);
+			const float max_hp = enet::deserialize_float(data);
 
-			net_objects.emplace_back(nid, type, position, rotation);
+			net_objects.emplace_back(nid, type, position, rotation, hp, max_hp);
 		}
 
 		return *this;

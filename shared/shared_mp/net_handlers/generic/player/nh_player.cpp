@@ -81,31 +81,7 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 
 		switch (type)
 		{
-		case PlayerDynInfo_Transform:
-		{
-			auto position = p.get_raw<vec3>();
-			auto rotation = p.get_raw<i16vec4>();
-
-			player->set_transform(position, jc::math::unpack_quat(rotation));
-
-#ifdef JC_SERVER
-			g_net->send_broadcast_unreliable(pc, PlayerPID_DynamicInfo, player, type, position, rotation);
-#endif
-
-			break;
-		}
-		case PlayerDynInfo_Velocity:
-		{
-			auto velocity = p.get_raw<vec3>();
-
-			player->set_velocity(velocity);
-
-#ifdef JC_SERVER
-			g_net->send_broadcast_unreliable(pc, PlayerPID_DynamicInfo, player, type, velocity);
-#endif
-
-			break;
-		}
+		
 		case PlayerDynInfo_HeadRotation:
 		{
 			const auto rotation = p.get_raw<vec3>();
@@ -127,18 +103,6 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 
 #ifdef JC_SERVER
 			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, skin_id);
-#endif
-
-			break;
-		}
-		case PlayerDynInfo_Health:
-		{
-			const auto hp = p.get_float();
-
-			player->set_hp(hp);
-
-#ifdef JC_SERVER
-			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, hp);
 #endif
 
 			break;
@@ -313,8 +277,6 @@ enet::PacketResult nh::player::set_weapon(const enet::Packet& p)
 #endif
 
 	const auto weapon_id = p.get_u8();
-
-	log(GREEN, "A player changed weapon from {} to {}", player->get_weapon_id(), weapon_id);
 
 	player->set_weapon_id(weapon_id);
 

@@ -78,6 +78,7 @@ namespace jc::vec
 	static constexpr auto FORWARD = vec3(0.f, 0.f, 1.f);
 	static constexpr auto BACK = vec3(0.f, 0.f, -1.f);
 	static constexpr auto ZERO = vec3(0.f);
+	static constexpr auto IDENTITY = vec4(1.f, 0.f, 0.f, 0.f);
 }
 
 namespace jc::qua
@@ -124,6 +125,26 @@ namespace jc::math
 			util::pack::unpack_float(q.x, 32767.f),
 			util::pack::unpack_float(q.y, 32767.f),
 			util::pack::unpack_float(q.z, 32767.f));
+	}
+
+	inline i16vec3 pack_vec3(const vec3& q, float factor = 50.f)
+	{
+		const auto _factor = (static_cast<float>(1 << 15) - 1.f) / factor;
+
+		return i16vec3(
+			util::pack::pack_float(q.x, _factor),
+			util::pack::pack_float(q.y, _factor),
+			util::pack::pack_float(q.z, _factor));
+	}
+
+	inline vec3 unpack_vec3(const i16vec3& v, float factor = 50.f)
+	{
+		const auto _factor = (static_cast<float>(1 << 15) - 1.f) / factor;
+
+		return vec3(
+			util::pack::unpack_float(v.x, _factor),
+			util::pack::unpack_float(v.y, _factor),
+			util::pack::unpack_float(v.z, _factor));
 	}
 
 	inline float quat_diff(const quat& a, const quat& b)

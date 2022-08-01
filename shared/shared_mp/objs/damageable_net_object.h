@@ -17,13 +17,13 @@ public:
 	NetObjectType get_type() const override { return TYPE(); }
 
 #ifdef JC_CLIENT
-	DamageableNetObject(NID nid, const vec3& position);
+	DamageableNetObject(NID nid, const TransformTR& transform);
 
 	void on_sync() override;
 
 	class ObjectBase* get_object_base() override;
 #else
-	DamageableNetObject(const vec3& position);
+	DamageableNetObject(const TransformTR& transform);
 #endif
 	~DamageableNetObject();
 

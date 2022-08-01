@@ -62,19 +62,21 @@ void jc::mp::logic::on_tick()
 				g_net->send_reliable(PlayerPID_StateSync, current_weapon_id);
 
 			// transform (we upload it every 500 ms for now to correct the position in remote players)
-			
+
 			if ((position != localplayer->get_position() || rotation != localplayer->get_rotation()) && local_char->is_on_ground() && transform_timer.ready())
 			{
-				g_net->send_unreliable(PlayerPID_DynamicInfo, PlayerDynInfo_Transform, position, jc::math::pack_quat(rotation));
+				TransformTR transform_tr(position, rotation);
 
-				localplayer->set_transform(position, rotation);
+				g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, localplayer, NetObjectVar_Transform, transform_tr.pack());
+
+				localplayer->set_transform(transform_tr);
 			}
 
 			// velocity
 			
 			/*if (velocity != localplayer->get_velocity() && glm::length(velocity) > 10.f && velocity_timer.ready())
 			{
-				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Velocity, velocity);
+				g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, NetObjectVar_Velocity, velocity);
 
 				localplayer->set_velocity(velocity);
 			}*/
@@ -120,7 +122,9 @@ void jc::mp::logic::on_tick()
 
 			if (g_key->is_key_pressed(VK_F3))
 			{
-				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, position + vec3(2.f, 1.f, 0.f), NetObject_Damageable);
+				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
+
+				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Damageable, transform);
 			}
 		}
 }
@@ -139,7 +143,7 @@ void jc::mp::logic::on_update_objects()
 			const auto player = obj->cast<Player>();
 
 			if (player->is_local())
-				break;
+				return;
 
 			const auto player_char = player->get_character();
 

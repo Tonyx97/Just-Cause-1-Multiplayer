@@ -149,28 +149,35 @@ PlayerClient* ObjectLists::get_player_client_by_nid(NID nid)
 
 // spawning
 
+NetObject* ObjectLists::spawn_net_object(
 #ifdef JC_CLIENT
-DamageableNetObject* ObjectLists::spawn_damageable(NID nid, const vec3& position)
-{
-	const auto object = CREATE_DAMAGEABLE_NET_OBJECT(nid, position);
-
-	check(add_net_object(object), "Could not add a damageable");
-
-	object->spawn();
-
-	return object;
-}
-#else
-DamageableNetObject* ObjectLists::spawn_damageable(const vec3& position)
-{
-	const auto object = CREATE_DAMAGEABLE_NET_OBJECT(position);
-
-	check(add_net_object(object), "Could not add a damageable");
-
-	object->spawn();
-
-	g_net->send_broadcast_reliable<ChannelID_World>(WorldPID_SpawnObject, position, object);
-
-	return object;
-}
+	NID nid, 
 #endif
+	NetObjectType type,
+	const TransformTR& transform)
+{
+	NetObject* object = nullptr;
+
+	switch (type)
+	{
+#ifdef JC_CLIENT
+	case NetObject_Damageable: object = CREATE_DAMAGEABLE_NET_OBJECT(nid, transform); break;
+#else
+	case NetObject_Damageable: object = CREATE_DAMAGEABLE_NET_OBJECT(transform); break;
+#endif
+	default: log(RED, "Invalid net object type to spawn: {}", type);
+	}
+
+	if (object)
+	{
+		check(add_net_object(object), "Could not add a damageable");
+
+		object->spawn();
+
+#ifdef JC_SERVER
+		g_net->send_broadcast_joined_reliable<ChannelID_World>(WorldPID_SpawnObject, object, transform);
+#endif
+	}
+
+	return object;
+}

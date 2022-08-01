@@ -88,7 +88,7 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 	const auto localplayer = g_net->get_localplayer();
 	const auto info = p.get<PlayerClientSyncInstancesPacket>();
 
-	log(YELLOW, "Syncing {} player instances...", info.net_objects.size());
+	log(YELLOW, "Syncing {} net object instances...", info.net_objects.size());
 
 	for (const auto& _info : info.net_objects)
 	{
@@ -114,19 +114,25 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 			const auto player = new_pc->get_player();
 
 			player->spawn();
+			player->set_position(_info.position);
+			player->set_rotation(_info.rotation);
+			player->set_hp(_info.hp);
+			player->set_max_hp(_info.max_hp);
 
-			log(PURPLE, "Created new player with NID {:x}", player->get_nid());
+			log(PURPLE, "Created player with NID {:x}", player->get_nid());
 
 			break;
 		}
 		case NetObject_Damageable:
 		{
-			log(RED, "syncing damageable object");
-
 			if (g_net->get_net_object_by_nid(_info.nid))
 				break;
 
-			g_net->spawn_damageable(_info.nid, _info.position);
+			const auto object = g_net->spawn_net_object(_info.nid, _info.type, { _info.position, _info.rotation });
+			object->set_hp(_info.hp);
+			object->set_max_hp(_info.max_hp);
+
+			log(PURPLE, "Created net object with NID {:x} and type {}", object->get_nid(), object->get_type());
 
 			break;
 		}
@@ -134,8 +140,7 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 		}
 	}
 
-	log(YELLOW, "All player instances synced (a total of {})", info.net_objects.size());
-#elif defined(JC_SERVER)
+	log(YELLOW, "All net object instances synced (a total of {})", info.net_objects.size());
 #endif
 
 	return enet::PacketRes_Ok;

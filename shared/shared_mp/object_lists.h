@@ -83,9 +83,10 @@ public:
 
 	// spawning
 	
+	NetObject* spawn_net_object(
 #ifdef JC_CLIENT
-	DamageableNetObject* spawn_damageable(NID nid, const vec3& position);
-#else
-	DamageableNetObject* spawn_damageable(const vec3& position);
+		NID nid,
 #endif
+		NetObjectType type,
+		const TransformTR& transform);
 };
