@@ -7,7 +7,7 @@
 NetObject::NetObject()
 {
 #ifdef JC_CLIENT
-	vars.transform_timer(16 * 2);
+	vars.transform_timer(16 * 3);
 #else
 	nid = enet::GET_FREE_NID();
 #endif
@@ -55,7 +55,7 @@ bool NetObject::sync()
 	{
 		if (glm::length(vars.pending_velocity) > 0.f)
 		{
-			g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Velocity, vars.velocity = vars.pending_velocity);
+			//g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Velocity, vars.velocity = vars.pending_velocity);
 
 			vars.pending_velocity = {};
 		}

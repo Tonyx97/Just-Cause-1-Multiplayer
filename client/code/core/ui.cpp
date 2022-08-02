@@ -944,22 +944,44 @@ void UI::net_debug()
 	if (!g_net)
 		return;
 
+	static TimerRaw kbs_timer(1000);
+
 	const auto stat_level = g_net->get_net_stat();
 
 	if (const auto peer = g_net->get_peer())
 	{
+		static int kbs_recv = 0,
+				   kbs_sent = 0;
+
 		ImGui::SetCursorPos({ 10.f, io->DisplaySize.y / 2.f + 100.f });
 
 		ImGui::Text(FORMATV("Network ID: {:x}", g_net->get_localplayer()->get_nid()).c_str());
-		ImGui::Text(FORMATV("Packet Loss: {:.2f} %%", (float(peer->packetLoss) / 65535.f) * 100.f).c_str());
+		ImGui::Text(FORMATV("Upload: {:.3f} KB/s", float(kbs_sent) / 1000.f).c_str());
+		ImGui::Text(FORMATV("Download: {:.3f} KB/s", float(kbs_recv) / 1000.f).c_str());
 		ImGui::Text(FORMATV("RTT / Ping: {}", peer->roundTripTime).c_str());
-		ImGui::Text(FORMATV("Incoming Total Data: {}", peer->incomingDataTotal).c_str());
-		ImGui::Text(FORMATV("Outgoing Total Data: {}", peer->outgoingDataTotal).c_str());
-		ImGui::Text(FORMATV("Total Data Received: {}", peer->totalDataReceived).c_str());
-		ImGui::Text(FORMATV("Total Data Sent: {}", peer->totalDataSent).c_str());
+		ImGui::Text(FORMATV("Packet Loss: {:.2f} %%", (float(peer->packetLoss) / 65535.f) * 100.f).c_str());
 		ImGui::Text(FORMATV("Packets Lost: {}", peer->packetsLost).c_str());
+
+		if (peer->outgoingDataTotal >= 1000.f * 1000.f)
+			ImGui::Text(FORMATV("Total Uploaded: {:.3f} MB", float(peer->outgoingDataTotal) / (1000.f * 1000.f)).c_str());
+		else ImGui::Text(FORMATV("Total Uploaded: {:.3f} KB", float(peer->outgoingDataTotal) / 1000.f).c_str());
+
+		if (peer->incomingDataTotal >= 1000.f * 1000.f)
+			ImGui::Text(FORMATV("Total Downloaded: {:.3f} MB", float(peer->incomingDataTotal) / (1000.f * 1000.f)).c_str());
+		else ImGui::Text(FORMATV("Total Downloaded: {:.3f} KB", float(peer->incomingDataTotal) / 1000.f).c_str());
+
+		ImGui::Text(FORMATV("Total Downloaded: {} KB", float(peer->incomingDataTotal) / 1000.f).c_str());
 		ImGui::Text(FORMATV("Total Packets Sent: {}", peer->totalPacketsSent).c_str());
 		ImGui::Text(FORMATV("Total Packets Lost: {}", peer->totalPacketsLost).c_str());
+		
+		if (kbs_timer.ready())
+		{
+			kbs_recv = peer->totalDataReceived;
+			kbs_sent = peer->totalDataSent;
+
+			peer->totalDataReceived = 0;
+			peer->totalDataSent = 0;
+		}
 	}
 }
 

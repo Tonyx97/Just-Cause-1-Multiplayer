@@ -190,17 +190,12 @@ void jc::mp::logic::on_update_objects()
 			{
 				// if this object is not owned then we will simply update the needed stuff
 
-				/*const auto pos = damageable->get_position();
+				const auto pos = damageable->get_position();
 				const auto rot = damageable->get_rotation();
 
 				const auto obj_base = damageable->get_object_base();
 
-				log(RED, "DISTANCE: {}", glm::length(obj_base->get_physical()->get_velocity()));
-
-				if (glm::length(obj_base->get_physical()->get_velocity()) < 0.5f)
-				{
-					obj_base->set_transform(Transform(pos, rot));
-				}*/
+				obj_base->set_transform(obj_base->get_transform().interpolate(Transform(pos, rot), 0.2f, 0.2f));
 			}
 
 			break;
