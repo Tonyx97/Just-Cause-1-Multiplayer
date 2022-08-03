@@ -13,6 +13,7 @@
 #include <game/sys/resource_streamer.h>
 #include <game/sys/player_global_info.h>
 #include <game/sys/weapon_system.h>
+#include <game/sys/particle_system.h>
 
 #include <havok/character_proxy.h>
 #include <havok/motion_state.h>
@@ -29,6 +30,31 @@
 
 namespace jc::character::hook
 {
+	static void* test = nullptr;
+
+	DEFINE_HOOK_THISCALL(update, 0x58FC80, void, Character* character, float delta)
+	{
+		/*const auto position = character->get_stomach_bone_position();
+
+		if (character->get_flags() & (1 << 31))
+		{
+			if (!test)
+			{
+				test = g_particle->spawn_fx("firesmall_static", position, {}, {}, true, false);
+
+				log(RED, "fire: {:x}", ptr(test));
+			}
+
+			character->set_hp(character->get_real_hp() - delta * 500.f);
+		}
+		else test = nullptr;
+
+		if (test)
+			jc::write(position, test, 0x4 + 0x30);*/
+
+		return update_hook.call(character, delta);
+	}
+
 	DEFINE_HOOK_THISCALL(set_body_stance, 0x625750, void, BodyStanceController* stance, uint32_t id)
 	{
 		if (const auto local_char = g_world->get_localplayer_character())
@@ -301,6 +327,7 @@ namespace jc::character::hook
 
 	void apply()
 	{
+		update_hook.hook();
 		set_body_stance_hook.hook();
 		set_arms_stance_hook.hook();
 		can_be_destroyed_hook.hook();
@@ -325,6 +352,7 @@ namespace jc::character::hook
 		can_be_destroyed_hook.unhook();
 		set_arms_stance_hook.unhook();
 		set_body_stance_hook.unhook();
+		update_hook.unhook();
 	}
 }
 
@@ -354,6 +382,8 @@ void Character::rebuild_skeleton()
 
 void Character::respawn()
 {
+	remove_flag(1 << 31); // dbg
+
 	jc::this_call(jc::character::fn::RESPAWN, this, 1.f);
 }
 

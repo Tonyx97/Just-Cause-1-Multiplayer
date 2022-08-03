@@ -16,5 +16,5 @@ void* ParticleSystem::spawn_fx(const std::string& name, const vec3& position, co
 {
 	Transform t(position);
 
-	return BITCAST(void*(__thiscall*)(void*, const std::string*, Transform*, bool, bool), jc::particle_system::fn::SPAWN_FX)(this, &name, &t, unk1, unk2);
+	return jc::this_call<void*>(jc::particle_system::fn::SPAWN_FX, this, &name, &t, unk1, unk2);
 }

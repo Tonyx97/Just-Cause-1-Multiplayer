@@ -111,6 +111,8 @@ void Chat::begin_typing()
 	if (!enabled || typing)
 		return;
 
+	g_key->block_input(true);
+
 	curr_msg = "";
 
 	typing_blocked = true;
@@ -121,6 +123,8 @@ void Chat::end_typing(bool send)
 {
 	if (!typing || !enabled)
 		return;
+
+	g_key->block_input(false);
 
 	std::string msg_to_send = curr_msg;
 

@@ -321,6 +321,9 @@ void UI::render_players()
 
 void UI::render_admin_panel()
 {
+	if (g_chat->is_typing())
+		return;
+
 	const auto main_cam = g_camera->get_main_camera();
 	if (!main_cam)
 		return;

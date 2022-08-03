@@ -188,7 +188,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		tl->set_light(TrafficLight_Orange);
+		local_char->set_flag(1 << 31);
 
 		/*if (garage_door = g_factory->spawn_animated_rigid_object(
 			local_pos,
