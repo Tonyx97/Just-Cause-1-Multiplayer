@@ -10,6 +10,9 @@ namespace jc::prof
     HWND console_hwnd = nullptr;
     bool console_allocated = false;
 
+	int screen_width = 0,
+		screen_height = 0;
+
     void init(const char* name)
     {
         if (console_allocated)
@@ -17,6 +20,27 @@ namespace jc::prof
 
         open_console(name);
     }
+
+#ifdef JC_CLIENT
+	void adjust_console()
+	{
+		HWND game_window = nullptr;
+
+		while (!game_window)
+			game_window = FindWindow(L"Just Cause", nullptr);
+
+		RECT game_window_rect;
+		GetWindowRect(game_window, &game_window_rect);
+
+		auto width = game_window_rect.right - game_window_rect.left;
+		auto height = game_window_rect.bottom - game_window_rect.top;
+
+		SetWindowPos(game_window, 0, (screen_width - width) / 2 + 250, (screen_height - height) / 2, width, height, 0);
+
+		BringWindowToTop(game_window);
+		SetForegroundWindow(game_window);
+	}
+#endif
 
     void open_console(const char* name)
 	{
@@ -35,8 +59,8 @@ namespace jc::prof
 			console_allocated = true;
 
 #ifdef JC_CLIENT
-			auto screen_width = GetSystemMetrics(SM_CXSCREEN);
-			auto screen_height = GetSystemMetrics(SM_CYSCREEN);
+			screen_width = GetSystemMetrics(SM_CXSCREEN);
+			screen_height = GetSystemMetrics(SM_CYSCREEN);
 
 			SetConsoleTitleA(name);
 			SetWindowPos(console_hwnd, 0, 0, 0, 1000, 650, 0);
@@ -52,22 +76,6 @@ namespace jc::prof
 
 			SetCurrentConsoleFontEx(CONSOLE_OUT, FALSE, &cfi);
 			SetConsoleTextAttribute(CONSOLE_OUT, WHITE);
-
-			HWND game_window = nullptr;
-
-			while (!game_window)
-				game_window = FindWindow(L"Just Cause", nullptr);
-
-			RECT game_window_rect;
-			GetWindowRect(game_window, &game_window_rect);
-
-			auto width = game_window_rect.right - game_window_rect.left;
-			auto height = game_window_rect.bottom - game_window_rect.top;
-
-			SetWindowPos(game_window, 0, (screen_width - width) / 2 + 250, (screen_height - height) / 2, width, height, 0);
-
-			BringWindowToTop(game_window);
-			SetForegroundWindow(game_window);
 #endif
 
 #ifdef JC_SERVER

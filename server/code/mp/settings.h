@@ -4,7 +4,7 @@ class Settings
 {
 private:
 
-	float day_time = 0.f;
+	float day_time = 8.f;
 
 	bool day_time_enabled = false;
 

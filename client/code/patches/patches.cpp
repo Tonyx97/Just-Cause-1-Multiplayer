@@ -24,6 +24,22 @@ DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1
 
 namespace jc::patches
 {
+#if FAST_LOAD
+	// savegame integrity check patch so we can change the buffer to proper stuff
+	// 
+	patch<2> savegame_integrity_patch(0x4925D5);
+
+	// minimal savegame buffer deserialization patch
+	// 
+	patch<5> savegame_minimal_load_patch(0x4F3D02);
+
+	// avoid CInfoMessage to show stuff that we don't want to,
+	// this happens because we don't setup the localizations
+	// so messages like "You were killed" would show up etc
+	//
+	patch<5> info_message_patch(0x7E2632);
+#endif
+
 	// sets the head interpolation value to 1.0 all the time
 	// so we can set our own rotation values and avoid the engine
 	// setting its own values (we load 1.0 and jump straight to the
@@ -95,6 +111,29 @@ void jc::patches::apply()
 
 	jc::protect_v(PAGE_EXECUTE_READWRITE, jc::g::patch::AVOID_WEAPON_BELT_RECREATION_WHILE_CHAR_INIT);
 
+#if FAST_LOAD
+	// apply CInfoMessage patch
+
+	info_message_patch._do(
+	{
+		0xE9, 0xFA, 0x00, 0x00, 0x00
+	});
+
+	// patch savegame integrity check
+
+	savegame_integrity_patch._do(
+	{
+		0xEB, 0x23,
+	});
+
+	// patch savegame deserialization
+
+	savegame_minimal_load_patch._do(
+	{
+		0xE9, 0xA0, 0x02, 0x00, 0x00
+	});
+#endif
+
 	// apply head rotation patch
 
 	auto head_rotation_patch_offset = jc::calc_call_offset(0x64B1F4 + 6, hk_head_rotation_patch);
@@ -164,6 +203,12 @@ void jc::patches::undo()
 	no_idle_animation._undo();
 	drop_weapon_on_death_patch._undo();
 	head_rotation_patch._undo();
+
+#if FAST_LOAD
+	savegame_minimal_load_patch._undo();
+	savegame_integrity_patch._undo();
+	info_message_patch._undo();
+#endif
 
 	play_ambience_2d_sounds_hook.unhook();
 

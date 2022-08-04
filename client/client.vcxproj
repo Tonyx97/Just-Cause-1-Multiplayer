@@ -137,6 +137,7 @@
     <ClCompile Include="code\game\object\rigid_object\animated_rigid_object.cpp" />
     <ClCompile Include="code\game\object\rigid_object\simple_rigid_object.cpp" />
     <ClCompile Include="code\game\object\rigid_object\traffic_light.cpp" />
+    <ClCompile Include="code\game\object\savegame\savegame.cpp" />
     <ClCompile Include="code\game\object\sound\sound_game_obj.cpp" />
     <ClCompile Include="code\game\object\spawn_point\agent_spawn_point.cpp" />
     <ClCompile Include="code\game\object\area_damage\area_damage.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="code\game\object\rigid_object\animated_rigid_object.h" />
     <ClInclude Include="code\game\object\rigid_object\simple_rigid_object.h" />
     <ClInclude Include="code\game\object\rigid_object\traffic_light.h" />
+    <ClInclude Include="code\game\object\savegame\savegame.h" />
     <ClInclude Include="code\game\object\sound\sound_game_obj.h" />
     <ClInclude Include="code\game\object\spawn_point\agent_spawn_point.h" />
     <ClInclude Include="code\game\object\area_damage\area_damage.h" />

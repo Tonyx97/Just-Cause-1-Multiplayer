@@ -37,6 +37,10 @@ namespace jc::prof
     void open_console(const char* name);
     void close_console(bool free_console);
 
+#ifdef JC_CLIENT
+	void adjust_console();
+#endif
+
     namespace detail
     {
         void log(bool nl, eColor color, const std::string& text);

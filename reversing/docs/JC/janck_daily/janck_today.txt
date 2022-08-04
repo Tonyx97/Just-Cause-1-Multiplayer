@@ -1,7 +1,0 @@
-.text:0040D050                                   QueryPerformanceFrequency_0
-.text:0040CFE0                                   CreateSemaphoreA_0
-.text:007998B0                                   CAgentSpawnPoint__Spawn
-.text:00648DC0                                   CAnimationControl__Init
-.text:0064C5A0                                   Skeleton__GetRandomBoneTransform
-.text:0064C500                                   Skeleton__GetStomachBoneTransform
-.text:0064C4E0                                   Skeleton__GetHeadBoneMatrixTransform

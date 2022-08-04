@@ -23,6 +23,9 @@
 #include <mp/net.h>
 #include <mp/chat/chat.h>
 
+#include <game/object/savegame/savegame.h>
+#include <game/object/character/character.h>
+
 HMODULE g_module = nullptr;
 
 bool initialized = false;
@@ -205,41 +208,111 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 	return tick_hook.call(_this);
 }
 
+#if FAST_LOAD
+// bypasses input and visibility of GuiLoadSave object by setting 
+// a few bools to true and the action type to 6
+//
+DEFINE_HOOK_STDCALL(load_save, 0x66D7F0, void*, ref<void*>* r)
+{
+	static void* main_load_save = nullptr;
+
+	auto res = load_save_hook.call(r);
+
+	if (!main_load_save && res)
+	{
+		main_load_save = r->obj;
+
+		jc::write<int>(6, main_load_save, 0x34);
+		jc::write(true, main_load_save, 0x285);
+		jc::write(true, main_load_save, 0x290);
+		jc::write(true, main_load_save, 0x293);
+	}
+
+	return res;
+}
+
+// intercepts the function to read game files, we will create our own buffer which the game will deserialize after being
+// patched so it deserializes minimal stuff, not everything is needed for multiplayer, in fact, there is barely useful stuff
+//
+DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filename, uint8_t* buffer, size_t size, size_t offset)
+{
+	SaveGameBuffer savegame;
+
+	savegame.add(1.f);
+	savegame.add(Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
+	savegame.add(0);	// ammo grenades
+
+	for (int i = 0; i < 14; ++i)
+		savegame.add(0);
+
+	savegame.add(0);
+	savegame.add(0); // weapon count
+
+	savegame.add(0);
+	savegame.add(0);
+	savegame.add(0);
+	savegame.add(0);
+
+	savegame.add(0ui8);
+
+	savegame.add(0ui8);
+	savegame.add(0ui8);
+
+	savegame.add(25.f);
+	savegame.add(3);
+	savegame.add(12.5f);
+	savegame.add(25.f);
+
+	for (int i = 0; i < 21; ++i)
+		savegame.add(true);
+
+	savegame.copy_to(buffer);
+
+	return 0;
+}
+
+// patches the loading screen and the GuiLoadSave objects updating when
+// the game has started initializing, not before
+//
+DEFINE_HOOK_STDCALL(initialize_game, 0x402DD0, int, int a1, int a2, int a3, int a4)
+{
+	// skips the loading screen
+
+	jc::nop(0x46C859, 5);
+
+	// forces update on GuiLoadSave objects
+	
+	jc::write(0x74ui8, 0x7FED33);
+
+	return initialize_game_hook.call(a1, a2, a3, a4);
+}
+#endif
+
 void dll_thread()
 {
 	jc::prof::init("JC:MP");
 
+	// wait until the shit is unpacked lol
+
+	do SwitchToThread();
+	while (jc::read<uint32_t>(0x46C859) != 0x02BD92E8);
+
 	log(GREEN, "Initializing at {:x}...", ptr(g_module));
 
 	util::init();
-
-	// patch multi instance shit
-
-	/*while (*(uint16_t*)0x402DDD != 0x15FF)
-		SwitchToThread();
-
-	for (int i = 0; i < 11; ++i)
-		*(uint8_t*)(0x402DE3 + i) = 0x90;*/
-
-	do
-	{
-		if (g_renderer &&
-			g_renderer->get_device() &&
-			g_world &&
-			g_game_control &&
-			g_physics &&
-			g_game_status &&
-			g_day_cycle &&
-			g_ai) break;
-
-		SwitchToThread();
-	} while (true);
-
 	jc::hooks::init();
+
+#if FAST_LOAD
+	initialize_game_hook.hook();
+	read_save_games_file_hook.hook();
+	load_save_hook.hook();
+#endif
 
 	tick_hook.hook();
 
 	jc::hooks::hook_queued();
+
+	jc::prof::adjust_console();
 
 	// f8 = exit key (unloads the mod only)
 
@@ -254,6 +327,12 @@ void dll_thread()
 		Sleep(100);
 
 	tick_hook.unhook();
+
+#if FAST_LOAD
+	load_save_hook.unhook();
+	read_save_games_file_hook.unhook();
+	initialize_game_hook.unhook();
+#endif
 
 	jc::hooks::unhook_queued();
 	jc::hooks::destroy();

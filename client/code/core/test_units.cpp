@@ -80,6 +80,12 @@ void jc::test_units::test_0()
 	if (g_key->is_key_pressed(VK_F5))
 		localplayer->respawn();
 
+	// savegame load test
+
+	if (g_key->is_key_pressed(VK_NUMPAD9))
+	{
+	}
+
 	struct TestInfo
 	{
 		CharacterHandle* handle = nullptr;
@@ -157,34 +163,7 @@ void jc::test_units::test_0()
 	if (g_key->is_key_pressed(KEY_F))
 		local_char->play_idle_stance();
 
-	if (g_key->is_key_down(VK_NUMPAD2) && info.character)
-	{
-		//garage_door->call_event(0x284);
-
-		// fire character's weapon
-
-		//jc::this_call(0x5A50E0, info.character);
-		//jc::this_call(0x59FD20, info.character, true);
-
-		jc::write<int16_t>(1, info.character->get_weapon_belt(), 0xF4);
-		info.character->apply_weapon_switch();
-
-		/*auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_Grenade_Launcher);
-
-		info.character->set_draw_weapon(weapon);
-		info.character->apply_weapon_switch();*/
-	}
-
 	static TrafficLight* tl = nullptr;
-
-	if (g_key->is_key_pressed(VK_NUMPAD9))
-	{
-		tl = g_factory->create_traffic_light(local_pos + vec3(0.f, 3.f, 0.f));
-
-		log(RED, "{:x}", ptr(tl));
-
-		//garage_door->call_event(0x288);
-	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
