@@ -25,7 +25,7 @@ namespace cmd
 			return Cmd_InvalidParams;
 
 		if (int level = std::stoi(params[0]); level >= 0 && level <= 3)
-			g_net->set_net_stats(level - 1);
+			g_net->set_net_stats(level);
 		else return Cmd_InvalidParams;
 
 		return Cmd_Ok;
