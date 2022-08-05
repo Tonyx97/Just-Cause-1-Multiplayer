@@ -69,8 +69,6 @@ Transform& Transform::interpolate(const Transform& transform, float tf, float rf
 	r0 = glm::normalize(r0);
 	r1 = glm::normalize(r1);
 	
-	log(RED, "{:.2f} {:.3f}", glm::distance(t0, t1), jc::math::quat_cos_theta(r0, r1));
-
 	const auto interpolated_t = glm::lerp(t0, t1, tf);
 	const auto interpolated_r = glm::normalize(glm::slerp(r0, r1, rf));
 	const auto interpolated_s = glm::lerp(s0, s1, sf);

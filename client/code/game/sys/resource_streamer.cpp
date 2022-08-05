@@ -38,7 +38,7 @@ bool ResourceStreamer::all_queues_empty() const
 	return get_pending_queue()->empty() && get_loading_queue()->empty();
 }
 
-bool ResourceStreamer::request_exported_entity(uint32_t id, const ee_resource_callback_t& callback, bool now)
+bool ResourceStreamer::request_exported_entity(int32_t id, const ee_resource_callback_t& callback, bool now)
 {
 	auto it = jc::vars::exported_entities.find(id);
 	if (it == jc::vars::exported_entities.end())

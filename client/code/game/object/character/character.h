@@ -100,6 +100,7 @@ class Character : public AliveObject
 private:
 
 	void rebuild_skeleton();
+	void init_model();
 
 public:
 
@@ -114,7 +115,8 @@ public:
 	void set_grenades_ammo(int32_t v);
 	void set_animation(const jc::stl::string& name, float speed, bool unk0 = false, bool unk1 = false);
 	void set_grenade_timeout(float v);
-	void set_skin(uint32_t id, bool sync = true);
+	void set_walking_anim_set(int32_t walking_anim_id, int32_t skin_id, bool sync = true);
+	void set_skin(int32_t id, bool sync = true);
 	void set_npc_variant(NPCVariant* v);
 	void set_npc_variant(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& accessories, bool sync = true);
 	void set_flag(uint32_t mask);

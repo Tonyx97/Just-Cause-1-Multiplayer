@@ -232,12 +232,22 @@ void Player::set_nick(const std::string& v)
 	dyn_info.nick = v;
 }
 
-void Player::set_skin(uint32_t v)
+void Player::set_skin(int32_t v)
 {
 	dyn_info.skin = v;
 
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->set_skin(v, false); });
+#endif
+}
+
+void Player::set_walking_set_and_skin(int32_t walking_set_id, int32_t skin_id)
+{
+	dyn_info.walking_set = walking_set_id;
+	dyn_info.skin = skin_id;
+
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->set_walking_anim_set(walking_set_id, skin_id, false); });
 #endif
 }
 

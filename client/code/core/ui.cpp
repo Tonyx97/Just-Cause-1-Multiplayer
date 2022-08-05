@@ -19,6 +19,7 @@
 #include <game/object/spawn_point/vehicle_spawn_point.h>
 #include <game/object/localplayer/localplayer.h>
 #include <game/object/agent_type/npc_variant.h>
+#include <game/object/vars/exported_entities.h>
 
 #include <mp/chat/chat.h>
 #include <mp/net.h>
@@ -391,14 +392,39 @@ void UI::render_admin_panel()
 		ImGui::Checkbox("Grip", &show_grip);
 		ImGui::Checkbox("Last grip", &show_last_grip);
 		ImGui::Checkbox("Infinite Ammos", &infinite_ammo);
-		ImGui::SliderInt("Bullets per shoot", &bullets_per_shoot, 1, 100);
 
 		static int weapon_to_give = 0;
 
-		ImGui::SliderInt("Weapon to give##ap.weap.tgiv", &weapon_to_give, 1, 43);
+		static WeaponID weapon_ids[] =
+		{
+			Weapon_Pistol,
+			Weapon_Assault_Rifle,
+			Weapon_Shotgun_pump_action,
+			Weapon_Rocket_Launcher,
+			Weapon_Silenced_Pistol,
+			Weapon_Revolver,
+			Weapon_1H_SMG,
+			Weapon_Silenced_SMG,
+			Weapon_2H_SMG,
+			Weapon_Sawed_off_shotgun,
+			Weapon_Grenade_Launcher,
+			Weapon_Disposable_RPG,
+			Weapon_Sniper_rifle,
+			Weapon_Assault_rifle_sniper,
+			Weapon_Assault_Rifle_heavy,
+			Weapon_Assault_Rifle_high_tech,
+			Weapon_Shotgun_automatic,
+			Weapon_Grapplinghook,
+			Weapon_Timed_Explosive,
+			Weapon_Triggered_Explosive,
+			Weapon_Remote_Trigger,
+		};
+
+		ImGui::Text("Selected Weapon Name: %s", jc::vars::weapons_id_to_type_name.find(weapon_ids[weapon_to_give])->second.c_str());
+		ImGui::SliderInt("Weapon to give##ap.weap.tgiv", &weapon_to_give, 0, 20);
 
 		if (ImGui::Button("Give weapon##ap.weap.giv"))
-			local_char->set_weapon(weapon_to_give, false);
+			local_char->set_weapon(weapon_ids[weapon_to_give], false);
 
 		ImGui::TreePop();
 	}
@@ -492,6 +518,8 @@ void UI::render_admin_panel()
 		static int veh_to_spawn = 0;
 		static int veh_faction = 0;
 
+		ImGui::Text("Selected Vehicle's EE name: %s", jc::vars::exported_entities_vehicles.find(veh_to_spawn)->second.c_str());
+
 		ImGui::SliderInt("Vehicle to spawn##ap.veh.tspw", &veh_to_spawn, 0, 109);
 		ImGui::SliderInt("Vehicle faction ##ap.veh.tfac", &veh_faction, 0, 8);
 
@@ -509,124 +537,6 @@ void UI::render_admin_panel()
 		}
 
 		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("Spawning"))
-	{
-		if (ImGui::Button(spawn_vtable_hooked ? "Unhook" : "Hook"))
-		{
-			// Hook CAgentSpawnPoint vtable.
-			//
-			constexpr auto table_start = static_cast<uintptr_t>(0x00A69340);
-			constexpr auto table_end = static_cast<uintptr_t>(0x00A693EC);
-			const auto	   p_table = reinterpret_cast<uintptr_t*>(table_start);
-
-			const auto	size = (table_end - table_start) / sizeof uintptr_t;
-			static auto only_once = true;
-			for (auto i = 0; i < size; i++)
-			{
-				if (only_once)
-				{
-					original_functions[i] = p_table[i];
-				}
-				if (i == 14)
-					continue;
-
-				if (i == 16)
-					continue;
-
-				if (!spawn_vtable_hooked)
-				{
-					p_table[i] = reinterpret_cast<uintptr_t>(neutral_hook2);
-				}
-				else
-				{
-					p_table[i] = original_functions[i];
-				}
-			}
-			only_once = false;
-			spawn_vtable_hooked = !spawn_vtable_hooked;
-		}
-
-		if (ImGui::Button("Dump CASPs"))
-		{
-			const auto			   start_address = 0x00400000u;
-			const auto			   end_address = 0x7FFFFFFFu;
-			auto				   address = start_address;
-			std::vector<uintptr_t> spawn_points;
-			while (address < end_address)
-			{
-				MEMORY_BASIC_INFORMATION mbi = {};
-				if (VirtualQueryEx(GetCurrentProcess(), reinterpret_cast<LPCVOID>(address), &mbi, sizeof mbi))
-				{
-					if (mbi.Protect == PAGE_READWRITE || mbi.Protect == PAGE_WRITECOPY || mbi.Protect == PAGE_EXECUTE_READWRITE)
-					{
-						//  CVSP 0x00A60F90
-						//  CASP 0x00A69340
-						// .data:00A6E630 B0 71 81 00                       PDTypeAgentVirtualTable (used by NPCs).
-						// .data:00A67950 D0 05 76 00                       AgentTypeVirtualTable (not a single instance ?).
-						const auto region_end = address + mbi.RegionSize;
-						for (; address < region_end; address += sizeof(uintptr_t*))
-						{
-							if (*reinterpret_cast<uintptr_t*>(address) == 0x00A69340)
-							{
-								spawn_points.push_back(address);
-							}
-						}
-					}
-					address += mbi.RegionSize;
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			if (!spawn_points.empty())
-				spawn_points.erase(spawn_points.begin());
-
-			static AgentSpawnPoint* spawn_point = nullptr;
-			if (!spawn_point)
-			{
-				// spawn_point = SpawnPointFactory::create_agent_spawn_point(g_world->get_localplayer_character()->get_position());
-			}
-
-			for (const auto spawn_point_address : spawn_points)
-			{
-				// printf("CASP 0x%p:\n\t-%s\n\t-%s\n\t-0x%p\n", spawn_point_address, spawn_point->get_spawn_name(), spawn_point->get_preset_name(), (void*)spawn_point->get_agent_type());
-				//printf("0x%p\n", spawn_point_address);
-			}
-		}
-
-		if (ImGui::Button("Spawn agent"))
-		{
-			static AgentSpawnPoint* spawn_point = nullptr;
-			if (!spawn_point)
-			{
-				spawn_point = g_factory->create_agent_spawn_point(g_world->get_localplayer_character()->get_position());
-				log(RED, "{:x}", ptr(spawn_point));
-			}
-			else
-			{
-				//spawn_point->set_position(g_world->get_localplayer_character()->get_position());
-				spawn_point->spawn();
-			}
-		}
-
-		ImGui::TreePop();
-	}
-
-	if (ImGui::Button("Load Game"))
-	{
-		static constexpr uintptr_t load_manager = 0x00D32F10;
-
-		static constexpr uintptr_t load_game_address = 0x00493400;
-
-		typedef void(__fastcall* load_game_t)(void* ecx);
-
-		static const auto load_game = reinterpret_cast<load_game_t>(load_game_address);
-
-		load_game(reinterpret_cast<void*>(load_manager));
 	}
 
 	ImGui::End();
@@ -672,7 +582,7 @@ void UI::overlay_debug()
 		{
 			if (g_key->is_key_down(VK_F2))
 			{
-				constexpr auto magnitude = 3.0001f;
+				constexpr auto magnitude = 2.5f;
 				const auto fp = g_camera->get_main_camera()->get_model_forward_vector();
 				vec3 forward_position = {};
 				forward_position.x = local_pos.x + (-fp.x * magnitude);
@@ -687,8 +597,6 @@ void UI::overlay_debug()
 		{
 			if (const auto weapon_info = weapon->get_info())
 			{
-				weapon_info->set_bullets_to_fire(bullets_per_shoot);
-
 				ImGui::Text("------------------");
 				ImGui::Text("Ptr: 0x%x", *weapon);
 				ImGui::Text("ID: %i", weapon_info->get_type_id());
@@ -771,9 +679,6 @@ void UI::overlay_debug()
 				is_visible = true;
 
 			const auto pawn_transform = pawn->get_transform();
-
-			if (g_key->is_key_pressed(VK_F3))
-				jc::this_call(0x60E110, pawn->get_weapon_belt(), &pawn_transform);
 
 			const float distance = glm::distance(local_player_pawn->get_position(), pawn_position);
 
@@ -947,43 +852,57 @@ void UI::net_debug()
 	if (!g_net)
 		return;
 
-	static TimerRaw kbs_timer(1000);
-
 	const auto stat_level = g_net->get_net_stat();
+
+	if (stat_level == 0)
+		return;
+
+	static TimerRaw kbs_timer(1000);
 
 	if (const auto peer = g_net->get_peer())
 	{
-		static int kbs_recv = 0,
-				   kbs_sent = 0;
+		static uint64_t kbs_recv = 0ull,
+						kbs_sent = 0ull;
 
 		ImGui::SetCursorPos({ 10.f, io->DisplaySize.y / 2.f + 100.f });
 
-		ImGui::Text(FORMATV("Network ID: {:x}", g_net->get_localplayer()->get_nid()).c_str());
-		ImGui::Text(FORMATV("Upload: {:.3f} KB/s", float(kbs_sent) / 1000.f).c_str());
-		ImGui::Text(FORMATV("Download: {:.3f} KB/s", float(kbs_recv) / 1000.f).c_str());
-		ImGui::Text(FORMATV("RTT / Ping: {}", peer->roundTripTime).c_str());
-		ImGui::Text(FORMATV("Packet Loss: {:.2f} %%", (float(peer->packetLoss) / 65535.f) * 100.f).c_str());
-		ImGui::Text(FORMATV("Packets Lost: {}", peer->packetsLost).c_str());
+		if (stat_level > 0)
+		{
+			ImGui::Text(FORMATV("Ping: {}", peer->roundTripTime).c_str());
+		}
 
-		if (peer->outgoingDataTotal >= 1000.f * 1000.f)
-			ImGui::Text(FORMATV("Total Uploaded: {:.3f} MB", float(peer->outgoingDataTotal) / (1000.f * 1000.f)).c_str());
-		else ImGui::Text(FORMATV("Total Uploaded: {:.3f} KB", float(peer->outgoingDataTotal) / 1000.f).c_str());
+		if (stat_level > 1)
+		{
+			ImGui::Text(FORMATV("Upload: {:.3f} KB/s", float(kbs_sent) / 1000.f).c_str());
+			ImGui::Text(FORMATV("Download: {:.3f} KB/s", float(kbs_recv) / 1000.f).c_str());
+		}
 
-		if (peer->incomingDataTotal >= 1000.f * 1000.f)
-			ImGui::Text(FORMATV("Total Downloaded: {:.3f} MB", float(peer->incomingDataTotal) / (1000.f * 1000.f)).c_str());
-		else ImGui::Text(FORMATV("Total Downloaded: {:.3f} KB", float(peer->incomingDataTotal) / 1000.f).c_str());
+		if (stat_level > 2)
+		{
+			ImGui::Text(FORMATV("Network ID: {:x}", g_net->get_localplayer()->get_nid()).c_str());
+			ImGui::Text(FORMATV("Packet Loss: {:.2f} %%", (float(peer->packetLoss) / 65535.f) * 100.f).c_str());
+			ImGui::Text(FORMATV("Packets Lost: {}", peer->packetsLost).c_str());
 
-		ImGui::Text(FORMATV("Total Downloaded: {} KB", float(peer->incomingDataTotal) / 1000.f).c_str());
-		ImGui::Text(FORMATV("Total Packets Sent: {}", peer->totalPacketsSent).c_str());
-		ImGui::Text(FORMATV("Total Packets Lost: {}", peer->totalPacketsLost).c_str());
+			if (peer->outgoingDataTotal >= 1000.f * 1000.f)
+				ImGui::Text(FORMATV("Total Uploaded: {:.3f} MB", float(peer->outgoingDataTotal) / (1000.f * 1000.f)).c_str());
+			else ImGui::Text(FORMATV("Total Uploaded: {:.3f} KB", float(peer->outgoingDataTotal) / 1000.f).c_str());
+
+			if (peer->incomingDataTotal >= 1000.f * 1000.f)
+				ImGui::Text(FORMATV("Total Downloaded: {:.3f} MB", float(peer->incomingDataTotal) / (1000.f * 1000.f)).c_str());
+			else ImGui::Text(FORMATV("Total Downloaded: {:.3f} KB", float(peer->incomingDataTotal) / 1000.f).c_str());
+
+			ImGui::Text(FORMATV("Total Downloaded: {} KB", float(peer->incomingDataTotal) / 1000.f).c_str());
+			ImGui::Text(FORMATV("Total Packets Sent: {}", peer->totalPacketsSent).c_str());
+			ImGui::Text(FORMATV("Total Packets Lost: {}", peer->totalPacketsLost).c_str());
+		}
 		
 		if (kbs_timer.ready())
 		{
 			kbs_recv = peer->totalDataReceived;
 			kbs_sent = peer->totalDataSent;
 
-			peer->totalDataReceived = 0;
-			peer->totalDataSent = 0;
+			peer->totalDataReceived = 0ull;
+			peer->totalDataSent = 0ull;
 		}
 	}
 }

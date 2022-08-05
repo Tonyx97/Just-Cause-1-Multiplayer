@@ -89,7 +89,7 @@ void PlayerClient::startup_sync()
 	// sync player's basic info
 
 	{
-		PlayerClientBasicInfoPacket p;
+		PlayerClientStartupInfoPacket p;
 
 		g_net->for_each_joined_player_client([&](NID, PlayerClient* pc)
 		{
@@ -97,7 +97,7 @@ void PlayerClient::startup_sync()
 			{
 				const auto& dyn_info = player->get_dyn_info();
 
-				p.info.emplace_back(player, PlayerClientBasicInfoPacket::Info
+				p.info.emplace_back(player, PlayerClientStartupInfoPacket::Info
 				{
 					.nick = dyn_info.nick,
 					.skin = dyn_info.skin,

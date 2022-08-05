@@ -112,12 +112,7 @@ int main()
 		const auto current_parent_path = get_current_parent_path() + "client\\";
 
 		const std::wstring full_game_path	= game_dir + L"JustCause.exe",
-						   current_dll_path = std::wstring(current_parent_path.begin(), current_parent_path.end()) + L"jcmp_client.dll",
-#ifdef _DEBUG
-						   cmd_line			= L"/windowed";
-#else
-						   cmd_line			= L"";
-#endif
+						   current_dll_path = std::wstring(current_parent_path.begin(), current_parent_path.end()) + L"jcmp_client.dll";
 
 		log(CYAN, "Launching Just Cause...");
 
@@ -125,7 +120,7 @@ int main()
 		
 		wprintf(L"Path: %s\n", game_dir.c_str());
 
-		if (!CreateProcessW(full_game_path.c_str(), (LPWSTR)cmd_line.c_str(), nullptr, nullptr, FALSE, suspend ? CREATE_SUSPENDED : 0, nullptr, game_dir.c_str(), &si, &pi))
+		if (!CreateProcessW(full_game_path.c_str(), nullptr, nullptr, nullptr, FALSE, suspend ? CREATE_SUSPENDED : 0, nullptr, game_dir.c_str(), &si, &pi))
 			return logb(RED, "Could not launch the game");
 
 		if (suspend)

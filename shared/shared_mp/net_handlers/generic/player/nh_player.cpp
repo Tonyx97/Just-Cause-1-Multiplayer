@@ -97,12 +97,25 @@ enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
 		}
 		case PlayerDynInfo_Skin:
 		{
-			const auto skin_id = p.get_u32();
+			const auto skin_id = p.get_i32();
 
 			player->set_skin(skin_id);
 
 #ifdef JC_SERVER
 			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, skin_id);
+#endif
+
+			break;
+		}
+		case PlayerDynInfo_WalkingSetAndSkin:
+		{
+			const auto walking_anim_set_id = p.get_i32();
+			const auto skin_id = p.get_i32();
+
+			player->set_walking_set_and_skin(walking_anim_set_id, skin_id);
+
+#ifdef JC_SERVER
+			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, walking_anim_set_id, skin_id);
 #endif
 
 			break;

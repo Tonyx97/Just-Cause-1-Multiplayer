@@ -10,7 +10,7 @@ enum PlayerClientPacketID : PacketID
 	PlayerClientPID_Join,
 	PlayerClientPID_Quit,
 	PlayerClientPID_SyncInstances,
-	PlayerClientPID_BasicInfo,
+	PlayerClientPID_StartupInfo,
 	PlayerClientPID_Nick,
 	PlayerClientPID_Max
 };

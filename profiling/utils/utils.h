@@ -456,6 +456,8 @@ namespace util
 
 			return out;
 		}
+
+		void get_desktop_resolution(int32_t& x, int32_t& y);
 	}
 
 	void init();

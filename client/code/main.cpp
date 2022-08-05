@@ -66,6 +66,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		g_game_status->init();
 		g_rsrc_streamer->init();
 		g_player_global_info->init();
+		g_settings->init();
 
 		// initialize mod systems
 
@@ -166,6 +167,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 			// destroy game systems
 
+			g_settings->destroy();
 			g_player_global_info->destroy();
 			g_rsrc_streamer->destroy();
 			g_game_status->destroy();
@@ -206,6 +208,35 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		g_game_control->on_tick();
 
 	return tick_hook.call(_this);
+}
+
+// patches the loading screen and the GuiLoadSave objects updating when
+// the game has started initializing, not before
+//
+DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
+{
+	auto ok = init_window_context_hook.call(ctx);
+
+	// apply initial patches before the game window opens
+
+	jc::patches::apply_initial_patches();
+
+	// set our settings (todojc - some of these features will be customizable
+	// from the launcher)
+
+	g_settings->set_float(SettingType_FxVolume, 1.f);
+	g_settings->set_float(SettingType_MusicVolume, 0.f);
+	g_settings->set_float(SettingType_DialogueVolume, 0.f);
+	g_settings->set_int(SettingType_MotionBlur, 0);
+	g_settings->set_int(SettingType_Subtitles, 0);
+	g_settings->set_int(SettingType_ActionCamera, 0);
+	g_settings->set_int(SettingType_HeatHaze, 0);
+	g_settings->set_int(SettingType_TextureResolution, 2);
+	g_settings->set_int(SettingType_SceneComplexity, 2);
+	g_settings->set_int(SettingType_WaterQuality, 2);
+	g_settings->set_int(SettingType_PostFX, 1);
+
+	return ok;
 }
 
 #if FAST_LOAD
@@ -270,22 +301,6 @@ DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filena
 
 	return 0;
 }
-
-// patches the loading screen and the GuiLoadSave objects updating when
-// the game has started initializing, not before
-//
-DEFINE_HOOK_STDCALL(initialize_game, 0x402DD0, int, int a1, int a2, int a3, int a4)
-{
-	// skips the loading screen
-
-	jc::nop(0x46C859, 5);
-
-	// forces update on GuiLoadSave objects
-	
-	jc::write(0x74ui8, 0x7FED33);
-
-	return initialize_game_hook.call(a1, a2, a3, a4);
-}
 #endif
 
 void dll_thread()
@@ -295,15 +310,20 @@ void dll_thread()
 	// wait until the shit is unpacked lol
 
 	do SwitchToThread();
-	while (jc::read<uint32_t>(0x46C859) != 0x02BD92E8);
+	while (jc::read<uint32_t>(0x46C859) != 0x02BD92E8
+#ifdef JC_DBG
+		&& jc::read<uint32_t>(0x46C859) != 0x90909090	// make sure we skip if we already patched this
+#endif
+		);
 
 	log(GREEN, "Initializing at {:x}...", ptr(g_module));
 
 	util::init();
 	jc::hooks::init();
 
+	init_window_context_hook.hook();
+
 #if FAST_LOAD
-	initialize_game_hook.hook();
 	read_save_games_file_hook.hook();
 	load_save_hook.hook();
 #endif
@@ -327,12 +347,13 @@ void dll_thread()
 		Sleep(100);
 
 	tick_hook.unhook();
-
+	
 #if FAST_LOAD
 	load_save_hook.unhook();
 	read_save_games_file_hook.unhook();
-	initialize_game_hook.unhook();
 #endif
+
+	init_window_context_hook.unhook();
 
 	jc::hooks::unhook_queued();
 	jc::hooks::destroy();

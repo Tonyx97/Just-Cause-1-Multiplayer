@@ -150,7 +150,7 @@ enet::PacketResult nh::player_client::basic_info(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto localplayer = g_net->get_localplayer();
-	const auto info = p.get<PlayerClientBasicInfoPacket>();
+	const auto info = p.get<PlayerClientStartupInfoPacket>();
 
 	log(YELLOW, "Updating {} player basic info...", info.info.size());
 

@@ -92,6 +92,35 @@ void __fastcall hk_head_rotation_patch(Skeleton* skeleton, ptr _)
 		}
 }
 
+void jc::patches::apply_initial_patches()
+{
+#if FAST_LOAD
+	// skips the loading screen
+
+	jc::nop(0x46C859, 5);
+
+	// forces update on GuiLoadSave objects
+
+	jc::write(0x74ui8, 0x7FED33);
+#endif
+
+	// change the name of the window
+	
+	std::strcpy((char*)0xAEBE18, "JC:MP\0");
+
+#ifdef JC_DBG
+	g_game_ctx->set_window_resolution(1600, 1200);
+	g_game_ctx->set_fullscreen(false);
+#else
+	int32_t sx, sy;
+
+	util::win::get_desktop_resolution(sx, sy);
+
+	g_game_ctx->set_window_resolution(sx, sy);
+	g_game_ctx->set_fullscreen(true);
+#endif
+}
+
 void jc::patches::apply()
 {
 	// replace 10 with 1 so the alt-tab is faster and doesn't freeze

@@ -15,7 +15,11 @@ private:
 
 	std::string nick {};
 
+#ifdef JC_DBG
+	int net_stat = 3;
+#else
 	int net_stat = 0;
+#endif
 
 	bool connected = false,
 		 timed_out = false,

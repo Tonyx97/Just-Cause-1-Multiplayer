@@ -21,6 +21,7 @@
 
 #include <mp/net.h>
 
+#include "../vars/anims.h"
 #include "../exported_entity/exported_entity.h"
 #include "../resource/ee_resource.h"
 
@@ -380,6 +381,16 @@ void Character::rebuild_skeleton()
 	jc::this_call(jc::character::fn::CREATE_SKELETON, skeleton);
 }
 
+void Character::init_model()
+{
+	// make sure we patch/skip the weapon belt recreation, because, for some reason, they added
+	// that inside this character info function
+
+	scoped_patch<8> sp(jc::g::patch::AVOID_WEAPON_BELT_RECREATION_WHILE_CHAR_INIT.address, { 0xE9, 0x8C, 0x0, 0x0, 0x0, 0x90, 0x90, 0x90 });
+
+	jc::v_call<ptr>(this, jc::alive_object::vt::INITIALIZE_MODELS, get_info());
+}
+
 void Character::respawn()
 {
 	remove_flag(1 << 31); // dbg
@@ -420,17 +431,32 @@ void Character::set_grenade_timeout(float v)
 	jc::write(v, this, jc::character::GRENADE_TIMEOUT);
 }
 
-void Character::set_skin(uint32_t id, bool sync)
+void Character::set_walking_anim_set(int32_t walking_anim_id, int32_t skin_id, bool sync)
+{
+	auto it = jc::vars::anim_sets.find(walking_anim_id);
+	if (it == jc::vars::anim_sets.end())
+		return;
+
+	auto new_info = get_info();
+
+	new_info->character_as = it->second;
+
+	set_skin(skin_id, false);
+
+	if (sync)
+	{
+		// sync the skin id with other players
+
+		g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_WalkingSetAndSkin, walking_anim_id, skin_id);
+	}
+}
+
+void Character::set_skin(int32_t id, bool sync)
 {
 	g_rsrc_streamer->request_exported_entity(id, [=](ExportedEntityResource* eer)
 	{
 		if (object_base_map* map = nullptr; eer->get_exported_entity()->load_class_properties(map) && map)
 		{
-			// Avalanche bois forgot to recreate the skeleton when setting the character info
-			// so we have to do it ourselves
-
-			rebuild_skeleton();
-
 			// let's try to get the model name from the map
 			// we will try to get the normal model first, if it fails
 			// the only choice we have is to check for PD model which seems
@@ -444,18 +470,20 @@ void Character::set_skin(uint32_t id, bool sync)
 				if (!map->find_string(ObjectBase::Hash_PD_Model, model))
 					return;
 
+			// Avalanche bois forgot to recreate the skeleton when setting the character info
+			// so we have to do it ourselves
+
+			rebuild_skeleton();
+
 			// get current info and set the new model
 
 			auto new_info = get_info();
 
 			new_info->model = model;
+			
+			// update the model etc
 
-			// make sure we patch/skip the weapon belt recreation, because, for some reason, they added
-			// that inside this character info function
-
-			scoped_patch<8> sp(jc::g::patch::AVOID_WEAPON_BELT_RECREATION_WHILE_CHAR_INIT.address, { 0xE9, 0x8C, 0x0, 0x0, 0x0, 0x90, 0x90, 0x90 });
-
-			jc::v_call<ptr>(this, jc::alive_object::vt::INITIALIZE_MODELS, new_info);
+			init_model();
 
 			// if we need to use npc variant then create one
 			// initialize it using the agent type map

@@ -13,6 +13,7 @@ enum PlayerDynamicInfoID : uint8_t
 {
 	PlayerDynInfo_HeadRotation,
 	PlayerDynInfo_Skin,
+	PlayerDynInfo_WalkingSetAndSkin,
 	PlayerDynInfo_NPCVariant,
 };
 
@@ -41,12 +42,14 @@ public:
 			 head_rotation{},
 			 aim_target {};
 
-		uint32_t skin = 0u,
-				 body_stance_id = 0u,
-				 arms_stance_id = 0u;
+		int32_t skin = 0,
+				walking_set = 0;
 
-		int32_t weapon_id = 0u,
-				firing_weapon_id = 0u;
+		int32_t	body_stance_id = 0,
+				arms_stance_id = 0;
+
+		int32_t weapon_id = 0,
+				firing_weapon_id = 0;
 
 		float head_interpolation = 0.f;
 
@@ -76,7 +79,7 @@ public:
 private:
 
 	DynamicInfo dyn_info {};
-	MovementInfo move_info{};
+	MovementInfo move_info {};
 	SkinInfo skin_info {};
 
 	PlayerClient* client = nullptr;
@@ -135,7 +138,8 @@ public:
 	// dynamic info getters/setters
 
 	void set_nick(const std::string& v);
-	void set_skin(uint32_t v);
+	void set_skin(int32_t v);
+	void set_walking_set_and_skin(int32_t walking_set_id, int32_t skin_id);
 	void set_velocity(const vec3& v);
 	void set_movement_angle(float angle, bool send_angle_only_next_tick);
 	void set_movement_info(float angle, float right, float forward, bool aiming);

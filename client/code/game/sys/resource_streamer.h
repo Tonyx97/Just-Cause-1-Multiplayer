@@ -32,7 +32,7 @@ public:
 	bool is_blocked() const;
 	bool can_add_resource() const;
 	bool all_queues_empty() const;
-	bool request_exported_entity(uint32_t id, const ee_resource_callback_t& callback, bool now = false);
+	bool request_exported_entity(int32_t id, const ee_resource_callback_t& callback, bool now = false);
 
 	std::deque<void*>* get_pending_queue() const;
 	std::deque<void*>* get_loading_queue() const;

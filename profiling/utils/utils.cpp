@@ -44,3 +44,15 @@ void util::init()
 
 	time::process_startup_tp = std::chrono::high_resolution_clock::now();
 }
+
+void util::win::get_desktop_resolution(int32_t& x, int32_t& y)
+{
+	MONITORINFO info = {};
+
+	info.cbSize = sizeof(MONITORINFO);
+
+	GetMonitorInfo(MonitorFromWindow(GetDesktopWindow(), MONITOR_DEFAULTTONEAREST), &info);
+
+	x = info.rcMonitor.right - info.rcMonitor.left;
+	y = info.rcMonitor.bottom - info.rcMonitor.top;
+}

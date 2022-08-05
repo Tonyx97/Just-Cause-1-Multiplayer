@@ -2,7 +2,7 @@
 
 namespace jc::vars
 {
-	inline std::unordered_map<uint32_t, std::string> exported_entities =
+	inline std::unordered_map<int32_t, std::string> exported_entities =
 	{
 		// key characters
 
@@ -174,7 +174,7 @@ namespace jc::vars
 		{ 153,	"rac_bookmaker_05.ee" },
 	};
 
-	inline std::unordered_map<uint32_t, std::string> exported_entities_vehicles =
+	inline std::unordered_map<int32_t, std::string> exported_entities_vehicles =
 	{
 		{ 0, "lave_001_Compact_Car_1.ee" }, // Baxter Petit
 		{ 1, "lave_002_normal_car_1.ee" }, // Chevalier Streetbird de luxe

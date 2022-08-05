@@ -63,9 +63,9 @@ ALIGN_POP()
 #endif
 };
 
-struct PlayerClientBasicInfoPacket
+struct PlayerClientStartupInfoPacket
 {
-	static constexpr PacketID ID = PlayerClientPID_BasicInfo;
+	static constexpr PacketID ID = PlayerClientPID_StartupInfo;
 	static constexpr PacketID CHANNEL = ChannelID_PlayerClient;
 	static constexpr int RELIABILITY = ENET_PACKET_FLAG_RELIABLE;
 
@@ -74,7 +74,7 @@ ALIGN_PUSH(1)
 	{
 		std::string nick;
 
-		uint32_t skin;
+		int32_t skin;
 
 		float hp,
 			  max_hp;
@@ -103,7 +103,7 @@ ALIGN_POP()
 
 	PacketHolder serialize_as_packet() const { return PacketHolder(serialize(), RELIABILITY); }
 
-	PlayerClientBasicInfoPacket& deserialize(std::vector<uint8_t>& data)
+	PlayerClientStartupInfoPacket& deserialize(std::vector<uint8_t>& data)
 	{
 		const auto size = enet::deserialize_int<size_t>(data);
 
@@ -114,7 +114,7 @@ ALIGN_POP()
 			Info _info
 			{
 				.nick = enet::deserialize_string(data),
-				.skin = enet::deserialize_int<uint32_t>(data),
+				.skin = enet::deserialize_int(data),
 				.hp = enet::deserialize_float(data),
 				.max_hp = enet::deserialize_float(data),
 			};

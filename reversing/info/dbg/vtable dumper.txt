@@ -1,0 +1,49 @@
+if (ImGui::Button("Dump CASPs"))
+		{
+			const auto			   start_address = 0x00400000u;
+			const auto			   end_address = 0x7FFFFFFFu;
+			auto				   address = start_address;
+			std::vector<uintptr_t> spawn_points;
+			while (address < end_address)
+			{
+				MEMORY_BASIC_INFORMATION mbi = {};
+				if (VirtualQueryEx(GetCurrentProcess(), reinterpret_cast<LPCVOID>(address), &mbi, sizeof mbi))
+				{
+					if (mbi.Protect == PAGE_READWRITE || mbi.Protect == PAGE_WRITECOPY || mbi.Protect == PAGE_EXECUTE_READWRITE)
+					{
+						//  CVSP 0x00A60F90
+						//  CASP 0x00A69340
+						// .data:00A6E630 B0 71 81 00                       PDTypeAgentVirtualTable (used by NPCs).
+						// .data:00A67950 D0 05 76 00                       AgentTypeVirtualTable (not a single instance ?).
+						const auto region_end = address + mbi.RegionSize;
+						for (; address < region_end; address += sizeof(uintptr_t*))
+						{
+							if (*reinterpret_cast<uintptr_t*>(address) == 0x00A69340)
+							{
+								spawn_points.push_back(address);
+							}
+						}
+					}
+					address += mbi.RegionSize;
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			if (!spawn_points.empty())
+				spawn_points.erase(spawn_points.begin());
+
+			static AgentSpawnPoint* spawn_point = nullptr;
+			if (!spawn_point)
+			{
+				// spawn_point = SpawnPointFactory::create_agent_spawn_point(g_world->get_localplayer_character()->get_position());
+			}
+
+			for (const auto spawn_point_address : spawn_points)
+			{
+				// printf("CASP 0x%p:\n\t-%s\n\t-%s\n\t-0x%p\n", spawn_point_address, spawn_point->get_spawn_name(), spawn_point->get_preset_name(), (void*)spawn_point->get_agent_type());
+				//printf("0x%p\n", spawn_point_address);
+			}
+		}
