@@ -9,7 +9,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "classes.md",
+            "file": "tony_daily/2022/8 August/05-08-2022.md",
             "mode": "source",
             "source": false
           }
@@ -40,7 +40,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "setting",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -49,8 +49,7 @@
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -70,7 +69,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "classes.md",
+                "file": "tony_daily/2022/8 August/05-08-2022.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -88,10 +87,10 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "89ddef219b9917c5",
+  "active": "dd83e66c589c0e7b",
   "lastOpenFiles": [
-    "tony_daily/2022/8 August/05-08-2022.md",
     "classes.md",
+    "tony_daily/2022/8 August/05-08-2022.md",
     "tony_daily/2022/7 July/14-07-2022.md",
     "tony_daily/2022/8 August/04-08-2022.md",
     "game/SaveGameData Layout.md",
