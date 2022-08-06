@@ -108,6 +108,10 @@ void jc::patches::apply_initial_patches()
 	
 	std::strcpy((char*)0xAEBE18, "JC:MP\0");
 
+	// shadow fix (thanks to ThirteenAG)
+
+	jc::write(0xEBui8, 0x46DEA5);
+
 #ifdef JC_DBG
 	g_game_ctx->set_window_resolution(1600, 1200);
 	g_game_ctx->set_fullscreen(false);

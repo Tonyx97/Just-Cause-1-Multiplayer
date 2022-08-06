@@ -17,7 +17,7 @@ namespace jc::prof
 
     void init(const char* name)
     {
-#ifndef JC_DBG
+#if defined(JC_CLIENT) && !defined(JC_DBG)
 		return;
 #endif
         if (console_allocated)
@@ -29,7 +29,7 @@ namespace jc::prof
 #ifdef JC_CLIENT
 	void adjust_console()
 	{
-#ifndef JC_DBG
+#if defined(JC_CLIENT) && !defined(JC_DBG)
 		return;
 #endif
 		HWND game_window = nullptr;
@@ -96,7 +96,7 @@ namespace jc::prof
 
     void close_console(bool free_console)
     {
-#ifndef JC_DBG
+#if defined(JC_CLIENT) && !defined(JC_DBG)
 		return;
 #endif
 
