@@ -32,6 +32,17 @@ namespace util::time
 		return hour_prefix + ':' + minute_prefix + ':' + second_prefix;
 	}
 
+	std::string get_str_time_path()
+	{
+		auto date = get_tm_date();
+
+		auto hour_prefix = (date.tm_hour < 10 ? "0" : "") + std::to_string(date.tm_hour),
+			minute_prefix = (date.tm_min < 10 ? "0" : "") + std::to_string(date.tm_min),
+			second_prefix = (date.tm_sec < 10 ? "0" : "") + std::to_string(date.tm_sec);
+
+		return hour_prefix + '.' + minute_prefix + '.' + second_prefix;
+	}
+
 	float get_time()
 	{
 		return static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - process_startup_tp).count());

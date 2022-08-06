@@ -1,4 +1,6 @@
 #include <Windows.h>
+#include <TlHelp32.h>
+#include <DbgHelp.h>
 
 #include "prof.h"
 
@@ -15,6 +17,9 @@ namespace jc::prof
 
     void init(const char* name)
     {
+#ifndef JC_DBG
+		return;
+#endif
         if (console_allocated)
 			return;
 
@@ -24,6 +29,9 @@ namespace jc::prof
 #ifdef JC_CLIENT
 	void adjust_console()
 	{
+#ifndef JC_DBG
+		return;
+#endif
 		HWND game_window = nullptr;
 
 		while (!game_window)
@@ -88,6 +96,10 @@ namespace jc::prof
 
     void close_console(bool free_console)
     {
+#ifndef JC_DBG
+		return;
+#endif
+
         if (!console_allocated)
             return;
 

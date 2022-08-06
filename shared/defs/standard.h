@@ -37,6 +37,8 @@
 #ifdef JC_CLIENT
 #define FAST_LOAD 1
 
+#include "main.h"
+
 #include <d3dx9math.h>
 
 #include <MinHook.h>
@@ -50,5 +52,7 @@
 #include <core/patching.h>
 #elif defined(JC_SERVER)
 #endif
+
+#include <bug_ripper/bug_ripper.h>
 
 using namespace std::chrono_literals;

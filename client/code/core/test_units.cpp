@@ -195,9 +195,11 @@ void jc::test_units::test_0()
 	{
 		//tl->set_light(TrafficLight_Red);
 
-		g_weapon->dump();
+		//g_weapon->dump();
 
 		log(RED, "called");
+
+		*(int*)0 = 0;
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD1))

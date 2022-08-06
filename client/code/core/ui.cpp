@@ -120,6 +120,9 @@ void UI::init()
 
 	g_key->set_wnd_proc(jc_hwnd);
 
+	SendMessageW(jc_hwnd, WM_SETICON, ICON_SMALL, GET_GAME_ICON());
+	SendMessageW(jc_hwnd, WM_SETICON, ICON_BIG, GET_GAME_ICON());
+
 	initialized = true;
 
 	log(GREEN, "Created UI in thread 0x{:x}", GetCurrentThreadId());

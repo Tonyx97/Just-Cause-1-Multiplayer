@@ -65,7 +65,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;NOMINMAX;_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_DEPRECATION_WARNING;SOLUTION_DIR="$(SolutionDir).";_DEBUG;CLIENT_EXPORTS;_WINDOWS;_USRDLL;JC_CLIENT;JC_DBG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_DEPRECATION_WARNING;SOLUTION_DIR="$(SolutionDir).";_DEBUG;CLIENT_EXPORTS;_WINDOWS;_USRDLL;JC_CLIENT;JC_DBG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -89,7 +89,7 @@
       <WarningLevel>Level3</WarningLevel>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;NOMINMAX;_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_DEPRECATION_WARNING;SOLUTION_DIR="$(SolutionDir).";JC_REL;NDEBUG;CLIENT_EXPORTS;_WINDOWS;_USRDLL;JC_CLIENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_DEPRECATION_WARNING;SOLUTION_DIR="$(SolutionDir).";JC_REL;NDEBUG;CLIENT_EXPORTS;_WINDOWS;_USRDLL;JC_CLIENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -277,6 +277,7 @@
     <ClInclude Include="code\game\sys\player_global_info.h" />
     <ClInclude Include="code\game\sys\resource_streamer.h" />
     <ClInclude Include="code\game\sys\settings_system.h" />
+    <ClInclude Include="code\main.h" />
     <ClInclude Include="code\mp\chat\chat.h" />
     <ClInclude Include="code\mp\cmd\cmd.h" />
     <ClInclude Include="code\mp\net.h" />
@@ -330,6 +331,13 @@
     <ClInclude Include="code\core\ui.h" />
     <ClInclude Include="code\game\sys\vehicle_manager.h" />
     <ClInclude Include="code\game\sys\world.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="rsrc\bug_ripper_ui.rc" />
+    <ResourceCompile Include="rsrc\resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="rsrc\icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

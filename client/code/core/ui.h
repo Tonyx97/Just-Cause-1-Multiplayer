@@ -63,6 +63,8 @@ public:
 	float add_text(const char* text, float x, float y, float s, const ImVec4& color, bool center, int shadow = -1, float wrap = 0.f);
 	float add_text(const wchar_t* text, float x, float y, float s, const ImVec4& color, bool center, int shadow = -1, float wrap = 0.f);
 
+	HWND get_window() const { return jc_hwnd; }
+
 	ImVec2 calc_text_size(const char* text, float size, float wrap);
 	ImVec2 get_screen_size() { return io->DisplaySize; }
 };

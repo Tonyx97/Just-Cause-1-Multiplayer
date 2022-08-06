@@ -25,6 +25,7 @@
 
 #include <game/object/savegame/savegame.h>
 #include <game/object/character/character.h>
+#include "main.h"
 
 HMODULE g_module = nullptr;
 
@@ -306,6 +307,7 @@ DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filena
 void dll_thread()
 {
 	jc::prof::init("JC:MP");
+	jc::bug_ripper::init(g_module);
 
 	// wait until the shit is unpacked lol
 
@@ -357,6 +359,7 @@ void dll_thread()
 
 	jc::hooks::unhook_queued();
 	jc::hooks::destroy();
+	jc::bug_ripper::destroy();
 
 	// close console and unload dll
 
@@ -380,4 +383,19 @@ BOOL APIENTRY DllMain(HMODULE instance, DWORD reason, LPVOID)
 	}
 
 	return TRUE;
+}
+
+void* GET_MODULE()
+{
+	return g_module;
+}
+
+long GET_GAME_ICON()
+{
+	static long icon = 0;
+
+	if (!icon)
+		icon = (long)LoadIcon((HINSTANCE)GET_MODULE(), L"GAME_ICON");
+
+	return icon;
 }

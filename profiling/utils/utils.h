@@ -139,6 +139,7 @@ namespace util
 	{
 		std::string get_str_date();
 		std::string get_str_time();
+		std::string get_str_time_path();
 
 		float get_time();
 	}
@@ -458,6 +459,41 @@ namespace util
 		}
 
 		void get_desktop_resolution(int32_t& x, int32_t& y);
+	}
+
+	namespace mem
+	{
+		inline void for_each_module(uint32_t pid, const std::function<bool(uintptr_t base_addr, uint32_t size, const wchar_t* name)>& fn, const std::vector<std::wstring>& ignored_mods)
+		{
+			MODULEENTRY32 mod_entry;
+
+			mod_entry.dwSize = sizeof(MODULEENTRY32);
+
+			HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, pid);
+
+			if (!Module32First(snapshot, &mod_entry))
+			{
+				CloseHandle(snapshot);
+				return;
+			}
+
+			do {
+				std::wstring mod_name(mod_entry.szModule);
+
+				std::transform(mod_name.begin(), mod_name.end(), mod_name.begin(), ::tolower);
+
+				if (std::find_if(ignored_mods.begin(), ignored_mods.end(), [&](const std::wstring& str)
+					{
+						return !str.compare(mod_name);
+					}) == ignored_mods.end())
+				{
+					if (fn(std::bit_cast<uintptr_t>(mod_entry.modBaseAddr), mod_entry.modBaseSize, mod_name.c_str()))
+						break;
+				}
+			} while (Module32Next(snapshot, &mod_entry));
+
+			CloseHandle(snapshot);
+		}
 	}
 
 	void init();
