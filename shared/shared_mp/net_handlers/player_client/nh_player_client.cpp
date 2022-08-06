@@ -156,8 +156,6 @@ enet::PacketResult nh::player_client::startup_info(const enet::Packet& p)
 
 	for (const auto& [player, _info] : info.info)
 	{
-		check(player->get_type() == NetObject_Player, "Type must be NetObject_Player");
-
 		// if this is the localplayer then we skip,
 		// we already know our local info
 
