@@ -51,7 +51,7 @@ enet::PacketResult nh::player_client::join(const enet::Packet& p)
 	player->set_max_hp(max_hp);
 
 	// sync net objects instances when this player loads
-	// and also sync all players basic info and spawning
+	// and also sync all players startup info and spawning
 #endif
 
 	pc->set_joined(true);
@@ -152,7 +152,7 @@ enet::PacketResult nh::player_client::startup_info(const enet::Packet& p)
 	const auto localplayer = g_net->get_localplayer();
 	const auto info = p.get<PlayerClientStartupInfoPacket>();
 
-	log(YELLOW, "Updating {} player basic info...", info.info.size());
+	log(YELLOW, "Updating {} player startup info...", info.info.size());
 
 	for (const auto& [player, _info] : info.info)
 	{
@@ -169,7 +169,7 @@ enet::PacketResult nh::player_client::startup_info(const enet::Packet& p)
 		player->set_max_hp(_info.max_hp);
 		player->set_skin(_info.skin, _info.skin_info.cloth_skin, _info.skin_info.head_skin, _info.skin_info.cloth_color, _info.skin_info.props);
 
-		log(PURPLE, "Updated basic info for player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
+		log(PURPLE, "Updated startup info for player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
 	}
 #else
 #endif
