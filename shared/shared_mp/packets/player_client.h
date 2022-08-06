@@ -74,6 +74,8 @@ ALIGN_PUSH(1)
 	{
 		std::string nick;
 
+		Player::SkinInfo skin_info;
+
 		int32_t skin;
 
 		float hp,
@@ -94,6 +96,10 @@ ALIGN_POP()
 			enet::serialize_params(data,
 				player,
 				_info.nick,
+				_info.skin_info.props,
+				_info.skin_info.cloth_skin,
+				_info.skin_info.head_skin,
+				_info.skin_info.cloth_color,
 				_info.skin,
 				_info.hp,
 				_info.max_hp);
@@ -114,6 +120,13 @@ ALIGN_POP()
 			Info _info
 			{
 				.nick = enet::deserialize_string(data),
+				.skin_info =
+				{
+					.props = enet::deserialize_vector<VariantPropInfo>(data),
+					.cloth_skin = enet::deserialize_int(data),
+					.head_skin = enet::deserialize_int(data),
+					.cloth_color = enet::deserialize_int(data),
+				},
 				.skin = enet::deserialize_int(data),
 				.hp = enet::deserialize_float(data),
 				.max_hp = enet::deserialize_float(data),

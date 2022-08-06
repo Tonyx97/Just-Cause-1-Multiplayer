@@ -218,6 +218,8 @@ bool Player::spawn()
 
 		log(PURPLE, "Player {:x} spawned now {:x}", get_nid(), ptr(get_character()));
 	}
+	// set default skin to 0 on our localplayer
+	else get_character()->set_skin(0, false);
 #endif
 
 	set_spawned(true);
@@ -238,6 +240,16 @@ void Player::set_skin(int32_t v)
 
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->set_skin(v, false); });
+#endif
+}
+
+void Player::set_skin(int32_t v, int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props)
+{
+	set_skin(v);
+	set_skin_info(cloth_skin, head_skin, cloth_color, props);
+
+#ifdef JC_CLIENT
+	verify_exec([&](Character* c) { c->set_skin(v, cloth_skin, head_skin, cloth_color, props, false); });
 #endif
 }
 

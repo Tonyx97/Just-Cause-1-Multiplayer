@@ -71,9 +71,9 @@ public:
 	{
 		std::vector<VariantPropInfo> props;
 
-		int32_t cloth_skin = 0,
-				head_skin = 0,
-				cloth_color = 0;
+		int32_t cloth_skin = -1,
+				head_skin = -1,
+				cloth_color = -1;
 	};
 
 private:
@@ -139,6 +139,7 @@ public:
 
 	void set_nick(const std::string& v);
 	void set_skin(int32_t v);
+	void set_skin(int32_t v, int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);
 	void set_walking_set_and_skin(int32_t walking_set_id, int32_t skin_id);
 	void set_velocity(const vec3& v);
 	void set_movement_angle(float angle, bool send_angle_only_next_tick);
@@ -180,4 +181,6 @@ public:
 	const DynamicInfo& get_dyn_info() const { return dyn_info; }
 
 	const MovementInfo& get_movement_info() const { return move_info; }
+
+	const SkinInfo& get_skin_info() const { return skin_info; }
 };

@@ -117,6 +117,7 @@ public:
 	void set_grenade_timeout(float v);
 	void set_walking_anim_set(int32_t walking_anim_id, int32_t skin_id, bool sync = true);
 	void set_skin(int32_t id, bool sync = true);
+	void set_skin(int32_t id, int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props, bool sync = true);
 	void set_npc_variant(NPCVariant* v);
 	void set_npc_variant(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& accessories, bool sync = true);
 	void set_flag(uint32_t mask);

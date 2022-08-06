@@ -432,8 +432,8 @@ void UI::render_admin_panel()
 	if (ImGui::TreeNode("Skins"))
 	{
 		static int skin_to_set = 0;
-		static int head_skin = 0;
-		static int cloth_skin = 0;
+		static int head_skin = -1;
+		static int cloth_skin = -1;
 
 		static std::vector<VariantPropInfo> accessories =
 		{

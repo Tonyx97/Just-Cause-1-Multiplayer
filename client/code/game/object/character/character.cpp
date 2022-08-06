@@ -453,6 +453,11 @@ void Character::set_walking_anim_set(int32_t walking_anim_id, int32_t skin_id, b
 
 void Character::set_skin(int32_t id, bool sync)
 {
+	set_skin(id, -1, -1, -1, {}, sync);
+}
+
+void Character::set_skin(int32_t id, int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props, bool sync)
+{
 	g_rsrc_streamer->request_exported_entity(id, [=](ExportedEntityResource* eer)
 	{
 		if (object_base_map* map = nullptr; eer->get_exported_entity()->load_class_properties(map) && map)
@@ -485,12 +490,23 @@ void Character::set_skin(int32_t id, bool sync)
 
 			init_model();
 
-			// if we need to use npc variant then create one
-			// initialize it using the agent type map
-			// and set it to this character
+			// if we specified a new npc variant through the parameters then
+			// let's use it instead of the default one
 
-			if (use_npc_variant)
+			const bool use_custom_npc_variant = (cloth_skin != -1 || head_skin != -1 || cloth_color != -1 || props.size() > 0);
+
+			if (use_custom_npc_variant)
 			{
+				// npc variant through set_skin is never synced
+
+				set_npc_variant(cloth_skin, head_skin, cloth_color, props, false);
+			}
+			else if (use_npc_variant)
+			{
+				// if we need to use npc variant then create one
+				// initialize it using the agent type map
+				// and set it to this character
+
 				auto npc_variant = NPCVariant::CREATE();
 
 				npc_variant->init_from_map(map);

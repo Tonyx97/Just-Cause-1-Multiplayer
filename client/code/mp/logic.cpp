@@ -181,19 +181,17 @@ void jc::mp::logic::on_update_objects()
 		}
 		case NetObject_Damageable:
 		{
-			const auto damageable = obj->cast<DamageableNetObject>();
-
 			// check if we own this damageable, if so,
 			// let's sync it with the server and other players
 
-			if (!damageable->sync())
+			if (!obj->sync())
 			{
 				// if this object is not owned then we will simply update the needed stuff
 
-				const auto pos = damageable->get_position();
-				const auto rot = damageable->get_rotation();
+				const auto pos = obj->get_position();
+				const auto rot = obj->get_rotation();
 
-				const auto obj_base = damageable->get_object_base();
+				const auto obj_base = obj->get_object_base();
 
 				obj_base->set_transform(obj_base->get_transform().interpolate(Transform(pos, rot), 0.2f, 0.2f));
 			}

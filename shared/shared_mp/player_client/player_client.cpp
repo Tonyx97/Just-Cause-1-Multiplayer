@@ -100,9 +100,10 @@ void PlayerClient::startup_sync()
 				p.info.emplace_back(player, PlayerClientStartupInfoPacket::Info
 				{
 					.nick = dyn_info.nick,
+					.skin_info = player->get_skin_info(),
 					.skin = dyn_info.skin,
 					.hp = player->get_hp(),
-					.max_hp = player->get_max_hp()
+					.max_hp = player->get_max_hp(),
 				});
 
 				log(PURPLE, "Updating player basic info with NID {:x} ({})", player->get_nid(), player->get_nick());

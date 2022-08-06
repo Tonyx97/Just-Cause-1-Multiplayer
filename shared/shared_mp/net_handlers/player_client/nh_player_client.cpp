@@ -146,7 +146,7 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 	return enet::PacketRes_Ok;
 }
 
-enet::PacketResult nh::player_client::basic_info(const enet::Packet& p)
+enet::PacketResult nh::player_client::startup_info(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto localplayer = g_net->get_localplayer();
@@ -164,10 +164,12 @@ enet::PacketResult nh::player_client::basic_info(const enet::Packet& p)
 		if (localplayer->equal(player->get_nid()))
 			continue;
 
+		check(player->is_spawned(), "A player must be spawned when receiving startup info");
+
 		player->set_nick(_info.nick);
-		player->set_skin(_info.skin);
 		player->set_hp(_info.hp);
 		player->set_max_hp(_info.max_hp);
+		player->set_skin(_info.skin, _info.skin_info.cloth_skin, _info.skin_info.head_skin, _info.skin_info.cloth_color, _info.skin_info.props);
 
 		log(PURPLE, "Updated basic info for player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
 	}
