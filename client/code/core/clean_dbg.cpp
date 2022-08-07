@@ -32,7 +32,7 @@ std::map<std::string, std::pair<uint32_t, ptr>> g_hashes;
 constexpr bool ENABLE_HOOKS = false;
 constexpr bool ENABLE_RAYCAST_DEBUG = false;
 constexpr bool ENABLE_DUMPING = false;
-constexpr bool ENABLE_INIT_FROM_MAP_DUMP = false;
+constexpr bool ENABLE_INIT_FROM_MAP_DUMP = true;
 constexpr bool ENABLE_ALL_MAPS_DUMP = false;
 constexpr bool ENABLE_STR_DEBUG = false;
 constexpr bool ENABLE_MAP_DEBUG = false;
@@ -204,7 +204,7 @@ DEFINE_HOOK_THISCALL(raycast, jc::physics::fn::RAYCAST, void*, uintptr_t _this, 
 	return raycast_hook.call(_this, r, a1, distance, hit_info, a3, a4, a5);
 }
 
-DEFINE_HOOK_THISCALL(object_init_from_map, 0x7E2130, void, ObjectBase* object, object_base_map* map)
+DEFINE_HOOK_THISCALL(object_init_from_map, 0x756D70, void, ObjectBase* object, object_base_map* map)
 {
 	if (!ENABLE_ALL_MAPS_DUMP)
 	{
@@ -240,7 +240,7 @@ DEFINE_HOOK_THISCALL(object_map_find_bool, 0x46AF70, bool, object_base_map* map,
 	auto res = object_map_find_bool_hook.call(map, hash, out);
 
 	if (res && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
-		log(GREEN, "map.insert<ValueType_Bool>(0x{:x}, {});", *hash, *out);
+		log(GREEN, "map.insert<object_base_map::Bool>(0x{:x}, {});", *hash, *out);
 
 	return res;
 }
@@ -250,7 +250,7 @@ DEFINE_HOOK_THISCALL(object_map_find_int16, 0x4C0030, bool, object_base_map* map
 	auto res = object_map_find_int16_hook.call(map, hash, out);
 
 	if (res && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
-		log(GREEN, "map.insert<ValueType_Float>(0x{:x}, {:.2f}f);", *hash, jc::game::decode_float(*out));
+		log(GREEN, "map.insert<object_base_map::Float>(0x{:x}, {:.2f}f);", *hash, jc::game::decode_float(*out));
 
 	return res;
 }
@@ -260,7 +260,7 @@ DEFINE_HOOK_THISCALL(object_map_find_int, 0x46AEF0, bool, object_base_map* map, 
 	auto res = object_map_find_int_hook.call(map, hash, out);
 
 	if (res && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
-		log(GREEN, "map.insert<ValueType_Int>(0x{:x}, {});", *hash, *out);
+		log(GREEN, "map.insert<object_base_map::Int>(0x{:x}, {});", *hash, *out);
 
 	return res;
 }
@@ -270,7 +270,19 @@ DEFINE_HOOK_THISCALL(object_map_find_float, 0x46AE70, bool, object_base_map* map
 	auto res = object_map_find_float_hook.call(map, hash, out);
 
 	if (res && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
-		log(GREEN, "map.insert<ValueType_Float>(0x{:x}, {:.2f}f);", *hash, *out);
+	{
+		log(GREEN, "map.insert<object_base_map::Float>(0x{:x}, {:.2f}f);", *hash, *out);
+	}
+
+	return res;
+}
+
+DEFINE_HOOK_THISCALL(object_map_find_vec2, 0x4DFB00, bool, object_base_map* map, uint32_t* hash, vec2* out)
+{
+	auto res = object_map_find_vec2_hook.call(map, hash, out);
+
+	if (res && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
+		log(GREEN, "map.insert<object_base_map::Vec2>(0x{:x}, vec2 {{ {}, {} }});", *hash, out->x, out->y);
 
 	return res;
 }
@@ -280,7 +292,7 @@ DEFINE_HOOK_THISCALL(object_map_find_vec3, 0x50E7D0, bool, object_base_map* map,
 	auto res = object_map_find_vec3_hook.call(map, hash, out);
 
 	if (res && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
-		log(GREEN, "map.insert<ValueType_Vec3>(0x{:x}, vec3 {{ {}, {}, {} }});", *hash, out->x, out->y, out->z);
+		log(GREEN, "map.insert<object_base_map::Vec3>(0x{:x}, vec3 {{ {}, {}, {} }});", *hash, out->x, out->y, out->z);
 
 	return res;
 }
@@ -290,7 +302,17 @@ DEFINE_HOOK_THISCALL(object_map_find_u16vec3, 0x7A96A0, bool, object_base_map* m
 	auto res = object_map_find_u16vec3_hook.call(map, hash, out);
 
 	if (res && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
-		log(GREEN, "map.insert<ValueType_Vec3>(0x{:x}, vec3 {{ {}, {}, {} }});", *hash, jc::game::decode_float(out->x), jc::game::decode_float(out->y), jc::game::decode_float(out->z));
+		log(GREEN, "map.insert<object_base_map::Vec3>(0x{:x}, vec3 {{ {}, {}, {} }});", *hash, jc::game::decode_float(out->x), jc::game::decode_float(out->y), jc::game::decode_float(out->z));
+
+	return res;
+}
+
+DEFINE_HOOK_THISCALL(object_map_find_vec4, 0x4DFA70, bool, object_base_map* map, uint32_t* hash, vec4* out)
+{
+	auto res = object_map_find_vec4_hook.call(map, hash, out);
+
+	if (res && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
+		log(GREEN, "map.insert<object_base_map::Vec4>(0x{:x}, vec4 {{ {}, {}, {}, {} }});", *hash, out->x, out->y, out->z, out->w);
 
 	return res;
 }
@@ -325,7 +347,13 @@ DEFINE_HOOK_THISCALL(object_map_find_string, 0x46ADD0, bool, object_base_map* ma
 
 	if (res && out->unk > 0 && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
 	{
-		log(*hash == 0xFBA08D60 ? RED : GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\");", *hash, out->c_str());
+		log(*hash == 0xFBA08D60 ? RED : GREEN, "map.insert<object_base_map::String>(0x{:x}, R\"({})\"); // 0x{:x}", *hash, out->c_str(), RET_ADDRESS);
+
+		/*if (strstr(out->c_str(), "lodimages"))
+		{
+			*out = "gui\\lodimages\\lodimage_07.dds";
+			return false;
+		}*/
 
 		/*if (*hash == 0x2fde8c90)
 		{
@@ -341,7 +369,7 @@ DEFINE_HOOK_CCALL(object_map_find_event, 0x987DD0, bool, object_base_map* map, u
 	auto res = object_map_find_event_hook.call(map, hash, out_ptr, out);
 
 	if (res && out->length > 0 && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
-		log(GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\"); // find event", hash, out->c_str());
+		log(GREEN, "map.insert<object_base_map::String>(0x{:x}, R\"({})\"); // find event", hash, out->c_str());
 
 	return res;
 }
@@ -351,7 +379,7 @@ DEFINE_HOOK_CCALL(object_map_find_event2, 0x987E80, bool, object_base_map* map, 
 	auto res = object_map_find_event2_hook.call(map, hash, out_ptr, out);
 
 	if (res && out->length > 0 && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
-		log(GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\"); // find event 2", hash, out->c_str());
+		log(GREEN, "map.insert<object_base_map::String>(0x{:x}, R\"({})\"); // find event 2", hash, out->c_str());
 
 	return res;
 }
@@ -361,7 +389,7 @@ DEFINE_HOOK_CCALL(object_map_find_event_and_subscribe, 0x987D20, bool, object_ba
 	auto res = object_map_find_event_and_subscribe_hook.call(map, hash, event_manager, out, name);
 
 	if (res && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
-		log(GREEN, "map.insert<ValueType_String>(0x{:x}, R\"({})\"); // find event and subscribe", hash, name->c_str());
+		log(GREEN, "map.insert<object_base_map::String>(0x{:x}, R\"({})\"); // find event and subscribe", hash, name->c_str());
 
 	return res;
 }
@@ -371,7 +399,7 @@ DEFINE_HOOK_THISCALL(object_map_get_pointer, 0x46B050, ptr, object_base_map* map
 	auto res = object_map_get_pointer_hook.call(map, hash);
 
 	if (res && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
-		log(GREEN, "map.insert<ValueType_Pointer>(0x{:x}, .); // put your pointer here", *hash);
+		log(GREEN, "map.insert<object_base_map::Pointer>(0x{:x}, .); // put your pointer here {:x}", *hash, RET_ADDRESS);
 
 	return res;
 }
@@ -395,8 +423,10 @@ void jc::clean_dbg::init()
 		object_map_find_int16_hook.hook();
 		object_map_find_int_hook.hook();
 		object_map_find_float_hook.hook();
+		object_map_find_vec2_hook.hook();
 		object_map_find_vec3_hook.hook();
 		object_map_find_u16vec3_hook.hook();
+		object_map_find_vec4_hook.hook();
 		object_map_find_mat4_hook.hook();
 		object_map_find_string_hook.hook();
 		object_map_find_event_hook.hook();
@@ -513,7 +543,9 @@ void jc::clean_dbg::destroy()
 		object_map_find_string_hook.unhook();
 		object_map_find_mat4_hook.unhook();
 		object_map_find_u16vec3_hook.unhook();
+		object_map_find_vec4_hook.unhook();
 		object_map_find_vec3_hook.unhook();
+		object_map_find_vec2_hook.unhook();
 		object_map_find_float_hook.unhook();
 		object_map_find_int_hook.unhook();
 		object_map_find_int16_hook.unhook();

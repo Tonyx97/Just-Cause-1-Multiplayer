@@ -62,9 +62,9 @@ void jc::mp::logic::on_tick()
 			if (state_sync_timer.ready())
 				g_net->send_reliable(PlayerPID_StateSync, current_weapon_id);
 
-			// transform (we upload it every 500 ms for now to correct the position in remote players)
+			// transform (we upload it every 100 ms for now to correct the position in remote players)
 
-			if ((position != localplayer->get_position() || rotation != localplayer->get_rotation()) && local_char->is_on_ground() && transform_timer.ready())
+			if ((position != localplayer->get_position() || rotation != localplayer->get_rotation())/* && local_char->is_on_ground()*/ && transform_timer.ready())
 			{
 				TransformTR transform_tr(position, rotation);
 

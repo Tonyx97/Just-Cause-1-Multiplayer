@@ -284,8 +284,12 @@ bool ImGui_ImplDX9_Init(IDirect3DDevice9* device)
     // Setup backend capabilities flags
     ImGui_ImplDX9_Data* bd = IM_NEW(ImGui_ImplDX9_Data)();
     io.BackendRendererUserData = (void*)bd;
-    io.BackendRendererName = "imgui_impl_dx9";
+    io.BackendRendererName = "JC:DX9";
     io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
+	io.KeySuper = false;
+	io.ImeWindowHandle = nullptr;
+	io.IniFilename = nullptr;
+	io.LogFilename = nullptr;
 
     bd->pd3dDevice = device;
     bd->pd3dDevice->AddRef();

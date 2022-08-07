@@ -32,7 +32,9 @@ void object_base_map::walk()
 	Node* first = jc::read<Node*>(this, 0x4);
 	Node* root = jc::read<Node*>(first, 0x4);
 
+	std::vector<vec2> vec2s;
 	std::vector<vec3> vec3s;
+	std::vector<vec4> vec4s;
 	std::vector<mat4> mat4s;
 
 	std::map<ValueType, std::set<std::string>> inserts;
@@ -95,10 +97,22 @@ void object_base_map::walk()
 			case Int:		inserts[Int].insert(FORMATV("map.insert<object_base_map::Int>({}, {}); // int", convert_hash_to_name(n->hash), *(int*)(ptr(n->data) + 4))); break;
 			case Float:		inserts[Float].insert(FORMATV("map.insert<object_base_map::Float>({}, {:.2f}f); // float", convert_hash_to_name(n->hash), *(float*)(ptr(n->data) + 4))); break;
 			case String:	inserts[String].insert(FORMATV("map.insert<object_base_map::String>({}, R\"({})\"); // string", convert_hash_to_name(n->hash), (const char*)(*(ptr*)(ptr(n->data) + 4)))); break;
+			case Vec2:
+			{
+				vec2s.push_back(**(vec2**)(ptr(n->data) + 4));
+				inserts[Vec2].insert(FORMATV("map.insert<object_base_map::Vec2>({}, &v2_{}); // vec2", convert_hash_to_name(n->hash), vec2s.size() - 1u));
+				break;
+			}
 			case Vec3:
 			{
 				vec3s.push_back(**(vec3**)(ptr(n->data) + 4));
-				inserts[Vec3].insert(FORMATV("map.insert<object_base_map::Vec3>({}, &v{}); // vec3", convert_hash_to_name(n->hash), vec3s.size() - 1u));
+				inserts[Vec3].insert(FORMATV("map.insert<object_base_map::Vec3>({}, &v3_{}); // vec3", convert_hash_to_name(n->hash), vec3s.size() - 1u));
+				break;
+			}
+			case Vec4:
+			{
+				vec4s.push_back(**(vec4**)(ptr(n->data) + 4));
+				inserts[Vec4].insert(FORMATV("map.insert<object_base_map::Vec4>({}, &v4_{}); // vec4", convert_hash_to_name(n->hash), vec4s.size() - 1u));
 				break;
 			}
 			case Mat4:
@@ -129,8 +143,14 @@ void object_base_map::walk()
 			, v[2][0], v[2][1], v[2][2], v[2][3]
 			, v[3][0], v[3][1], v[3][2], v[3][3]);
 
+	for (int i = 0; const auto & v : vec4s)
+		log(GREEN, "const auto v4_{} = vec4 {{ {:.2f}f, {:.2f}f, {:.2f}f, {:.2f}f }};", i++, v.x, v.y, v.z, v.w);
+
 	for (int i = 0; const auto & v : vec3s)
-		log(GREEN, "const auto v{} = vec3 {{ {:.2f}f, {:.2f}f, {:.2f}f }};", i++, v.x, v.y, v.z);
+		log(GREEN, "const auto v3_{} = vec3 {{ {:.2f}f, {:.2f}f, {:.2f}f }};", i++, v.x, v.y, v.z);
+
+	for (int i = 0; const auto & v : vec2s)
+		log(GREEN, "const auto v2_{} = vec2 {{ {:.2f}f, {:.2f}f }};", i++, v.x, v.y);
 
 	for (const auto& [type, v] : inserts)
 		for (const auto& str : v)

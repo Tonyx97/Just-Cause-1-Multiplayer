@@ -318,6 +318,9 @@
     <ClCompile Include="code\game\sys\settings_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\game\object\ui\map_icon_type.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\game\sys\renderer.h">
@@ -665,6 +668,12 @@
     <ClInclude Include="code\main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="code\game\object\ui\map_icon_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rsrc\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rsrc\bug_ripper_ui.rc">
@@ -678,5 +687,8 @@
     <Image Include="rsrc\icon.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="rsrc\font.ttf" />
   </ItemGroup>
 </Project>

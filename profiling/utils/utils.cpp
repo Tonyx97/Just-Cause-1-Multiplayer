@@ -67,3 +67,19 @@ void util::win::get_desktop_resolution(int32_t& x, int32_t& y)
 	x = info.rcMonitor.right - info.rcMonitor.left;
 	y = info.rcMonitor.bottom - info.rcMonitor.top;
 }
+
+std::tuple<void*, size_t> util::win::load_resource(void* mod_base, int id, LPWSTR type)
+{
+	const auto mod_module = (HMODULE)mod_base;
+	const auto resource = FindResource(mod_module, MAKEINTRESOURCE(id), type);
+	const auto rsrc_mem = LoadResource(mod_module, resource);
+	const auto size = SizeofResource(mod_module, resource);
+	const auto rsrc_address = LockResource(rsrc_mem);
+	const auto font_mem = malloc(size);
+
+	memcpy(font_mem, rsrc_address, size);
+
+	UnlockResource(resource);
+
+	return { font_mem, size };
+}

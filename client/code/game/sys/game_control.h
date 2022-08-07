@@ -22,6 +22,7 @@ public:
 
 	void init();
 	void destroy();
+	void create_global_objects();
 	void hook_create_object();
 	void unhook_create_object();
 	void on_tick();

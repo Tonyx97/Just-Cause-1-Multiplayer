@@ -20,6 +20,7 @@
 #include <game/object/vars/exported_entities.h>
 #include <game/object/mission/objective.h>
 #include <game/object/ui/map_icon.h>
+#include <game/object/ui/map_icon_type.h>
 
 namespace jc::factory_system
 {
@@ -35,6 +36,7 @@ namespace jc::factory_system
 		std::vector<ref<ItemPickup>>			item_pickups;
 		std::vector<ref<AnimatedRigidObject>>	animated_rigid_objects;
 		std::vector<ref<UIMapIcon>>				ui_map_icons;
+		std::vector<ref<UIMapIconType>>			ui_map_icon_types;
 		std::vector<ref<Objective>>				objectives;
 		std::vector<ref<TrafficLight>>			traffic_lights;
 	}
@@ -393,14 +395,27 @@ AnimatedRigidObject* FactorySystem::spawn_animated_rigid_object(const vec3& posi
 	return nullptr;
 }
 
-UIMapIcon* FactorySystem::create_map_icon(const vec3& position, uint32_t icon)
+UIMapIcon* FactorySystem::create_map_icon(const std::string& name, const vec3& position)
 {
 	if (auto rf = g_game_control->create_object<UIMapIcon>(false))
 	{
-		if (!rf->setup(position, icon))
+		if (!rf->setup(name, position))
 			return nullptr;
 
 		return rf.move_to(ui_map_icons);
+	}
+
+	return nullptr;
+}
+
+UIMapIconType* FactorySystem::create_map_icon_type(const std::string& name, const std::string& texture, const vec2& scale)
+{
+	if (auto rf = g_game_control->create_object<UIMapIconType>(false))
+	{
+		if (!rf->setup(name, texture, scale))
+			return nullptr;
+
+		return rf.move_to(ui_map_icon_types);
 	}
 
 	return nullptr;

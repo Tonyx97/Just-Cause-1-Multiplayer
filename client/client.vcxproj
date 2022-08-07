@@ -147,6 +147,7 @@
     <ClCompile Include="code\game\object\base\comps\model.cpp" />
     <ClCompile Include="code\game\object\base\base.cpp" />
     <ClCompile Include="code\game\object\spawn_point\object_spawn_point.cpp" />
+    <ClCompile Include="code\game\object\ui\map_icon_type.cpp" />
     <ClCompile Include="code\game\object\ui\target_indicator.cpp" />
     <ClCompile Include="code\game\object\ui\map_icon.cpp" />
     <ClCompile Include="code\game\object\vehicle\airplane.cpp" />
@@ -253,6 +254,7 @@
     <ClInclude Include="code\game\object\base\comps\model.h" />
     <ClInclude Include="code\game\object\base\base.h" />
     <ClInclude Include="code\game\object\spawn_point\object_spawn_point.h" />
+    <ClInclude Include="code\game\object\ui\map_icon_type.h" />
     <ClInclude Include="code\game\object\ui\target_indicator.h" />
     <ClInclude Include="code\game\object\ui\map_icon.h" />
     <ClInclude Include="code\game\object\vars\anims.h" />
@@ -331,6 +333,7 @@
     <ClInclude Include="code\core\ui.h" />
     <ClInclude Include="code\game\sys\vehicle_manager.h" />
     <ClInclude Include="code\game\sys\world.h" />
+    <ClInclude Include="rsrc\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rsrc\bug_ripper_ui.rc" />
@@ -338,6 +341,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="rsrc\icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="rsrc\font.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -31,7 +31,9 @@ struct object_base_map : public jc::map<object_base_map, uint32_t>
 		Int = 1,
 		Float = 2,
 		String = 3,
+		Vec2 = 4,
 		Vec3 = 5,
+		Vec4 = 6,
 		Mat4 = 8,
 		Unknown = 0
 	};

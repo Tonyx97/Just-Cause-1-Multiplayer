@@ -13,7 +13,7 @@ public:
 
 	IMPL_OBJECT_TYPE_ID("CGuiMapIcon");
 
-	bool setup(const vec3& position, uint32_t icon);
+	bool setup(const std::string& name, const vec3& position);
 
 	void set_position(const vec3& v);
 

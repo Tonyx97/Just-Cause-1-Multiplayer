@@ -14,7 +14,7 @@ enet::PacketResult nh::chat::msg(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
-		g_chat->add_chat_msg(player->get_nick() + " (" + std::to_string(player->get_nid()) + "): " + p.get_str());
+		g_chat->add_chat_msg(player->get_nick() + ": " + p.get_str());
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();

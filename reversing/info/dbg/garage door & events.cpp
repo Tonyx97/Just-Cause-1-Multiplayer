@@ -77,44 +77,22 @@ void jc::test_units::test_0()
 	auto	  local_pos = local_char->get_position();
 	Transform local_t(local_pos);
 
-	// icon stuff
-
-	if (g_key->is_key_pressed(VK_NUMPAD4))
-	{
-		auto icon = g_factory->create_map_icon("test", local_pos);
-
-		log(RED, "{:x}", ptr(icon));
-	}
-
-	struct Test
-	{
-		IMPL_OBJECT_TYPE_ID("CGuiPdaMap");
-	};
-
-	static std::vector<ref<Test>> types;
+	// savegame load test
 
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
-		if (auto r = g_game_control->create_object<Test>(true))
-		{
-			log(RED, "{:x}", ptr(*r));
+		auto icon = g_factory->create_map_icon(local_pos, 6);
 
-			object_base_map map {};
+		log(RED, "{:x}", ptr(icon));
 
-			map.insert<object_base_map::String>(0xb8fbd88e, R"(MAP)"); // 0x4d9bbf
-			map.insert<object_base_map::String>(0x11c77973, R"(parent_pda_map)"); // 0x4d9cad
-			map.insert<object_base_map::String>(0x21e3a6b0, R"(pda_legend_off)"); // 0x987d61
-			map.insert<object_base_map::String>(0x21e3a6b0, R"()"); // find event and subscribe
-			map.insert<object_base_map::String>(0xe6ec60eb, R"(pda_legend_on)"); // 0x987d61
-			map.insert<object_base_map::String>(0xe6ec60eb, R"()"); // find event and subscribe
-			map.insert<object_base_map::Float>(0x7fa38657, 0.05f);
-			map.insert<object_base_map::Float>(0x8ad33e6f, 0.03f);
-			map.insert<object_base_map::Float>(0xa599b5d9, 9.00f);
-
-			((ObjectBase*)*r)->init_from_map(&map);
-
-			types.push_back(std::move(r));
-		}
+		map.insert<ValueType_String>(0x46e62875, R"(gui\pda_icon_interestpoint_mission.dds)");
+		map.insert<ValueType_String>(0xccd9c837, R"(icon_interestpoint_mission)");
+		map.insert<ValueType_Float>(0x969629fc, 0.01f);
+		map.insert<ValueType_Float>(0x5c8f3808, 0.01f);
+		map.insert<ValueType_Int>(0xb0c3614f, 2);
+		map.insert<ValueType_Int>(0x5b22b39c, 178);
+		map.insert<ValueType_String>(0x39e82511, R"(icon_objective_on icon_show_all)");
+		map.insert<ValueType_String>(0x884ed8bb, R"(icon_objective_off)");
 	}
 
 	struct TestInfo
@@ -192,6 +170,32 @@ void jc::test_units::test_0()
 	static AnimatedRigidObject* garage_door = nullptr;
 
 	static TrafficLight* tl = nullptr;
+
+	if (g_key->is_key_pressed(VK_NUMPAD4))
+	{
+		local_char->set_flag(1 << 31);
+
+		/*if (garage_door = g_factory->spawn_animated_rigid_object(
+			local_pos,
+			R"(building_blocks\general\safehouse_guer_garage_door.lod)",
+			R"(models\building_blocks\general\safehouse_guer_garage_door_col.pfx)"))
+		{
+			log(RED, "nice {:x}", ptr(garage_door));
+
+			garage_door->setup_event_and_subscribe(0x290, "custom::anim_end");
+			garage_door->setup_event_and_subscribe(0x284, "custom::opendoor");
+			garage_door->setup_event_and_subscribe(0x288, "custom::closedoor");
+
+			const auto open_sound = g_sound->create_sound(local_pos, "door\\door_garage", 0);
+			const auto close_sound = g_sound->create_sound(local_pos, "door\\door_garage", 1);
+
+			open_sound->setup_event_and_subscribe(0xB0, "custom::opendoor");
+
+			close_sound->setup_event_and_subscribe(0xA8, "custom::closedoor");
+			close_sound->setup_event_and_subscribe(0xAC, "custom::opendoor");
+			close_sound->setup_event_and_subscribe(0xB0, "custom::anim_end");
+		}*/
+	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD7))
 	{

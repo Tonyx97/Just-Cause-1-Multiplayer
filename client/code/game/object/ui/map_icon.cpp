@@ -4,14 +4,8 @@
 
 #include "../vars/ui.h"
 
-bool UIMapIcon::setup(const vec3& position, uint32_t icon)
+bool UIMapIcon::setup(const std::string& name, const vec3& position)
 {
-	auto it = jc::vars::ui_map_icons.find(icon);
-	if (it == jc::vars::ui_map_icons.end())
-		return false;
-
-	const auto& icon_name = it->second;
-
 	object_base_map map {};
 
 	map.insert<object_base_map::Int>(0x2414a266, 1); // int
@@ -20,7 +14,7 @@ bool UIMapIcon::setup(const vec3& position, uint32_t icon)
 	map.insert<object_base_map::Int>(ObjectBase::Hash_Relative, 1); // int
 	map.insert<object_base_map::String>(0x6b7d9fdd, "CGuiMapIcon1"); // string
 	//map.insert<object_base_map::String>(0x884ed8bb, R"(A2M08_start_fmv_briefing)"); // string
-	map.insert<object_base_map::String>(0xccd9c837, icon_name); // string
+	map.insert<object_base_map::String>(0xccd9c837, name); // string
 	map.insert<object_base_map::String>(ObjectBase::Hash_Class, "CGuiMapIcon"); // string
 	map.insert<object_base_map::String>(ObjectBase::Hash_Desc, "UIMapIcon"); // string
 	map.insert<object_base_map::Vec3>(0xcf235620, &position); // vec3

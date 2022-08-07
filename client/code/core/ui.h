@@ -30,7 +30,7 @@ private:
 		 show_last_grip		 = false,
 		 infinite_ammo = true,
 		 no_clip			 = true,
-		 spawn_vtable_hooked = false;
+		 show_top_dbg = false;
 
 	int bullets_per_shoot = 1;
 
@@ -41,6 +41,7 @@ private:
 
 	void begin();
 	void render();
+	void loading_screen();
 	void render_players();
 	void render_admin_panel();
 	void overlay_debug();

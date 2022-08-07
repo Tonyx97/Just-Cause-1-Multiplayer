@@ -104,6 +104,15 @@ void jc::patches::apply_initial_patches()
 	jc::write(0x74ui8, 0x7FED33);
 #endif
 
+	// patch the loading screen lines (it's just ugly)
+	// and the text tips
+
+	jc::nop(0x4DDF97, 6);
+	jc::nop(0x4DDFA0, 5);
+
+	jc::nop(0x4DDB88, 6);
+	jc::nop(0x4DDB94, 5);
+
 	// change the name of the window
 	
 	std::strcpy((char*)0xAEBE18, "JC:MP\0");

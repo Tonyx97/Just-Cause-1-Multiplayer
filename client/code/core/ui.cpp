@@ -111,12 +111,16 @@ void UI::init()
 
 	io = &ImGui::GetIO();
 
-	// Fuck light mode.
+	// fuck light mode
 
 	ImGui::StyleColorsDark();
 
 	ImGui_ImplWin32_Init(jc_hwnd);
 	ImGui_ImplDX9_Init(dx_device);
+
+	const auto [font_data, font_size] = util::win::load_resource(GET_MODULE(), GAME_FONT, RT_FONT);
+
+	io->Fonts->AddFontFromMemoryTTF(font_data, font_size, 22.f, nullptr, io->Fonts->GetGlyphRangesDefault());
 
 	g_key->set_wnd_proc(jc_hwnd);
 
@@ -254,6 +258,7 @@ void UI::render()
 	{
 		overlay_debug();
 		render_players();
+		loading_screen();
 		net_debug();
 
 		g_chat->update();
@@ -262,8 +267,20 @@ void UI::render()
 	ImGui::End();
 }
 
+void UI::loading_screen()
+{
+	if (g_net->is_joined())
+		return;
+
+	add_text("Welcome to JC:MP! Please wait until all resources are downloaded and the game loads",
+		0.1f * io->DisplaySize.x, 0.45f * io->DisplaySize.y, 24.f, { 1.f, 1.f, 1.f, 1.f }, false, true, 300.f);
+}
+
 void UI::render_players()
 {
+	if (!g_net->is_joined())
+		return;
+
 	const auto main_cam = g_camera->get_main_camera();
 	if (!main_cam)
 		return;
@@ -376,6 +393,7 @@ void UI::render_admin_panel()
 	if (ImGui::TreeNode("General"))
 	{
 		ImGui::Checkbox("No clip", &no_clip);
+		ImGui::Checkbox("Show Top Debug", &show_top_dbg);
 
 		if (ImGui::Button("Toggle world lighting"))
 			g_day_cycle->set_night_time_enabled(!g_day_cycle->is_night_time_enabled());
@@ -603,55 +621,58 @@ void UI::overlay_debug()
 			}
 		}
 
-		if (const auto weapon = weapon_belt->get_current_weapon())
+		if (show_top_dbg)
 		{
-			if (const auto weapon_info = weapon->get_info())
+			if (const auto weapon = weapon_belt->get_current_weapon())
 			{
-				ImGui::Text("------------------");
-				ImGui::Text("Ptr: 0x%x", *weapon);
-				ImGui::Text("ID: %i", weapon_info->get_type_id());
-				ImGui::Text("Slot: %i", weapon_belt->get_weapon_slot(*weapon));
-				ImGui::Text("Weapon from slot: 0x%x", *weapon_belt->get_weapon_from_slot(weapon_belt->get_weapon_slot(*weapon)));
+				if (const auto weapon_info = weapon->get_info())
+				{
+					ImGui::Text("------------------");
+					ImGui::Text("Ptr: 0x%x", *weapon);
+					ImGui::Text("ID: %i", weapon_info->get_type_id());
+					ImGui::Text("Slot: %i", weapon_belt->get_weapon_slot(*weapon));
+					ImGui::Text("Weapon from slot: 0x%x", *weapon_belt->get_weapon_from_slot(weapon_belt->get_weapon_slot(*weapon)));
+				}
+
+				if (show_grip)
+				{
+					if (vec2 out_sp; camera->w2s(weapon->get_grip_transform()->get_position(), out_sp))
+						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFFFF, 30, 2.f);
+				}
+
+				if (show_last_muzzle)
+				{
+					if (vec2 out_sp; camera->w2s(weapon->get_last_muzzle_transform()->get_position(), out_sp))
+						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFF00, 30, 2.f);
+				}
+
+				if (show_muzzle)
+				{
+					if (vec2 out_sp; camera->w2s(weapon->get_muzzle_transform()->get_position(), out_sp))
+						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFF00FF, 30, 2.f);
+				}
+
+				if (show_last_grip)
+				{
+					if (vec2 out_sp; camera->w2s(weapon->get_last_ejector_transform()->get_position(), out_sp))
+						v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFF00FFFF, 30, 2.f);
+				}
+
+				/*if (vec2 out_sp; camera->w2s(local_player_pawn->get_aim_target(), out_sp)) /// aim target
+					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFF00FFFF, 30, 2.f);*/
 			}
 
-			if (show_grip)
+			if (const auto vehicle_controller = local_player_pawn->get_vehicle_controller())
 			{
-				if (vec2 out_sp; camera->w2s(weapon->get_grip_transform()->get_position(), out_sp))
-					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFFFF, 30, 2.f);
-			}
+				ImGui::Text("VehicleController: 0x%x", vehicle_controller);
 
-			if (show_last_muzzle)
-			{
-				if (vec2 out_sp; camera->w2s(weapon->get_last_muzzle_transform()->get_position(), out_sp))
-					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFFFF00, 30, 2.f);
-			}
+				if (vec2 out_sp; camera->w2s(vehicle_controller->get_transform()->get_position(), out_sp))
+					v_list->AddCircle({ out_sp.x, out_sp.y }, 20.f, 0xFFFFFFFF, 30, 5.f);
 
-			if (show_muzzle)
-			{
-				if (vec2 out_sp; camera->w2s(weapon->get_muzzle_transform()->get_position(), out_sp))
-					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFFFF00FF, 30, 2.f);
-			}
-
-			if (show_last_grip)
-			{
-				if (vec2 out_sp; camera->w2s(weapon->get_last_ejector_transform()->get_position(), out_sp))
-					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFF00FFFF, 30, 2.f);
-			}
-
-			/*if (vec2 out_sp; camera->w2s(local_player_pawn->get_aim_target(), out_sp)) /// aim target
-				v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFF00FFFF, 30, 2.f);*/
-		}
-
-		if (const auto vehicle_controller = local_player_pawn->get_vehicle_controller())
-		{
-			ImGui::Text("VehicleController: 0x%x", vehicle_controller);
-
-			if (vec2 out_sp; camera->w2s(vehicle_controller->get_transform()->get_position(), out_sp))
-				v_list->AddCircle({ out_sp.x, out_sp.y }, 20.f, 0xFFFFFFFF, 30, 5.f);
-
-			if (const auto vehicle = vehicle_controller->get_vehicle())
-			{
-				ImGui::Text("Vehicle: 0x%x", vehicle);
+				if (const auto vehicle = vehicle_controller->get_vehicle())
+				{
+					ImGui::Text("Vehicle: 0x%x", vehicle);
+				}
 			}
 		}
 
@@ -789,69 +810,26 @@ void UI::overlay_debug()
 			}
 		}
 
-		ImGui::Text("------------------");
-		ImGui::Text("Closest HP ptr: 0x%x", closest_hp_ptr);
-		ImGui::Text("Facing object: 0x%x", ptr(local_player_pawn->get_facing_object()));
-
-		if (closest_weapon)
-			ImGui::Text("Closest Weapon: 0x%x", ptr(closest_weapon));
-		ImGui::Text("------------------");
-
-		vec3 lt;
-		quat lr;
-		vec3 ls;
-
+		if (show_top_dbg)
 		{
-			local_transform.decompose(lt, lr, ls);
+			ImGui::Text("------------------");
+			ImGui::Text("Closest HP ptr: 0x%x", closest_hp_ptr);
+			ImGui::Text("Facing object: 0x%x", ptr(local_player_pawn->get_facing_object()));
 
-			ImGui::Text("Position: %.2f %.2f %.2f", lt.x, lt.y, lt.z);
-			ImGui::Text("Rotation: %.2f %.2f %.2f %.2f", lr.w, lr.x, lr.y, lr.z);
-			ImGui::Text("Scale: %.2f %.2f %.2f", ls.x, ls.y, ls.z);
-		}
+			if (closest_weapon)
+				ImGui::Text("Closest Weapon: 0x%x", ptr(closest_weapon));
+			ImGui::Text("------------------");
 
-		{
-			if (auto local_char = g_world->get_localplayer_character())
+			vec3 lt;
+			quat lr;
+			vec3 ls;
+
 			{
-				auto localp = g_world->get_localplayer();
+				local_transform.decompose(lt, lr, ls);
 
-				auto local_transform = local_char->get_transform();
-
-				static CharacterHandle* cc_h = nullptr;
-
-				if (g_key->is_key_pressed(VK_F6))
-				{
-					if (!g_test_char)
-					{
-						cc_h = g_factory->spawn_character("female1", g_world->get_localplayer_character()->get_position());
-						g_test_char = cc_h->get_character();
-						g_test_char->set_skin(126);
-						g_test_char->set_invincible(true);
-					}
-					else
-					{
-						//cc->respawn();
-						g_factory->destroy_character_handle(cc_h);
-						cc_h = nullptr;
-						g_test_char = nullptr;
-					}
-
-					log(RED, "{:x}", ptr(g_test_char));
-				}
-
-				if (g_test_char && g_test_char->is_alive())
-				{
-					// interpolate main transform
-
-					auto previous_t = g_test_char->get_transform();
-
-					log(RED, "{}", jc::math::quat_diff(glm::quat_cast(previous_t.get_matrix()), local_transform.get_matrix()));
-
-					//local_transform.translate(vec3(0.f, 0.f, 1.f));
-
-					previous_t.interpolate(local_transform, 0.2f, 0.05f);
-
-					g_test_char->set_transform(previous_t);
-				}
+				ImGui::Text("Position: %.2f %.2f %.2f", lt.x, lt.y, lt.z);
+				ImGui::Text("Rotation: %.2f %.2f %.2f %.2f", lr.w, lr.x, lr.y, lr.z);
+				ImGui::Text("Scale: %.2f %.2f %.2f", ls.x, ls.y, ls.z);
 			}
 		}
 	}

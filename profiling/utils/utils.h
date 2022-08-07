@@ -459,6 +459,8 @@ namespace util
 		}
 
 		void get_desktop_resolution(int32_t& x, int32_t& y);
+
+		std::tuple<void*, size_t> load_resource(void* mod_base, int id, LPWSTR type);
 	}
 
 	namespace mem

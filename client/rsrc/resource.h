@@ -1,0 +1,2 @@
+#define GAME_ICON 9797
+#define GAME_FONT 9798

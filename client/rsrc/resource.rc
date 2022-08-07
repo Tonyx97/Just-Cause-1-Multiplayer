@@ -1,1 +1,4 @@
+#include "resource.h"
+
 GAME_ICON ICON "icon.ico"
+GAME_FONT FONT "font.ttf"

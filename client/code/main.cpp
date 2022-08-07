@@ -97,12 +97,22 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		g_explosion->init();
 		g_task->init();
 
-		// hook present
+		// place game control "create object" hook to block the engine from
+		// creating useless objects such as FMV, UserInputObject etc
 
-		log(GREEN, "Hooking...");
+		g_game_control->hook_create_object();
+
+		// before initializing, let's create global objects needed for certain functionalities like
+		// extra map icons that are not in the game by default etc
+
+		g_game_control->create_global_objects();
 
 		g_renderer->hook_present();
 		g_game_status->hook_dispatcher();
+
+		log(GREEN, "Hooking...");
+
+		// hook game fns
 
 		jc::hooks::hook_game_fns();
 
@@ -237,11 +247,6 @@ DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
 	g_settings->set_int(SettingType_SceneComplexity, 2);
 	g_settings->set_int(SettingType_WaterQuality, 2);
 	g_settings->set_int(SettingType_PostFX, 1);
-
-	// place game control "create object" hook to block the engine from
-	// creating useless objects such as FMV, UserInputObject etc
-
-	g_game_control->hook_create_object();
 
 	return ok;
 }
@@ -389,7 +394,7 @@ long GET_GAME_ICON()
 	static long icon = 0;
 
 	if (!icon)
-		icon = (long)LoadIcon((HINSTANCE)GET_MODULE(), L"GAME_ICON");
+		icon = (long)LoadIcon((HINSTANCE)GET_MODULE(), MAKEINTRESOURCE(GAME_ICON));
 
 	return icon;
 }

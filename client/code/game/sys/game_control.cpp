@@ -25,13 +25,34 @@ namespace jc::game_control
 		"CUserInputObject",
 		"CGuiFMVObject",
 		"CGuiMapIcon",
-		"CGuiMapIconType",
 		"CGuiMapSwitchIcon",
 		"CGuiPdaMap",
 		"CObjective",
 		"CSafeHouse",
 		"CGarage",
 		"CRaceManager",
+		"CItemPickup",
+		"CGuiLiberateSettlement",
+		"CProvinceSettlement",
+		"CNamedPoint",
+		"CSettlementSoundObject",
+		"CInterestPoint",
+		"CGuiExtract",
+		"CGuiFactions",
+		"CBookMark",
+		"CNamedArea",
+		"CRoadFileLoader",
+		"CDropoffPoint",
+		"CSideMissionTarget",
+		"CInfoMessage",
+		"CProvinceInfoMessage",
+		"CMission",
+		"CCollectItemsManager",
+		"CGroupSpawner",
+		"CSideMissionEmployers",
+		"CSideMissionType",
+		"CFactionRelationSetter",
+		"CPause",
 	};
 
 	bool ignore_blocked_objects = false;
@@ -50,6 +71,8 @@ DEFINE_HOOK_THISCALL(create_object, 0x4EE350, ref<ObjectBase>*, GameControl* gc,
 
 				return nullptr;
 			}
+
+		//log(RED, "created '{}'", class_name_str);
 	}
 
 	return create_object_hook.call(gc, r, class_name, enable_now);
@@ -72,6 +95,24 @@ void GameControl::init()
 
 void GameControl::destroy()
 {
+}
+
+void GameControl::create_global_objects()
+{
+	// create some extra icon types
+
+	g_factory->create_map_icon_type("handshake", "hud_handshake.dds", vec2(0.02f));
+	g_factory->create_map_icon_type("aim_cross", "aim_new_cross.dds", vec2(0.02f));
+	g_factory->create_map_icon_type("black_square", "binoculars_black.dds", vec2(0.02f));
+	g_factory->create_map_icon_type("compass_arrow", "hud_compass_arrow.dds", vec2(0.02f));
+	g_factory->create_map_icon_type("north", "hud_compass_n.dds", vec2(0.02f));
+	g_factory->create_map_icon_type("liberate_bg", "hud_liberate_bg.dds", vec2(0.02f));
+	g_factory->create_map_icon_type("liberate_box", "hud_liberate_box.dds", vec2(0.02f));
+	g_factory->create_map_icon_type("liberate_house", "hud_liberate_house.dds", vec2(0.025f));
+	g_factory->create_map_icon_type("air_veh", "pda_icon_airvehicle.dds", vec2(0.0125f));
+	g_factory->create_map_icon_type("air_veh_friendly", "pda_icon_airvehicle_friendly.dds", vec2(0.0125f));
+	g_factory->create_map_icon_type("player", "pda_icon_player.dds", vec2(0.02f));
+	g_factory->create_map_icon_type("aa_gun", "pda_icon_aa_gun.dds", vec2(0.0125f));
 }
 
 void GameControl::hook_create_object()
