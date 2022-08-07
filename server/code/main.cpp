@@ -13,6 +13,7 @@
 int main()
 {
 	jc::prof::init("JC:MP Server");
+	jc::bug_ripper::init(GetModuleHandle(nullptr));
 
 	util::init();
 
@@ -43,6 +44,8 @@ int main()
 	g_net->destroy();
 
 	JC_FREE(g_net);
+
+	jc::bug_ripper::destroy();
 
 	return EXIT_SUCCESS;
 }
