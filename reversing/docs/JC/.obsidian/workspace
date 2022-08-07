@@ -9,7 +9,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "tony_daily/06-08-2022.md",
+            "file": "tony_daily/2022/8 August/06-08-2022.md",
             "mode": "source",
             "source": false
           }
@@ -69,7 +69,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "tony_daily/06-08-2022.md",
+                "file": "tony_daily/2022/8 August/06-08-2022.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -90,6 +90,7 @@
   "active": "dd83e66c589c0e7b",
   "lastOpenFiles": [
     "tony_daily/2022/8 August/05-08-2022.md",
+    "tony_daily/2022/8 August/06-08-2022.md",
     "classes.md",
     "tony_daily/2022/7 July/14-07-2022.md",
     "tony_daily/2022/8 August/04-08-2022.md",
@@ -97,7 +98,6 @@
     "game/particle_effects.md",
     "tony_daily/2022/8 August/03-08-2022.md",
     "tony_daily/2022/8 August/01-08-2022.md",
-    "tony_daily/03-08-2022.md",
-    "tony_daily/2022/8 August/02-08-2022.md"
+    "tony_daily/03-08-2022.md"
   ]
 }
