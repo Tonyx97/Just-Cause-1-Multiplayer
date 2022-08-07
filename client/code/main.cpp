@@ -373,18 +373,6 @@ void dll_thread()
 	FreeLibraryAndExitThread(g_module, 0);
 }
 
-BOOL APIENTRY DllMain(HMODULE instance, DWORD reason, LPVOID)
-{
-	if (reason == DLL_PROCESS_ATTACH)
-	{
-		g_module = instance;
-
-		CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)dll_thread, nullptr, 0, nullptr);
-	}
-
-	return TRUE;
-}
-
 void* GET_MODULE()
 {
 	return g_module;
@@ -398,4 +386,16 @@ long GET_GAME_ICON()
 		icon = (long)LoadIcon((HINSTANCE)GET_MODULE(), L"GAME_ICON");
 
 	return icon;
+}
+
+BOOL APIENTRY DllMain(HMODULE instance, DWORD reason, LPVOID)
+{
+	if (reason == DLL_PROCESS_ATTACH)
+	{
+		g_module = instance;
+
+		CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)dll_thread, nullptr, 0, nullptr);
+	}
+
+	return TRUE;
 }
