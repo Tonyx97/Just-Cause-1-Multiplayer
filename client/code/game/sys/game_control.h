@@ -14,10 +14,16 @@ namespace jc::game_control
 
 class GameControl
 {
+private:
+	
+	void* create_object_internal(void* r, jc::stl::string* class_name, bool enable_now);
+
 public:
 
 	void init();
 	void destroy();
+	void hook_create_object();
+	void unhook_create_object();
 	void on_tick();
 
 	template <typename T, typename R = ref<T>>
@@ -27,7 +33,7 @@ public:
 
 		jc::stl::string class_name = T::CLASS_NAME();
 
-		jc::this_call(jc::game_control::fn::CREATE_OBJECT, this, &r, &class_name, enable_now);
+		create_object_internal(&r, &class_name, enable_now);
 
 		return r;
 	}

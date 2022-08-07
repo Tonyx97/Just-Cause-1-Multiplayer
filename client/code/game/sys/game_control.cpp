@@ -15,6 +15,57 @@
 #include <core/keycode.h>
 #include <core/test_units.h>
 
+namespace jc::game_control
+{
+	static constexpr std::string_view default_blocked_objects[] =
+	{
+		"CAgentSpawnPoint",
+		"CVehicleSpawnPoint",
+		"CObjectSpawnPoint",
+		"CUserInputObject",
+		"CGuiFMVObject",
+		"CGuiMapIcon",
+		"CGuiMapIconType",
+		"CGuiMapSwitchIcon",
+		"CGuiPdaMap",
+		"CObjective",
+		"CSafeHouse",
+		"CGarage",
+		"CRaceManager",
+	};
+
+	bool ignore_blocked_objects = false;
+}
+
+DEFINE_HOOK_THISCALL(create_object, 0x4EE350, ref<ObjectBase>*, GameControl* gc, ref<ObjectBase>* r, jc::stl::string* class_name, bool enable_now)
+{
+	if (!jc::game_control::ignore_blocked_objects)
+	{
+		const auto class_name_str = class_name->c_str();
+
+		for (const auto& object_name : jc::game_control::default_blocked_objects)
+			if (!object_name.compare(class_name_str))
+			{
+				r->make_invalid();
+
+				return nullptr;
+			}
+	}
+
+	return create_object_hook.call(gc, r, class_name, enable_now);
+}
+
+void* GameControl::create_object_internal(void* r, jc::stl::string* class_name, bool enable_now)
+{
+	jc::game_control::ignore_blocked_objects = true;
+
+	const auto res = create_object_hook.call(this, BITCAST(ref<ObjectBase>*, r), class_name, enable_now);
+
+	jc::game_control::ignore_blocked_objects = false;
+
+	return res;
+}
+
 void GameControl::init()
 {
 }
@@ -23,11 +74,23 @@ void GameControl::destroy()
 {
 }
 
+void GameControl::hook_create_object()
+{
+	create_object_hook.hook();
+}
+
+void GameControl::unhook_create_object()
+{
+	create_object_hook.unhook();
+}
+
 void GameControl::on_tick()
 {
+#ifdef JC_DBG
 	// debug test units
 
 	jc::test_units::test_0();
+#endif
 
 	// do mod logic
 

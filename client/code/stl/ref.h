@@ -91,6 +91,12 @@ struct ref
 		dec_ref();
 	}
 
+	void make_invalid()
+	{
+		obj = nullptr;
+		counter = nullptr;
+	}
+
 	void inc()
 	{
 		decltype(counter) counter_ptr;

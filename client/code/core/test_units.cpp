@@ -77,9 +77,6 @@ void jc::test_units::test_0()
 	auto	  local_pos = local_char->get_position();
 	Transform local_t(local_pos);
 
-	if (g_key->is_key_pressed(VK_F5))
-		localplayer->respawn();
-
 	// savegame load test
 
 	if (g_key->is_key_pressed(VK_NUMPAD9))
@@ -160,9 +157,6 @@ void jc::test_units::test_0()
 
 	static AnimatedRigidObject* garage_door = nullptr;
 
-	if (g_key->is_key_pressed(KEY_F))
-		local_char->play_idle_stance();
-
 	static TrafficLight* tl = nullptr;
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
@@ -198,8 +192,6 @@ void jc::test_units::test_0()
 		//g_weapon->dump();
 
 		log(RED, "called");
-
-		*(int*)0 = 0;
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD1))

@@ -356,6 +356,13 @@ void UI::render_admin_panel()
 
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 
+	if (ImGui::Button("Respawn / Revive"))
+		if (local_char->get_hp() <= 0.f)
+			g_world->get_localplayer()->respawn();
+
+	if (g_key->is_key_pressed(KEY_F))
+		local_char->play_idle_stance();
+
 	if (ImGui::TreeNode("Server"))
 	{
 		float day_time = g_day_cycle->get_hour();

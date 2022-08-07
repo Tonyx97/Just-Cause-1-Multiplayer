@@ -142,6 +142,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 			g_game_status->unhook_dispatcher();
 			g_renderer->unhook_present();
+			g_game_control->unhook_create_object();
 
 			jc::hooks::unhook_game_fns();
 
@@ -236,6 +237,11 @@ DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
 	g_settings->set_int(SettingType_SceneComplexity, 2);
 	g_settings->set_int(SettingType_WaterQuality, 2);
 	g_settings->set_int(SettingType_PostFX, 1);
+
+	// place game control "create object" hook to block the engine from
+	// creating useless objects such as FMV, UserInputObject etc
+
+	g_game_control->hook_create_object();
 
 	return ok;
 }

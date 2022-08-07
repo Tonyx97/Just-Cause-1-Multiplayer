@@ -293,6 +293,8 @@ namespace jc::character::hook
 		if (const auto lp = g_net->get_localplayer())
 			if (const auto local_char = lp->get_character())
 			{
+				//log(RED, "damn, {} {} {} {} {}", dir->x, dir->y, dir->z, f1, f2);
+
 				if (local_char == character)
 					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_ForceLaunch, character->get_added_velocity(), *dir, f1, f2);
 				else if (g_net->get_player_by_character(character))
