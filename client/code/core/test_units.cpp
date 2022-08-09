@@ -53,12 +53,14 @@ DEFINE_HOOK_CCALL(_test, 0x407FD0, void, ptr a1, ptr a2)
 
 // 40E940 = FnThatReadsAssetFromDisk
 
-DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, bool, ptr a1, jc::stl::string* name, int type, const char* data, ptr a5)
+DEFINE_HOOK_THISCALL(resource_request, 0x423070, int, ptr a1, ptr a2, jc::stl::string name, ptr data, ptr flags)
 {
-	if (strstr(data, "ANIM"))
-		log(RED, "{:x} {:x} {:x} '{}' '{}'", a1, type, a5, name->c_str(), data);
+	log(RED, "{:x} {:x} {:x} {:x} {}", a1, a2, data, flags, name.c_str());
+	//log(RED, "{:x} {:x} {} {:x} {:x}", a1, a2, name.c_str(), data, flags);
 
-	return resource_request_hook.call(a1, name, type, data, a5);
+	//while (!GetAsyncKeyState(VK_F3));
+
+	return resource_request_hook.call(a1, a2, name, data, flags);
 }
 
 /*DEFINE_HOOK_THISCALL(resource_request, 0x40E940, bool, ptr a1, ptr a2, ptr a3, ptr a4, ptr a5, ptr a6, ptr a7)
@@ -133,18 +135,18 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		jc::stl::string model_name = "arve_008_body_lod1.rbm";
+		jc::stl::string model_name = "ball.rbm";
 		jc::stl::string pfx_name = "bath_boll.pfx";
-		jc::stl::string anim_name = "ingame02-3-2_caramicas.anim";
+		jc::stl::string anim_name = "test.anim";
 
 		{ // model
 			std::ifstream data_file(model_name.c_str(), std::ios::binary);
 
-			char data[57708] = { 0 };
+			char data[7044] = { 0 };
 
 			data_file.read(data, sizeof(data));
 
-			auto r = jc::this_call(0x57A070, jc::read<ptr>(0xD84F50), &model_name, data, 0x508f8, 2);
+			auto r = jc::this_call(0x57A070, jc::read<ptr>(0xD84F50), &model_name, data, 7044, 2);
 
 			ref<ptr> _r;
 
@@ -167,7 +169,7 @@ void jc::test_units::test_0()
 
 			int dummy[12] = { 0 };
 
-			jc::this_call(0x463C20, dummy, data, 0xA2C);
+			jc::this_call(0x463C20, dummy, data, 2604);
 
 			bref<ptr> br;
 
@@ -175,29 +177,32 @@ void jc::test_units::test_0()
 
 			mat4 identity = mat4(1.f);
 
-			jc::this_call(0x4E4760, jc::read<ptr>(0xD37340), &pfx_name, &br, &identity, true, false, dummy);
+			jc::this_call(0x4E4760, jc::read<ptr>(0xD37340), &pfx_name, &br, &identity, true, true, dummy);
 
 			log(RED, "pfx: {:x}", ptr(br.obj));
 
 			ay2.push_back(std::move(br));
 		}
 
-		/*{ // anim
+		{ // anim
 			std::ifstream data_file(anim_name.c_str(), std::ios::binary);
 
-			char data[60912] = { 0 };
+			char data[8626] = { 0 };
 
 			data_file.read(data, sizeof(data));
 
 			ref<ptr> r;
 
-			auto res = jc::this_call(0x55F170, jc::read<ptr>(0xD84D14), &r, &anim_name, data, 0x88);
+			auto res = jc::this_call(0x55F170, jc::read<ptr>(0xD84D14), &r, &anim_name, data, 8626);
 
 			log(RED, "anim: {:x}", ptr(r.obj));
 
 			ay3.push_back(std::move(r));
-		}*/
+		}
 	}
+
+	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
+	//	log(YELLOW, "{:x} {:x} {:x}", entry->hash, entry->offset, entry->size);
 
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
@@ -207,7 +212,25 @@ void jc::test_units::test_0()
 
 		log(RED, "{:x}", ptr(res));*/
 
-		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "arve_008_body_lod1.rbm", "bath_boll.pfx");
+		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "ball.rbm", "bath_boll.pfx");
+
+		//g_archives->dump_hashed_assets();
+	}
+
+	if (g_key->is_key_pressed(VK_NUMPAD5))
+	{
+		jc::stl::string anim_name = "test.anim";
+		//std::string anim_name = R"(dance_hooker_NPC_2.anim)";
+
+		/*ptr temp = 0;
+
+		jc::this_call<bool>(0x659FF0, jc::read<ptr>(0xD84D14) + 0x4, &temp, &anim_name);
+
+		log(RED, "anim {:x} {:x}", anim, temp);
+
+		log(RED, "loaded: {}", temp != jc::read<ptr>(jc::read<ptr>(0xD84D14) + 0x8));*/
+
+		local_char->set_animation(anim_name, 0.2f, true, true);
 	}
 
 	struct TestInfo
@@ -372,23 +395,5 @@ void jc::test_units::test_0()
 			Sleep(100);*/
 
 		// local_char->set_animation(anim_name, 0.2f, true, true);
-	}
-
-	int a = 0;
-
-	if (g_key->is_key_pressed(VK_NUMPAD5))
-	{
-		jc::stl::string anim_name = "ingame02-3-2_caramicas.anim";
-		//std::string anim_name = R"(dance_hooker_NPC_2.anim)";
-
-		/*ptr temp = 0;
-
-		jc::this_call<bool>(0x659FF0, jc::read<ptr>(0xD84D14) + 0x4, &temp, &anim_name);
-
-		log(RED, "anim {:x} {:x}", anim, temp);
-
-		log(RED, "loaded: {}", temp != jc::read<ptr>(jc::read<ptr>(0xD84D14) + 0x8));*/
-
-		local_char->set_animation(anim_name, 0.2f, true, true);
 	}
 }

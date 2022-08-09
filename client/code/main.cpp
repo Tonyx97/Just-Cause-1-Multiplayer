@@ -6,6 +6,8 @@
 #include <defs/libs.h>
 #include <defs/standard.h>
 
+#include <iostream>
+
 #include <timer/timer.h>
 
 #include <game/sys/all.h>
@@ -26,6 +28,8 @@
 #include <game/object/savegame/savegame.h>
 #include <game/object/character/character.h>
 #include "main.h"
+
+#define PAUSE_BEFORE_OPENING 0
 
 HMODULE g_module = nullptr;
 
@@ -122,7 +126,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		log(GREEN, "Initializing NET...");
 
 #ifdef _DEBUG
-		g_net->init("192.168.0.24", nick);
+		g_net->init("192.168.0.22", nick);
 #else
 		g_net->init(g_registry.get_string("ip"), nick);
 #endif
@@ -229,6 +233,15 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 //
 DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
 {
+#if PAUSE_BEFORE_OPENING
+	log(YELLOW, "waiting for enter...");
+
+	std::cin.get();
+	std::cin.get();
+
+	log(GREEN, "continuing...");
+#endif
+
 	auto ok = init_window_context_hook.call(ctx);
 
 	// apply initial patches before the game window opens

@@ -2,7 +2,18 @@
 
 namespace jc::archives
 {
-	static constexpr uint32_t SINGLETON		= 0xAF236C;			// Archives*
+	static constexpr uint32_t SINGLETON			= 0xAF236C;		// Archives*
+	static constexpr uint32_t BORDERS			= 0x20;			// std::vector<size_t>
+	static constexpr uint32_t UNKNOWN			= 0x30;			// size_t
+	static constexpr uint32_t ASSETS_ENTRIES	= 0x34;			// std::vector<ArchiveAssetEntry>
+
+	namespace fn
+	{
+		static constexpr uint32_t FIND_ASSET_ENTRY_BY_HASH	= 0x40B2F0;
+		static constexpr uint32_t FIND_ASSET_ENTRY			= 0x40B4B0;
+		static constexpr uint32_t FIND_ASSET				= 0x40B220;
+		
+	}
 }
 
 struct AssetInfo
@@ -11,6 +22,24 @@ struct AssetInfo
 
 	size_t data_base = 0u,
 		   offset = 0u,
+		   size = 0u;
+};
+
+struct ArchiveAssetEntry
+{
+	uint32_t hash = 0u;
+
+	size_t offset = 0u,
+		   size = 0u;
+};
+
+struct AssetDataInfo
+{
+	uint32_t hash = 0u;
+
+	int32_t arc_index = -1;
+
+	size_t offset = 0u,
 		   size = 0u;
 };
 
@@ -67,11 +96,17 @@ public:
 		return value;
 	}
 
+	void read(size_t offset, void* data, size_t size)
+	{
+		seek(offset);
+		read_internal(data, size);
+	}
+
 	std::string read_str();
 
 	// asset methods
 
-	std::shared_ptr<Asset> get_asset(const std::string& name, AssetInfo* info);
+	std::shared_ptr<Asset> get_named_asset(const std::string& name, AssetInfo* info);
 };
 
 class Archives
@@ -81,6 +116,20 @@ public:
 	void init();
 	void destroy();
 	void dump_asset(const std::string& name);
+	void dump_hashed_assets();
+
+	ArchiveAssetEntry* get_asset_entry(const std::string& name);
+	ArchiveAssetEntry* get_asset_entry(uint32_t hash);
+
+	AssetDataInfo get_asset_data_info(const ArchiveAssetEntry* entry) const;
+
+	AssetDataInfo get_asset(const std::string& name);
+	AssetDataInfo get_asset(uint32_t hash);
+
+	size_t get_unknown() const;
+
+	jc::stl::vector<size_t> get_borders() const;
+	jc::stl::vector<ArchiveAssetEntry> get_assets_entries() const;
 };
 
 inline Singleton<Archives, jc::archives::SINGLETON> g_archives;

@@ -84,11 +84,11 @@ void Archive::read_metadata()
 	case 4: sarcs = jc::vars::pc4_sarcs; sarcs_count = sizeof(jc::vars::pc4_sarcs) / sizeof(uint32_t); break;
 	}
 
-	for (int i = 0; i < sarcs_count; ++i)
+	for (size_t i = 0u; i < sarcs_count; ++i)
 	{
 		// move to the current sarc
 
-		const auto sarc_base = sarcs[i];
+		const auto sarc_base = static_cast<size_t>(sarcs[i]);
 
 		// skip the header trash
 
@@ -98,7 +98,7 @@ void Archive::read_metadata()
 
 		const auto metadata_end = sarc_base + read<size_t>();
 
-		while (get_curr_pointer() < metadata_end)
+		while (static_cast<size_t>(get_curr_pointer()) < metadata_end)
 		{
 			const auto rsrc_name = read_str();
 			const auto rsrc_offset = read<size_t>();
@@ -157,7 +157,7 @@ void Archive::read_metadata()
 			seek(sarc_base + rsrc_offset);
 			read_internal(asset_data, rsrc_size);
 
-			std::ofstream asset_file("ExtractedAssets\\" + filename, std::ios::binary);
+			std::ofstream asset_file("ExtractedAssets\\named\\" + filename, std::ios::binary);
 			asset_file.write(asset_data, rsrc_size);
 			asset_file.close();
 
@@ -204,7 +204,7 @@ std::string Archive::read_str()
 	return str;
 }
 
-std::shared_ptr<Asset> Archive::get_asset(const std::string& name, AssetInfo* info)
+std::shared_ptr<Asset> Archive::get_named_asset(const std::string& name, AssetInfo* info)
 {
 	auto it = metadata.find(name);
 	if (it == metadata.end())
@@ -268,7 +268,7 @@ void Archives::dump_asset(const std::string& name)
 	{
 		AssetInfo info;
 
-		if (const auto asset = arc->get_asset(name, &info))
+		if (const auto asset = arc->get_named_asset(name, &info))
 		{
 			std::string filename = name;
 
@@ -282,4 +282,108 @@ void Archives::dump_asset(const std::string& name)
 			return;
 		}
 	}
+}
+
+void Archives::dump_hashed_assets()
+{
+	const auto entries = get_assets_entries();
+
+	for (const auto& entry : entries)
+	{
+		const auto data_info = get_asset_data_info(&entry);
+
+		log(RED, "[pc{}.arc] {:x} {:x} {:x}", data_info.arc_index, data_info.hash, data_info.offset, data_info.size);
+
+		const auto arc = jc::archives::arcs[data_info.arc_index];
+
+		char* data = new char[data_info.size]();
+
+		arc->read(data_info.offset, data, data_info.size);
+
+		std::string format;
+
+		switch (jc::read<uint32_t>(data))
+		{
+		case 0x4: log(CYAN, "Asset is .ee"); format = ".ee"; break;
+		case 0x5: log(CYAN, "Asset is .rbm"); format = ".rbm"; break;
+		case 0x4D494E41: log(CYAN, "Asset is .anim"); format = ".anim"; break;
+		case 0x20534444: log(CYAN, "Asset is .dds"); format = ".dds"; break;
+		case 0x584650: log(CYAN, "Asset is .pfx"); format = ".pfx"; break;
+		/*default:
+			log(BLUE, "'{}'", (char*)data);*/
+		}
+
+		if (!format.empty())
+		{
+			std::stringstream ss;
+
+			ss << std::hex << data_info.hash;
+
+			std::ofstream asset_file("ExtractedAssets\\hashed\\" + ss.str() + format, std::ios::binary);
+
+			asset_file.write(data, data_info.size);
+			asset_file.close();
+		}
+
+		delete[] data;
+	}
+}
+
+ArchiveAssetEntry* Archives::get_asset_entry(const std::string& name)
+{
+	return jc::this_call<ArchiveAssetEntry*>(jc::archives::fn::FIND_ASSET_ENTRY, this, name.c_str());
+}
+
+ArchiveAssetEntry* Archives::get_asset_entry(uint32_t hash)
+{
+	const auto entries = get_assets_entries();
+
+	ArchiveAssetEntry* entry = nullptr;
+
+	jc::c_call(jc::archives::fn::FIND_ASSET_ENTRY_BY_HASH, &entry, entries.begin(), entries.end(), &hash);
+
+	return entry;
+}
+
+AssetDataInfo Archives::get_asset_data_info(const ArchiveAssetEntry* entry) const
+{
+	AssetDataInfo info;
+
+	info.hash = entry->hash;
+	info.size = entry->size;
+
+	jc::this_call(jc::archives::fn::FIND_ASSET, this, entry->offset, &info.arc_index, &info.offset);
+
+	return info;
+}
+
+AssetDataInfo Archives::get_asset(const std::string& name)
+{
+	if (const auto entry = get_asset_entry(name))
+		return get_asset_data_info(entry);
+
+	return {};
+}
+
+AssetDataInfo Archives::get_asset(uint32_t hash)
+{
+	if (const auto entry = get_asset_entry(hash))
+		return get_asset_data_info(entry);
+
+	return {};
+}
+
+size_t Archives::get_unknown() const
+{
+	return jc::read<size_t>(this, jc::archives::UNKNOWN);
+}
+
+jc::stl::vector<size_t> Archives::get_borders() const
+{
+	return jc::read<jc::stl::vector<size_t>>(this, jc::archives::BORDERS);
+}
+
+jc::stl::vector<ArchiveAssetEntry> Archives::get_assets_entries() const
+{
+	return jc::read<jc::stl::vector<ArchiveAssetEntry>>(this, jc::archives::ASSETS_ENTRIES);
 }
