@@ -50,6 +50,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 		log(GREEN, "Initializing game systems...");
 
+		g_archives->init();
 		g_game_control->init();
 		g_renderer->init();
 		g_world->init();
@@ -197,6 +198,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 			g_world->destroy();
 			g_renderer->destroy();
 			g_game_control->destroy();
+			g_archives->destroy();
 
 			// free mod systems
 
@@ -282,7 +284,8 @@ DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filena
 	SaveGameBuffer savegame;
 
 	savegame.add(1.f);
-	savegame.add(Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
+	savegame.add(Transform(vec3(111.f, 339.f, 688.f)));
+	//savegame.add(Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
 	savegame.add(0);	// ammo grenades
 
 	for (int i = 0; i < 14; ++i)
@@ -351,7 +354,11 @@ void dll_thread()
 
 	bool game_exit = false;
 
-	while (!GetAsyncKeyState(VK_F8) && !(game_exit = GetAsyncKeyState(VK_F9)))
+	while (
+#ifdef JC_DBG
+		!GetAsyncKeyState(VK_F8) &&
+#endif
+		!(game_exit = GetAsyncKeyState(VK_F9)))
 		Sleep(50);
 
 	unload_mod = true;
@@ -379,7 +386,7 @@ void dll_thread()
 	jc::prof::close_console(true);
 
 	if (game_exit)
-		std::exit(EXIT_FAILURE);
+		std::exit(EXIT_SUCCESS);
 
 	FreeLibraryAndExitThread(g_module, 0);
 }

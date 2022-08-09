@@ -55,12 +55,14 @@ namespace jc::game_control
 		"CPause",
 	};
 
+	static constexpr bool enable_block = true;
+
 	bool ignore_blocked_objects = false;
 }
 
 DEFINE_HOOK_THISCALL(create_object, 0x4EE350, ref<ObjectBase>*, GameControl* gc, ref<ObjectBase>* r, jc::stl::string* class_name, bool enable_now)
 {
-	if (!jc::game_control::ignore_blocked_objects)
+	if (!jc::game_control::ignore_blocked_objects && jc::game_control::enable_block)
 	{
 		const auto class_name_str = class_name->c_str();
 

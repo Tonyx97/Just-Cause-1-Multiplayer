@@ -162,6 +162,7 @@
     <ClCompile Include="code\game\object\vehicle\submarine.cpp" />
     <ClCompile Include="code\game\object\vehicle\tank.cpp" />
     <ClCompile Include="code\game\object\vehicle\vehicle.cpp" />
+    <ClCompile Include="code\game\sys\archives.cpp" />
     <ClCompile Include="code\game\sys\game_ctx.cpp" />
     <ClCompile Include="code\game\sys\game_status.cpp" />
     <ClCompile Include="code\game\sys\player_global_info.cpp" />
@@ -258,6 +259,7 @@
     <ClInclude Include="code\game\object\ui\target_indicator.h" />
     <ClInclude Include="code\game\object\ui\map_icon.h" />
     <ClInclude Include="code\game\object\vars\anims.h" />
+    <ClInclude Include="code\game\object\vars\archives.h" />
     <ClInclude Include="code\game\object\vars\exported_entities.h" />
     <ClInclude Include="code\game\object\vars\npc_variants.h" />
     <ClInclude Include="code\game\object\vars\ui.h" />
@@ -274,6 +276,7 @@
     <ClInclude Include="code\game\object\vehicle\submarine.h" />
     <ClInclude Include="code\game\object\vehicle\tank.h" />
     <ClInclude Include="code\game\object\vehicle\vehicle.h" />
+    <ClInclude Include="code\game\sys\archives.h" />
     <ClInclude Include="code\game\sys\game_ctx.h" />
     <ClInclude Include="code\game\sys\game_status.h" />
     <ClInclude Include="code\game\sys\player_global_info.h" />

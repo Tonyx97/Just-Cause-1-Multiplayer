@@ -321,6 +321,9 @@
     <ClCompile Include="code\game\object\ui\map_icon_type.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\game\sys\archives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\game\sys\renderer.h">
@@ -672,6 +675,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="rsrc\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\sys\archives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\vars\archives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

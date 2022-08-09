@@ -1,5 +1,6 @@
 #pragma once
 
+#include "archives.h"
 #include "ai_core.h"
 #include "ammo_manager.h"
 #include "camera_manager.h"
