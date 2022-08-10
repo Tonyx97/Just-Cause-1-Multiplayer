@@ -158,6 +158,14 @@ public:
 
 	void init();
 	void destroy();
+	void dump_asset(const std::string& name);
+	void dump_hashed_assets();
+	void dump_ee(AssetBuffer& ab);
+	void dump_dds(const AssetBuffer& ab);
+	void dump_pfx(const AssetBuffer& ab);
+	void dump_rbm(const AssetBuffer& ab);
+	void dump_bfsm(const AssetBuffer& ab);
+	void dump_anim(const AssetBuffer& ab);
 
 	ArchiveAssetEntry* get_asset_entry(const std::string& name);
 	ArchiveAssetEntry* get_asset_entry(uint32_t hash);

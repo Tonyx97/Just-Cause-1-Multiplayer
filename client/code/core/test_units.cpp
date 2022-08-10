@@ -53,14 +53,24 @@ DEFINE_HOOK_CCALL(_test, 0x407FD0, void, ptr a1, ptr a2)
 
 // 40E940 = FnThatReadsAssetFromDisk
 
-DEFINE_HOOK_THISCALL(resource_request, 0x423070, int, ptr a1, ptr a2, jc::stl::string name, ptr data, ptr flags)
+DEFINE_HOOK_THISCALL(resource_request, 0x423070, int, ptr a1, ptr a2, jc::stl::string name, ptr data, ptr size)
 {
-	log(RED, "{:x} {:x} {:x} {:x} {}", a1, a2, data, flags, name.c_str());
-	//log(RED, "{:x} {:x} {} {:x} {:x}", a1, a2, name.c_str(), data, flags);
+	if (strstr(name.c_str(), "kc_009_ubody"))
+	{
+		log(RED, "{:x} {:x} {:x} {:x} {}", a1, a2, data, size, name.c_str());
+
+		//std::ifstream data_file("alpha.dds", std::ios::binary);
+
+		//size = 22000;
+
+		//data_file.read((char*)data, size);
+
+		//log(RED, "{:x} {:x} {} {:x} {:x}", a1, a2, name.c_str(), data, flags);
+	}
 
 	//while (!GetAsyncKeyState(VK_F3));
 
-	return resource_request_hook.call(a1, a2, name, data, flags);
+	return resource_request_hook.call(a1, a2, name, data, size);
 }
 
 /*DEFINE_HOOK_THISCALL(resource_request, 0x40E940, bool, ptr a1, ptr a2, ptr a3, ptr a4, ptr a5, ptr a6, ptr a7)
@@ -133,20 +143,53 @@ void jc::test_units::test_0()
 	static std::vector<bref<ptr>> ay2;
 	static std::vector<ref<ptr>> ay3;
 
+	if (g_key->is_key_pressed(VK_NUMPAD9))
+	{
+		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "crate_custom_png.rbm", "");
+
+		//g_archives->dump_hashed_assets();
+
+		/*const auto asset = g_archives->get_asset(R"(PROP_ponytailgrey.lod)");
+
+		log(GREEN, "{} {:x} {:x} {:x}", asset.arc_index, asset.hash, asset.offset, asset.size);*/
+	}
+
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		jc::stl::string model_name = "ball.rbm";
+		jc::stl::string model_name = "crate_custom_png.rbm";
 		jc::stl::string pfx_name = "bath_boll.pfx";
-		jc::stl::string anim_name = "test.anim";
+		jc::stl::string anim_name = "test2.anim";
+		jc::stl::string tex_name = "texture.png";
+
+		{ // texture
+
+			std::ifstream data_file(tex_name.c_str(), std::ios::binary);
+
+			int tex_size = 998140;
+
+			char* data = new char[tex_size]();
+
+			data_file.read(data, tex_size);
+
+			ref<ptr> r;
+
+			jc::this_call(0x423070, jc::read<ptr>(0xAF2410), &r, tex_name, data, tex_size);
+
+			//delete[] data;
+
+			log(RED, "texture: {:x}", ptr(r.obj));
+
+			ay3.push_back(std::move(r));
+		}
 
 		{ // model
 			std::ifstream data_file(model_name.c_str(), std::ios::binary);
 
-			char data[7044] = { 0 };
+			char data[938] = { 0 };
 
 			data_file.read(data, sizeof(data));
 
-			auto r = jc::this_call(0x57A070, jc::read<ptr>(0xD84F50), &model_name, data, 7044, 2);
+			auto r = jc::this_call(0x57A070, jc::read<ptr>(0xD84F50), &model_name, data, 938, 2);
 
 			ref<ptr> _r;
 
@@ -160,7 +203,7 @@ void jc::test_units::test_0()
 			jc::c_call(0x405610, r);
 		}
 
-		{ // pfx
+		/*{ // pfx
 			std::ifstream data_file(pfx_name.c_str(), std::ios::binary);
 
 			char data[2604] = { 0 };
@@ -187,39 +230,26 @@ void jc::test_units::test_0()
 		{ // anim
 			std::ifstream data_file(anim_name.c_str(), std::ios::binary);
 
-			char data[8626] = { 0 };
+			char data[73628] = { 0 };
 
 			data_file.read(data, sizeof(data));
 
 			ref<ptr> r;
 
-			auto res = jc::this_call(0x55F170, jc::read<ptr>(0xD84D14), &r, &anim_name, data, 8626);
+			auto res = jc::this_call(0x55F170, jc::read<ptr>(0xD84D14), &r, &anim_name, data, 73628);
 
 			log(RED, "anim: {:x}", ptr(r.obj));
 
 			ay3.push_back(std::move(r));
-		}
+		}*/
 	}
 
 	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
 	//	log(YELLOW, "{:x} {:x} {:x}", entry->hash, entry->offset, entry->size);
 
-	if (g_key->is_key_pressed(VK_NUMPAD9))
-	{
-		/*jc::stl::string name = "seve_002_body.lod";
-
-		auto res = jc::this_call(0x57AF60, jc::read<ptr>(0xD84F5C), &name, &local_t, false, false, false);
-
-		log(RED, "{:x}", ptr(res));*/
-
-		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "ball.rbm", "bath_boll.pfx");
-
-		//g_archives->dump_hashed_assets();
-	}
-
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		jc::stl::string anim_name = "test.anim";
+		jc::stl::string anim_name = "test2.anim";
 		//std::string anim_name = R"(dance_hooker_NPC_2.anim)";
 
 		/*ptr temp = 0;
@@ -287,11 +317,13 @@ void jc::test_units::test_0()
 			log(CYAN, "handle base from character {:x}", ptr(info.character->get_handle_base()));
 			log(CYAN, "char {:x}", ptr(info.character));
 
-			if (auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_2H_SMG)) // Weapon_1H_SMG - Weapon_Grenade_Launcher
+			info.character->set_model(6);
+
+			/*if (auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_2H_SMG)) // Weapon_1H_SMG - Weapon_Grenade_Launcher
 			{
 				info.character->set_draw_weapon(weapon);
 				info.character->apply_weapon_switch();
-			}
+			}*/
 		}
 		else
 		{

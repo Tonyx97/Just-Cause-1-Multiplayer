@@ -680,9 +680,6 @@
     <ClInclude Include="code\game\sys\archives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\object\vars\archives.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rsrc\bug_ripper_ui.rc">
