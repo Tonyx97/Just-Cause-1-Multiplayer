@@ -297,8 +297,7 @@ DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filena
 	SaveGameBuffer savegame;
 
 	savegame.add(1.f);
-	savegame.add(Transform(vec3(111.f, 339.f, 688.f)));
-	//savegame.add(Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
+	savegame.add(Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
 	savegame.add(0);	// ammo grenades
 
 	for (int i = 0; i < 14; ++i)

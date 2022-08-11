@@ -53,24 +53,26 @@ DEFINE_HOOK_CCALL(_test, 0x407FD0, void, ptr a1, ptr a2)
 
 // 40E940 = FnThatReadsAssetFromDisk
 
-DEFINE_HOOK_THISCALL(resource_request, 0x423070, int, ptr a1, ptr a2, jc::stl::string name, ptr data, ptr size)
+DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* name, int type, ptr data, ptr size)
 {
-	if (strstr(name.c_str(), "kc_009_ubody"))
+	if (strstr(name->c_str(), "kc_022_lod1.rbm"))
 	{
-		log(RED, "{:x} {:x} {:x} {:x} {}", a1, a2, data, size, name.c_str());
+		/*log(RED, "{:x} {:x} {:x} {}", a1, data, size, name->c_str());
 
-		//std::ifstream data_file("alpha.dds", std::ios::binary);
+		const auto data_file = util::fs::read_bin_file("kc_022_lod1.rbm");
 
-		//size = 22000;
+		size = data_file.size();
 
-		//data_file.read((char*)data, size);
+		log(RED, "size: {}", data_file.size());
 
-		//log(RED, "{:x} {:x} {} {:x} {:x}", a1, a2, name.c_str(), data, flags);
+		memcpy((void*)data, data_file.data(), size);
+
+		log(RED, "size: {}", data_file.size());*/
 	}
 
 	//while (!GetAsyncKeyState(VK_F3));
 
-	return resource_request_hook.call(a1, a2, name, data, size);
+	return resource_request_hook.call(a1, name, type, data, size);
 }
 
 /*DEFINE_HOOK_THISCALL(resource_request, 0x40E940, bool, ptr a1, ptr a2, ptr a3, ptr a4, ptr a5, ptr a6, ptr a7)
