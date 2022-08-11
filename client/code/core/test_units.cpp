@@ -162,20 +162,11 @@ void jc::test_units::test_0()
 		jc::stl::string tex_name = "texture.png";
 
 		{ // texture
-
-			std::ifstream data_file(tex_name.c_str(), std::ios::binary);
-
-			int tex_size = 998140;
-
-			char* data = new char[tex_size]();
-
-			data_file.read(data, tex_size);
+			const auto data = util::fs::read_bin_file(tex_name.c_str());
 
 			ref<ptr> r;
 
-			jc::this_call(0x423070, jc::read<ptr>(0xAF2410), &r, tex_name, data, tex_size);
-
-			//delete[] data;
+			jc::this_call(0x423070, jc::read<ptr>(0xAF2410), &r, tex_name, data.data(), data.size());
 
 			log(RED, "texture: {:x}", ptr(r.obj));
 
@@ -183,13 +174,9 @@ void jc::test_units::test_0()
 		}
 
 		{ // model
-			std::ifstream data_file(model_name.c_str(), std::ios::binary);
+			const auto data = util::fs::read_bin_file(model_name.c_str());
 
-			char data[938] = { 0 };
-
-			data_file.read(data, sizeof(data));
-
-			auto r = jc::this_call(0x57A070, jc::read<ptr>(0xD84F50), &model_name, data, 938, 2);
+			auto r = jc::this_call(0x57A070, jc::read<ptr>(0xD84F50), &model_name, data.data(), data.size(), 2);
 
 			ref<ptr> _r;
 

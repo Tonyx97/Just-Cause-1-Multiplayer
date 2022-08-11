@@ -83,3 +83,33 @@ std::tuple<void*, size_t> util::win::load_resource(void* mod_base, int id, LPWST
 
 	return { font_mem, size };
 }
+
+int64_t util::fs::get_file_size(std::ifstream& file)
+{
+	file.seekg(0, std::ios::end);
+
+	const auto length = file.tellg();
+
+	file.seekg(0);
+
+	return static_cast<int64_t>(length);
+}
+
+std::vector<uint8_t> util::fs::read_bin_file(const std::string& filename)
+{
+	std::ifstream file(filename, std::ios::binary);
+
+	if (!file)
+		return {};
+
+	const auto file_size = static_cast<size_t>(get_file_size(file));
+
+	if (file_size <= 0u)
+		return {};
+
+	std::vector<uint8_t> data(file_size);
+
+	file.read(BITCAST(char*, data.data()), file_size);
+
+	return data;
+}

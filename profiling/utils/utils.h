@@ -463,6 +463,13 @@ namespace util
 		std::tuple<void*, size_t> load_resource(void* mod_base, int id, LPWSTR type);
 	}
 
+	namespace fs
+	{
+		int64_t get_file_size(std::ifstream& file);
+
+		std::vector<uint8_t> read_bin_file(const std::string& filename);
+	}
+
 	namespace mem
 	{
 		inline void for_each_module(uint32_t pid, const std::function<bool(uintptr_t base_addr, uint32_t size, const wchar_t* name)>& fn, const std::vector<std::wstring>& ignored_mods)
