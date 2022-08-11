@@ -156,81 +156,19 @@ void jc::test_units::test_0()
 		log(GREEN, "{} {:x} {:x} {:x}", asset.arc_index, asset.hash, asset.offset, asset.size);*/
 	}
 
-	if (g_key->is_key_pressed(VK_NUMPAD4))
+	if (g_key->is_key_down(VK_NUMPAD4))
 	{
-		jc::stl::string model_name = "crate_custom_png.rbm";
-		jc::stl::string pfx_name = "bath_boll.pfx";
 		jc::stl::string anim_name = "test2.anim";
-		jc::stl::string tex_name = "texture.png";
 
-		{ // texture
-			const auto data = util::fs::read_bin_file(tex_name.c_str());
+		g_rsrc_streamer->load_texture("texture.png");
+		g_rsrc_streamer->load_rbm("crate_custom_png.rbm");
+		g_rsrc_streamer->load_pfx("crate.pfx");
 
-			ref<ptr> r;
+		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "crate_custom_png.rbm", "crate.pfx");
 
-			jc::this_call(0x423070, jc::read<ptr>(0xAF2410), &r, tex_name, data.data(), data.size());
-
-			log(RED, "texture: {:x}", ptr(r.obj));
-
-			ay3.push_back(std::move(r));
-		}
-
-		{ // model
-			const auto data = util::fs::read_bin_file(model_name.c_str());
-
-			auto r = jc::this_call(0x57A070, jc::read<ptr>(0xD84F50), &model_name, data.data(), data.size(), 2);
-
-			ref<ptr> _r;
-
-			jc::this_call(0x5C3570, r, &_r);
-
-			log(RED, "rbm: {:x}", ptr(_r.obj));
-
-			ay.push_back(std::move(_r));
-
-			jc::this_call(0x657B70, r);
-			jc::c_call(0x405610, r);
-		}
-
-		/*{ // pfx
-			std::ifstream data_file(pfx_name.c_str(), std::ios::binary);
-
-			char data[2604] = { 0 };
-
-			data_file.read(data, sizeof(data));
-
-			int dummy[12] = { 0 };
-
-			jc::this_call(0x463C20, dummy, data, 2604);
-
-			bref<ptr> br;
-
-			jc::this_call(0x4D8310, &br); // init ref
-
-			mat4 identity = mat4(1.f);
-
-			jc::this_call(0x4E4760, jc::read<ptr>(0xD37340), &pfx_name, &br, &identity, true, true, dummy);
-
-			log(RED, "pfx: {:x}", ptr(br.obj));
-
-			ay2.push_back(std::move(br));
-		}
-
-		{ // anim
-			std::ifstream data_file(anim_name.c_str(), std::ios::binary);
-
-			char data[73628] = { 0 };
-
-			data_file.read(data, sizeof(data));
-
-			ref<ptr> r;
-
-			auto res = jc::this_call(0x55F170, jc::read<ptr>(0xD84D14), &r, &anim_name, data, 73628);
-
-			log(RED, "anim: {:x}", ptr(r.obj));
-
-			ay3.push_back(std::move(r));
-		}*/
+		g_rsrc_streamer->unload_pfx("crate.pfx");
+		g_rsrc_streamer->unload_rbm("crate_custom_png.rbm");
+		g_rsrc_streamer->unload_texture("texture.png");
 	}
 
 	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
@@ -238,18 +176,11 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		jc::stl::string anim_name = "test2.anim";
-		//std::string anim_name = R"(dance_hooker_NPC_2.anim)";
+		g_rsrc_streamer->load_anim("test.anim");
+		local_char->set_animation("test.anim", 0.2f, true, true);
+		g_rsrc_streamer->unload_anim("test.anim");
 
-		/*ptr temp = 0;
-
-		jc::this_call<bool>(0x659FF0, jc::read<ptr>(0xD84D14) + 0x4, &temp, &anim_name);
-
-		log(RED, "anim {:x} {:x}", anim, temp);
-
-		log(RED, "loaded: {}", temp != jc::read<ptr>(jc::read<ptr>(0xD84D14) + 0x8));*/
-
-		local_char->set_animation(anim_name, 0.2f, true, true);
+		//local_char->set_animation("dance_hooker_NPC_2.anim", 0.2f, true, true);
 	}
 
 	struct TestInfo

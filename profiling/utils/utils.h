@@ -466,6 +466,8 @@ namespace util
 	namespace fs
 	{
 		int64_t get_file_size(std::ifstream& file);
+		
+		std::string strip_parent_path(const std::string& str);
 
 		std::vector<uint8_t> read_bin_file(const std::string& filename);
 	}

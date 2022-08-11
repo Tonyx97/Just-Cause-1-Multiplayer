@@ -6,6 +6,11 @@
 
 #include <core/task_system/task_system.h>
 
+std::unordered_map<std::string, ref<AssetRBM>> rbms;
+std::unordered_map<std::string, bref<AssetPFX>> pfxs;
+std::unordered_map<std::string, ref<AssetAnim>> anims;
+std::unordered_map<std::string, ref<AssetTexture>> textures;
+
 void ResourceStreamer::init()
 {
 }
@@ -71,6 +76,131 @@ bool ResourceStreamer::request_exported_entity(int32_t id, const ee_resource_cal
 
 		return true;
 	});
+
+	return true;
+}
+
+bool ResourceStreamer::load_rbm(const std::string& filename)
+{
+	const auto file_data = util::fs::read_bin_file(filename);
+
+	if (file_data.empty())
+		return false;
+
+	jc::stl::string name = util::fs::strip_parent_path(filename);
+
+	auto model = jc::this_call(jc::resource_streamer::fn::LOAD_RBM_FROM_MEM, jc::read<ptr>(0xD84F50), &name, file_data.data(), file_data.size(), 2);
+
+	ref<AssetRBM> r;
+
+	jc::this_call(jc::resource_streamer::fn::GET_RBM_REF, model, &r);
+
+	rbms.insert({ filename, std::move(r) });
+
+	jc::this_call(0x657B70, model);
+	jc::c_call(0x405610, model);
+	
+    return true;
+}
+
+bool ResourceStreamer::load_pfx(const std::string& filename)
+{
+	const auto file_data = util::fs::read_bin_file(filename);
+
+	if (file_data.empty())
+		return false;
+
+	AssetDataHolder data_holder(file_data);
+
+	jc::stl::string name = util::fs::strip_parent_path(filename);
+
+	bref<AssetPFX> r(true);
+
+	mat4 identity = mat4(1.f);
+
+	jc::this_call(jc::resource_streamer::fn::LOAD_PFX_FROM_MEM, jc::read<ptr>(0xD37340), &name, &r, &identity, true, false, &data_holder);
+
+	pfxs.insert({ filename, std::move(r) });
+
+	return true;
+}
+
+bool ResourceStreamer::load_anim(const std::string& filename)
+{
+	const auto file_data = util::fs::read_bin_file(filename);
+
+	if (file_data.empty())
+		return false;
+
+	jc::stl::string name = util::fs::strip_parent_path(filename);
+
+	ref<AssetAnim> r;
+
+	jc::this_call(jc::resource_streamer::fn::LOAD_ANIM_FROM_MEM, jc::read<ptr>(0xD84D14), &r, &name, file_data.data(), file_data.size());
+
+	anims.insert({ filename, std::move(r) });
+
+	return true;
+}
+
+bool ResourceStreamer::load_texture(const std::string& filename)
+{
+	const auto file_data = util::fs::read_bin_file(filename.c_str());
+
+	if (file_data.empty())
+		return false;
+	
+	jc::stl::string name = util::fs::strip_parent_path(filename);
+	
+	ref<AssetTexture> r;
+
+	jc::this_call(jc::resource_streamer::fn::LOAD_TEXTURE_FROM_MEM, jc::read<ptr>(0xAF2410), &r, name, file_data.data(), file_data.size());
+
+	textures.insert({ filename, std::move(r) });
+
+	return true;
+}
+
+bool ResourceStreamer::unload_rbm(const std::string& filename)
+{
+	auto it = rbms.find(filename);
+	if (it == rbms.end())
+		return false;
+
+	rbms.erase(it);
+
+	return true;
+}
+
+bool ResourceStreamer::unload_pfx(const std::string& filename)
+{
+	auto it = pfxs.find(filename);
+	if (it == pfxs.end())
+		return false;
+
+	pfxs.erase(it);
+
+	return true;
+}
+
+bool ResourceStreamer::unload_anim(const std::string& filename)
+{
+	auto it = anims.find(filename);
+	if (it == anims.end())
+		return false;
+
+	anims.erase(it);
+
+	return true;
+}
+
+bool ResourceStreamer::unload_texture(const std::string& filename)
+{
+	auto it = textures.find(filename);
+	if (it == textures.end())
+		return false;
+
+	textures.erase(it);
 
 	return true;
 }

@@ -95,6 +95,16 @@ int64_t util::fs::get_file_size(std::ifstream& file)
 	return static_cast<int64_t>(length);
 }
 
+std::string util::fs::strip_parent_path(const std::string& str)
+{
+	const auto pos = str.find_last_of('\\');
+	
+	if (pos == std::string::npos)
+		return str;
+	
+	return str.substr(pos + 1);
+}
+
 std::vector<uint8_t> util::fs::read_bin_file(const std::string& filename)
 {
 	std::ifstream file(filename, std::ios::binary);

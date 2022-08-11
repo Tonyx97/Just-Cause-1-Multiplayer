@@ -171,6 +171,13 @@ struct bref
 	void*		  unk4	  = nullptr;
 
 	bref() {}
+	
+	bref(bool init)
+	{
+		if (init)
+			jc::this_call(jc::big_reference::fn::INIT, this);
+	}
+	
 	~bref()
 	{
 		if (!vt || !obj || !counter || !unk2 || !unk3 || unk4)
