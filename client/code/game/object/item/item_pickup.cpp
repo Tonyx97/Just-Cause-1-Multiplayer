@@ -2,7 +2,7 @@
 
 #include "item_pickup.h"
 
-#include <game/sys/weapon_system.h>
+#include <game/sys/weapon/weapon_system.h>
 
 namespace jc::item_pickup::hook
 {

@@ -2,7 +2,7 @@
 
 #include "sound_system.h"
 
-#include <game/sys/game_control.h>
+#include <game/sys/game/game_control.h>
 
 #include <game/transform/transform.h>
 

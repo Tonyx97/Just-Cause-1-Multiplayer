@@ -9,8 +9,8 @@
 #include <game/object/character/character.h>
 #include <game/object/localplayer/localplayer.h>
 #include <game/object/character_handle/character_handle.h>
-#include <game/sys/world.h>
-#include <game/sys/factory_system.h>
+#include <game/sys/world/world.h>
+#include <game/sys/core/factory_system.h>
 #include <core/task_system/task_system.h>
 #include <core/keycode.h>
 #include <core/test_units.h>

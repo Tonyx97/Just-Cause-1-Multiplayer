@@ -7,13 +7,13 @@
 #include "../character_handle/character_handle.h"
 
 #include <game/transform/transform.h>
-#include <game/sys/world.h>
-#include <game/sys/physics.h>
-#include <game/sys/ai_core.h>
-#include <game/sys/resource_streamer.h>
-#include <game/sys/player_global_info.h>
-#include <game/sys/weapon_system.h>
-#include <game/sys/particle_system.h>
+#include <game/sys/world/world.h>
+#include <game/sys/resource/physics.h>
+#include <game/sys/ai/ai_core.h>
+#include <game/sys/resource/resource_streamer.h>
+#include <game/sys/world/player_global_info.h>
+#include <game/sys/weapon/weapon_system.h>
+#include <game/sys/particle/particle_system.h>
 
 #include <havok/character_proxy.h>
 #include <havok/motion_state.h>

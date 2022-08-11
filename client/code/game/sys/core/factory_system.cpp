@@ -1,10 +1,11 @@
 #include <defs/standard.h>
 
-#include "game_control.h"
+#include "../game/game_control.h"
+
 #include "factory_system.h"
 
 #include <game/transform/transform.h>
-#include <game/sys/weapon_system.h>
+#include <game/sys/weapon/weapon_system.h>
 #include <game/object/character/character.h>
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/character_handle/character_handle.h>

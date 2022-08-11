@@ -1,8 +1,17 @@
 #include <defs/standard.h>
 
 #include "physics.h"
+#include "resource_streamer.h"
 
 #include <game/object/force_pulse/force_pulse.h>
+#include <game/object/asset/asset_pfx.h>
+
+namespace jc::physics
+{
+	std::unordered_map<std::string, bref<AssetPFX>> pfxs;
+}
+
+using namespace jc::physics;
 
 void hkWorld::set_gravity(const vec4& v)
 {
@@ -33,18 +42,51 @@ void Physics::create_force_pulse(const vec3& position, float radius, float force
 	pulse.activate();
 }
 
+bool Physics::load_pfx(const std::string& filename)
+{
+	const auto file_data = util::fs::read_bin_file(filename);
+
+	if (file_data.empty())
+		return false;
+
+	AssetDataHolder data_holder(file_data);
+
+	jc::stl::string name = util::fs::strip_parent_path(filename);
+
+	bref<AssetPFX> r(true);
+
+	mat4 identity = mat4(1.f);
+
+	jc::this_call(fn::LOAD_PFX_FROM_MEM, this, &name, &r, &identity, true, false, &data_holder);
+
+	pfxs.insert({ filename, std::move(r) });
+
+	return true;
+}
+
+bool Physics::unload_pfx(const std::string& filename)
+{
+	auto it = pfxs.find(filename);
+	if (it == pfxs.end())
+		return false;
+
+	pfxs.erase(it);
+
+	return true;
+}
+
 bool Physics::raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_info, bool unk1, bool unk2)
 {
 	uint8_t buffer[0x54];
 
-	jc::this_call<int, void*>(jc::physics::fn::SETUP_RAYCAST_CTX_BASIC, buffer);
+	jc::this_call<int, void*>(fn::SETUP_RAYCAST_CTX_BASIC, buffer);
 
 	const auto direction = dest - origin;
 
 	ray r(origin, direction);
 
 	return !!jc::this_call<void*, Physics*, const ray*, int, float, ray_hit_info*, void*, bool, bool>(
-		jc::physics::fn::RAYCAST,
+		fn::RAYCAST,
 		this,
 		&r,
 		0,
@@ -57,10 +99,10 @@ bool Physics::raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_in
 
 hkWorld* Physics::get_hk_world() const
 {
-	return jc::read<hkWorld*>(this, jc::physics::HK_WORLD);
+	return jc::read<hkWorld*>(this, HK_WORLD);
 }
 
 vec3 Physics::get_world_position() const
 {
-	return jc::read<vec3>(this, jc::physics::WORLD_POSITION);
+	return jc::read<vec3>(this, WORLD_POSITION);
 }

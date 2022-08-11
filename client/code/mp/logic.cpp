@@ -5,13 +5,13 @@
 
 #include <timer/timer.h>
 
-#include <game/sys/world.h>
+#include <game/sys/world/world.h>
+#include <game/sys/time/time_system.h>
+
 #include <game/object/base/comps/physical.h>
 #include <game/object/character/character.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/weapon/weapon_belt.h>
-
-#include <game/sys/time_system.h>
 
 #include <core/keycode.h>
 

@@ -3,7 +3,7 @@
 #include "weapon.h"
 #include "weapon_belt.h"
 
-#include <game/sys/weapon_system.h>
+#include <game/sys/weapon/weapon_system.h>
 
 void WeaponBelt::set_slot_ammo(int32_t slot, int32_t v)
 {

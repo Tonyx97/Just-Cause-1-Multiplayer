@@ -1,7 +1,7 @@
 #include <defs/standard.h>
 
 #include <game/transform/transform.h>
-#include <game/sys/game_control.h>
+#include <game/sys/game/game_control.h>
 
 #include "damageable_object.h"
 

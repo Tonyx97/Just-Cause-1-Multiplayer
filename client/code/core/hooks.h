@@ -5,7 +5,6 @@
 #include <utils/utils.h>
 
 #include <game/globals.h>
-#include <game/sys/physics.h>
 
 class Transform;
 class Character;

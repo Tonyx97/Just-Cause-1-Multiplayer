@@ -4,7 +4,7 @@
 
 #include <mp/net.h>
 
-#include <game/sys/world.h>
+#include <game/sys/world/world.h>
 
 #include <game/object/character/character.h>
 #include <game/object/damageable_object/damageable_object.h>

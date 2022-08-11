@@ -5,7 +5,7 @@
 #include <mp/net.h>
 
 #ifdef JC_CLIENT
-#include <game/sys/day_cycle.h>
+#include <game/sys/world/day_cycle.h>
 #endif
 
 enet::PacketResult nh::world::day_time(const enet::Packet& p)

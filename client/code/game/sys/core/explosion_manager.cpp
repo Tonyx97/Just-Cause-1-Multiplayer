@@ -1,8 +1,9 @@
 #include <defs/standard.h>
 
 #include "explosion_manager.h"
-#include "particle_system.h"
-#include "physics.h"
+
+#include "../particle/particle_system.h"
+#include "../resource/physics.h"
 
 #include <game/object/area_damage/area_damage.h>
 

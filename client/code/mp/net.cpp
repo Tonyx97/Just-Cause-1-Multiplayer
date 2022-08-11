@@ -9,7 +9,7 @@
 #include <shared_mp/player_client/player_client.h>
 #include <shared_mp/objs/player.h>
 
-#include <game/sys/world.h>
+#include <game/sys/world/world.h>
 #include <game/object/character/character.h>
 
 bool Net::init(const std::string& ip, const std::string& nick)

@@ -5,7 +5,7 @@
 #include "damageable_net_object.h"
 
 #ifdef JC_CLIENT
-#include <game/sys/factory_system.h>
+#include <game/sys/core/factory_system.h>
 
 #include <game/object/base/comps/physical.h>
 #include <game/object/damageable_object/damageable_object.h>

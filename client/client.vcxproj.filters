@@ -24,19 +24,19 @@
     <ClCompile Include="code\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\renderer.cpp">
+    <ClCompile Include="code\game\sys\renderer\renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\world.cpp">
+    <ClCompile Include="code\game\sys\world\world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\character\character.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\physics.cpp">
+    <ClCompile Include="code\game\sys\resource\physics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\vehicle_manager.cpp">
+    <ClCompile Include="code\game\sys\vehicle\vehicle_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\core\hooks.cpp">
@@ -66,7 +66,7 @@
     <ClCompile Include="code\core\ui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\camera_manager.cpp">
+    <ClCompile Include="code\game\sys\camera\camera_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\camera\camera.cpp">
@@ -81,19 +81,19 @@
     <ClCompile Include="code\game\globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\ammo_manager.cpp">
+    <ClCompile Include="code\game\sys\weapon\ammo_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\weapon\bullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\sound_system.cpp">
+    <ClCompile Include="code\game\sys\sound\sound_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\sound\sound_bank.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\time_system.cpp">
+    <ClCompile Include="code\game\sys\time\time_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\weapon\weapon_belt.cpp">
@@ -102,13 +102,13 @@
     <ClCompile Include="code\game\object\character\comps\vehicle_controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\particle_system.cpp">
+    <ClCompile Include="code\game\sys\particle\particle_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\day_cycle.cpp">
+    <ClCompile Include="code\game\sys\world\day_cycle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\explosion_manager.cpp">
+    <ClCompile Include="code\game\sys\core\explosion_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\force_pulse\force_pulse.cpp">
@@ -135,10 +135,10 @@
     <ClCompile Include="code\havok\motion_state.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\game_control.cpp">
+    <ClCompile Include="code\game\sys\game\game_control.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\weapon_system.cpp">
+    <ClCompile Include="code\game\sys\weapon\weapon_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\weapon\weapon.cpp">
@@ -150,7 +150,7 @@
     <ClCompile Include="code\game\object\base\comps\physical.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\factory_system.cpp">
+    <ClCompile Include="code\game\sys\core\factory_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\character_handle\character_handle.cpp">
@@ -159,7 +159,7 @@
     <ClCompile Include="code\game\object\character\comps\stance_controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\ai_core.cpp">
+    <ClCompile Include="code\game\sys\ai\ai_core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\base\comps\model.cpp">
@@ -231,13 +231,13 @@
     <ClCompile Include="code\mp\cmd\cmd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\game_status.cpp">
+    <ClCompile Include="code\game\sys\game\game_status.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\mounted_gun\mounted_gun.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\resource_streamer.cpp">
+    <ClCompile Include="code\game\sys\resource\resource_streamer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\resource\resource.cpp">
@@ -294,7 +294,7 @@
     <ClCompile Include="code\core\thread_system\thread_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\player_global_info.cpp">
+    <ClCompile Include="code\game\sys\world\player_global_info.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\vehicle\comps\vehicle_seat.cpp">
@@ -312,16 +312,16 @@
     <ClCompile Include="code\game\object\savegame\savegame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\game_ctx.cpp">
+    <ClCompile Include="code\game\sys\game\game_ctx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\settings_system.cpp">
+    <ClCompile Include="code\game\sys\settings\settings_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\ui\map_icon_type.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\sys\archives.cpp">
+    <ClCompile Include="code\game\sys\resource\archives.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\asset\asset_rbm.cpp">
@@ -336,21 +336,30 @@
     <ClCompile Include="code\game\object\asset\asset_texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\game\sys\resource\model_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\game\sys\resource\anim_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\game\sys\resource\texture_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="code\game\sys\renderer.h">
+    <ClInclude Include="code\game\sys\renderer\renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\world.h">
+    <ClInclude Include="code\game\sys\world\world.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\character\character.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\physics.h">
+    <ClInclude Include="code\game\sys\resource\physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\vehicle_manager.h">
+    <ClInclude Include="code\game\sys\vehicle\vehicle_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\core\hooks.h">
@@ -383,7 +392,7 @@
     <ClInclude Include="code\core\ui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\camera_manager.h">
+    <ClInclude Include="code\game\sys\camera\camera_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\camera\camera.h">
@@ -401,19 +410,19 @@
     <ClInclude Include="code\stl\vec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\ammo_manager.h">
+    <ClInclude Include="code\game\sys\weapon\ammo_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\weapon\bullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\sound_system.h">
+    <ClInclude Include="code\game\sys\sound\sound_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\sound\sound_bank.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\time_system.h">
+    <ClInclude Include="code\game\sys\time\time_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\weapon\weapon_belt.h">
@@ -422,16 +431,16 @@
     <ClInclude Include="code\game\object\character\comps\vehicle_controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\particle_system.h">
+    <ClInclude Include="code\game\sys\particle\particle_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\day_cycle.h">
+    <ClInclude Include="code\game\sys\world\day_cycle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\sys\all.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\explosion_manager.h">
+    <ClInclude Include="code\game\sys\core\explosion_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\force_pulse\force_pulse.h">
@@ -458,10 +467,10 @@
     <ClInclude Include="code\havok\motion_state.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\game_control.h">
+    <ClInclude Include="code\game\sys\game\game_control.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\weapon_system.h">
+    <ClInclude Include="code\game\sys\weapon\weapon_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\weapon\weapon.h">
@@ -476,7 +485,7 @@
     <ClInclude Include="code\core\patching.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\factory_system.h">
+    <ClInclude Include="code\game\sys\core\factory_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\character_handle\character_handle.h">
@@ -485,7 +494,7 @@
     <ClInclude Include="code\game\object\character\comps\stance_controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\ai_core.h">
+    <ClInclude Include="code\game\sys\ai\ai_core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\stl\ref.h">
@@ -566,13 +575,13 @@
     <ClInclude Include="code\mp\cmd\cmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\game_status.h">
+    <ClInclude Include="code\game\sys\game\game_status.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\mounted_gun\mounted_gun.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\resource_streamer.h">
+    <ClInclude Include="code\game\sys\resource\resource_streamer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\resource\resource.h">
@@ -650,7 +659,7 @@
     <ClInclude Include="code\core\thread_system\stl\vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\player_global_info.h">
+    <ClInclude Include="code\game\sys\world\player_global_info.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\vehicle\comps\vehicle_seat.h">
@@ -674,10 +683,10 @@
     <ClInclude Include="code\game\object\vars\anims.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\game_ctx.h">
+    <ClInclude Include="code\game\sys\game\game_ctx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\settings_system.h">
+    <ClInclude Include="code\game\sys\settings\settings_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\main.h">
@@ -689,7 +698,7 @@
     <ClInclude Include="rsrc\resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\sys\archives.h">
+    <ClInclude Include="code\game\sys\resource\archives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\asset\asset_rbm.h">
@@ -702,6 +711,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\asset\asset_texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\sys\resource\model_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\sys\resource\anim_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\sys\resource\texture_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

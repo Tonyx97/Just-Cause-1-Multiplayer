@@ -6,7 +6,7 @@
 #include <mp/net.h>
 #include <mp/cmd/cmd.h>
 
-#include <game/sys/game_status.h>
+#include <game/sys/game/game_status.h>
 
 #include "chat.h"
 

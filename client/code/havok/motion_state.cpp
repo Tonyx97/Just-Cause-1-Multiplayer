@@ -2,6 +2,8 @@
 
 #include "motion_state.h"
 
+#include <game/sys/resource/physics.h>
+
 void hkMotionState::set_position(const vec3& v, bool absolute)
 {
 	if (absolute)

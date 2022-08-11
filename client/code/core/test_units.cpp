@@ -160,15 +160,15 @@ void jc::test_units::test_0()
 	{
 		jc::stl::string anim_name = "test2.anim";
 
-		g_rsrc_streamer->load_texture("texture.png");
-		g_rsrc_streamer->load_rbm("crate_custom_png.rbm");
-		g_rsrc_streamer->load_pfx("crate.pfx");
+		g_texture_system->load_texture("texture.png");
+		g_model_system->load_rbm("crate_custom_png.rbm");
+		g_physics->load_pfx("crate.pfx");
 
 		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "crate_custom_png.rbm", "crate.pfx");
 
-		g_rsrc_streamer->unload_pfx("crate.pfx");
-		g_rsrc_streamer->unload_rbm("crate_custom_png.rbm");
-		g_rsrc_streamer->unload_texture("texture.png");
+		g_physics->unload_pfx("crate.pfx");
+		g_model_system->unload_rbm("crate_custom_png.rbm");
+		g_texture_system->unload_texture("texture.png");
 	}
 
 	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
@@ -176,9 +176,9 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		g_rsrc_streamer->load_anim("test.anim");
+		g_anim_system->load_anim("test.anim");
 		local_char->set_animation("test.anim", 0.2f, true, true);
-		g_rsrc_streamer->unload_anim("test.anim");
+		g_anim_system->unload_anim("test.anim");
 
 		//local_char->set_animation("dance_hooker_NPC_2.anim", 0.2f, true, true);
 	}

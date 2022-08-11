@@ -5,7 +5,7 @@
 #include <game/object/weapon/weapon.h>
 #include <game/object/weapon/weapon_belt.h>
 
-#include <game/sys/weapon_system.h>
+#include <game/sys/weapon/weapon_system.h>
 
 void AmmoManager::init()
 {

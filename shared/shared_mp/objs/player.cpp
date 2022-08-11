@@ -5,9 +5,9 @@
 #include "player.h"
 
 #ifdef JC_CLIENT
-#include <game/sys/factory_system.h>
-#include <game/sys/world.h>
-#include <game/sys/weapon_system.h>
+#include <game/sys/core/factory_system.h>
+#include <game/sys/world/world.h>
+#include <game/sys/weapon/weapon_system.h>
 #include <game/object/spawn_point/spawn_point.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/character/character.h>

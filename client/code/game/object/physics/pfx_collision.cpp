@@ -7,7 +7,7 @@
 
 #include <mp/net.h>
 
-#include <game/sys/world.h>
+#include <game/sys/world/world.h>
 
 namespace jc::pfx_collision::hook
 {

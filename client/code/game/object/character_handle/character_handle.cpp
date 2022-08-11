@@ -4,7 +4,7 @@
 
 #include "character_handle.h"
 
-#include <game/sys/ai_core.h>
+#include <game/sys/ai/ai_core.h>
 
 void CharacterHandle::set_pending_destroy()
 {
