@@ -23,6 +23,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)bug_ripper\bug_ripper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)prof\prof.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)registry\registry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\buffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\utils.h" />
   </ItemGroup>
 </Project>

@@ -1,61 +1,34 @@
 #include <defs/libs.h>
 #include <defs/standard.h>
 
+#include <utils/buffer.h>
+
 #include <assimp/Exporter.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/SceneCombiner.h>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-struct Buffer
+static constexpr std::string_view INPUT_DIR = "input\\";
+static constexpr std::string_view OUTPUT_DIR = "output\\";
+
+int rbms_done = 0;
+
+void convert_to_rbm(const std::string& path, const std::string& filename, const std::string& ext)
 {
-	std::vector<uint8_t> data;
-
-	Buffer() {}
-
-	template <typename T>
-	void insert(const T& v, size_t size)
+	struct VertexInfo
 	{
-		const auto ptr = BITCAST(uint8_t*, &v);
+		vec3 position;
+		vec3 normal;
+		vec2 uv;
+		uint32_t color;
+	};
 
-		data.insert(data.end(), ptr, ptr + size);
-	}
-
-	template <typename T>
-	void insert(T* v, size_t size)
-	{
-		data.insert(data.end(), v, v + size);
-	}
-
-	template <typename T, std::enable_if_t<!std::is_pointer_v<T> && !std::is_array_v<T>>* = nullptr>
-	void add(const T& v)
-	{
-		insert(v, sizeof(v));
-	}
-
-	void add(const std::string& v)
-	{
-		insert(v.length(), sizeof(size_t));
-		insert(v.c_str(), v.length());
-	}
-
-	void to_file(const std::string& filename)
-	{
-		std::ofstream test_file(filename, std::ios::binary);
-
-		test_file.write(BITCAST(char*, data.data()), data.size());
-	}
-};
-
-int main()
-{
 	Assimp::Importer imp;
 
 	auto scene = imp.ReadFile(
-		"test.fbx",
-		//aiProcess_MakeLeftHanded |
+		path,
 		aiProcess_FlipUVs |
-		//aiProcess_FlipWindingOrder |
 		aiProcess_Triangulate |
 		aiProcess_CalcTangentSpace |
 		aiProcess_ForceGenNormals |
@@ -65,52 +38,45 @@ int main()
 		aiProcess_ImproveCacheLocality |
 		aiProcess_LimitBoneWeights);
 
-	log(RED, "meshes: {}", scene->mNumMeshes);
-
 	Buffer out {};
 
-	out.add("RBMDL");
-	out.add(1);
-	out.add(3);
-	out.add(1);
-	out.add(-vec3(10.f, 10.f, 10.f));
-	out.add(vec3(10.f, 10.f, 10.f));
-	out.add(scene->mNumMeshes); // block count
-
-	for (int mesh_index = 0; mesh_index < scene->mNumMeshes; ++mesh_index)
+	auto add_header = [&](const vec3& min_bb, const vec3& max_bb, int blocks_count)
 	{
-		out.add("DiffuseVertexColors");
+		out.add("RBMDL");
+		out.add(1);
+		out.add(3);
+		out.add(1);
+		out.add(min_bb);
+		out.add(max_bb);
+		out.add(blocks_count);
+	};
 
-		const auto mesh = scene->mMeshes[mesh_index];
-		const auto material = scene->mMaterials[mesh->mMaterialIndex];
-
-		check(material->GetTextureCount(aiTextureType_DIFFUSE) < 2, "Invalid amount of textures");
+	auto get_texture_by_type = [&](aiMaterial* material, aiTextureType type, int index = 0)
+	{
+		check(material->GetTextureCount(type) < 2, "Invalid amount of textures");
 
 		aiString name;
 
-		check(material->GetTexture(aiTextureType_DIFFUSE, 0, &name) == aiReturn_SUCCESS, "Could not get a mesh texture");
+		check(material->GetTexture(type, 0, &name) == aiReturn_SUCCESS, "Could not get a mesh texture");
 
-		log(RED, "{}", name.C_Str());
+		return std::string(name.C_Str());
+	};
 
-		out.add(name.C_Str());
+	add_header(-vec3(10.f, 10.f, 10.f), vec3(10.f, 10.f, 10.f), scene->mNumMeshes);
 
-		for (int i = 0; i < 20; ++i) out.add(0.f);
-		
-		out.add(3); // primitive type
-		out.add(mesh->mNumVertices); // vertex count
+	for (uint32_t mesh_index = 0u; mesh_index < scene->mNumMeshes; ++mesh_index)
+	{
+		const auto mesh = scene->mMeshes[mesh_index];
+		const auto material = scene->mMaterials[mesh->mMaterialIndex];
 
-		struct VertexInfo
-		{
-			vec3 position;
-			vec3 normal;
-			vec2 uv;
-			uint32_t color;
-		};
+		check(mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE, "Only triangle meshes supported");
+
+		const auto texture = get_texture_by_type(material, aiTextureType_DIFFUSE);
 
 		std::vector<VertexInfo> vertices;
 		std::vector<uint16_t> indices;
 
-		for (int i = 0; i < mesh->mNumVertices; ++i)
+		for (uint32_t i = 0u; i < mesh->mNumVertices; ++i)
 		{
 			vertices.push_back(
 			{
@@ -121,7 +87,7 @@ int main()
 			});
 		}
 
-		for (int face_index = 0; face_index < mesh->mNumFaces; ++face_index)
+		for (uint32_t face_index = 0u; face_index < mesh->mNumFaces; ++face_index)
 		{
 			const auto face = &mesh->mFaces[face_index];
 
@@ -132,9 +98,15 @@ int main()
 			indices.push_back(static_cast<uint16_t>(face->mIndices[2]));
 		}
 
-		log(GREEN, "primitive type: {}", int(mesh->mPrimitiveTypes));
-		log(GREEN, "vertices: {}", vertices.size());
-		log(GREEN, "indices: {}", indices.size());
+		// write the data
+
+		out.add("DiffuseVertexColors");
+		out.add(texture);
+
+		for (int i = 0; i < 20; ++i) out.add(0.f);
+
+		out.add(3); // triangle list
+		out.add(vertices.size()); // vertex count
 
 		for (const auto& vertex : vertices)
 			out.add(vertex.position);
@@ -154,14 +126,43 @@ int main()
 		out.add(0);
 		out.add(indices.size());
 
-		for (uint16_t i = 0; auto index : indices)
+		for (auto index : indices)
 			out.add(index);
 
 		out.add(0x89ABCDEF);
 	}
 
-	out.to_file("test.rbm");
+	out.to_file(std::string(OUTPUT_DIR) + filename + ".rbm");
 
-	//return EXIT_SUCCESS;
+	++rbms_done;
+}
+
+int main()
+{
+	bool close = false;
+
+	if (close = !std::filesystem::is_directory(INPUT_DIR))
+		std::filesystem::create_directory(INPUT_DIR);
+
+	if (close = close || !std::filesystem::is_directory(OUTPUT_DIR))
+		std::filesystem::create_directory(OUTPUT_DIR);
+
+	if (close)
+		return EXIT_SUCCESS;
+
+	for (auto e : std::filesystem::directory_iterator(INPUT_DIR))
+	{
+		const auto p = e.path();
+		const auto path = p.string();
+		const auto filename = p.stem().string();
+		const auto ext = p.extension().string();
+
+		if (ext == ".fbx" || ext == ".3ds" || ext == ".obj")
+			convert_to_rbm(path, filename, ext);
+	}
+
+	log(GREEN, "*** Conversion completed ***");
+	log(GREEN, "RBMs converted: {}", rbms_done);
+	
 	return std::cin.get();
 }
