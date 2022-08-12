@@ -147,8 +147,9 @@ void jc::test_units::test_0()
 	{
 		using namespace enet;
 
-		auto rbm = util::fs::read_bin_file("complex.rbm");
 		std::vector<uint8_t> out;
+
+		auto rbm = util::fs::read_bin_file("complex.rbm");
 
 		const auto type = deserialize_string(rbm);
 		const auto major = deserialize_int(rbm);
@@ -180,6 +181,7 @@ void jc::test_units::test_0()
 			int textures_count = 0;
 			
 			bool use_color = false;
+			bool use_normals = false;
 
 			switch (util::hash::JENKINS(block_type))
 			{
@@ -187,18 +189,21 @@ void jc::test_units::test_0()
 			{
 				textures_count = 1;
 				use_color = false;
-				break;
-			}
-			case util::hash::JENKINS("AdditiveAlpha"):
-			{
-				textures_count = 1;
-				use_color = false;
+				use_normals = true;
 				break;
 			}
 			case util::hash::JENKINS("DiffuseVertexColors"):
 			{
 				textures_count = 1;
 				use_color = true;
+				use_normals = true;
+				break;
+			}
+			case util::hash::JENKINS("AdditiveAlpha"):
+			{
+				textures_count = 1;
+				use_color = false;
+				use_normals = false;
 				break;
 			}
 			default: log(RED, "    Unknown block type: {}", type);
@@ -234,16 +239,17 @@ void jc::test_units::test_0()
 				log(GREEN, "    vertex {}: {:.2f}, {:.2f}, {:.2f}", v, f.x, f.y, f.z);
 			}
 
-			const auto unk0 = deserialize_int(rbm);
+			const auto unk0 = deserialize_int<uint32_t>(rbm);
+
+			log(GREEN, "    unk0: {0:b}", unk0);
 
 			serialize_params(out, unk0);
-
-			log(GREEN, "    f0: {0:b}", unk0);
-			log(GREEN, "    f0: {0:b}", unk0);
 
 			for (int v = 0; v < vertex_count; ++v)
 			{
 				const auto uv = deserialize_general_data<vec2>(rbm);
+
+				serialize_params(out, uv);
 
 				if (use_color)
 				{
@@ -254,29 +260,34 @@ void jc::test_units::test_0()
 					log(GREEN, "    color {}: {:x}", v, color);
 				}
 
-				const auto _nx = deserialize_int<int8_t>(rbm);
-				const auto _ny = deserialize_int<int8_t>(rbm);
-				const auto _nz = deserialize_int<int8_t>(rbm);
-				const auto _nw = deserialize_int<int8_t>(rbm);
-				const auto nx = util::pack::unpack_float(_nx, 127.f);
-				const auto ny = util::pack::unpack_float(_ny, 127.f);
-				const auto nz = util::pack::unpack_float(_nz, 127.f);
-				const auto nw = util::pack::unpack_float(_nw, 127.f);
+				if (use_normals)
+				{
+					const auto _nx = deserialize_int<int8_t>(rbm);
+					const auto _ny = deserialize_int<int8_t>(rbm);
+					const auto _nz = deserialize_int<int8_t>(rbm);
+					const auto _nw = deserialize_int<int8_t>(rbm);
 
-				serialize_params(out, uv);
-				serialize_params(out, util::pack::pack_float<int8_t>(nx, 127.f));
-				serialize_params(out, util::pack::pack_float<int8_t>(ny, 127.f));
-				serialize_params(out, util::pack::pack_float<int8_t>(nz, 127.f));
-				serialize_params(out, util::pack::pack_float<int8_t>(nw, 127.f));
+					const auto nx = util::pack::unpack_float(_nx, 127.f);
+					const auto ny = util::pack::unpack_float(_ny, 127.f);
+					const auto nz = util::pack::unpack_float(_nz, 127.f);
+					const auto nw = util::pack::unpack_float(_nw, 127.f);
 
-				log(GREEN, "    uv {}: {:.2f}, {:.2f} | {:.2f} {:.2f} {:.2f}", v, uv.x, uv.y, nx, ny, nz);
+					serialize_params(out, util::pack::pack_float<int8_t>(nx, 127.f));
+					serialize_params(out, util::pack::pack_float<int8_t>(ny, 127.f));
+					serialize_params(out, util::pack::pack_float<int8_t>(nz, 127.f));
+					serialize_params(out, util::pack::pack_float<int8_t>(nw, 127.f));
+
+					log(GREEN, "    normal {}: {:.2f} {:.2f} {:.2f}", v, nx, ny, nz);
+				}
+
+				log(GREEN, "    uv {}: {:.2f}, {:.2f}", v, uv.x, uv.y);
 			}
 
 			uint32_t indices_count = deserialize_int(rbm);
 
-			serialize_params(out, indices_count);
-
 			log(GREEN, "    indices_count: {}", indices_count);
+
+			serialize_params(out, indices_count);
 
 			bool use_first_indices = true;
 
@@ -284,9 +295,9 @@ void jc::test_units::test_0()
 			{
 				indices_count = deserialize_int<uint16_t>(rbm);
 
-				log(GREEN, "    (second) indices_count: {}", indices_count);
+				serialize_params<int16_t>(out, indices_count);
 
-				serialize_params(out, indices_count);
+				log(GREEN, "    (second) indices_count: {}", indices_count);
 
 				use_first_indices = false;
 			}
