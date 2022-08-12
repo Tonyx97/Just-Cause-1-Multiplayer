@@ -219,7 +219,11 @@ void jc::test_units::test_0()
 			}
 
 			for (int i = 0; i < 20; ++i)
-				serialize_params(out, deserialize_float(rbm));
+			{
+				const auto f = deserialize_float(rbm);
+
+				serialize_params(out, f);
+			}
 
 			const auto primitive_type = deserialize_int(rbm);
 			const auto vertex_count = deserialize_int(rbm);
@@ -241,7 +245,7 @@ void jc::test_units::test_0()
 
 			const auto unk0 = deserialize_int<uint32_t>(rbm);
 
-			log(GREEN, "    unk0: {0:b}", unk0);
+			log(GREEN, "    vertices infos: {}", unk0);
 
 			serialize_params(out, unk0);
 
@@ -249,7 +253,7 @@ void jc::test_units::test_0()
 			{
 				auto uv = deserialize_general_data<vec2>(rbm);
 
-				vec2 fixed[4] =
+				/*vec2 fixed[4] =
 				{
 					{ 1.f, 1.f },
 					{ 1.f, 0.f },
@@ -261,7 +265,7 @@ void jc::test_units::test_0()
 
 				uv = fixed[i];
 
-				i = (i + 1) % 4;
+				i = (i + 1) % 4;*/
 
 				serialize_params(out, uv);
 
@@ -296,37 +300,30 @@ void jc::test_units::test_0()
 
 				log(GREEN, "    uv {}: {:.2f}, {:.2f}", v, uv.x, uv.y);
 			}
+			
+			auto indices_count = deserialize_int(rbm);
 
-			uint32_t indices_count = deserialize_int(rbm);
-
-			log(GREEN, "    indices_count: {}", indices_count);
+			log(RED, "trash indices: {}", indices_count);
 
 			serialize_params(out, indices_count);
 
-			bool use_first_indices = true;
-
 			if (indices_count == 0)
 			{
-				indices_count = deserialize_int<uint16_t>(rbm);
+				indices_count = deserialize_int(rbm);
 
-				serialize_params<int16_t>(out, indices_count);
-
-				log(GREEN, "    (second) indices_count: {}", indices_count);
-
-				use_first_indices = false;
+				serialize_params(out, indices_count);
 			}
+
+			log(GREEN, "    indices_count: {}", indices_count);
 
 			for (int v = 0; v < indices_count; ++v)
 			{
-				const auto f = deserialize_int<uint16_t>(rbm);
+				const auto index = deserialize_int<uint16_t>(rbm);
 
-				serialize_params(out, f);
+				serialize_params(out, index);
 
-				log(GREEN, "    index {}: {}", v, f);
+				log(GREEN, "    index {}: {}", v, index);
 			}
-
-			if (!use_first_indices)
-				serialize_params(out, deserialize_int<uint16_t>(rbm));
 
 			const auto block_end = deserialize_int<uint32_t>(rbm);
 
@@ -356,7 +353,7 @@ void jc::test_units::test_0()
 	{
 		std::string model = "test.rbm"; // "crate_custom_png.rbm"
 
-		g_texture_system->load_texture("texture.png");
+		g_texture_system->load_texture("1.jpg");
 		g_model_system->load_rbm(model);
 		g_physics->load_pfx("crate.pfx");
 
@@ -364,7 +361,7 @@ void jc::test_units::test_0()
 
 		g_physics->unload_pfx("crate.pfx");
 		g_model_system->unload_rbm(model);
-		g_texture_system->unload_texture("texture.png");
+		g_texture_system->unload_texture("1.jpg");
 	}
 
 	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
