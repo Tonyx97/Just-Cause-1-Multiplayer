@@ -6,8 +6,6 @@
 #include <defs/libs.h>
 #include <defs/standard.h>
 
-#include <iostream>
-
 #include <timer/timer.h>
 
 #include <game/sys/all.h>

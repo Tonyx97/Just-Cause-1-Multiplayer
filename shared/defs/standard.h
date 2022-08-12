@@ -5,6 +5,7 @@
 #include <dbghelp.h>
 #include <tlhelp32.h>
 
+#include <iostream>
 #include <filesystem>
 #include <concepts>
 #include <fstream>

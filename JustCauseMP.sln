@@ -16,6 +16,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shared", "shared\shared.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "profiling", "profiling\profiling.vcxitems", "{C71A13A3-8825-4C05-8925-E11ECBE42EEB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asset_converter", "asset_converter\asset_converter.vcxproj", "{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -48,6 +50,14 @@ Global
 		{F3A1C58E-2EA8-414B-A0A0-ABCE1D08A247}.Release|x64.Build.0 = Release|x64
 		{F3A1C58E-2EA8-414B-A0A0-ABCE1D08A247}.Release|x86.ActiveCfg = Release|Win32
 		{F3A1C58E-2EA8-414B-A0A0-ABCE1D08A247}.Release|x86.Build.0 = Release|Win32
+		{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}.Debug|x64.ActiveCfg = Debug|x64
+		{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}.Debug|x64.Build.0 = Debug|x64
+		{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}.Debug|x86.ActiveCfg = Debug|Win32
+		{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}.Debug|x86.Build.0 = Debug|Win32
+		{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}.Release|x64.ActiveCfg = Release|x64
+		{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}.Release|x64.Build.0 = Release|x64
+		{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}.Release|x86.ActiveCfg = Release|Win32
+		{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +71,7 @@ Global
 		profiling\profiling.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		shared\shared.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		profiling\profiling.vcxitems*{c71a13a3-8825-4c05-8925-e11ecbe42eeb}*SharedItemsImports = 9
+		profiling\profiling.vcxitems*{dcf6d994-54fa-4ad0-9adb-e34faffaf46f}*SharedItemsImports = 4
 		shared\shared.vcxitems*{dffbc708-890d-491b-980f-e8613869783b}*SharedItemsImports = 9
 		profiling\profiling.vcxitems*{f3a1c58e-2ea8-414b-a0a0-abce1d08a247}*SharedItemsImports = 4
 	EndGlobalSection
