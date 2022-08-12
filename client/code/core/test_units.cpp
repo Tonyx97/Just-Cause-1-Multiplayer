@@ -149,7 +149,7 @@ void jc::test_units::test_0()
 
 		std::vector<uint8_t> out;
 
-		auto rbm = util::fs::read_bin_file("complex.rbm");
+		auto rbm = util::fs::read_bin_file("crate_custom_png.rbm");
 
 		const auto type = deserialize_string(rbm);
 		const auto major = deserialize_int(rbm);
@@ -247,7 +247,21 @@ void jc::test_units::test_0()
 
 			for (int v = 0; v < vertex_count; ++v)
 			{
-				const auto uv = deserialize_general_data<vec2>(rbm);
+				auto uv = deserialize_general_data<vec2>(rbm);
+
+				vec2 fixed[4] =
+				{
+					{ 1.f, 1.f },
+					{ 1.f, 0.f },
+					{ 0.f, 1.f },
+					{ 0.f, 0.f },
+				};
+
+				static int i = 0;
+
+				uv = fixed[i];
+
+				i = (i + 1) % 4;
 
 				serialize_params(out, uv);
 
