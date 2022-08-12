@@ -34,6 +34,7 @@ using ivec3 = glm::i32vec3;
 using i16vec3 = glm::i16vec3;
 using u16vec3 = glm::u16vec3;
 using ivec2 = glm::i32vec2;
+using uvec2 = glm::u32vec2;
 using ivec1 = glm::i32vec1;
 
 /**

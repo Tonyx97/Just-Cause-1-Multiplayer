@@ -127,6 +127,8 @@ void jc::test_units::destroy()
 	//_test_hook.unhook();
 }
 
+#include <net/serializer.h>
+
 void jc::test_units::test_0()
 {
 	auto localplayer = g_world->get_localplayer();
@@ -139,11 +141,180 @@ void jc::test_units::test_0()
 	auto local_pos = local_char->get_position();
 	Transform local_t(local_pos);
 
-	// icon stuff
+	// rbm reversing
 
-	static std::vector<ref<ptr>> ay;
-	static std::vector<bref<ptr>> ay2;
-	static std::vector<ref<ptr>> ay3;
+	if (g_key->is_key_pressed(VK_NUMPAD2))
+	{
+		using namespace enet;
+
+		auto rbm = util::fs::read_bin_file("complex.rbm");
+		std::vector<uint8_t> out;
+
+		const auto type = deserialize_string(rbm);
+		const auto major = deserialize_int(rbm);
+		const auto minor = deserialize_int(rbm);
+		const auto minor2 = deserialize_int(rbm);
+		const auto min_bb = deserialize_general_data<vec3>(rbm);
+		const auto max_bb = deserialize_general_data<vec3>(rbm);
+		const auto blocks_count = deserialize_int(rbm);
+
+		serialize_params(out, type);
+		serialize_params(out, major);
+		serialize_params(out, minor);
+		serialize_params(out, minor2);
+		serialize_params(out, min_bb);
+		serialize_params(out, max_bb);
+		serialize_params(out, blocks_count);
+
+		log(GREEN, "version: {}.{}.{}", major, minor, minor2);
+		log(GREEN, "header: '{}'", type);
+
+		for (int i = 0; i < blocks_count; ++i)
+		{
+			const auto block_type = deserialize_string(rbm);
+
+			log(GREEN, "  block {} type: '{}'", i, block_type);
+
+			serialize_params(out, block_type);
+
+			int textures_count = 0;
+			
+			bool use_color = false;
+
+			switch (util::hash::JENKINS(block_type))
+			{
+			case util::hash::JENKINS("Diffuse"):
+			{
+				textures_count = 1;
+				use_color = false;
+				break;
+			}
+			case util::hash::JENKINS("AdditiveAlpha"):
+			{
+				textures_count = 1;
+				use_color = false;
+				break;
+			}
+			case util::hash::JENKINS("DiffuseVertexColors"):
+			{
+				textures_count = 1;
+				use_color = true;
+				break;
+			}
+			default: log(RED, "    Unknown block type: {}", type);
+			}
+
+			for (int texture_i = 0; texture_i < textures_count; ++texture_i)
+			{
+				const auto texture_name = deserialize_string(rbm);
+
+				serialize_params(out, texture_name);
+
+				log(GREEN, "    texture {} name: '{}'", texture_i, texture_name);
+			}
+
+			for (int i = 0; i < 20; ++i)
+				serialize_params(out, deserialize_float(rbm));
+
+			const auto primitive_type = deserialize_int(rbm);
+			const auto vertex_count = deserialize_int(rbm);
+
+			serialize_params(out, primitive_type);
+			serialize_params(out, vertex_count);
+
+			log(GREEN, "    primitive type: {}", primitive_type);
+			log(GREEN, "    vertices count: {}", vertex_count);
+
+			for (int v = 0; v < vertex_count; ++v)
+			{
+				const auto f = deserialize_general_data<vec3>(rbm);
+
+				serialize_params(out, f);
+
+				log(GREEN, "    vertex {}: {:.2f}, {:.2f}, {:.2f}", v, f.x, f.y, f.z);
+			}
+
+			const auto unk0 = deserialize_int(rbm);
+
+			serialize_params(out, unk0);
+
+			log(GREEN, "    f0: {0:b}", unk0);
+			log(GREEN, "    f0: {0:b}", unk0);
+
+			for (int v = 0; v < vertex_count; ++v)
+			{
+				const auto uv = deserialize_general_data<vec2>(rbm);
+
+				if (use_color)
+				{
+					const auto color = deserialize_int<uint32_t>(rbm);
+
+					serialize_params(out, color);
+
+					log(GREEN, "    color {}: {:x}", v, color);
+				}
+
+				const auto _nx = deserialize_int<int8_t>(rbm);
+				const auto _ny = deserialize_int<int8_t>(rbm);
+				const auto _nz = deserialize_int<int8_t>(rbm);
+				const auto _nw = deserialize_int<int8_t>(rbm);
+				const auto nx = util::pack::unpack_float(_nx, 127.f);
+				const auto ny = util::pack::unpack_float(_ny, 127.f);
+				const auto nz = util::pack::unpack_float(_nz, 127.f);
+				const auto nw = util::pack::unpack_float(_nw, 127.f);
+
+				serialize_params(out, uv);
+				serialize_params(out, util::pack::pack_float<int8_t>(nx, 127.f));
+				serialize_params(out, util::pack::pack_float<int8_t>(ny, 127.f));
+				serialize_params(out, util::pack::pack_float<int8_t>(nz, 127.f));
+				serialize_params(out, util::pack::pack_float<int8_t>(nw, 127.f));
+
+				log(GREEN, "    uv {}: {:.2f}, {:.2f} | {:.2f} {:.2f} {:.2f}", v, uv.x, uv.y, nx, ny, nz);
+			}
+
+			uint32_t indices_count = deserialize_int(rbm);
+
+			serialize_params(out, indices_count);
+
+			log(GREEN, "    indices_count: {}", indices_count);
+
+			bool use_first_indices = true;
+
+			if (indices_count == 0)
+			{
+				indices_count = deserialize_int<uint16_t>(rbm);
+
+				log(GREEN, "    (second) indices_count: {}", indices_count);
+
+				serialize_params(out, indices_count);
+
+				use_first_indices = false;
+			}
+
+			for (int v = 0; v < indices_count; ++v)
+			{
+				const auto f = deserialize_int<uint16_t>(rbm);
+
+				serialize_params(out, f);
+
+				log(GREEN, "    index {}: {}", v, f);
+			}
+
+			if (!use_first_indices)
+				serialize_params(out, deserialize_int<uint16_t>(rbm));
+
+			const auto block_end = deserialize_int<uint32_t>(rbm);
+
+			serialize_params(out, block_end);
+
+			if (block_end == 0x89ABCDEF)
+				log(CYAN, "    block ended");
+		}
+
+		std::ofstream test_file("test.rbm", std::ios::binary);
+
+		test_file.write((char*)out.data(), out.size());
+	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
@@ -156,18 +327,18 @@ void jc::test_units::test_0()
 		log(GREEN, "{} {:x} {:x} {:x}", asset.arc_index, asset.hash, asset.offset, asset.size);*/
 	}
 
-	if (g_key->is_key_down(VK_NUMPAD4))
+	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		jc::stl::string anim_name = "test2.anim";
+		std::string model = "test.rbm"; // "crate_custom_png.rbm"
 
 		g_texture_system->load_texture("texture.png");
-		g_model_system->load_rbm("crate_custom_png.rbm");
+		g_model_system->load_rbm(model);
 		g_physics->load_pfx("crate.pfx");
 
-		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "crate_custom_png.rbm", "crate.pfx");
+		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), model, "crate.pfx");
 
 		g_physics->unload_pfx("crate.pfx");
-		g_model_system->unload_rbm("crate_custom_png.rbm");
+		g_model_system->unload_rbm(model);
 		g_texture_system->unload_texture("texture.png");
 	}
 
