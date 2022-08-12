@@ -32,10 +32,26 @@ struct Buffer
 		insert(v.c_str(), v.length());
 	}
 
+	template <typename T, typename... A>
+	void add(const T& v, A... args)
+	{
+		if constexpr (std::is_array_v<T>)
+			add(std::string(v));
+		else add(v);
+
+		if constexpr (sizeof...(args) > 0)
+			add(args...);
+	}
+
 	void to_file(const std::string& filename)
 	{
 		std::ofstream test_file(filename, std::ios::binary);
 
 		test_file.write(BITCAST(char*, data.data()), data.size());
+	}
+
+	void copy_to(uint8_t* dst)
+	{
+		memcpy(dst, data.data(), data.size());
 	}
 };

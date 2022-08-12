@@ -32,6 +32,7 @@
 #include <memory/memory.h>
 
 #include <utils/utils.h>
+#include <utils/buffer.h>
 
 #include <math/math.h>
 

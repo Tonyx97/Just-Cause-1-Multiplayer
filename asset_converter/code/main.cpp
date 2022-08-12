@@ -1,8 +1,6 @@
 #include <defs/libs.h>
 #include <defs/standard.h>
 
-#include <utils/buffer.h>
-
 #include <assimp/Exporter.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/SceneCombiner.h>
@@ -14,7 +12,7 @@ static constexpr std::string_view OUTPUT_DIR = "output\\";
 
 int rbms_done = 0;
 
-void convert_to_rbm(const std::string& path, const std::string& filename, const std::string& ext)
+bool convert_to_rbm(const std::string& path, const std::string& filename, const std::string& ext)
 {
 	struct VertexInfo
 	{
@@ -38,31 +36,14 @@ void convert_to_rbm(const std::string& path, const std::string& filename, const 
 		aiProcess_ImproveCacheLocality |
 		aiProcess_LimitBoneWeights);
 
+	if (!scene)
+		return false;
+
 	Buffer out {};
 
-	auto add_header = [&](const vec3& min_bb, const vec3& max_bb, int blocks_count)
-	{
-		out.add("RBMDL");
-		out.add(1);
-		out.add(3);
-		out.add(1);
-		out.add(min_bb);
-		out.add(max_bb);
-		out.add(blocks_count);
-	};
+	// add header
 
-	auto get_texture_by_type = [&](aiMaterial* material, aiTextureType type, int index = 0)
-	{
-		check(material->GetTextureCount(type) < 2, "Invalid amount of textures");
-
-		aiString name;
-
-		check(material->GetTexture(type, 0, &name) == aiReturn_SUCCESS, "Could not get a mesh texture");
-
-		return std::string(name.C_Str());
-	};
-
-	add_header(-vec3(10.f, 10.f, 10.f), vec3(10.f, 10.f, 10.f), scene->mNumMeshes);
+	out.add("RBMDL", 1, 3, 1, -vec3(10.f, 10.f, 10.f), vec3(10.f, 10.f, 10.f), scene->mNumMeshes);
 
 	for (uint32_t mesh_index = 0u; mesh_index < scene->mNumMeshes; ++mesh_index)
 	{
@@ -71,7 +52,18 @@ void convert_to_rbm(const std::string& path, const std::string& filename, const 
 
 		check(mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE, "Only triangle meshes supported");
 
-		const auto texture = get_texture_by_type(material, aiTextureType_DIFFUSE);
+		auto get_texture_by_type = [&](aiTextureType type, int index = 0)
+		{
+			check(material->GetTextureCount(type) < 2, "Invalid amount of textures");
+
+			aiString name;
+
+			check(material->GetTexture(type, 0, &name) == aiReturn_SUCCESS, "Could not get a mesh texture");
+
+			return std::string(name.C_Str());
+		};
+
+		const auto texture = get_texture_by_type(aiTextureType_DIFFUSE);
 
 		std::vector<VertexInfo> vertices;
 		std::vector<uint16_t> indices;
@@ -135,10 +127,14 @@ void convert_to_rbm(const std::string& path, const std::string& filename, const 
 	out.to_file(std::string(OUTPUT_DIR) + filename + ".rbm");
 
 	++rbms_done;
+
+	return true;
 }
 
 int main()
 {
+	jc::prof::init("JC:MP Asset Converter");
+
 	bool close = false;
 
 	if (close = !std::filesystem::is_directory(INPUT_DIR))
@@ -157,12 +153,19 @@ int main()
 		const auto filename = p.stem().string();
 		const auto ext = p.extension().string();
 
+		bool ok = false;
+
 		if (ext == ".fbx" || ext == ".3ds" || ext == ".obj")
-			convert_to_rbm(path, filename, ext);
+			ok = convert_to_rbm(path, filename, ext);
+
+		if (!ok)
+			log(RED, "Could not convert file '{}'", path);
 	}
 
 	log(GREEN, "*** Conversion completed ***");
 	log(GREEN, "RBMs converted: {}", rbms_done);
+
+	jc::prof::close_console(true);
 	
 	return std::cin.get();
 }

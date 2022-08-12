@@ -292,7 +292,7 @@ DEFINE_HOOK_STDCALL(load_save, 0x66D7F0, void*, ref<void*>* r)
 //
 DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filename, uint8_t* buffer, size_t size, size_t offset)
 {
-	SaveGameBuffer savegame;
+	Buffer savegame;
 
 	savegame.add(1.f);
 	savegame.add(Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
