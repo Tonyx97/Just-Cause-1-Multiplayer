@@ -161,7 +161,7 @@ void Net::set_joined(bool v)
 
 		// let everyone know that we entered the world and spawned
 
-		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Join, local_char->get_real_hp(), local_char->get_max_hp());
+		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Join);
 	}
 }
 
@@ -213,6 +213,7 @@ void Net::setup_channels()
 		switch (auto id = p.get_id())
 		{
 		case WorldPID_SetTime:				return nh::world::day_time(p);
+		case WorldPID_SetRandSeed:			return nh::world::rand_seed(p);
 		case WorldPID_SpawnObject:			return nh::world::spawn_object(p);
 		case WorldPID_DestroyObject:		return nh::world::destroy_object(p);
 		case WorldPID_SetOwnership:			return nh::world::set_ownership(p);

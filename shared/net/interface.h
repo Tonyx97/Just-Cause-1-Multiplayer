@@ -184,6 +184,9 @@ namespace enet
 		uint32_t get_u32() const { return deserialize_int<uint32_t>(data); }
 		int32_t get_i32() const { return deserialize_int<int32_t>(data); }
 
+		uint64_t get_u64() const { return deserialize_int<uint64_t>(data); }
+		int64_t get_i64() const { return deserialize_int<int64_t>(data); }
+
 		template <typename T>
 		T get_integral() const { return deserialize_int<T>(data); }
 

@@ -39,16 +39,9 @@ enet::PacketResult nh::player_client::join(const enet::Packet& p)
 		return enet::PacketRes_BadArgs;
 
 	const auto pc = player->get_client();
-
 #elif JC_SERVER
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
-
-	const float hp = p.get_float(),
-				max_hp = p.get_float();
-
-	player->set_hp(hp);
-	player->set_max_hp(max_hp);
 
 	// sync net objects instances when this player loads
 	// and also sync all players startup info and spawning

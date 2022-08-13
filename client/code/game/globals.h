@@ -44,6 +44,13 @@ namespace jc::game
 		return *BITCAST(float*, &i);
 	}
 
+	inline uint32_t hash_str(const std::string& str)
+	{
+		const jc::stl::string _str = str;
+
+		return jc::c_call<uint32_t>(0x473720, &str);
+	}
+
 	inline uint16_t encode_float(float v)
 	{
 		uint16_t out;

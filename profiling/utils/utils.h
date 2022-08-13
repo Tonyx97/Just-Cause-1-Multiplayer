@@ -404,6 +404,7 @@ namespace util
 		inline std::mt19937_64 mt;
 
 		inline void init_seed() { mt.seed(__rdtsc()); }
+		inline void set_seed(uint64_t seed) { mt.seed(seed); }
 
 		template <typename T>
 		T rand_int(T min, T max) { return std::uniform_int_distribution<T>(min, max)(mt); }

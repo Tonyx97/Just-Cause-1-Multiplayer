@@ -49,6 +49,7 @@ enum PlayerPacketID : PacketID
 enum WorldPacketID : PacketID
 {
 	WorldPID_SetTime = PlayerPID_Max,			// day cycle set hour time (0.0-24.0)
+	WorldPID_SetRandSeed,						// used by the server to sync the server's rand seed with other players
 	WorldPID_SpawnObject,						// ask and spawn an object in the server and remote players
 	WorldPID_DestroyObject,						// used by the client and server to sync destruction of an object
 	WorldPID_SetOwnership,						// used to let the players know if their ownership of an object changed (used by the server)

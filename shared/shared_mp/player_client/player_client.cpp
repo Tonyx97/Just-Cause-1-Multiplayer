@@ -38,6 +38,12 @@ PlayerClient::~PlayerClient()
 #ifdef JC_SERVER
 void PlayerClient::startup_sync()
 {
+	// set player's default info before doing startup sync
+
+	player->set_skin(0);
+	player->set_hp(500.f);
+	player->set_max_hp(500.f);
+
 	// sync net object instances
 
 	{
