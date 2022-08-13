@@ -165,7 +165,9 @@ int main()
 	log(GREEN, "*** Conversion completed ***");
 	log(GREEN, "RBMs converted: {}", rbms_done);
 
+	std::cin.get();
+
 	jc::prof::close_console(true);
-	
-	return std::cin.get();
+
+	return EXIT_SUCCESS;
 }
