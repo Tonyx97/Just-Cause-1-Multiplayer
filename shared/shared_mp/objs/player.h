@@ -8,6 +8,7 @@
 
 class PlayerClient;
 class CharacterHandle;
+class UIMapIcon;
 
 enum PlayerDynamicInfoID : uint8_t
 {
@@ -85,6 +86,8 @@ private:
 	PlayerClient* client = nullptr;
 
 #ifdef JC_CLIENT
+	UIMapIcon* blip = nullptr;
+
 	CharacterHandle* handle = nullptr;
 
 	bool local = false,
@@ -101,14 +104,13 @@ public:
 #ifdef JC_CLIENT
 	Player(PlayerClient* pc, NID nid);
 
-	void on_sync() override {}
-
 	class ObjectBase* get_object_base() override;
 
 	void verify_exec(const std::function<void(Character*)>& fn);
 	void respawn(float hp, float max_hp, bool sync = true);
 	void dispatch_movement();
 	void correct_position();
+	void update_blip();
 	void set_local() { local = true; }
 
 	bool is_dispatching_movement() const;
@@ -117,6 +119,8 @@ public:
 	Character* get_character() const;
 
 	CharacterHandle* get_character_handle() const;
+
+	UIMapIcon* get_blip() const { return blip; }
 #else
 	Player(PlayerClient* pc);
 
@@ -129,6 +133,7 @@ public:
 
 	~Player();
 
+	void on_sync() override {}
 	void on_net_var_change(NetObjectVarType var_type) override;
 
 	bool spawn() override;

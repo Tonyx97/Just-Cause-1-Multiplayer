@@ -22,24 +22,27 @@
 #include <game/object/mission/objective.h>
 #include <game/object/ui/map_icon.h>
 #include <game/object/ui/map_icon_type.h>
+#include <game/object/sound/sound_game_obj.h>
 
 namespace jc::factory_system
 {
 	namespace v
 	{
-		std::unordered_set<CharacterHandle*>	character_handles;
-		std::vector<ref<SimpleRigidObject>>		simple_rigid_objects;
-		std::vector<ref<DamageableObject>>		damageables;
-		std::vector<ref<AgentSpawnPoint>>		agent_spawns;
-		std::vector<ref<VehicleSpawnPoint>>		vehicle_spawns;
-		std::vector<ref<MountedGun>>			mounted_guns;
-		std::vector<ref<Ladder>>				ladders;
-		std::vector<ref<ItemPickup>>			item_pickups;
-		std::vector<ref<AnimatedRigidObject>>	animated_rigid_objects;
-		std::vector<ref<UIMapIcon>>				ui_map_icons;
-		std::vector<ref<UIMapIconType>>			ui_map_icon_types;
-		std::vector<ref<Objective>>				objectives;
-		std::vector<ref<TrafficLight>>			traffic_lights;
+		std::unordered_set<CharacterHandle*>		character_handles;
+
+		ref_map<SimpleRigidObject>					simple_rigid_objects;
+		ref_map<DamageableObject>					damageables;
+		ref_map<AgentSpawnPoint>					agent_spawns;
+		ref_map<VehicleSpawnPoint>					vehicle_spawns;
+		ref_map<MountedGun>							mounted_guns;
+		ref_map<Ladder>								ladders;
+		ref_map<ItemPickup>							item_pickups;
+		ref_map<AnimatedRigidObject>				animated_rigid_objects;
+		ref_map<UIMapIcon>							ui_map_icons;
+		ref_map<UIMapIconType>						ui_map_icon_types;
+		ref_map<Objective>							objectives;
+		ref_map<TrafficLight>						traffic_lights;
+		ref_map<SoundGameObject>					sounds;
 	}
 }
 
@@ -94,20 +97,24 @@ void FactorySystem::destroy_character_handle(CharacterHandle* v)
 	v->destroy();
 }
 
+void FactorySystem::destroy_damageable_object(DamageableObject* v)
+{
+	damageables.erase(v);
+}
+
 void FactorySystem::destroy_agent_spawn_point(AgentSpawnPoint* v)
 {
-	if (!v)
-		return;
-
-	agent_spawns.erase(std::remove_if(agent_spawns.begin(), agent_spawns.end(), [&](const auto& r) { return r.obj == v; }));
+	agent_spawns.erase(v);
 }
 
 void FactorySystem::destroy_vehicle_spawn_point(VehicleSpawnPoint* v)
 {
-	if (!v)
-		return;
+	vehicle_spawns.erase(v);
+}
 
-	vehicle_spawns.erase(std::remove_if(vehicle_spawns.begin(), vehicle_spawns.end(), [&](const auto& r) { return r.obj == v; }));
+void FactorySystem::destroy_map_icon(UIMapIcon* v)
+{
+	ui_map_icons.erase(v);
 }
 
 int16_t FactorySystem::get_max_character_spawns() const
@@ -157,7 +164,7 @@ SimpleRigidObject* FactorySystem::spawn_simple_rigid_object(const vec3& position
 	{
 		g_game_control->enable_object(rf);
 
-		return rf.move_to(simple_rigid_objects);
+		return rf.move_to_map(simple_rigid_objects);
 	}
 
 	return nullptr;
@@ -171,7 +178,7 @@ DamageableObject* FactorySystem::spawn_damageable_object(const vec3& position, c
 	{
 		g_game_control->enable_object(rf);
 
-		return rf.move_to(damageables);
+		return rf.move_to_map(damageables);
 	}
 
 	return nullptr;
@@ -209,7 +216,7 @@ AgentSpawnPoint* FactorySystem::create_agent_spawn_point(const vec3& position)
 		rf->init_from_map(&map);
 		rf->set_position(position);
 
-		return rf.move_to(agent_spawns);
+		return rf.move_to_map(agent_spawns);
 	}
 
 	return nullptr;
@@ -248,7 +255,7 @@ VehicleSpawnPoint* FactorySystem::create_vehicle_spawn_point(const vec3& positio
 		rf->set_position(position);
 		rf->set_faction(faction);
 
-		return rf.move_to(vehicle_spawns);
+		return rf.move_to_map(vehicle_spawns);
 	}
 
 	return nullptr;
@@ -283,7 +290,7 @@ MountedGun* FactorySystem::spawn_mounted_gun(const vec3& position)
 
 		rf->init_from_map(&map);
 
-		return rf.move_to(mounted_guns);
+		return rf.move_to_map(mounted_guns);
 	}
 
 	return nullptr;
@@ -320,7 +327,7 @@ Ladder* FactorySystem::spawn_ladder(const vec3& position, const std::string& mod
 
 		rf->init_from_map(&map);
 
-		return rf.move_to(ladders);
+		return rf.move_to_map(ladders);
 	}
 
 	return nullptr;
@@ -333,7 +340,7 @@ ItemPickup* FactorySystem::spawn_general_item_pickup(const vec3& position, uint3
 		if (!rf->setup(position, type, Weapon_None, model, description))
 			return nullptr;
 
-		return rf.move_to(item_pickups);
+		return rf.move_to_map(item_pickups);
 	}
 
 	return nullptr;
@@ -346,7 +353,7 @@ ItemPickup* FactorySystem::spawn_weapon_item_pickup(const vec3& position, uint32
 		if (!rf->setup(position, ItemType_Weapon, weapon_id, {}, description))
 			return nullptr;
 
-		return rf.move_to(item_pickups);
+		return rf.move_to_map(item_pickups);
 	}
 
 	return nullptr;
@@ -390,7 +397,7 @@ AnimatedRigidObject* FactorySystem::spawn_animated_rigid_object(const vec3& posi
 
 		rf->init_from_map(&map);
 
-		return rf.move_to(animated_rigid_objects);
+		return rf.move_to_map(animated_rigid_objects);
 	}
 
 	return nullptr;
@@ -403,7 +410,7 @@ UIMapIcon* FactorySystem::create_map_icon(const std::string& name, const vec3& p
 		if (!rf->setup(name, position))
 			return nullptr;
 
-		return rf.move_to(ui_map_icons);
+		return rf.move_to_map(ui_map_icons);
 	}
 
 	return nullptr;
@@ -416,7 +423,7 @@ UIMapIconType* FactorySystem::create_map_icon_type(const std::string& name, cons
 		if (!rf->setup(name, texture, scale))
 			return nullptr;
 
-		return rf.move_to(ui_map_icon_types);
+		return rf.move_to_map(ui_map_icon_types);
 	}
 
 	return nullptr;
@@ -429,7 +436,7 @@ Objective* FactorySystem::create_objective(const vec3& position, const u8vec4& c
 		if (!rf->setup(position, color))
 			return nullptr;
 
-		return rf.move_to(objectives);
+		return rf.move_to_map(objectives);
 	}
 
 	return nullptr;
@@ -442,7 +449,20 @@ TrafficLight* FactorySystem::create_traffic_light(const vec3& position)
 		if (!rf->setup(position))
 			return nullptr;
 
-		return rf.move_to(traffic_lights);
+		return rf.move_to_map(traffic_lights);
+	}
+
+	return nullptr;
+}
+
+SoundGameObject* FactorySystem::create_sound(const vec3& position, const std::string& bank_name, uint32_t sound_id)
+{
+	if (auto rf = g_game_control->create_object<SoundGameObject>())
+	{
+		if (!rf->setup(position, bank_name, sound_id))
+			return nullptr;
+
+		return rf.move_to_map(sounds);
 	}
 
 	return nullptr;

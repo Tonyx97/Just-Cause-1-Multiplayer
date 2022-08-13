@@ -13,6 +13,7 @@
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
 #include <game/object/weapon/weapon_belt.h>
+#include <game/object/ui/map_icon.h>
 
 Player::Player(PlayerClient* pc, NID nid) : client(pc)
 {
@@ -90,6 +91,11 @@ void Player::correct_position()
 	}
 }
 
+void Player::update_blip()
+{
+	blip->set_position(get_position());
+}
+
 bool Player::is_dispatching_movement() const
 {
 	return dispatching_movement;
@@ -158,6 +164,7 @@ Player::~Player()
 		set_spawned(false);
 
 		g_factory->destroy_character_handle(handle);
+		g_factory->destroy_map_icon(blip);
 
 		handle = nullptr;
 
@@ -217,9 +224,21 @@ bool Player::spawn()
 		check(handle, "Could not create the player's character");
 
 		log(PURPLE, "Player {:x} spawned now {:x}", get_nid(), ptr(get_character()));
+
+		blip = g_factory->create_map_icon("player_blip", get_position());
+
+		check(blip, "Could not create the player's blip");
 	}
-	// set default skin to 0 on our localplayer
-	else get_character()->set_skin(0, false);
+	else
+	{
+		// setup our localplayer when spawning for the first time
+
+		const auto character = get_character();
+
+		character->set_skin(0, false);
+		character->set_hp(500.f);
+		character->set_max_hp(500.f);
+	}
 #endif
 
 	set_spawned(true);

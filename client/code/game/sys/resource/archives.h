@@ -67,8 +67,6 @@ struct Asset
 
 struct AssetBuffer
 {
-	std::string name;
-
 	std::vector<uint8_t> data;
 
 	size_t offset = 0u;
@@ -158,6 +156,7 @@ public:
 
 	void init();
 	void destroy();
+	void dump_hashed_assets();
 
 	ArchiveAssetEntry* get_asset_entry(const std::string& name);
 	ArchiveAssetEntry* get_asset_entry(uint32_t hash);

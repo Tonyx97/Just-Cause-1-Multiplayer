@@ -34,4 +34,6 @@ public:
 	};
 
 	IMPL_OBJECT_TYPE_ID("CSoundGameObject");
+
+	bool setup(const vec3& position, const std::string& bank_name, uint32_t sound_id);
 };

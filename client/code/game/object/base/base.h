@@ -103,4 +103,12 @@ public:
 	vec3 get_view_direction() const;
 
 	quat get_rotation() const;
+
+	template <typename T>
+	T* cast()
+	{
+		static_assert(std::is_base_of_v<ObjectBase, T>);
+
+		return BITCAST(T*, this);
+	}
 };

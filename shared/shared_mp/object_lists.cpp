@@ -95,19 +95,24 @@ NetObject* ObjectLists::add_net_object(NetObject* net_obj)
 {
 	const auto nid = net_obj->get_nid();
 
-	switch (net_obj->get_type())
+	switch (const auto type = net_obj->get_type())
 	{
 	case NetObject_Player:
 	{
 		player_clients.insert({ nid, BITCAST(Player*, net_obj)->get_client()});
 		break;
 	}
-	case NetObject_Damageable:
-	{
-		break;
-	}
 	default:
-		check(false, "Invalid net object type");
+	{
+		// if the object has no valid type then it's an invalid net object
+
+		if (!net_obj->is_valid_type())
+		{
+			check(false, "Invalid net object type");
+
+			return nullptr;
+		}
+	}
 	}
 
 	net_objects.insert({ nid, net_obj });
@@ -127,7 +132,16 @@ bool ObjectLists::remove_net_object(NetObject* net_obj)
 		break;
 	}
 	default:
-		check(false, "Invalid net object type");
+	{
+		// if the object has no valid type then it's an invalid net object
+		
+		if (!net_obj->is_valid_type())
+		{
+			check(false, "Invalid net object type");
+
+			return false;
+		}
+	}
 	}
 
 	net_objects.erase(nid);
@@ -149,9 +163,27 @@ PlayerClient* ObjectLists::get_player_client_by_nid(NID nid)
 
 // spawning
 
+bool ObjectLists::destroy_net_object(NetObject* obj)
+{
+	check(!obj->cast<Player>(), "Cannot destroy a Player using this function, use ::remove_player_client");
+
+#ifdef JC_SERVER
+	g_net->send_broadcast_joined_reliable<ChannelID_World>(WorldPID_DestroyObject, obj);
+#endif
+
+	if (!remove_net_object(obj))
+		return false;
+
+	JC_FREE(obj);
+
+	return true;
+}
+
 NetObject* ObjectLists::spawn_net_object(
 #ifdef JC_CLIENT
-	NID nid, 
+	NID nid,
+#else
+	SyncType sync_type,
 #endif
 	NetObjectType type,
 	const TransformTR& transform)
@@ -162,15 +194,19 @@ NetObject* ObjectLists::spawn_net_object(
 	{
 #ifdef JC_CLIENT
 	case NetObject_Damageable: object = CREATE_DAMAGEABLE_NET_OBJECT(nid, transform); break;
+	case NetObject_Blip: object = CREATE_BLIP_NET_OBJECT(nid, transform); break;
 #else
-	case NetObject_Damageable: object = CREATE_DAMAGEABLE_NET_OBJECT(transform); break;
+	case NetObject_Damageable: object = CREATE_DAMAGEABLE_NET_OBJECT(sync_type, transform); break;
+	case NetObject_Blip: object = CREATE_BLIP_NET_OBJECT(sync_type, transform); break;
 #endif
 	default: log(RED, "Invalid net object type to spawn: {}", type);
 	}
 
+	check(object, "Could not create a net object");
+
 	if (object)
 	{
-		check(add_net_object(object), "Could not add a damageable");
+		check(add_net_object(object), "Could not add a net object");
 
 		object->spawn();
 

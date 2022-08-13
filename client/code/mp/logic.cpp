@@ -137,6 +137,8 @@ void jc::mp::logic::on_update_objects()
 		if (!obj->is_spawned())
 			return;
 
+		const auto obj_base = obj->get_object_base();
+
 		switch (const auto type = obj->get_type())
 		{
 		case NetObject_Player:
@@ -147,6 +149,10 @@ void jc::mp::logic::on_update_objects()
 				return;
 
 			const auto player_char = player->get_character();
+
+			// update player's blip
+
+			player->update_blip();
 
 			// correct player position with the server's transform
 
@@ -191,7 +197,17 @@ void jc::mp::logic::on_update_objects()
 				const auto pos = obj->get_position();
 				const auto rot = obj->get_rotation();
 
-				const auto obj_base = obj->get_object_base();
+				obj_base->set_transform(obj_base->get_transform().interpolate(Transform(pos, rot), 0.2f, 0.2f));
+			}
+
+			break;
+		}
+		case NetObject_Blip:
+		{
+			if (!obj->sync())
+			{
+				const auto pos = obj->get_position();
+				const auto rot = obj->get_rotation();
 
 				obj_base->set_transform(obj_base->get_transform().interpolate(Transform(pos, rot), 0.2f, 0.2f));
 			}

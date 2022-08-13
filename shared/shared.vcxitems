@@ -33,6 +33,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\generic\player\nh_player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\player_client\nh_player_client.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\objs\all.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\objs\blip.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\objs\damageable_net_object.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\objs\net_object.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\packets.h" />
@@ -54,6 +55,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\world\nh_world.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\generic\player\nh_player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\player_client\nh_player_client.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\objs\blip.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\objs\damageable_net_object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\objs\net_object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\object_lists.cpp" />

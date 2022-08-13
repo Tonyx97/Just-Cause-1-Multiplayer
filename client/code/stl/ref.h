@@ -141,11 +141,11 @@ struct ref
 		return { obj, counter };
 	}
 
-	T* move_to(auto& container)
+	T* move_to_map(auto& map)
 	{
 		const auto item = obj;
 
-		container.push_back(std::move(*this));
+		map.insert({ item, std::move(*this) });
 
 		return item;
 	}
@@ -221,3 +221,6 @@ struct bref
 	T* operator->() const noexcept { return obj; }
 	T* operator*() const noexcept { return obj; }
 };
+
+template <typename T>
+using ref_map = std::unordered_map<T*, ref<T>>;

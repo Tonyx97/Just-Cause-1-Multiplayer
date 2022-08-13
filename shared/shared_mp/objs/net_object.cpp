@@ -4,6 +4,15 @@
 
 #include <shared_mp/objs/player.h>
 
+#ifdef JC_CLIENT
+#include <game/object/base/comps/physical.h>
+#include <game/object/damageable_object/damageable_object.h>
+#include <game/object/ui/map_icon.h>
+#include <game/sys/core/factory_system.h>
+
+#include <mp/net.h>
+#endif
+
 NetObject::NetObject()
 {
 #ifdef JC_CLIENT
@@ -15,17 +24,13 @@ NetObject::NetObject()
 
 NetObject::~NetObject()
 {
-#ifdef JC_SERVER
+#ifdef JC_CLIENT
+#else
 	enet::FREE_NID(nid);
 #endif
 }
 
 #ifdef JC_CLIENT
-#include <game/object/base/comps/physical.h>
-#include <game/object/alive_object/alive_object.h>
-
-#include <mp/net.h>
-
 bool NetObject::sync()
 {
 	if (!is_owned())
@@ -118,6 +123,15 @@ namespace enet
 		free_nids.insert(nid);
 	}
 }
+
+bool NetObject::sync()
+{
+	log(RED, "server wants to sync this object");
+
+	on_sync();
+	
+	return true;
+}
 #endif
 
 void NetObject::set_streamer(Player* v)
@@ -206,4 +220,11 @@ void NetObject::set_velocity(const vec3& v)
 void NetObject::set_pending_velocity(const vec3& v)
 {
 	vars.pending_velocity = v;
+}
+
+bool NetObject::is_valid_type() const
+{
+	const auto type = get_type();
+
+	return type > NetObject_Invalid && type < NetObject_Max;
 }

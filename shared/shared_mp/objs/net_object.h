@@ -30,6 +30,8 @@ enum _NetObjectType : NetObjectType
 	NetObject_Invalid,
 	NetObject_Player,
 	NetObject_Damageable,
+	NetObject_Blip,
+	NetObject_Max,
 };
 
 enum _SyncType : SyncType
@@ -75,6 +77,8 @@ private:
 
 	Player* streamer = nullptr;
 
+	void* userdata = nullptr;
+
 	SyncType sync_type = SyncType_None;
 
 	NID nid = INVALID_NID;
@@ -87,11 +91,11 @@ public:
 
 	virtual ~NetObject() = 0;
 
-#ifdef JC_CLIENT
 	bool sync();
 
 	virtual void on_sync() = 0;
 
+#ifdef JC_CLIENT
 	virtual class ObjectBase* get_object_base() = 0;
 #endif
 
@@ -107,6 +111,14 @@ public:
 	bool is_owned() const;
 #endif
 
+	template <typename T>
+	void set_userdata(const T& v)
+	{
+		if constexpr (std::is_pointer_v<T>)
+			userdata = v;
+		else userdata = &v;
+	}
+
 	void set_streamer(Player* v);
 	void set_spawned(bool v);
 	void set_sync_type(SyncType v) { sync_type = v; }
@@ -119,6 +131,7 @@ public:
 	void set_velocity(const vec3& v);
 	void set_pending_velocity(const vec3& v);
 
+	bool is_valid_type() const;
 	bool is_owned_by(Player* player) const { return streamer == player; }
 	bool is_spawned() const { return spawned; }
 	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
@@ -129,6 +142,9 @@ public:
 	SyncType get_sync_type() const { return sync_type; }
 
 	Player* get_streamer() const { return streamer; }
+
+	template <typename T>
+	T* get_userdata() const { return BITCAST(T*, userdata); }
 
 	template <typename T>
 	T* cast() const

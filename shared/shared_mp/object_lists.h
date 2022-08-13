@@ -82,10 +82,14 @@ public:
 	PlayerClient* get_player_client_by_nid(NID nid);
 
 	// spawning
+
+	bool destroy_net_object(NetObject* obj);
 	
 	NetObject* spawn_net_object(
 #ifdef JC_CLIENT
 		NID nid,
+#else
+		SyncType sync_type,
 #endif
 		NetObjectType type,
 		const TransformTR& transform);

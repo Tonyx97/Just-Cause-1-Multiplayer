@@ -92,19 +92,18 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 
 	for (const auto& _info : info.net_objects)
 	{
+		if (g_net->get_net_object_by_nid(_info.nid))
+			continue;
+
 		switch (_info.type)
 		{
 		case NetObject_Player:
 		{
-			// we skip the sync of this net object if:
-			// 
-			// 1. we received our own local player then we skip it,
-			// we don't want to do anything to our local player from here
-			// 
-			// 2. instance already exists then we skip this
-			// current net object
+			// we skip the sync of this net object if we received our own
+			// local player then we skip it, we don't want to do anything
+			// to our local player from here
 
-			if (localplayer->equal(_info.nid) || g_net->get_net_object_by_nid(_info.nid))
+			if (localplayer->equal(_info.nid))
 				break;
 
 			const auto new_pc = g_net->add_player_client(_info.nid);
@@ -125,12 +124,18 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 		}
 		case NetObject_Damageable:
 		{
-			if (g_net->get_net_object_by_nid(_info.nid))
-				break;
-
 			const auto object = g_net->spawn_net_object(_info.nid, _info.type, TransformTR(_info.position, _info.rotation));
+
 			object->set_hp(_info.hp);
 			object->set_max_hp(_info.max_hp);
+
+			log(PURPLE, "Created net object with NID {:x} and type {}", object->get_nid(), object->get_type());
+
+			break;
+		}
+		case NetObject_Blip:
+		{
+			const auto object = g_net->spawn_net_object(_info.nid, _info.type, TransformTR(_info.position, _info.rotation));
 
 			log(PURPLE, "Created net object with NID {:x} and type {}", object->get_nid(), object->get_type());
 

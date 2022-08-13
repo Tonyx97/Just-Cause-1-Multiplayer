@@ -114,6 +114,7 @@ void GameControl::create_global_objects()
 	g_factory->create_map_icon_type("air_veh", "pda_icon_airvehicle.dds", vec2(0.0125f));
 	g_factory->create_map_icon_type("air_veh_friendly", "pda_icon_airvehicle_friendly.dds", vec2(0.0125f));
 	g_factory->create_map_icon_type("player", "pda_icon_player.dds", vec2(0.02f));
+	g_factory->create_map_icon_type("player_blip", "pda_icon_interestpoint_collect.dds", vec2(0.0125f));
 	g_factory->create_map_icon_type("aa_gun", "pda_icon_aa_gun.dds", vec2(0.0125f));
 }
 

@@ -11,7 +11,7 @@ bool UIMapIcon::setup(const std::string& name, const vec3& position)
 	map.insert<object_base_map::Int>(0x2414a266, 1); // int
 	map.insert<object_base_map::Int>(0x525a07d4, 1); // int
 	map.insert<object_base_map::Int>(ObjectBase::Hash_Enabled, 1); // int - enabled
-	map.insert<object_base_map::Int>(ObjectBase::Hash_Relative, 1); // int
+	map.insert<object_base_map::Int>(ObjectBase::Hash_Relative, 0); // int
 	map.insert<object_base_map::String>(0x6b7d9fdd, "CGuiMapIcon1"); // string
 	//map.insert<object_base_map::String>(0x884ed8bb, R"(A2M08_start_fmv_briefing)"); // string
 	map.insert<object_base_map::String>(0xccd9c837, name); // string

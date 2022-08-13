@@ -82,6 +82,7 @@ void Net::setup_channels()
 		switch (auto id = p.get_id())
 		{
 		case WorldPID_SpawnObject:		return nh::world::spawn_object(p);
+		case WorldPID_DestroyObject:	return nh::world::destroy_object(p);
 		case WorldPID_SyncObject:		return nh::world::sync_object(p);
 		}
 
@@ -128,6 +129,10 @@ void Net::tick()
 	// update the sync of all net objects
 
 	refresh_net_object_sync();
+
+	// sync (from the server) global objects such as players' blips etc
+
+	sync_net_objects();
 
 	// process packets from the players
 
@@ -220,5 +225,14 @@ void Net::refresh_net_object_sync()
 				net_obj->set_streamer(new_streamer);
 			}
 		}
+	}
+}
+
+void Net::sync_net_objects()
+{
+	static TimerRaw refresh_timer(enet::TICKS_MS);
+
+	if (refresh_timer.ready())
+	{
 	}
 }

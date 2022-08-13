@@ -21,6 +21,7 @@ class UIMapIcon;
 class UIMapIconType;
 class Objective;
 class TrafficLight;
+class SoundGameObject;
 
 /*
 * Factory/SpawnSystem to create and spawn game objects
@@ -29,13 +30,16 @@ class FactorySystem
 {
 private:
 public:
+
 	void init();
 	void destroy();
 	void set_max_character_spawns(int v);
 	void set_max_vehicle_spawns(int v);
 	void destroy_character_handle(CharacterHandle* v);
+	void destroy_damageable_object(DamageableObject* v);
 	void destroy_agent_spawn_point(AgentSpawnPoint* v);
 	void destroy_vehicle_spawn_point(VehicleSpawnPoint* v);
+	void destroy_map_icon(UIMapIcon* v);
 
 	int16_t get_max_character_spawns() const;
 	int16_t get_max_vehicle_spawns() const;
@@ -54,6 +58,7 @@ public:
 	UIMapIconType*			create_map_icon_type(const std::string& name, const std::string& texture, const vec2& scale);
 	Objective*				create_objective(const vec3& position, const u8vec4& color);
 	TrafficLight*			create_traffic_light(const vec3& position);
+	SoundGameObject*		create_sound(const vec3& position, const std::string& bank_name, uint32_t sound_id);
 };
 
 inline Singleton<FactorySystem, jc::spawn_system::SINGLETON> g_factory;

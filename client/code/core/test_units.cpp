@@ -362,6 +362,10 @@ void jc::test_units::test_0()
 		g_physics->unload_pfx("crate.pfx");
 		g_model_system->unload_rbm(model);
 		g_texture_system->unload_texture("1.jpg");
+
+		const auto v = g_factory->create_map_icon("player_blip", jc::character::g::DEFAULT_SPAWN_LOCATION);
+
+		log(GREEN, "blip: {:x}", ptr(v));
 	}
 
 	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))

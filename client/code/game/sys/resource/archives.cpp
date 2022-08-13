@@ -94,6 +94,8 @@ void Archives::init()
 
 	for (auto& f : futures)
 		f.wait();
+
+	//dump_hashed_assets();
 }
 
 void Archives::destroy()
@@ -102,6 +104,57 @@ void Archives::destroy()
 
 	for (auto arc : arcs)
 		JC_FREE(arc);
+}
+
+void Archives::dump_hashed_assets()
+{
+	const auto entries = get_assets_entries();
+
+	for (const auto& entry : entries)
+	{
+		const auto data_info = get_asset_data_info(&entry);
+
+		const auto arc = jc::archives::arcs[data_info.arc_index];
+
+		AssetBuffer ab {};
+
+		ab.data.resize(data_info.size);
+
+		arc->read(data_info.offset, ab.data.data(), data_info.size);
+
+		std::string format;
+
+		switch (jc::read<uint32_t>(ab.data.data()))
+		{
+		case 0x4:			format = ".ee"; break;
+		case 0x5:			format = ".rbm"; break;
+		case 0x4D494E41:	format = ".anim"; break;
+		case 0x20534444:	format = ".dds"; break;
+		case 0x8C4D42:		format = ".bmp"; break;
+		case 0x584650:		format = ".pfx"; break;
+		case 0xA0D2F2F:		format = ".shader"; break;
+		default:
+		{
+			switch (jc::read<uint8_t>(ab.data.data()))
+			{
+			case 0x3C:		format = ".xml"; break;
+			default:
+			{
+				log(BLUE, "'{}'", (char*)ab.data.data());
+
+				format = ".txt";
+			}
+			}
+		}
+		}
+
+		if (!format.empty())
+		{
+			std::ofstream file("ExtractedAssets\\hashed\\" + util::string::hex_to_str(data_info.hash) + format, std::ios::binary);
+
+			file.write((char*)ab.data.data(), ab.data.size());
+		}
+	}
 }
 
 ArchiveAssetEntry* Archives::get_asset_entry(const std::string& name)

@@ -16,23 +16,26 @@ DamageableNetObject::DamageableNetObject(NID nid, const TransformTR& transform)
 	set_transform(transform);
 }
 
-void DamageableNetObject::on_sync()
-{
-}
-
 ObjectBase* DamageableNetObject::get_object_base()
 {
 	return obj;
 }
 #else
-DamageableNetObject::DamageableNetObject(const TransformTR& transform)
+DamageableNetObject::DamageableNetObject(SyncType sync_type, const TransformTR& transform)
 {
-	set_sync_type(SyncType_Distance);
+	set_sync_type(sync_type);
 	set_transform(transform);
 }
 #endif
 
 DamageableNetObject::~DamageableNetObject()
+{
+#ifdef JC_CLIENT
+	g_factory->destroy_damageable_object(obj);
+#endif
+}
+
+void DamageableNetObject::on_sync()
 {
 }
 
@@ -66,8 +69,8 @@ bool DamageableNetObject::spawn()
 	obj = g_factory->spawn_damageable_object(get_position(), "building_blocks\\general\\oil_barrel_red.lod", "models\\building_blocks\\general\\oil_barrel.pfx");
 
 	check(obj, "Could not create damageable object");
-
-	log(PURPLE, "DamageableObject {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
+	
+	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
 #endif
 
 	set_spawned(true);
