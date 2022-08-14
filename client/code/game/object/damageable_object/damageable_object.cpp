@@ -20,7 +20,7 @@ ref<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::
 		map.insert<object_base_map::Int>(0x5156b18b, 1);
 		map.insert<object_base_map::Int>(0x31386da9, 0);
 		map.insert<object_base_map::Int>(0x52702583, 0);
-		map.insert<object_base_map::Int>(0x10037591, 0);
+		map.insert<object_base_map::Int>(0x10037591, 1);
 		map.insert<object_base_map::Int>(0x2c9331bd, 1);
 		map.insert<object_base_map::Int>(0xaa49c099, 1);
 		map.insert<object_base_map::Int>(0x37595a1a, 1);

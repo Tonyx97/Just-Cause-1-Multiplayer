@@ -69,6 +69,10 @@ namespace jc::patches
 	// player will generate the correct set of PRGN so they stay the same
 	//
 	patch<24> fire_bullet_patch(0x61F54D);
+
+	// removes the heat haze effect from scoped weapons because it's shit
+	//
+	patch<8> scope_heat_haze_patch(0x5B86AD);
 }
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
@@ -168,6 +172,13 @@ void jc::patches::apply()
 
 	jc::protect_v(PAGE_EXECUTE_READWRITE, jc::g::patch::AVOID_WEAPON_BELT_RECREATION_WHILE_CHAR_INIT);
 
+	// weapon ai info patches (to avoid remote players from using
+	// ai weapon info)
+
+	jc::nop(0x61E529, 0xF);
+	jc::nop(0x56908E, 0xF);
+	jc::nop(0x61F4CB, 0x12);
+
 #if FAST_LOAD
 	// apply CInfoMessage patch
 
@@ -257,25 +268,25 @@ void jc::patches::apply()
 
 	fire_bullet_patch._do(
 	{
-		0x8D, 0x95, 0x2C, 0xFF, 0xFF, 0xFF,
-		0x52,
-		0x8D, 0x4D, 0xF0,
-		0x51,
-		0x8B, 0x8D, 0x84, 0xFE, 0xFF, 0xFF,
-		0xE8,								// call hook
+		0x8D, 0x95, 0x2C, 0xFF, 0xFF, 0xFF,		// lea edx, [ebp-0xd4]
+		0x52,									// push edx
+		0x8D, 0x4D, 0xF0,						// lea ecx, [ebp-0x10]
+		0x51,									// push ecx
+		0x8B, 0x8D, 0x84, 0xFE, 0xFF, 0xFF,		// mov ecx, DWORD PTR [ebp-0x17c]
+		0xE8,									// call hook
 		fire_bullet_offset.b0,
 		fire_bullet_offset.b1,
 		fire_bullet_offset.b2,
 		fire_bullet_offset.b3,
-		0xEB, 0x12							// jmp
+		0xEB, 0x12								// jmp
 	});
+	
+	// apply scoped weapons removal patch
 
-	// weapon ai info patches (to avoid remote players from using
-	// ai weapon info)
-
-	jc::nop(0x61E529, 0xF);
-	jc::nop(0x56908E, 0xF);
-	jc::nop(0x61F4CB, 0x12);
+	scope_heat_haze_patch._do(
+	{
+		0xEB, 0x25			// jmp
+	});
 }
 
 void jc::patches::undo()
