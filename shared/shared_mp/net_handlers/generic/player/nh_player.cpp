@@ -234,15 +234,18 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	}
 	case PlayerStanceID_Fire:
 	{
+		const auto rand_seed = p.get_u64();
 		const auto weapon_id = p.get_u8();
 		const auto muzzle_pos = p.get_raw<vec3>();
 		const auto target_pos = p.get_raw<vec3>();
 
-		player->fire_current_weapon(weapon_id, muzzle_pos, target_pos);
-
-#ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, weapon_id, muzzle_pos, target_pos);
+#ifdef JC_CLIENT
+		player->set_fire_seed(rand_seed);
+#else
+		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, rand_seed, weapon_id, muzzle_pos, target_pos);
 #endif
+
+		player->fire_current_weapon(weapon_id, muzzle_pos, target_pos);
 
 		break;
 	}

@@ -72,7 +72,7 @@ namespace jc
 	template <typename Tx, typename Ty>
 	inline Address calc_call_offset(Tx from, Ty to)
 	{
-		return Address((ptr(to) - ptr(from)) - 5);
+		return Address(static_cast<ptr>(BITCAST(int, to) - BITCAST(int, from)) - 5u);
 	}
 
 	template <typename T, typename X>

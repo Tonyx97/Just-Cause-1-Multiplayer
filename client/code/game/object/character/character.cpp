@@ -253,12 +253,19 @@ namespace jc::character::hook
 			if (const auto localplayer = g_net->get_localplayer())
 				if (const auto local_char = localplayer->get_character(); character == local_char)
 					if (auto weapon = local_char->get_weapon_belt()->get_current_weapon())
+					{
+						const auto rand_seed = __rdtsc();
+
+						localplayer->set_fire_seed(rand_seed);
+
 						g_net->send_reliable(
 							PlayerPID_StanceAndMovement,
 							PlayerStanceID_Fire,
+							rand_seed,
 							weapon->get_id(),
 							weapon->get_grip_transform()->get_position(),
 							weapon->get_aim_target());
+					}
 		
 		return res;
 	}
@@ -696,13 +703,8 @@ void Character::set_weapon(uint8_t id, bool is_remote_player)
 		// do a few adjustments to the weapon if it's owned by a remote player
 
 		if (is_remote_player)
-		{
 			if (const auto weapon_info = rf->get_info())
-			{
 				weapon_info->set_infinite_ammo(true);
-				weapon_info->set_accuracy(true, weapon_info->get_accuracy(false));
-			}
-		}
 
 		// draw the weapon
 

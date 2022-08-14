@@ -9,18 +9,9 @@
 
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
+#include <game/object/weapon/weapon.h>
 
 #include <mp/net.h>
-
-DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
-{
-	const auto res = play_ambience_2d_sounds_hook.call(a1, a2);
-
-	if (a2)
-		*a2 = "";
-		
-	return res;
-}
 
 namespace jc::patches
 {
@@ -71,6 +62,23 @@ namespace jc::patches
 	// do not make the death camera slower, just keep rotating baby
 	//
 	patch<2> death_camera_velocity(0x605755);
+
+	// patch to properly create synced shots in remote players,
+	// since the spread is clientside, the bullets could hit or not in remote players causing
+	// a sense of desync, this patch will sync the rand seed across all players and each
+	// player will generate the correct set of PRGN so they stay the same
+	//
+	patch<24> fire_bullet_patch(0x61F54D);
+}
+
+DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
+{
+	const auto res = play_ambience_2d_sounds_hook.call(a1, a2);
+
+	if (a2)
+		*a2 = "";
+
+	return res;
 }
 
 void __fastcall hk_head_rotation_patch(Skeleton* skeleton, ptr _)
@@ -90,6 +98,13 @@ void __fastcall hk_head_rotation_patch(Skeleton* skeleton, ptr _)
 				skeleton->set_head_interpolation(head_interpolation - 1.f * delta);
 			else skeleton->set_head_interpolation(1.f * delta + head_interpolation);
 		}
+}
+
+void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, float* accuracy, vec3* out_spread)
+{
+	if (const auto owner = weapon->get_owner())
+		if (const auto player = g_net->get_player_by_character(owner))
+			*out_spread = player->get_fire_spread() * *accuracy;
 }
 
 void jc::patches::apply_initial_patches()
@@ -235,6 +250,32 @@ void jc::patches::apply()
 	// avoid weird 2d sounds
 
 	play_ambience_2d_sounds_hook.hook();
+
+	// fire bullet sync patch
+
+	auto fire_bullet_offset = jc::calc_call_offset(0x61F54D + 0x11, hk_fire_bullet_patch);
+
+	fire_bullet_patch._do(
+	{
+		0x8D, 0x95, 0x2C, 0xFF, 0xFF, 0xFF,
+		0x52,
+		0x8D, 0x4D, 0xF0,
+		0x51,
+		0x8B, 0x8D, 0x84, 0xFE, 0xFF, 0xFF,
+		0xE8,								// call hook
+		fire_bullet_offset.b0,
+		fire_bullet_offset.b1,
+		fire_bullet_offset.b2,
+		fire_bullet_offset.b3,
+		0xEB, 0x12							// jmp
+	});
+
+	// weapon ai info patches (to avoid remote players from using
+	// ai weapon info)
+
+	jc::nop(0x61E529, 0xF);
+	jc::nop(0x56908E, 0xF);
+	jc::nop(0x61F4CB, 0x12);
 }
 
 void jc::patches::undo()
@@ -245,13 +286,14 @@ void jc::patches::undo()
 	no_idle_animation._undo();
 	drop_weapon_on_death_patch._undo();
 	head_rotation_patch._undo();
+	fire_bullet_patch._undo();
 
 #if FAST_LOAD
 	savegame_minimal_load_patch._undo();
 	savegame_integrity_patch._undo();
 	info_message_patch._undo();
 #endif
-
+	
 	play_ambience_2d_sounds_hook.unhook();
 
 	jc::write(20ui8, 0x5A4400);

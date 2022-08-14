@@ -4,8 +4,6 @@ class Settings
 {
 private:
 
-	uint64_t rand_seed = 0u;
-
 	float day_time = 8.f;
 
 	bool day_time_enabled = false;

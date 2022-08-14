@@ -213,7 +213,6 @@ void Net::setup_channels()
 		switch (auto id = p.get_id())
 		{
 		case WorldPID_SetTime:				return nh::world::day_time(p);
-		case WorldPID_SetRandSeed:			return nh::world::rand_seed(p);
 		case WorldPID_SpawnObject:			return nh::world::spawn_object(p);
 		case WorldPID_DestroyObject:		return nh::world::destroy_object(p);
 		case WorldPID_SetOwnership:			return nh::world::set_ownership(p);

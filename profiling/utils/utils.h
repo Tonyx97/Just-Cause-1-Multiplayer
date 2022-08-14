@@ -402,15 +402,22 @@ namespace util
 	namespace rand
 	{
 		inline std::mt19937_64 mt;
+		inline uint64_t seed = 0ull;
 
-		inline void init_seed() { mt.seed(__rdtsc()); }
-		inline void set_seed(uint64_t seed) { mt.seed(seed); }
+		inline void init_seed() { mt.seed(seed = __rdtsc()); }
+		inline uint64_t set_seed(uint64_t v) { mt.seed(v); return std::exchange(seed, v); }
 
 		template <typename T>
 		T rand_int(T min, T max) { return std::uniform_int_distribution<T>(min, max)(mt); }
 
 		template <typename T>
 		T rand_flt(T min, T max) { return std::uniform_real_distribution<T>(min, max)(mt); }
+
+		template <typename T>
+		T rand_int(std::mt19937_64& v, T min, T max) { return std::uniform_int_distribution<T>(min, max)(v); }
+
+		template <typename T>
+		T rand_flt(std::mt19937_64& v, T min, T max) { return std::uniform_real_distribution<T>(min, max)(v); }
 	}
 
 	namespace cpp

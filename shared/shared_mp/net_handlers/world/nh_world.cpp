@@ -18,15 +18,6 @@ enet::PacketResult nh::world::day_time(const enet::Packet& p)
 	return enet::PacketRes_Ok;
 }
 
-enet::PacketResult nh::world::rand_seed(const enet::Packet& p)
-{
-#ifdef JC_CLIENT
-	util::rand::set_seed(p.get_u64());
-#endif
-
-	return enet::PacketRes_Ok;
-}
-
 enet::PacketResult nh::world::spawn_object(const enet::Packet& p)
 {
 #ifdef JC_CLIENT

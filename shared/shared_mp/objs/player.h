@@ -37,6 +37,10 @@ public:
 
 	struct DynamicInfo
 	{
+#ifdef JC_CLIENT
+		std::mt19937_64 fire_rand_mt;
+#endif
+
 		std::string nick;
 
 		vec3 velocity {},
@@ -111,6 +115,7 @@ public:
 	void dispatch_movement();
 	void correct_position();
 	void update_blip();
+	void set_fire_seed(uint64_t seed);
 	void set_local() { local = true; }
 
 	bool is_dispatching_movement() const;
@@ -121,6 +126,8 @@ public:
 	CharacterHandle* get_character_handle() const;
 
 	UIMapIcon* get_blip() const { return blip; }
+
+	vec3 get_fire_spread();
 #else
 	Player(PlayerClient* pc);
 
@@ -172,7 +179,7 @@ public:
 	uint32_t get_body_stance_id() const { return dyn_info.body_stance_id; }
 	uint32_t get_arms_stance_id() const { return dyn_info.arms_stance_id; }
 
-	float get_head_interpolation() const { return dyn_info.head_interpolation; }
+	float get_head_interpolation() const { return dyn_info.head_interpolation; };
 
 	const vec3& get_head_rotation() const { return dyn_info.head_rotation; }
 	const vec3& get_aim_target() const { return dyn_info.aim_target; }

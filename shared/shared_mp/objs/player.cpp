@@ -21,6 +21,23 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 	set_sync_type(SyncType_Locked);
 }
 
+Player::~Player()
+{
+	if (!is_local() && handle)
+	{
+		check(handle, "Invalid handle when destroying a remote player");
+
+		set_spawned(false);
+
+		g_factory->destroy_character_handle(handle);
+		g_factory->destroy_map_icon(blip);
+
+		handle = nullptr;
+
+		log(RED, "Player {} character despawned", get_nid());
+	}
+}
+
 ObjectBase* Player::get_object_base()
 {
 	return get_character();
@@ -96,6 +113,11 @@ void Player::update_blip()
 	blip->set_position(get_position());
 }
 
+void Player::set_fire_seed(uint64_t seed)
+{
+	dyn_info.fire_rand_mt.seed(seed);
+}
+
 bool Player::is_dispatching_movement() const
 {
 	return dispatching_movement;
@@ -113,11 +135,24 @@ CharacterHandle* Player::get_character_handle() const
 {
 	return is_local() ? nullptr : handle;
 }
+
+vec3 Player::get_fire_spread()
+{
+	return { util::rand::rand_flt(dyn_info.fire_rand_mt, -1.f, 1.f), util::rand::rand_flt(dyn_info.fire_rand_mt, -1.f, 1.f), util::rand::rand_flt(dyn_info.fire_rand_mt, -1.f, 1.f) };
+}
 #else
 Player::Player(PlayerClient* pc) : client(pc)
 {
 	set_sync_type(SyncType_Locked);
 	set_streamer(this);
+}
+
+Player::~Player()
+{
+	// if this player owns any net object, remove all the ownerships
+	// from the player and the objects
+
+	remove_all_ownerships();
 }
 
 void Player::respawn(float hp, float max_hp)
@@ -153,30 +188,6 @@ void Player::remove_all_ownerships()
 	});
 }
 #endif
-
-Player::~Player()
-{
-#ifdef JC_CLIENT
-	if (!is_local() && handle)
-	{
-		check(handle, "Invalid handle when destroying a remote player");
-
-		set_spawned(false);
-
-		g_factory->destroy_character_handle(handle);
-		g_factory->destroy_map_icon(blip);
-
-		handle = nullptr;
-
-		log(RED, "Player {} character despawned", get_nid());
-	}
-#else
-	// if this player owns any net object, remove all the ownerships
-	// from the player and the objects
-
-	remove_all_ownerships();
-#endif
-}
 
 void Player::on_net_var_change(NetObjectVarType var_type)
 {
