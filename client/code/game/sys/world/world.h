@@ -16,6 +16,7 @@ class World
 public:
 	void init();
 	void destroy();
+	void set_localplayer(LocalPlayer* v);
 
 	jc::stl::vector<Character*> get_characters() const;
 

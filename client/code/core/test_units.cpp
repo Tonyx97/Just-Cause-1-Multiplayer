@@ -338,9 +338,11 @@ void jc::test_units::test_0()
 		test_file.write((char*)out.data(), out.size());
 	}
 
-	if (g_key->is_key_pressed(VK_NUMPAD9))
+	if (g_key->is_key_down(VK_NUMPAD9))
 	{
-		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "crate_custom_png.rbm", "");
+		local_char->set_body_stance(27);
+
+		//g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "crate_custom_png.rbm", "");
 
 		//g_archives->dump_hashed_assets();
 
@@ -422,8 +424,24 @@ void jc::test_units::test_0()
 		}
 	}
 
+	static LocalPlayer* npc_lp = nullptr;
+
+	if (info.handle && npc_lp)
+	{
+		jc::this_call(0x4CB8C0, npc_lp);
+	}
+
 	if (g_key->is_key_pressed(VK_ADD))
 	{
+		if (!npc_lp)
+		{
+			npc_lp = game::malloc<LocalPlayer>(0x53C);
+
+			jc::this_call(0x4C03B0, npc_lp);
+
+			log(GREEN, "npc lp: {:x} {:x}", ptr(npc_lp), ptr(localplayer));
+		}
+		
 		if (!info.handle)
 		{
 			info.handle = g_factory->spawn_character("female1", g_world->get_localplayer_character()->get_position());
@@ -434,9 +452,19 @@ void jc::test_units::test_0()
 			log(CYAN, "handle base from character {:x}", ptr(info.character->get_handle_base()));
 			log(CYAN, "char {:x}", ptr(info.character));
 
-			info.character->set_model(6);
+			info.character->set_position(local_pos + vec3(0.f, 50.f, 0.f));
 
-			/*if (auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_2H_SMG)) // Weapon_1H_SMG - Weapon_Grenade_Launcher
+			info.character->set_model(6);
+			
+			//info.character->set_body_stance(29);
+			//info.character->set_body_stance(27);
+			//info.character->set_body_stance(25);
+			//info.character->set_body_stance(52);
+
+			/*
+			jc::write(info.character, npc_lp, 0x1C);
+			
+			if (auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_2H_SMG)) // Weapon_1H_SMG - Weapon_Grenade_Launcher
 			{
 				info.character->set_draw_weapon(weapon);
 				info.character->apply_weapon_switch();
@@ -450,7 +478,7 @@ void jc::test_units::test_0()
 			info.character = nullptr;
 		}
 	}
-
+	
 	static CharacterHandle* handle = nullptr;
 
 	static AnimatedRigidObject* garage_door = nullptr;
@@ -462,6 +490,12 @@ void jc::test_units::test_0()
 		//tl->set_light(TrafficLight_Red);
 
 		//g_weapon->dump();
+
+		//jc::this_call(0x5A13B0, info.character);
+
+		//local_char->set_body_stance(29);
+		//local_char->set_body_stance(30);
+		//local_char->set_added_velocity({ 0.f, 100.f, 0.f });
 
 		log(RED, "called");
 	}

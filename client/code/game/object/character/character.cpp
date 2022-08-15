@@ -58,6 +58,47 @@ namespace jc::character::hook
 
 	DEFINE_HOOK_THISCALL(set_body_stance, 0x625750, void, BodyStanceController* stance, uint32_t id)
 	{
+		auto can_be_ignored = [id]()
+		{
+			switch (id)
+			{
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 6:
+			case 9:
+			case 10:
+			case 13:
+			case 14:
+			case 16:
+			case 24:
+			case 25:
+			case 30:
+			case 74:
+			case 75:
+			case 77:
+			case 88: return true; // allow these to be set to remote players by the engine itself
+			}
+
+			return false;
+		};
+
+		auto can_be_synced = [id]()
+		{
+			switch (id)
+			{
+			case 27:
+			case 28:
+			case 29:
+			case 30:
+			case 59:
+			case 85: return true;
+			}
+
+			return false;
+		};
+
 		if (const auto local_char = g_world->get_localplayer_character())
 		{
 			const auto character = stance->get_character();
@@ -76,26 +117,11 @@ namespace jc::character::hook
 					// if the engine is not setting the stance from a known return address
 					// then we need to filter by stance id
 
-					switch (id)
+					if (!can_be_ignored())
 					{
-					case 1:
-					case 3:
-					case 4:
-					case 6:
-					case 14:
-					case 86:
-					case 87:
-					case 89: break; // ignore
-					case 85:
-					{
-						g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_BodyStance, id);
-
-						break;
-					}
-					default:
-					{
-						//log(GREEN, "[DBG] Localplayer body stance set to: {} from {:x}", id, ret_add);
-					}
+						if (can_be_synced())
+							g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_BodyStance, id);
+						else log(GREEN, "[DBG] Localplayer body stance set to: {} from {:x}", id, RET_ADDRESS);
 					}
 				}
 				}
@@ -108,22 +134,9 @@ namespace jc::character::hook
 				// like falling and stuff like that, which will be controlled by packets sent by remote players
 				// containg such information (summary: to avoid desync)
 
-				switch (id)
-				{
-				case 1:
-				case 3:
-				case 6:
-				case 9:
-				case 24:
-				case 30:
-				case 88: break; // allow these to be set to remote players by the engine itself
-				default:
-				{
+				if (!can_be_ignored())
 					if (!player->is_dispatching_movement())
 						return;
-				}
-				}
-
 			}
 		}
 
@@ -181,30 +194,7 @@ namespace jc::character::hook
 		{
 			if (const auto local_char = localplayer->get_character(); character == local_char)
 			{
-				const auto& move_info = localplayer->get_movement_info();
-
-				const bool was_moving = move_info.right != 0.f || move_info.forward != 0.f || move_info.aiming;
-				const bool is_moving = right != 0.f || forward != 0.f || aiming;
-				const bool is_diff = right != move_info.right || forward != move_info.forward || aiming != move_info.aiming;
-
-				const bool is_move_diff = is_diff || (was_moving && !is_moving || !was_moving && is_moving);
-				const bool is_angle_diff = angle != move_info.angle;
-
-				if (is_move_diff || is_angle_diff)
-				{
-					localplayer->set_movement_info(angle, right, forward, aiming);
-
-					if (is_move_diff)
-					{
-						const auto packed_angle = util::pack::pack_pi_angle(angle);
-						const auto packed_right = util::pack::pack_norm(right);
-						const auto packed_forward = util::pack::pack_norm(forward);
-
-						g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, packed_angle, packed_right, packed_forward, aiming);
-					}
-					else if (is_moving && is_angle_diff)
-						localplayer->set_movement_angle(angle, true);
-				}
+				localplayer->set_movement_info(angle, right, forward, aiming);
 			}
 			else if (auto player = g_net->get_player_by_character(character))
 				return;
@@ -320,7 +310,7 @@ namespace jc::character::hook
 		case 0x5A3EAB: break;	// Character::CheckForceLaunch, modifying Y velocity for a better parabolic movement
 		default:
 		{
-			//log(RED, "[{}] {}", CURR_FN, ret);
+			log(RED, "[{}] WARNING {}", CURR_FN, ret);
 
 			// block the localplayer from modifying a remote player's velocity
 			
@@ -335,8 +325,33 @@ namespace jc::character::hook
 		character_proxy_add_velocity_hook.call(proxy, velocity, rotation);
 	}
 
+	DEFINE_HOOK_THISCALL(character_test, 0x744CF0, void, hkCharacterProxy* proxy, mat4* m, vec3* velocity, float delta)
+	{
+		// check which parts of the engine code we want to let modify a remote player's velocity
+
+		switch (const auto ret = RET_ADDRESS)
+		{
+		default:
+		{
+			log(RED, "[{}] WARNING {}", CURR_FN, ret);
+
+			// block the localplayer from modifying a remote player's velocity
+
+			if (const auto lp = g_net->get_localplayer())
+				if (const auto local_char = lp->get_character())
+					if (const auto character = proxy->get_character(); character && !character->is_on_ground())
+						if (character != local_char && g_net->get_player_by_character(character))
+							return;
+		}
+		}
+
+		character_test_hook.call(proxy, m, velocity, delta);
+	}
+
 	void apply()
 	{
+		character_test_hook.hook();
+
 		update_hook.hook();
 		set_body_stance_hook.hook();
 		set_arms_stance_hook.hook();
@@ -352,6 +367,8 @@ namespace jc::character::hook
 
 	void undo()
 	{
+		character_test_hook.unhook();
+
 		character_proxy_add_velocity_hook.unhook();
 		force_launch_hook.unhook();
 		reload_current_weapon_hook.unhook();

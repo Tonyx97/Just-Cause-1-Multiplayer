@@ -95,9 +95,8 @@ void Player::correct_position()
 	if (correcting_position)
 	{
 		const auto character = get_character();
-
 		const auto current_position = character->get_position();
-
+		
 		auto interpolated_t = glm::lerp(current_position, get_position(), 0.5f);
 		auto interpolated_r = glm::slerp(character->get_rotation(), get_rotation(), 0.5f);
 
@@ -208,6 +207,7 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 
 		break;
 	}
+	case NetObjectVar_Velocity: verify_exec([&](Character* c) { c->set_added_velocity(get_velocity()); }); break;
 	case NetObjectVar_Health: verify_exec([&](Character* c) { c->set_hp(get_hp()); }); break;
 	case NetObjectVar_MaxHealth: verify_exec([&](Character* c) { c->set_max_hp(get_max_hp()); }); break;
 	}
@@ -313,7 +313,11 @@ void Player::set_movement_angle(float angle, bool send_angle_only_next_tick)
 
 void Player::set_movement_info(float angle, float right, float forward, bool aiming)
 {
-	set_movement_angle(angle, false);
+	const bool force_sync_angle = move_info.angle != angle;
+
+	move_info.force_sync = move_info.right != right || move_info.forward != forward || move_info.aiming != aiming;
+
+	set_movement_angle(angle, !move_info.force_sync && force_sync_angle);
 
 	move_info.right = right;
 	move_info.forward = forward;

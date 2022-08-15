@@ -20,8 +20,9 @@ void jc::mp::logic::on_tick()
 	// send and update our local player info
 
 	static TimerRaw state_sync_timer(2500);
-	static TimerRaw transform_timer(100);
-	static TimerRaw velocity_timer(3000);
+	static TimerRaw transform_timer(enet::TICKS_MS * 5);
+	static TimerRaw fast_transform_timer(enet::TICKS_MS);
+	static TimerRaw velocity_timer(enet::TICKS_MS * 5);
 	static TimerRaw angle_timer(16 * 2);
 	static TimerRaw head_rotation_timer(enet::TICKS_MS * 25);
 	static TimerRaw aiming_timer(enet::TICKS_MS * 5);
@@ -62,9 +63,27 @@ void jc::mp::logic::on_tick()
 			if (state_sync_timer.ready())
 				g_net->send_reliable(PlayerPID_StateSync, current_weapon_id);
 
+			// movement info & movement angle too
+
+			if (localplayer->should_force_sync_movement_info())
+			{
+				const auto packed_angle = util::pack::pack_pi_angle(move_info.angle);
+				const auto packed_right = util::pack::pack_norm(move_info.right);
+				const auto packed_forward = util::pack::pack_norm(move_info.forward);
+
+				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, packed_angle, packed_right, packed_forward, move_info.aiming);
+			}
+			else if (localplayer->should_sync_angle_only() && angle_timer.ready())
+				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_MovementAngle, util::pack::pack_pi_angle(move_angle));
+
+			localplayer->set_movement_angle(move_angle, false);
+
 			// transform (we upload it every 100 ms for now to correct the position in remote players)
 
-			if ((position != localplayer->get_position() || rotation != localplayer->get_rotation())/* && local_char->is_on_ground()*/ && transform_timer.ready())
+			const bool is_on_ground = local_char->is_on_ground();
+
+			if ((position != localplayer->get_position() || rotation != localplayer->get_rotation()) &&
+				(transform_timer.ready())/* || (!is_on_ground && fast_transform_timer.ready())*/)
 			{
 				TransformTR transform_tr(position, rotation);
 
@@ -75,20 +94,13 @@ void jc::mp::logic::on_tick()
 
 			// velocity
 			
-			/*if (velocity != localplayer->get_velocity() && glm::length(velocity) > 10.f && velocity_timer.ready())
+			if (velocity != localplayer->get_velocity() && glm::length(velocity) > 0.f && velocity_timer.ready())
 			{
 				g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, NetObjectVar_Velocity, velocity);
 
 				localplayer->set_velocity(velocity);
-			}*/
 
-			// movement angle
-
-			if (localplayer->should_sync_angle_only() && angle_timer.ready())
-			{
-				g_net->send_unreliable(PlayerPID_StanceAndMovement, PlayerStanceID_MovementAngle, util::pack::pack_pi_angle(move_angle));
-
-				localplayer->set_movement_angle(move_angle, false);
+				log(GREEN, "sending vel {}", glm::length(velocity));
 			}
 
 			// head rotation

@@ -69,6 +69,7 @@ public:
 			  forward = 0.f;
 
 		bool sync_angle_next_tick = false,
+			 force_sync = false,
 			 aiming = false;
 	};
 
@@ -171,6 +172,7 @@ public:
 	bool is_hip_aiming() const { return dyn_info.hip_aim; }
 	bool is_full_aiming() const { return dyn_info.full_aim; }
 	bool should_sync_angle_only() const { return move_info.sync_angle_next_tick; }
+	bool should_force_sync_movement_info() const { return move_info.force_sync; }
 
 	int32_t get_firing_weapon_id() const { return dyn_info.firing_weapon_id; }
 	int32_t get_weapon_id() const { return dyn_info.weapon_id; }

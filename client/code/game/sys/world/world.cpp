@@ -12,6 +12,11 @@ void World::destroy()
 {
 }
 
+void World::set_localplayer(LocalPlayer* v)
+{
+	jc::write(v, this, jc::world::LOCALPLAYER);
+}
+
 jc::stl::vector<Character*> World::get_characters() const
 {
 	return jc::read<jc::stl::vector<Character*>>(this, jc::world::CHARACTER_LIST);
