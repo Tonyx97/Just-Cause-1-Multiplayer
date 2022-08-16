@@ -868,8 +868,14 @@ CharacterHandleBase* Character::get_handle_base() const
 {
 	CharacterHandleBase* handle_base = nullptr;
 
+	log(RED, "wtf {:x} {:x}", ptr(this), ptr(g_world->get_localplayer_character()));
+
 	if (this == g_world->get_localplayer_character())
+	{
 		handle_base = g_player_global_info->get_localplayer_handle_base();
+	}
+
+	log(RED, "{:x}", ptr(handle_base));
 
 	if (!handle_base)
 		if (const auto handle_entry = REF(CharacterHandleEntry*, this, jc::character::HANDLE_ENTRY))

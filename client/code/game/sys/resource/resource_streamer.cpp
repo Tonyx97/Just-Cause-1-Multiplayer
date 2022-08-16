@@ -38,13 +38,26 @@ bool ResourceStreamer::all_queues_empty() const
 	return get_pending_queue()->empty() && get_loading_queue()->empty();
 }
 
-bool ResourceStreamer::request_exported_entity(int32_t id, const ee_resource_callback_t& callback, bool now)
+bool ResourceStreamer::request_exported_entity(int32_t id, const ee_resource_callback_t& callback, bool vehicle, bool now)
 {
-	auto it = jc::vars::exported_entities.find(id);
-	if (it == jc::vars::exported_entities.end())
-		return false;
+	jc::stl::string ee_name;
 
-	jc::stl::string ee_name = it->second;
+	if (vehicle)
+	{
+		auto it = jc::vars::exported_entities_vehicles.find(id);
+		if (it == jc::vars::exported_entities_vehicles.end())
+			return false;
+
+		ee_name = it->second;
+	}
+	else
+	{
+		auto it = jc::vars::exported_entities.find(id);
+		if (it == jc::vars::exported_entities.end())
+			return false;
+
+		ee_name = it->second;
+	}
 
 	log(YELLOW, "[ResourceStreamer] Requesting EE '{}'", ee_name.c_str());
 

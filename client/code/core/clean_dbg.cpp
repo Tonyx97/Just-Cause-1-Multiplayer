@@ -31,9 +31,9 @@ std::map<std::string, std::pair<uint32_t, ptr>> g_hashes;
 
 constexpr bool ENABLE_HOOKS = true;
 constexpr bool ENABLE_RAYCAST_DEBUG = false;
-constexpr bool ENABLE_OBJECT_BASE_MAP_DUMP = false;
+constexpr bool ENABLE_OBJECT_BASE_MAP_DUMP = true;
 constexpr bool ENABLE_DUMPING = false;
-constexpr bool ENABLE_INIT_FROM_MAP_DUMP = false;
+constexpr bool ENABLE_INIT_FROM_MAP_DUMP = true;
 constexpr bool ENABLE_ALL_MAPS_DUMP = false;
 constexpr bool ENABLE_STR_DEBUG = true;
 
@@ -204,7 +204,7 @@ DEFINE_HOOK_THISCALL(raycast, jc::physics::fn::RAYCAST, void*, uintptr_t _this, 
 	return raycast_hook.call(_this, r, a1, distance, hit_info, a3, a4, a5);
 }
 
-DEFINE_HOOK_THISCALL(object_init_from_map, 0x757A70, void, ObjectBase* object, object_base_map* map)
+DEFINE_HOOK_THISCALL(object_init_from_map, 0x817840, void, ObjectBase* object, object_base_map* map)
 {
 	if (!ENABLE_ALL_MAPS_DUMP)
 	{

@@ -8,7 +8,7 @@ void VehicleSeat::warp_character(Character* character)
 {
 	jc::v_call(this, jc::vehicle_seat::vt::WARP_CHARACTER, character, character->get_handle_base(), false);
 
-	//jc::this_call(0x5A1D40, character, true);
+	jc::this_call(0x5A1D40, character, true);
 }
 
 void VehicleSeat::open_door(Character* character)

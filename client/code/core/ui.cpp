@@ -555,13 +555,25 @@ void UI::render_admin_panel()
 		{
 			static VehicleSpawnPoint* spawn_point = nullptr;
 
+			/*if (spawn_point)
+				if (auto type = jc::read<ptr>(spawn_point, 0x134))
+					if (auto map = jc::read<object_base_map*>(type, 0xD4))
+					{
+						map->walk();
+					}*/
+
 			if (!spawn_point)
+			{
 				spawn_point = g_factory->create_vehicle_spawn_point(g_world->get_localplayer_character()->get_position() + vec3(2.5f, 0.5f, 0.f), veh_to_spawn, veh_faction);
+
+			}
 			else
 			{
 				g_factory->destroy_vehicle_spawn_point(spawn_point);
 				spawn_point = nullptr;
 			}
+
+			log(GREEN, "CVSP: {:x}", ptr(spawn_point));
 		}
 
 		ImGui::TreePop();
