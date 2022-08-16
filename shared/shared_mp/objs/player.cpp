@@ -112,9 +112,10 @@ void Player::update_blip()
 	blip->set_position(get_position());
 }
 
-void Player::set_fire_seed(uint64_t seed)
+void Player::set_multiple_rand_seed(uint16_t v)
 {
-	dyn_info.fire_rand_mt.seed(seed);
+	dyn_info.multiple_bullet_mt.seed(v);
+	dyn_info.use_multiple_bullet = (v != 0u);
 }
 
 bool Player::is_dispatching_movement() const
@@ -135,9 +136,14 @@ CharacterHandle* Player::get_character_handle() const
 	return is_local() ? nullptr : handle;
 }
 
-vec3 Player::get_fire_spread()
+vec3 Player::generate_bullet_rand_spread()
 {
-	return { util::rand::rand_flt(dyn_info.fire_rand_mt, -1.f, 1.f), util::rand::rand_flt(dyn_info.fire_rand_mt, -1.f, 1.f), util::rand::rand_flt(dyn_info.fire_rand_mt, -1.f, 1.f) };
+	return
+	{
+		util::rand::rand_flt(dyn_info.multiple_bullet_mt, -1.f, 1.f),
+		util::rand::rand_flt(dyn_info.multiple_bullet_mt, -1.f, 1.f),
+		util::rand::rand_flt(dyn_info.multiple_bullet_mt, -1.f, 1.f)
+	};
 }
 #else
 Player::Player(PlayerClient* pc) : client(pc)
@@ -313,7 +319,7 @@ void Player::set_movement_angle(float angle, bool send_angle_only_next_tick)
 
 void Player::set_movement_info(float angle, float right, float forward, bool aiming)
 {
-	const bool force_sync_angle = move_info.angle != angle;
+	const bool force_sync_angle = move_info.angle != angle && (move_info.right != 0.f || move_info.forward != 0.f);
 
 	move_info.force_sync = move_info.right != right || move_info.forward != forward || move_info.aiming != aiming;
 
@@ -392,10 +398,19 @@ void Player::set_aim_info(bool hip, bool full, const vec3& target)
 	dyn_info.aim_target = target;
 }
 
-void Player::fire_current_weapon(int32_t weapon_id, const vec3& muzzle, const vec3& target)
+void Player::set_bullet_direction(const vec3& muzzle, const vec3& dir)
 {
+	dyn_info.muzzle_position = muzzle;
+	dyn_info.bullet_dir = dir;
+	dyn_info.aim_target = muzzle + dir;
+}
+
+void Player::fire_current_weapon(int32_t weapon_id, const vec3& muzzle, const vec3& dir)
+{
+	set_bullet_direction(muzzle, dir);
+
 #ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->fire_current_weapon(weapon_id, muzzle, target); });
+	verify_exec([&](Character* c) { c->fire_current_weapon(weapon_id, muzzle, dyn_info.aim_target); });
 #endif
 }
 

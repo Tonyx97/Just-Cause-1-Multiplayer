@@ -68,11 +68,15 @@ namespace jc::patches
 	// a sense of desync, this patch will sync the rand seed across all players and each
 	// player will generate the correct set of PRGN so they stay the same
 	//
-	patch<24> fire_bullet_patch(0x61F54D);
+	patch<20> fire_bullet_patch(0x61F6AB);
 
 	// removes the heat haze effect from scoped weapons because it's shit
 	//
 	patch<8> scope_heat_haze_patch(0x5B86AD);
+
+	// removes engine overriding of last muzzle transform in weapon because
+	// we will use our own
+	patch<2> last_muzzle_transform_patch(0x61F1D9);
 }
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
@@ -104,11 +108,35 @@ void __fastcall hk_head_rotation_patch(Skeleton* skeleton, ptr _)
 		}
 }
 
-void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, float* accuracy, vec3* out_spread)
+void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muzzle_transform)
 {
 	if (const auto owner = weapon->get_owner())
 		if (const auto player = g_net->get_player_by_character(owner))
-			*out_spread = player->get_fire_spread() * *accuracy;
+			if (const auto weapon_info = weapon->get_info())
+			{
+				// if the player is local then just get our aim target and calculate the
+				// proper direction, otherwise, we want to grab the muzzle and aim target
+				// from the remote Player instance
+
+				const auto muzzle = player->get_muzzle_position();
+			
+				auto direction = player->get_bullet_direction();
+
+				// modify direction if this weapon fires more than 1 bullet at the same time
+				// the rand seed used to generate the direction modifier is synced across all players
+				// so all bullets should be the same in other's players instances
+
+				if (player->should_use_multiple_rand_seed())
+				{
+					const auto rand_vector = player->generate_bullet_rand_spread();
+					const auto accuracy = 3.f * glm::radians(1.f - weapon_info->get_accuracy(false));
+					const auto rotation_matrix = glm::yawPitchRoll(rand_vector.x * accuracy, rand_vector.y * accuracy, rand_vector.z * accuracy);
+
+					direction = vec4(direction, 0.f) * rotation_matrix;
+				}
+
+				*final_muzzle_transform = Transform::look_at(muzzle, muzzle + direction);
+			}
 }
 
 void jc::patches::apply_initial_patches()
@@ -264,21 +292,19 @@ void jc::patches::apply()
 
 	// fire bullet sync patch
 
-	auto fire_bullet_offset = jc::calc_call_offset(0x61F54D + 0x11, hk_fire_bullet_patch);
+	auto fire_bullet_offset = jc::calc_call_offset(0x61F6AB + 0xD, hk_fire_bullet_patch);
 
 	fire_bullet_patch._do(
 	{
-		0x8D, 0x95, 0x2C, 0xFF, 0xFF, 0xFF,		// lea edx, [ebp-0xd4]
-		0x52,									// push edx
-		0x8D, 0x4D, 0xF0,						// lea ecx, [ebp-0x10]
-		0x51,									// push ecx
-		0x8B, 0x8D, 0x84, 0xFE, 0xFF, 0xFF,		// mov ecx, DWORD PTR [ebp-0x17c]
+		0x8D, 0x85, 0x64, 0xFF, 0xFF, 0xFF,		// lea eax, [ebp-0x9C]
+		0x50,									// push eax
+		0x8B, 0x8D, 0x84, 0xFE, 0xFF, 0xFF,		// mov ecx, [ebp-0x17C]
 		0xE8,									// call hook
 		fire_bullet_offset.b0,
 		fire_bullet_offset.b1,
 		fire_bullet_offset.b2,
 		fire_bullet_offset.b3,
-		0xEB, 0x12								// jmp
+		0xEB, 0x07								// jmp
 	});
 	
 	// apply scoped weapons removal patch
@@ -287,10 +313,18 @@ void jc::patches::apply()
 	{
 		0xEB, 0x25			// jmp
 	});
+
+	// apply weapon last muzzle transform patch
+
+	last_muzzle_transform_patch._do(
+	{
+		0xEB, 0x1C			// jmp
+	});
 }
 
 void jc::patches::undo()
 {
+	last_muzzle_transform_patch._undo();
 	death_camera_velocity._undo();
 	set_health_red_fx._undo();
 	death_state._undo();

@@ -71,13 +71,16 @@ namespace jc::character::hook
 			case 10:
 			case 13:
 			case 14:
+			case 15:
 			case 16:
+			case 17:
+			case 19:
 			case 24:
-			case 25:
-			case 30:
-			case 74:
-			case 75:
-			case 77:
+			//case 25:
+			//case 30:
+			//case 74:
+			//case 75:
+			//case 77:
 			case 88: return true; // allow these to be set to remote players by the engine itself
 			}
 
@@ -88,6 +91,7 @@ namespace jc::character::hook
 		{
 			switch (id)
 			{
+			case 25:
 			case 27:
 			case 28:
 			case 29:
@@ -243,18 +247,53 @@ namespace jc::character::hook
 			if (const auto localplayer = g_net->get_localplayer())
 				if (const auto local_char = localplayer->get_character(); character == local_char)
 					if (auto weapon = local_char->get_weapon_belt()->get_current_weapon())
-					{
-						const auto rand_seed = __rdtsc();
+						if (const auto weapon_info = weapon->get_info())
+						{
+							// do our own spread calculation so we can send the final muzzle and direction to the server
+							// to achieve perfect sync on muzzle and direction
 
-						localplayer->set_fire_seed(rand_seed);
+							const auto muzzle = weapon->get_muzzle_transform()->get_position();
+							const auto aim_target = weapon->get_aim_target();
 
-						g_net->send_reliable(
-							PlayerPID_StanceAndMovement,
-							PlayerStanceID_Fire,
-							rand_seed,
-							weapon->get_id(),
-							weapon->get_grip_transform()->get_position(),
-							weapon->get_aim_target());
+							auto direction = glm::normalize(aim_target - muzzle);
+
+							if (const auto bullets = weapon_info->get_bullets_to_fire(); bullets == 1)
+							{
+								const auto accuracy = 3.f * glm::radians(1.f - weapon_info->get_accuracy(false));
+								const auto rotation_matrix = glm::yawPitchRoll(
+									util::rand::rand_flt(-1.f, 1.f) * accuracy,
+									util::rand::rand_flt(-1.f, 1.f) * accuracy,
+									util::rand::rand_flt(-1.f, 1.f) * accuracy);
+
+								direction = vec4(direction, 0.f) * rotation_matrix;
+
+								localplayer->set_multiple_rand_seed(0u);
+								localplayer->set_bullet_direction(muzzle, direction);
+
+								g_net->send_reliable(
+									PlayerPID_StanceAndMovement,
+									PlayerStanceID_Fire,
+									weapon->get_id(),
+									muzzle,
+									direction);
+							}
+							else if (bullets > 1)
+							{
+								// non-zero rand seed to generate the rest of the pellets
+
+								const auto rand_seed = static_cast<uint16_t>(1u + (static_cast<uint16_t>(__rdtsc()) & 0xFFFE));
+
+								localplayer->set_multiple_rand_seed(rand_seed);
+								localplayer->set_bullet_direction(muzzle, direction);
+
+								g_net->send_reliable(
+									PlayerPID_StanceAndMovement,
+									PlayerStanceID_FireMultiple,
+									rand_seed,
+									weapon->get_id(),
+									muzzle,
+									direction);
+							}
 					}
 		
 		return res;
@@ -327,9 +366,7 @@ namespace jc::character::hook
 
 	DEFINE_HOOK_THISCALL(character_test, 0x744CF0, void, hkCharacterProxy* proxy, mat4* m, vec3* velocity, float delta)
 	{
-		// check which parts of the engine code we want to let modify a remote player's velocity
-
-		switch (const auto ret = RET_ADDRESS)
+		/*switch (const auto ret = RET_ADDRESS)
 		{
 		default:
 		{
@@ -343,7 +380,7 @@ namespace jc::character::hook
 						if (character != local_char && g_net->get_player_by_character(character))
 							return;
 		}
-		}
+		}*/
 
 		character_test_hook.call(proxy, m, velocity, delta);
 	}

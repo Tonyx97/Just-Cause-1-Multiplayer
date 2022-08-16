@@ -69,6 +69,8 @@ public:
 	const vec4& operator [](int i) const { return row(i); }
 
 #ifdef JC_CLIENT
+	static Transform look_at(const vec3& eye, const vec3& target);
+
 	vec3 rotate_point(vec3 p) const;
 #endif
 };

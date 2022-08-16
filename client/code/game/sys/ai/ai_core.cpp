@@ -7,8 +7,8 @@
 void AiCore::init()
 {
 	Character::SET_FLYING_Y_MODIFIER(5.f);
-	Character::SET_GLOBAL_PUNCH_DAMAGE(500.f);
-	Character::SET_GLOBAL_PUNCH_DAMAGE(500.f, true);
+	Character::SET_GLOBAL_PUNCH_DAMAGE(250.f);
+	Character::SET_GLOBAL_PUNCH_DAMAGE(250.f, true);
 }
 
 void AiCore::destroy()

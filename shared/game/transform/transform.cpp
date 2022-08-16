@@ -93,6 +93,15 @@ TransformTR Transform::get_tr() const
 }
 
 #ifdef JC_CLIENT
+Transform Transform::look_at(const vec3& eye, const vec3& target)
+{
+	Transform t;
+
+	jc::this_call(0x413420, &t, &eye, &target, &jc::vec::UP);
+
+	return t;
+}
+
 vec3 Transform::rotate_point(vec3 p) const
 {
 	return *jc::c_call<vec3*, vec3*, vec3*, const Transform*>(jc::g::math::fn::ROTATE_POINT_BY_MATRIX, &p, &p, this);

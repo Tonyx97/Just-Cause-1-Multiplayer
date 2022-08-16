@@ -610,7 +610,7 @@ void UI::overlay_debug()
 		{
 			if (g_key->is_key_down(VK_F2))
 			{
-				constexpr auto magnitude = 2.5f;
+				constexpr auto magnitude = 1.5f;
 				const auto fp = g_camera->get_main_camera()->get_model_forward_vector();
 				vec3 forward_position = {};
 				forward_position.x = local_pos.x + (-fp.x * magnitude);
@@ -704,10 +704,10 @@ void UI::overlay_debug()
 
 			bool res = g_physics->raycast(local_head, pawn_head_position, hit_info);
 
-			auto is_visible = false;
+			auto is_visible = true;
 
-			if (hit_info.object)
-				is_visible = true;
+			/*if (hit_info.object)
+				is_visible = true;*/
 
 			const auto pawn_transform = pawn->get_transform();
 
@@ -727,23 +727,29 @@ void UI::overlay_debug()
 			auto pad = 0;
 			if (show_health)
 			{
-				v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.1f}%", pawn->get_hp()).c_str());
+				v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 15.f }, is_visible ? green_color : red_color, std::format("{:.1f}%", pawn->get_hp()).c_str());
 				pad += 1;
 			}
 			if (show_velocity)
 			{
 				const auto vel = pawn->get_velocity();
-				v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.1f} ({:.1f}, {:.1f}, {:.1f})", glm::length(vel), vel.x, vel.y, vel.z).c_str());
+				v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 15.f }, is_visible ? green_color : red_color, std::format("{:.1f} ({:.1f}, {:.1f}, {:.1f})", glm::length(vel), vel.x, vel.y, vel.z).c_str());
 				pad += 1;
 			}
 			if (show_distance)
 			{
-				v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:.4f}", distance).c_str());
+				v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 15.f }, is_visible ? green_color : red_color, std::format("{:.4f}", distance).c_str());
 				pad += 1;
 			}
 			//if (show_distance)
 			{
 				//v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:x}", ptr(pawn)).c_str());
+				pad += 1;
+			}
+			if (true)
+			{
+				const auto id = pawn->get_body_stance()->get_movement_id();
+				v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 15.f }, is_visible ? green_color : red_color, std::format("{}", id).c_str());
 				pad += 1;
 			}
 			if (show_skeleton)

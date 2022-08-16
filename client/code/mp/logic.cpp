@@ -83,7 +83,7 @@ void jc::mp::logic::on_tick()
 			const bool is_on_ground = local_char->is_on_ground();
 
 			if ((position != localplayer->get_position() || rotation != localplayer->get_rotation()) &&
-				(transform_timer.ready())/* || (!is_on_ground && fast_transform_timer.ready())*/)
+				(is_on_ground && transform_timer.ready()) || (!is_on_ground && fast_transform_timer.ready()))
 			{
 				TransformTR transform_tr(position, rotation);
 
@@ -94,14 +94,14 @@ void jc::mp::logic::on_tick()
 
 			// velocity
 			
-			if (velocity != localplayer->get_velocity() && glm::length(velocity) > 0.f && velocity_timer.ready())
+			/*if (velocity != localplayer->get_velocity() && glm::length(velocity) > 0.f && velocity_timer.ready())
 			{
 				g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, NetObjectVar_Velocity, velocity);
 
 				localplayer->set_velocity(velocity);
 
 				log(GREEN, "sending vel {}", glm::length(velocity));
-			}
+			}*/
 
 			// head rotation
 			
@@ -189,10 +189,10 @@ void jc::mp::logic::on_update_objects()
 
 			if (hip_aim || full_aim)
 			{
-				auto previous_aim_target = player_char->get_aim_target(),
-					 target_aim_target = player->get_aim_target();
+				const auto previous_aim_target = player_char->get_aim_target(),
+						   target_aim_target = player->get_aim_target();
 
-				player_char->set_aim_target(glm::lerp(previous_aim_target, target_aim_target, 0.1f));
+				player_char->set_aim_target(jc::math::lerp(previous_aim_target, target_aim_target, 0.075f));
 			}
 
 			break;

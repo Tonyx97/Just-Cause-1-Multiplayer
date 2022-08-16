@@ -5,6 +5,7 @@ namespace jc::weapon
 	static constexpr uint32_t GRIP_TRANSFORM		  = 0x38; // Transform
 	static constexpr uint32_t CHARACTER_OWNER		  = 0x78; // Character*
 	static constexpr uint32_t LAST_MUZZLE_TRANSFORM	  = 0xC0; // Transform
+	static constexpr uint32_t LAST_MUZZLE_POSITION	  = LAST_MUZZLE_TRANSFORM + 0x30; // Transform
 	static constexpr uint32_t MUZZLE_TRANSFORM		  = 0x100; // Transform
 	static constexpr uint32_t MUZZLE_POSITION		  = MUZZLE_TRANSFORM + 0x30; // vec3
 	static constexpr uint32_t LAST_EJECTOR_TRANSFORM  = 0x140; // Transform
@@ -80,6 +81,8 @@ public:
 	void set_ammo(int32_t v);
 	void set_last_shot_time(float v);
 	void set_muzzle_position(const vec3& v);
+	void set_last_muzzle_position(const vec3& v);
+	void set_last_muzzle_transform(const Transform& v);
 	void set_aim_target(const vec3& v);
 	void force_fire();
 

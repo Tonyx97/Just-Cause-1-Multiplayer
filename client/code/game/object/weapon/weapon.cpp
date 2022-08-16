@@ -2,6 +2,8 @@
 
 #include "weapon.h"
 
+#include <game/transform/transform.h>
+
 void WeaponInfo::set_max_mag_ammo(int32_t v)
 {
 	jc::write(v, this, jc::weapon_info::MAX_MAG_AMMO);
@@ -123,6 +125,16 @@ void Weapon::set_last_shot_time(float v)
 void Weapon::set_muzzle_position(const vec3& v)
 {
 	jc::write(v, this, jc::weapon::MUZZLE_POSITION);
+}
+
+void Weapon::set_last_muzzle_position(const vec3& v)
+{
+	jc::write(v, this, jc::weapon::LAST_MUZZLE_POSITION);
+}
+
+void Weapon::set_last_muzzle_transform(const Transform& v)
+{
+	jc::write(v, this, jc::weapon::LAST_MUZZLE_TRANSFORM);
 }
 
 void Weapon::set_aim_target(const vec3& v)

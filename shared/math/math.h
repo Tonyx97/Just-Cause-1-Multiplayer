@@ -148,6 +148,16 @@ namespace jc::math
 			util::pack::unpack_float(v.z, _factor));
 	}
 
+	inline vec3 lerp(const vec3& v, const vec3& t, float f)
+	{
+		return
+		{
+			std::lerp(v.x, t.x, f),
+			std::lerp(v.y, t.y, f),
+			std::lerp(v.z, t.z, f)
+		};
+	}
+
 	inline float quat_diff(const quat& a, const quat& b)
 	{
 		return std::asinf(glm::length(glm::normalize(glm::conjugate(a) * b))) * 2.f;

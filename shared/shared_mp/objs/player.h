@@ -27,6 +27,7 @@ enum PlayerStanceID : uint8_t
 	PlayerStanceID_BodyStance,
 	PlayerStanceID_Aiming,
 	PlayerStanceID_Fire,
+	PlayerStanceID_FireMultiple,
 	PlayerStanceID_Reload,
 	PlayerStanceID_ForceLaunch,
 };
@@ -38,13 +39,17 @@ public:
 	struct DynamicInfo
 	{
 #ifdef JC_CLIENT
-		std::mt19937_64 fire_rand_mt;
+		std::mt19937_64 multiple_bullet_mt;
+
+		bool use_multiple_bullet = false;
 #endif
 
 		std::string nick;
 
 		vec3 velocity {},
 			 head_rotation{},
+			 muzzle_position {},
+			 bullet_dir {},
 			 aim_target {};
 
 		int32_t skin = 0,
@@ -116,11 +121,13 @@ public:
 	void dispatch_movement();
 	void correct_position();
 	void update_blip();
-	void set_fire_seed(uint64_t seed);
+	void set_multiple_rand_seed(uint16_t v);
 	void set_local() { local = true; }
 
 	bool is_dispatching_movement() const;
 	bool is_local() const { return local; }
+
+	uint16_t should_use_multiple_rand_seed() const { return dyn_info.use_multiple_bullet; }
 
 	Character* get_character() const;
 
@@ -128,7 +135,7 @@ public:
 
 	UIMapIcon* get_blip() const { return blip; }
 
-	vec3 get_fire_spread();
+	vec3 generate_bullet_rand_spread();
 #else
 	Player(PlayerClient* pc);
 
@@ -164,7 +171,8 @@ public:
 	void force_launch(const vec3& vel, const vec3& dir, float f1, float f2);
 	void set_weapon_id(int32_t id);
 	void set_aim_info(bool hip, bool full, const vec3& target);
-	void fire_current_weapon(int32_t weapon_id = 0, const vec3& muzzle = {}, const vec3& target = {});
+	void set_bullet_direction(const vec3& muzzle, const vec3& dir);
+	void fire_current_weapon(int32_t weapon_id = 0, const vec3& muzzle = {}, const vec3& dir = {});
 	void reload();
 	void set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);
 
@@ -181,10 +189,12 @@ public:
 	uint32_t get_body_stance_id() const { return dyn_info.body_stance_id; }
 	uint32_t get_arms_stance_id() const { return dyn_info.arms_stance_id; }
 
-	float get_head_interpolation() const { return dyn_info.head_interpolation; };
+	float get_head_interpolation() const { return dyn_info.head_interpolation; }
 
 	const vec3& get_head_rotation() const { return dyn_info.head_rotation; }
 	const vec3& get_aim_target() const { return dyn_info.aim_target; }
+	const vec3& get_muzzle_position() const { return dyn_info.muzzle_position; }
+	const vec3& get_bullet_direction() const { return dyn_info.bullet_dir; }
 
 	const std::string& get_nick() const { return dyn_info.nick; }
 
