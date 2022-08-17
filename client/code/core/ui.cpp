@@ -897,7 +897,6 @@ void UI::net_debug()
 				ImGui::Text(FORMATV("Total Downloaded: {:.3f} MB", float(peer->incomingDataTotal) / (1000.f * 1000.f)).c_str());
 			else ImGui::Text(FORMATV("Total Downloaded: {:.3f} KB", float(peer->incomingDataTotal) / 1000.f).c_str());
 
-			ImGui::Text(FORMATV("Total Downloaded: {} KB", float(peer->incomingDataTotal) / 1000.f).c_str());
 			ImGui::Text(FORMATV("Total Packets Sent: {}", peer->totalPacketsSent).c_str());
 			ImGui::Text(FORMATV("Total Packets Lost: {}", peer->totalPacketsLost).c_str());
 		}
