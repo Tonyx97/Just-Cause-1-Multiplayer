@@ -10,6 +10,8 @@
 #include "../sound/sound_game_obj.h"
 #include "../damageable_object/damageable_object.h"
 
+#include <game/sys/time/time_system.h>
+
 bool object_base_map::find_string(uint32_t hash, jc::stl::string& out)
 {
 	return jc::this_call<bool>(FIND_STRING(), this, &hash, &out);
@@ -160,6 +162,16 @@ void object_base_map::walk()
 void ObjectBase::init_from_map(object_base_map* map)
 {
 	jc::v_call(this, jc::object_base::vt::INIT_FROM_MAP, map);
+}
+
+void ObjectBase::enable(bool v)
+{
+	jc::v_call(this, jc::object_base::vt::ENABLE, v);
+}
+
+void ObjectBase::update()
+{
+	jc::v_call(this, jc::object_base::vt::UPDATE, g_time->get_delta());
 }
 
 void ObjectBase::set_transform(const Transform& transform)

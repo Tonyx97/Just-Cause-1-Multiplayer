@@ -6,6 +6,7 @@
 
 #include <game/transform/transform.h>
 #include <game/sys/weapon/weapon_system.h>
+#include <game/sys/resource/resource_streamer.h>
 #include <game/object/character/character.h>
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/character_handle/character_handle.h>
@@ -16,6 +17,7 @@
 #include <game/object/spawn_point/agent_spawn_point.h>
 #include <game/object/spawn_point/vehicle_spawn_point.h>
 #include <game/object/mounted_gun/mounted_gun.h>
+#include <game/object/agent_type/vehicle_type.h>
 #include <game/object/ladder/ladder.h>
 #include <game/object/item/item_pickup.h>
 #include <game/object/vars/exported_entities.h>
@@ -23,6 +25,9 @@
 #include <game/object/ui/map_icon.h>
 #include <game/object/ui/map_icon_type.h>
 #include <game/object/sound/sound_game_obj.h>
+#include <game/object/resource/ee_resource.h>
+#include <game/object/exported_entity/exported_entity.h>
+#include <game/object/vehicle/vehicle.h>
 
 namespace jc::factory_system
 {
@@ -32,6 +37,7 @@ namespace jc::factory_system
 
 		ref_map<SimpleRigidObject>					simple_rigid_objects;
 		ref_map<DamageableObject>					damageables;
+		ref_map<Vehicle>							vehicles;
 		ref_map<AgentSpawnPoint>					agent_spawns;
 		ref_map<VehicleSpawnPoint>					vehicle_spawns;
 		ref_map<MountedGun>							mounted_guns;
@@ -64,6 +70,7 @@ void FactorySystem::destroy()
 
 	simple_rigid_objects.clear();
 	damageables.clear();
+	vehicles.clear();
 	agent_spawns.clear();
 	vehicle_spawns.clear();
 	mounted_guns.clear();
@@ -71,8 +78,10 @@ void FactorySystem::destroy()
 	item_pickups.clear();
 	animated_rigid_objects.clear();
 	ui_map_icons.clear();
+	ui_map_icon_types.clear();
 	objectives.clear();
 	traffic_lights.clear();
+	sounds.clear();
 
 	// set the default amount of spawns for characters and vehicles
 
@@ -184,6 +193,42 @@ DamageableObject* FactorySystem::spawn_damageable_object(const vec3& position, c
 	}
 
 	return nullptr;
+}
+
+Vehicle* FactorySystem::spawn_vehicle(int32_t id, const Transform& transform)
+{
+	Vehicle* vehicle = nullptr;
+
+	// make sure we load the ee right now, we don't want to wait
+	// for the next frame, we need the vehicle now
+
+	g_rsrc_streamer->request_vehicle_ee(id, [&](ExportedEntityResource* eer, const std::string& name)
+	{
+		const auto ee = eer->get_exported_entity();
+
+		std::string class_name;
+
+		object_base_map* _map = nullptr;
+
+		if (ee->take_class_property(&class_name, _map))
+		{
+			const auto vehicle_type = VehicleType::CREATE();
+
+			vehicle_type->load(class_name, name, _map);
+
+			auto r = vehicle_type->create_vehicle(transform);
+
+			vehicle = *r;
+
+			r->enable(true);
+
+			g_game_control->enable_object(r);
+
+			r.move_to_map(vehicles);
+		}
+	}, true);
+
+	return vehicle;
 }
 
 AgentSpawnPoint* FactorySystem::create_agent_spawn_point(const vec3& position)

@@ -24,8 +24,7 @@ class AssetPFX;
 class AssetAnim;
 class AssetTexture;
 
-using resource_callback_t = std::function<void(Resource*)>;
-using ee_resource_callback_t = std::function<void(ExportedEntityResource*)>;
+using ee_resource_callback_t = std::function<void(ExportedEntityResource*, const std::string& name)>;	// should replace this by agent type maybe
 
 struct AssetDataHolder
 {
@@ -48,7 +47,8 @@ public:
 	bool is_blocked() const;
 	bool can_add_resource() const;
 	bool all_queues_empty() const;
-	bool request_exported_entity(int32_t id, const ee_resource_callback_t& callback, bool vehicle = false, bool now = false);
+	bool request_agent_ee(int32_t id, const ee_resource_callback_t& callback, bool now = false);
+	bool request_vehicle_ee(int32_t id, const ee_resource_callback_t& callback, bool now = false);
 
 	std::deque<void*>* get_pending_queue() const;
 	std::deque<void*>* get_loading_queue() const;

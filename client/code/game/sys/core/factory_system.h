@@ -12,6 +12,7 @@ class CharacterHandle;
 class SimpleRigidObject;
 class AnimatedRigidObject;
 class DamageableObject;
+class Vehicle;
 class AgentSpawnPoint;
 class VehicleSpawnPoint;
 class MountedGun;
@@ -47,6 +48,7 @@ public:
 	CharacterHandle*		spawn_character(const std::string& model_name, const vec3& position = {}, int weapon_id = 0);
 	SimpleRigidObject*		spawn_simple_rigid_object(const vec3& position, const std::string& model_name, const std::string& pfx_name);
 	DamageableObject*		spawn_damageable_object(const vec3& position, const std::string& model_name, const std::string& pfx_name);
+	Vehicle*				spawn_vehicle(int32_t id, const Transform& transform);
 	AgentSpawnPoint*		create_agent_spawn_point(const vec3& position);
 	VehicleSpawnPoint*		create_vehicle_spawn_point(const vec3& position, int32_t id, int32_t faction);
 	MountedGun*				spawn_mounted_gun(const vec3& position);

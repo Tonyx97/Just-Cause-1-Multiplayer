@@ -124,7 +124,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		log(GREEN, "Initializing NET...");
 
 #ifdef _DEBUG
-		g_net->init("192.168.91.1", nick);
+		g_net->init("192.168.0.18", nick);
 #else
 		g_net->init(g_registry.get_string("ip"), nick);
 #endif
@@ -222,6 +222,8 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 	}
 	else if (g_game_control)
 		g_game_control->on_tick();
+
+	g_global_ptr = BITCAST(ptr, tick_hook.original);
 
 	return tick_hook.call(_this);
 }

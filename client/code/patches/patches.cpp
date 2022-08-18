@@ -207,6 +207,10 @@ void jc::patches::apply()
 	jc::nop(0x56908E, 0xF);
 	jc::nop(0x61F4CB, 0x12);
 
+	// avoid automatic destruction of vehicles after 8 seconds
+
+	jc::nop(0x4F522E, 0x5);
+
 	// increase max bone full update distance (by default it's 225 aka 15 meters away from camera)
 
 	jc::write(std::pow(250.f, 2.f), 0xA56990);

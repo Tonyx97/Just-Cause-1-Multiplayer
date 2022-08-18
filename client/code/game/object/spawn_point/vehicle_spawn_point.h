@@ -7,10 +7,7 @@ namespace jc::vehicle_spawn_point
 	static constexpr uint32_t TYPE = 0xE4; // VehicleType*
 }
 
-class VehicleType
-{
-public:
-};
+class VehicleType;
 
 class VehicleSpawnPoint : public ObjectSpawnPoint
 {

@@ -34,13 +34,14 @@ namespace jc::game_control
 		"CItemPickup",
 		"CGuiLiberateSettlement",
 		"CProvinceSettlement",
-		"CNamedPoint",
 		"CSettlementSoundObject",
 		"CInterestPoint",
 		"CGuiExtract",
 		"CGuiFactions",
 		"CBookMark",
+		"CNamedPoint",
 		"CNamedArea",
+		"CNamedPointFinder",
 		"CRoadFileLoader",
 		"CDropoffPoint",
 		"CSideMissionTarget",
@@ -53,6 +54,7 @@ namespace jc::game_control
 		"CSideMissionType",
 		"CFactionRelationSetter",
 		"CPause",
+		"CSpawnGroup",
 	};
 
 	static constexpr bool enable_block = true;
@@ -126,6 +128,11 @@ void GameControl::hook_create_object()
 void GameControl::unhook_create_object()
 {
 	create_object_hook.unhook();
+}
+
+void GameControl::dispatch_locations_load()
+{
+	jc::this_call(jc::game_control::fn::DISPATCH_LOCATIONS_LOAD, this);
 }
 
 void GameControl::on_tick()

@@ -123,6 +123,7 @@
     <ClCompile Include="code\core\thread_system\thread_system.cpp" />
     <ClCompile Include="code\game\object\action_point_owner\action_point_owner.cpp" />
     <ClCompile Include="code\game\object\agent_type\npc_variant.cpp" />
+    <ClCompile Include="code\game\object\agent_type\vehicle_type.cpp" />
     <ClCompile Include="code\game\object\alive_object\alive_object.cpp" />
     <ClCompile Include="code\game\object\asset\asset_anim.cpp" />
     <ClCompile Include="code\game\object\asset\asset_pfx.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="code\core\thread_system\thread_system.h" />
     <ClInclude Include="code\game\object\action_point_owner\action_point_owner.h" />
     <ClInclude Include="code\game\object\agent_type\npc_variant.h" />
+    <ClInclude Include="code\game\object\agent_type\vehicle_type.h" />
     <ClInclude Include="code\game\object\alive_object\alive_object.h" />
     <ClInclude Include="code\game\object\asset\asset_anim.h" />
     <ClInclude Include="code\game\object\asset\asset_pfx.h" />

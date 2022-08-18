@@ -345,6 +345,9 @@
     <ClCompile Include="code\game\sys\resource\texture_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\game\object\agent_type\vehicle_type.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\game\sys\renderer\renderer.h">
@@ -720,6 +723,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\sys\resource\texture_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\agent_type\vehicle_type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

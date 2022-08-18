@@ -19,6 +19,8 @@ namespace jc::object_base
 		static constexpr uint32_t GET_TRANSFORM = 4;
 		static constexpr uint32_t SET_TRANSFORM = 5;
 		static constexpr uint32_t INIT_FROM_MAP = 6;
+		static constexpr uint32_t ENABLE		= 10;
+		static constexpr uint32_t UPDATE		= 14;
 		static constexpr uint32_t IS_VEHICLE	= 20;
 		static constexpr uint32_t GET_TYPENAME	= 30;
 	}
@@ -86,6 +88,8 @@ public:
 	void set_position(const vec3& v);
 	void set_model(uint32_t id);
 	void init_from_map(object_base_map* map);
+	void enable(bool v);
+	void update();
 
 	bool is_vehicle() const;
 

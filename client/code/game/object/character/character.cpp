@@ -76,6 +76,7 @@ namespace jc::character::hook
 			case 17:
 			case 19:
 			case 24:
+			case 54:	// vehicle seating
 			//case 25:
 			//case 30:
 			//case 74:
@@ -523,7 +524,7 @@ void Character::set_skin(int32_t id, bool sync)
 
 void Character::set_skin(int32_t id, int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props, bool sync)
 {
-	g_rsrc_streamer->request_exported_entity(id, [=](ExportedEntityResource* eer)
+	g_rsrc_streamer->request_agent_ee(id, [=](ExportedEntityResource* eer, const std::string&)
 	{
 		if (object_base_map* map = nullptr; eer->get_exported_entity()->load_class_properties(map) && map)
 		{

@@ -27,9 +27,11 @@ class CharacterHandleBase
 class CharacterHandle
 {
 private:
+
 	void set_pending_destroy();
 
 public:
+
 	static CharacterHandle* GET_FREE_HANDLE();
 
 	void destroy();

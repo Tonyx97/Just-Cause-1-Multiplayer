@@ -13,6 +13,7 @@
 #include <game/object/weapon/weapon.h>
 #include <game/object/resource/ee_resource.h>
 #include <game/object/exported_entity/exported_entity.h>
+#include <game/object/agent_type/vehicle_type.h>
 #include <game/object/agent_type/npc_variant.h>
 #include <game/object/rigid_object/animated_rigid_object.h>
 #include <game/object/rigid_object/traffic_light.h>
@@ -342,70 +343,13 @@ void jc::test_units::test_0()
 
 	static std::vector<ref<Vehicle>> vehs;
 
-	if (g_key->is_key_pressed(VK_NUMPAD9))
+	if (g_key->is_key_down(VK_NUMPAD9))
 	{
-		g_rsrc_streamer->request_exported_entity(10, [&, local_pos, local_char](ExportedEntityResource* eer)
-		{
-			const auto ee = eer->get_exported_entity();
+		log(BLUE, "Requesting");
 
-			std::string class_name;
+		g_factory->spawn_vehicle(11, local_t);
 
-			object_base_map* _map = nullptr;
-
-			if (ee->take_class_property(&class_name, _map))
-			{
-
-				log(GREEN, "class name: {}", class_name);
-
-				jc::stl::string _class_name = class_name;
-				jc::stl::string _ee_name = jc::vars::exported_entities_vehicles[10];
-
-				auto vtype = jc::c_call(0x671B40, 0x1F8, 0xA);
-
-				log(RED, "vehicle type: {:x}", ptr(vtype));
-				jc::this_call(0x817370, vtype, 1);
-				jc::this_call(0x818350, vtype, &_class_name, &_ee_name, _map);
-
-				_map->walk();
-
-				Transform new_t(local_pos + vec3(3.f, 2.f, 0.f));
-
-				log(RED, "{} {} {}", local_pos.x, local_pos.y, local_pos.z);
-
-				ref<Vehicle> r;
-
-				jc::this_call(0x8184E0, vtype, &r, &new_t, 0);
-
-				log(RED, "vehicle created: {:x}", ptr(r.obj));
-
-				(*(void(__thiscall**)(ptr, int))(ptr(*(ptr*)r.obj) + 0x28))(ptr(r.obj), 1);
-				(*(void(__thiscall**)(ptr))(ptr(*(ptr*)r.obj) + 0x128))(ptr(r.obj));
-
-				log(RED, " fucking local char {:x}", ptr(local_char));
-
-				auto driver_seat = r.obj->get_driver_seat();
-
-				driver_seat->warp_character(local_char);
-
-				g_game_control->enable_object(r);
-
-				vehs.push_back(std::move(r));
-			}
-
-			/*
-
-			((ObjectBase*)vtype)->init_from_map(&map);
-
-			jc::this_call(0x818350, vtype, &class_name, &ee_name, &map);
-
-			ref<ptr> r;
-
-			jc::this_call(0x8184E0, vtype, &r, &local_t, 1);
-
-			log(RED, "vehicle created: {:x}", ptr(r.obj));
-
-			vehs.push_back(std::move(r));*/
-		}, true);
+		log(BLUE, "Requesting Done");
 
 		//g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "crate_custom_png.rbm", "");
 		//g_archives->dump_hashed_assets();
@@ -562,9 +506,9 @@ void jc::test_units::test_0()
 		log(RED, "called");
 	}
 
-	if (g_key->is_key_pressed(VK_NUMPAD1))
+	if (g_key->is_key_down(VK_NUMPAD1))
 	{
-		local_char->set_walking_anim_set(4, 7);
+		//local_char->set_walking_anim_set(4, 7);
 
 		/*struct vel_test
 		{

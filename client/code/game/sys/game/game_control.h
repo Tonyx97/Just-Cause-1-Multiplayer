@@ -7,8 +7,9 @@ namespace jc::game_control
 
 	namespace fn
 	{
-		static constexpr uint32_t CREATE_OBJECT		= 0x4EE350;
-		static constexpr uint32_t ENABLE_OBJECT		= 0x4EE480;
+		static constexpr uint32_t CREATE_OBJECT				= 0x4EE350;
+		static constexpr uint32_t DISPATCH_LOCATIONS_LOAD	= 0x4F1990;
+		static constexpr uint32_t ENABLE_OBJECT				= 0x4EE480;
 	}
 }
 
@@ -25,6 +26,7 @@ public:
 	void create_global_objects();
 	void hook_create_object();
 	void unhook_create_object();
+	void dispatch_locations_load();
 	void on_tick();
 
 	template <typename T, typename R = ref<T>>
