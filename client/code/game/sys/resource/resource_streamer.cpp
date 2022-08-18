@@ -96,8 +96,6 @@ bool ResourceStreamer::request_vehicle_ee(int32_t id, const ee_resource_callback
 
 	ee_resource->push(ee_name);
 
-	bool ok = false;
-
 	if (now)
 	{
 		while (!ee_resource->is_loaded())
