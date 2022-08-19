@@ -60,6 +60,8 @@ namespace jc::character::hook
 	{
 		auto can_be_ignored = [id]()
 		{
+			// allow the following stances to be set to remote players by the engine itself
+
 			switch (id)
 			{
 			case 1:
@@ -76,13 +78,19 @@ namespace jc::character::hook
 			case 17:
 			case 19:
 			case 24:
+			case 38:	// exit vehicle
+			case 39:	// open vehicle door
+			case 37:	// close vehicle door from inside
+			case 43:	// enter vehicle
+			case 45:	// close vehicle door from outside
 			case 54:	// vehicle seating
-			//case 25:
-			//case 30:
-			//case 74:
-			//case 75:
-			//case 77:
-			case 88: return true; // allow these to be set to remote players by the engine itself
+			case 56:	// vehicle looking behind
+			case 58:	// lift motorbike from the ground
+			case 74:
+			case 75:
+			case 77:
+			case 78:
+			case 88: return true;
 			}
 
 			return false;
@@ -198,9 +206,7 @@ namespace jc::character::hook
 		if (const auto localplayer = g_net->get_localplayer())
 		{
 			if (const auto local_char = localplayer->get_character(); character == local_char)
-			{
 				localplayer->set_movement_info(angle, right, forward, aiming);
-			}
 			else if (auto player = g_net->get_player_by_character(character))
 				return;
 		}

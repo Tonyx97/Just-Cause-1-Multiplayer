@@ -100,6 +100,8 @@ void Net::setup_channels()
 		case PlayerPID_DynamicInfo:					return nh::player::dynamic_info(p);
 		case PlayerPID_StanceAndMovement:			return nh::player::stance_and_movement(p);
 		case PlayerPID_SetWeapon:					return nh::player::set_weapon(p);
+		case PlayerPID_EnterExitVehicle:			return nh::player::enter_exit_vehicle(p);
+		case PlayerPID_VehicleControl:				return nh::player::vehicle_control(p);
 		}
 
 		return enet::PacketRes_NotFound;
@@ -120,8 +122,6 @@ void Net::setup_channels()
 
 void Net::tick()
 {
-	SetWindowText(GetConsoleWindow(), std::format(L"JC:MP Server ({} players connected)", get_player_clients_count()).c_str());
-
 	// process settings and server environment
 	
 	settings.process();
@@ -167,7 +167,9 @@ void Net::tick()
 
 	static auto packet_per_sec_printer = timer::add_timer(1000, [&]()
 	{
-		log(RED, "Packets per second: {} | Bytes per second: {}", sv->totalReceivedPackets, sv->totalReceivedData);
+		//log(RED, "Packets per second: {} | Bytes per second: {}", sv->totalReceivedPackets, sv->totalReceivedData);
+
+		SetWindowText(GetConsoleWindow(), std::format(L"JC:MP Server ({} players, {} p/s, {} b/s)", get_player_clients_count(), sv->totalReceivedPackets, sv->totalReceivedData).c_str());
 
 		sv->totalReceivedData = 0;
 		sv->totalReceivedPackets = 0;
@@ -193,13 +195,14 @@ void Net::refresh_net_object_sync()
 			case SyncType_Distance:
 			{
 				distance_objs.push_back(obj);
+
 				break;
 			}
 			default: log(RED, "Unknown sync type: {}", sync_type);
 			}
 		});
 
-		log(RED, "checking distance objects: {}", distance_objs.size());
+		//log(RED, "checking distance objects: {}", distance_objs.size());
 
 		for (auto net_obj : distance_objs)
 		{

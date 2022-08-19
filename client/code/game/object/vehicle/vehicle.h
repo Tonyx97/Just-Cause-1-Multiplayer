@@ -18,6 +18,12 @@ namespace jc::vehicle
 		static constexpr uint32_t GET_PASSENGER_SEAT	= 54;
 		static constexpr uint32_t GET_SPECIAL_SEAT		= 55;
 	}
+
+	namespace hook
+	{
+		void apply();
+		void undo();
+	}
 }
 
 enum VehicleFaction

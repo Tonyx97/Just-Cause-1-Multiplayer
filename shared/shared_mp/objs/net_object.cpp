@@ -43,6 +43,7 @@ bool NetObject::sync()
 	TransformTR real_transform;
 
 	const auto object_base = BITCAST(AliveObject*, get_object_base());
+	const auto physical = object_base->get_physical();
 
 	real_transform.t = object_base->get_position();
 	real_transform.r = object_base->get_rotation();
@@ -51,19 +52,23 @@ bool NetObject::sync()
 				real_max_hp = object_base->get_max_hp();
 
 	if ((real_transform.t != get_position() || real_transform.r != get_rotation()) && vars.transform_timer.ready())
+	{
 		g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Transform, (vars.transform = real_transform).pack());
+
+		//g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Velocity, physical->get_velocity());
+	}
 
 	switch (get_type())
 	{
 	case NetObject_Player: break;
 	default:
 	{
-		if (glm::length(vars.pending_velocity) > 0.f)
+		/*if (glm::length(vars.pending_velocity) > 0.f)
 		{
-			//g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Velocity, vars.velocity = vars.pending_velocity);
+			g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Velocity, vars.velocity = vars.pending_velocity);
 
 			vars.pending_velocity = {};
-		}
+		}*/
 	}
 	}
 
@@ -78,6 +83,11 @@ bool NetObject::sync()
 	on_sync();
 
 	return true;
+}
+
+void NetObject::set_transform_timer(int64_t v)
+{
+	vars.transform_timer(v);
 }
 
 bool NetObject::is_owned() const

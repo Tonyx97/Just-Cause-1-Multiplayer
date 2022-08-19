@@ -233,6 +233,8 @@ Vehicle* FactorySystem::spawn_vehicle(int32_t id, const Transform& transform)
 		}
 	}, true);
 
+	g_global_ptr = BITCAST(ptr, vehicle);
+
 	return vehicle;
 }
 

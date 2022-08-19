@@ -13,11 +13,12 @@ VehicleNetObject::VehicleNetObject(NID nid, const TransformTR& transform)
 {
 	set_nid(nid);
 	set_transform(transform);
+	//set_transform_timer(50);
 }
 
 ObjectBase* VehicleNetObject::get_object_base()
 {
-	return obj;
+	return get_object();
 }
 #else
 VehicleNetObject::VehicleNetObject(SyncType sync_type, const TransformTR& transform)
@@ -45,12 +46,19 @@ void VehicleNetObject::on_net_var_change(NetObjectVarType var_type)
 	{
 	case NetObjectVar_Transform:
 	case NetObjectVar_Position:
-	case NetObjectVar_Rotation: /*obj->set_transform(Transform(get_position(), get_rotation()));*/ break;
+	case NetObjectVar_Rotation: obj->set_transform(Transform(get_position(), get_rotation())); break;
 	//case NetObjectVar_Velocity: obj->get_physical()->set_velocity(get_velocity()); break;
 	case NetObjectVar_Health: obj->set_hp(get_hp()); break;
 	case NetObjectVar_MaxHealth: obj->set_max_hp(get_max_hp()); break;
 }
 #endif
+}
+
+void VehicleNetObject::set_info(float x, float y, bool braking)
+{
+	this->x = x;
+	this->y = y;
+	this->braking = braking;
 }
 
 bool VehicleNetObject::spawn()

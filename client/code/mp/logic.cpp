@@ -10,6 +10,8 @@
 
 #include <game/object/base/comps/physical.h>
 #include <game/object/character/character.h>
+#include <game/object/character/comps/vehicle_controller.h>
+#include <game/object/character/comps/vehicle_controller.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/weapon/weapon_belt.h>
 
@@ -47,6 +49,8 @@ void jc::mp::logic::on_tick()
 			const bool hip_aiming = localplayer->is_hip_aiming();
 			const bool full_aiming = localplayer->is_full_aiming();
 			const auto aim_target = local_char->get_aim_target();
+			const auto veh_controller = local_char->get_vehicle_controller();
+			const auto vehicle = veh_controller ? veh_controller->get_vehicle() : nullptr;
 			const auto& move_info = localplayer->get_movement_info();
 			const auto move_angle = move_info.angle;
 
@@ -63,33 +67,40 @@ void jc::mp::logic::on_tick()
 			if (state_sync_timer.ready())
 				g_net->send_reliable(PlayerPID_StateSync, current_weapon_id);
 
-			// movement info & movement angle too
+			// we need to check if we are in a vehicle or not, if so, we won't send stuff such as our transform,
+			// the movement info etc we will save a lot of bandwidth and performance with this optimization
 
-			if (localplayer->should_force_sync_movement_info())
+			if (!vehicle)
 			{
-				const auto packed_angle = util::pack::pack_pi_angle(move_info.angle);
-				const auto packed_right = util::pack::pack_norm(move_info.right);
-				const auto packed_forward = util::pack::pack_norm(move_info.forward);
+				// movement info & movement angle too
 
-				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, packed_angle, packed_right, packed_forward, move_info.aiming);
-			}
-			else if (localplayer->should_sync_angle_only() && angle_timer.ready())
-				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_MovementAngle, util::pack::pack_pi_angle(move_angle));
+				if (localplayer->should_force_sync_movement_info())
+				{
+					const auto packed_angle = util::pack::pack_pi_angle(move_info.angle);
+					const auto packed_right = util::pack::pack_norm(move_info.right);
+					const auto packed_forward = util::pack::pack_norm(move_info.forward);
 
-			localplayer->set_movement_angle(move_angle, false);
+					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, packed_angle, packed_right, packed_forward, move_info.aiming);
+				}
+				else if (localplayer->should_sync_angle_only() && angle_timer.ready())
+					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_MovementAngle, util::pack::pack_pi_angle(move_angle));
 
-			// transform (we upload it every 100 ms for now to correct the position in remote players)
 
-			const bool is_on_ground = local_char->is_on_ground();
+				localplayer->set_movement_angle(move_angle, false);
 
-			if ((position != localplayer->get_position() || rotation != localplayer->get_rotation()) &&
-				(is_on_ground && transform_timer.ready()) || (!is_on_ground && fast_transform_timer.ready()))
-			{
-				TransformTR transform_tr(position, rotation);
+				// transform (we upload it every 100 ms for now to correct the position in remote players)
 
-				g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, localplayer, NetObjectVar_Transform, transform_tr.pack());
+				const bool is_on_ground = local_char->is_on_ground();
 
-				localplayer->set_transform(transform_tr);
+				if ((position != localplayer->get_position() || rotation != localplayer->get_rotation()) &&
+					(is_on_ground && transform_timer.ready()) || (!is_on_ground && fast_transform_timer.ready()))
+				{
+					TransformTR transform_tr(position, rotation);
+
+					g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, localplayer, NetObjectVar_Transform, transform_tr.pack());
+
+					localplayer->set_transform(transform_tr);
+				}
 			}
 
 			// velocity
@@ -205,7 +216,6 @@ void jc::mp::logic::on_update_objects()
 			break;
 		}
 		case NetObject_Damageable:
-		case NetObject_Vehicle:
 		{
 			// check if we own this damageable, if so,
 			// let's sync it with the server and other players
@@ -230,6 +240,15 @@ void jc::mp::logic::on_update_objects()
 				const auto rot = obj->get_rotation();
 
 				obj_base->set_transform(obj_base->get_transform().interpolate(Transform(pos, rot), 0.2f, 0.2f));
+			}
+
+			break;
+		}
+		case NetObject_Vehicle:
+		{
+			if (!obj->sync())
+			{
+
 			}
 
 			break;

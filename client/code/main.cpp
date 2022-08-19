@@ -223,8 +223,6 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 	else if (g_game_control)
 		g_game_control->on_tick();
 
-	g_global_ptr = BITCAST(ptr, tick_hook.original);
-
 	return tick_hook.call(_this);
 }
 
@@ -297,7 +295,8 @@ DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filena
 	Buffer savegame;
 
 	savegame.add(1.f);
-	savegame.add(Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
+	savegame.add(Transform(vec3(2857.f, 92.f, -3604.f)));
+	//savegame.add(Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
 	savegame.add(0);	// ammo grenades
 
 	for (int i = 0; i < 14; ++i)

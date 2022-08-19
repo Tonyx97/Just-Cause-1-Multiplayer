@@ -108,6 +108,7 @@ public:
 
 #ifdef JC_CLIENT
 	void set_nid(NID v) { nid = v; }
+	void set_transform_timer(int64_t v);
 
 	bool is_owned() const;
 #endif

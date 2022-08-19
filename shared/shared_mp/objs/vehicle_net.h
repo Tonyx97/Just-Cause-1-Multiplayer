@@ -10,6 +10,11 @@ private:
 	class Vehicle* obj = nullptr;
 #endif
 
+	float x = 0.f,
+		  y = 0.f;
+
+	bool braking = false;
+
 public:
 
 	static constexpr NetObjectType TYPE() { return NetObject_Vehicle; }
@@ -19,6 +24,8 @@ public:
 #ifdef JC_CLIENT
 	VehicleNetObject(NID nid, const TransformTR& transform);
 
+	class Vehicle* get_object() const { return obj; }
+
 	class ObjectBase* get_object_base() override;
 #else
 	VehicleNetObject(SyncType sync_type, const TransformTR& transform);
@@ -27,6 +34,9 @@ public:
 
 	void on_sync() override;
 	void on_net_var_change(NetObjectVarType var_type) override;
+	void set_info(float x, float y, bool braking);
+
+	std::tuple<float, float, bool> get_info() const { return { x, y, braking }; }
 
 	bool spawn() override;
 };

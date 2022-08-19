@@ -23,11 +23,14 @@
 #include <game/object/mission/objective.h>
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/vehicle/comps/vehicle_seat.h>
+#include <game/object/interactable/interactable.h>
 #include <game/object/ui/map_icon.h>
 #include <game/object/localplayer/localplayer.h>
 #include <game/object/physics/pfx_collision.h>
 #include <game/object/physics/pfx_base.h>
 #include <game/sys/all.h>
+
+#include <net/serializer.h>
 
 DEFINE_HOOK_THISCALL(_is_key_pressed, 0x48C850, bool, int _this, int key)
 {
@@ -43,15 +46,23 @@ DEFINE_HOOK_THISCALL(_is_key_down, 0x48C800, bool, int _this, int key)
 {
 	const auto res = _is_key_down_hook.call(_this, key);
 
-	if (res && key != 0x24 && key != 0x26 && key != 0x27)
+	if (res)
 		log(RED, "[KEY DOWN] {:x} -> {} from {:x}", key, res, ptr(_ReturnAddress()));
 
 	return res;
 }
 
-DEFINE_HOOK_CCALL(_test, 0x407FD0, void, ptr a1, ptr a2)
+DEFINE_HOOK_THISCALL(_is_key_down2, 0x48C8B0, float, int _this, int key)
 {
-	_test_hook.call(a1, a2);
+	const auto res = _is_key_down2_hook.call(_this, key);
+
+	if (RET_ADDRESS == 0x851d6a)
+		return 0.f;
+
+	if (res)
+		log(RED, "[JOYSTICK KEY] {:x} -> {} from {:x}", key, res, ptr(_ReturnAddress()));
+
+	return res;
 }
 
 // 40E940 = FnThatReadsAssetFromDisk
@@ -78,59 +89,23 @@ DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* n
 	return resource_request_hook.call(a1, name, type, data, size);
 }
 
-/*DEFINE_HOOK_THISCALL(resource_request, 0x40E940, bool, ptr a1, ptr a2, ptr a3, ptr a4, ptr a5, ptr a6, ptr a7)
-{
-	log(RED, "{:x} {:x} {:x} {:x} {:x} {:x} {:x}", a1, a2, a3, a4, a5, a6, a7);
-
-	auto res = resource_request_hook.call(a1, a2, a3, a4, a5, a6, a7);
-
-	//while (!GetAsyncKeyState(VK_F3));
-
-	return res;
-}*/
-
-/*DEFINE_HOOK_THISCALL(resource_request, 0x40EB80, bool, ptr a1, jc::stl::string* a2)
-{
-	log(RED, "{:x} {}", a1, a2->c_str());
-
-	auto res = resource_request_hook.call(a1, a2);
-
-	return res;
-}*/
-
-/*DEFINE_HOOK_STDCALL(resource_request, 0x76C83130, HANDLE,
-	          LPCSTR                lpFileName,
-	           DWORD                 dwDesiredAccess,
-	          DWORD                 dwShareMode,
-	 LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-	           DWORD                 dwCreationDisposition,
-	           DWORD                 dwFlagsAndAttributes,
-	 HANDLE                hTemplateFile)
-{
-	log(RED, "{}", lpFileName);
-
-	auto res = resource_request_hook.call(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
-
-	return res;
-}*/
-
 void jc::test_units::init()
 {
-	resource_request_hook.hook();
-	//_is_key_pressed_hook.hook();
+	//resource_request_hook.hook();
+	_is_key_pressed_hook.hook();
 	//_is_key_down_hook.hook();
+	//_is_key_down2_hook.hook();
 	//_test_hook.hook();
 }
 
 void jc::test_units::destroy()
 {
-	resource_request_hook.unhook();
-	//_is_key_pressed_hook.unhook();
+	//resource_request_hook.unhook();
+	_is_key_pressed_hook.unhook();
 	//_is_key_down_hook.unhook();
+	//_is_key_down2_hook.unhook();
 	//_test_hook.unhook();
 }
-
-#include <net/serializer.h>
 
 void jc::test_units::test_0()
 {
@@ -144,212 +119,22 @@ void jc::test_units::test_0()
 	auto local_pos = local_char->get_position();
 	Transform local_t(local_pos);
 
-	// rbm reversing
-
-	if (g_key->is_key_pressed(VK_NUMPAD2))
-	{
-		using namespace enet;
-
-		std::vector<uint8_t> out;
-
-		auto rbm = util::fs::read_bin_file("crate_custom_png.rbm");
-
-		const auto type = deserialize_string(rbm);
-		const auto major = deserialize_int(rbm);
-		const auto minor = deserialize_int(rbm);
-		const auto minor2 = deserialize_int(rbm);
-		const auto min_bb = deserialize_general_data<vec3>(rbm);
-		const auto max_bb = deserialize_general_data<vec3>(rbm);
-		const auto blocks_count = deserialize_int(rbm);
-
-		serialize_params(out, type);
-		serialize_params(out, major);
-		serialize_params(out, minor);
-		serialize_params(out, minor2);
-		serialize_params(out, min_bb);
-		serialize_params(out, max_bb);
-		serialize_params(out, blocks_count);
-
-		log(GREEN, "version: {}.{}.{}", major, minor, minor2);
-		log(GREEN, "header: '{}'", type);
-
-		for (int i = 0; i < blocks_count; ++i)
-		{
-			const auto block_type = deserialize_string(rbm);
-
-			log(GREEN, "  block {} type: '{}'", i, block_type);
-
-			serialize_params(out, block_type);
-
-			int textures_count = 0;
-			
-			bool use_color = false;
-			bool use_normals = false;
-
-			switch (util::hash::JENKINS(block_type))
-			{
-			case util::hash::JENKINS("Diffuse"):
-			{
-				textures_count = 1;
-				use_color = false;
-				use_normals = true;
-				break;
-			}
-			case util::hash::JENKINS("DiffuseVertexColors"):
-			{
-				textures_count = 1;
-				use_color = true;
-				use_normals = true;
-				break;
-			}
-			case util::hash::JENKINS("AdditiveAlpha"):
-			{
-				textures_count = 1;
-				use_color = false;
-				use_normals = false;
-				break;
-			}
-			default: log(RED, "    Unknown block type: {}", type);
-			}
-
-			for (int texture_i = 0; texture_i < textures_count; ++texture_i)
-			{
-				const auto texture_name = deserialize_string(rbm);
-
-				serialize_params(out, texture_name);
-
-				log(GREEN, "    texture {} name: '{}'", texture_i, texture_name);
-			}
-
-			for (int i = 0; i < 20; ++i)
-			{
-				const auto f = deserialize_float(rbm);
-
-				serialize_params(out, f);
-			}
-
-			const auto primitive_type = deserialize_int(rbm);
-			const auto vertex_count = deserialize_int(rbm);
-
-			serialize_params(out, primitive_type);
-			serialize_params(out, vertex_count);
-
-			log(GREEN, "    primitive type: {}", primitive_type);
-			log(GREEN, "    vertices count: {}", vertex_count);
-
-			for (int v = 0; v < vertex_count; ++v)
-			{
-				const auto f = deserialize_general_data<vec3>(rbm);
-
-				serialize_params(out, f);
-
-				log(GREEN, "    vertex {}: {:.2f}, {:.2f}, {:.2f}", v, f.x, f.y, f.z);
-			}
-
-			const auto unk0 = deserialize_int<uint32_t>(rbm);
-
-			log(GREEN, "    vertices infos: {}", unk0);
-
-			serialize_params(out, unk0);
-
-			for (int v = 0; v < vertex_count; ++v)
-			{
-				auto uv = deserialize_general_data<vec2>(rbm);
-
-				/*vec2 fixed[4] =
-				{
-					{ 1.f, 1.f },
-					{ 1.f, 0.f },
-					{ 0.f, 1.f },
-					{ 0.f, 0.f },
-				};
-
-				static int i = 0;
-
-				uv = fixed[i];
-
-				i = (i + 1) % 4;*/
-
-				serialize_params(out, uv);
-
-				if (use_color)
-				{
-					const auto color = deserialize_int<uint32_t>(rbm);
-
-					serialize_params(out, color);
-
-					log(GREEN, "    color {}: {:x}", v, color);
-				}
-
-				if (use_normals)
-				{
-					const auto _nx = deserialize_int<int8_t>(rbm);
-					const auto _ny = deserialize_int<int8_t>(rbm);
-					const auto _nz = deserialize_int<int8_t>(rbm);
-					const auto _nw = deserialize_int<int8_t>(rbm);
-
-					const auto nx = util::pack::unpack_float(_nx, 127.f);
-					const auto ny = util::pack::unpack_float(_ny, 127.f);
-					const auto nz = util::pack::unpack_float(_nz, 127.f);
-					const auto nw = util::pack::unpack_float(_nw, 127.f);
-
-					serialize_params(out, util::pack::pack_float<int8_t>(nx, 127.f));
-					serialize_params(out, util::pack::pack_float<int8_t>(ny, 127.f));
-					serialize_params(out, util::pack::pack_float<int8_t>(nz, 127.f));
-					serialize_params(out, util::pack::pack_float<int8_t>(nw, 127.f));
-
-					log(GREEN, "    normal {}: {:.2f} {:.2f} {:.2f}", v, nx, ny, nz);
-				}
-
-				log(GREEN, "    uv {}: {:.2f}, {:.2f}", v, uv.x, uv.y);
-			}
-			
-			auto indices_count = deserialize_int(rbm);
-
-			log(RED, "trash indices: {}", indices_count);
-
-			serialize_params(out, indices_count);
-
-			if (indices_count == 0)
-			{
-				indices_count = deserialize_int(rbm);
-
-				serialize_params(out, indices_count);
-			}
-
-			log(GREEN, "    indices_count: {}", indices_count);
-
-			for (int v = 0; v < indices_count; ++v)
-			{
-				const auto index = deserialize_int<uint16_t>(rbm);
-
-				serialize_params(out, index);
-
-				log(GREEN, "    index {}: {}", v, index);
-			}
-
-			const auto block_end = deserialize_int<uint32_t>(rbm);
-
-			serialize_params(out, block_end);
-
-			if (block_end == 0x89ABCDEF)
-				log(CYAN, "    block ended");
-		}
-
-		std::ofstream test_file("test.rbm", std::ios::binary);
-
-		test_file.write((char*)out.data(), out.size());
-	}
-
 	static std::vector<ref<Vehicle>> vehs;
 
-	if (g_key->is_key_down(VK_NUMPAD9))
+	jc::nop(0x850012, 8);
+
+	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
-		log(BLUE, "Requesting");
+		//jc::this_call(0x4CE770, localplayer, g_player_global_info->get_localplayer_handle_base());
 
-		g_factory->spawn_vehicle(11, local_t);
+		auto veh = BITCAST(Vehicle*, g_global_ptr);
 
-		log(BLUE, "Requesting Done");
+		const auto seat = veh->get_driver_seat();
+
+		jc::this_call(0x76C010, *seat);
+
+		//const auto interactable = seat->get_interactable();
+		//interactable->interact_with(local_char);
 
 		//g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "crate_custom_png.rbm", "");
 		//g_archives->dump_hashed_assets();
@@ -370,10 +155,6 @@ void jc::test_units::test_0()
 		g_physics->unload_pfx("crate.pfx");
 		g_model_system->unload_rbm(model);
 		g_texture_system->unload_texture("1.jpg");
-
-		const auto v = g_factory->create_map_icon("player_blip", jc::character::g::DEFAULT_SPAWN_LOCATION);
-
-		log(GREEN, "blip: {:x}", ptr(v));
 	}
 
 	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
@@ -584,5 +365,204 @@ void jc::test_units::test_0()
 			Sleep(100);*/
 
 		// local_char->set_animation(anim_name, 0.2f, true, true);
+	}
+
+
+
+	// rbm reversing
+
+	if (g_key->is_key_pressed(VK_NUMPAD2))
+	{
+		using namespace enet;
+
+		std::vector<uint8_t> out;
+
+		auto rbm = util::fs::read_bin_file("crate_custom_png.rbm");
+
+		const auto type = deserialize_string(rbm);
+		const auto major = deserialize_int(rbm);
+		const auto minor = deserialize_int(rbm);
+		const auto minor2 = deserialize_int(rbm);
+		const auto min_bb = deserialize_general_data<vec3>(rbm);
+		const auto max_bb = deserialize_general_data<vec3>(rbm);
+		const auto blocks_count = deserialize_int(rbm);
+
+		serialize_params(out, type);
+		serialize_params(out, major);
+		serialize_params(out, minor);
+		serialize_params(out, minor2);
+		serialize_params(out, min_bb);
+		serialize_params(out, max_bb);
+		serialize_params(out, blocks_count);
+
+		log(GREEN, "version: {}.{}.{}", major, minor, minor2);
+		log(GREEN, "header: '{}'", type);
+
+		for (int i = 0; i < blocks_count; ++i)
+		{
+			const auto block_type = deserialize_string(rbm);
+
+			log(GREEN, "  block {} type: '{}'", i, block_type);
+
+			serialize_params(out, block_type);
+
+			int textures_count = 0;
+
+			bool use_color = false;
+			bool use_normals = false;
+
+			switch (util::hash::JENKINS(block_type))
+			{
+			case util::hash::JENKINS("Diffuse"):
+			{
+				textures_count = 1;
+				use_color = false;
+				use_normals = true;
+				break;
+			}
+			case util::hash::JENKINS("DiffuseVertexColors"):
+			{
+				textures_count = 1;
+				use_color = true;
+				use_normals = true;
+				break;
+			}
+			case util::hash::JENKINS("AdditiveAlpha"):
+			{
+				textures_count = 1;
+				use_color = false;
+				use_normals = false;
+				break;
+			}
+			default: log(RED, "    Unknown block type: {}", type);
+			}
+
+			for (int texture_i = 0; texture_i < textures_count; ++texture_i)
+			{
+				const auto texture_name = deserialize_string(rbm);
+
+				serialize_params(out, texture_name);
+
+				log(GREEN, "    texture {} name: '{}'", texture_i, texture_name);
+			}
+
+			for (int i = 0; i < 20; ++i)
+			{
+				const auto f = deserialize_float(rbm);
+
+				serialize_params(out, f);
+			}
+
+			const auto primitive_type = deserialize_int(rbm);
+			const auto vertex_count = deserialize_int(rbm);
+
+			serialize_params(out, primitive_type);
+			serialize_params(out, vertex_count);
+
+			log(GREEN, "    primitive type: {}", primitive_type);
+			log(GREEN, "    vertices count: {}", vertex_count);
+
+			for (int v = 0; v < vertex_count; ++v)
+			{
+				const auto f = deserialize_general_data<vec3>(rbm);
+
+				serialize_params(out, f);
+
+				log(GREEN, "    vertex {}: {:.2f}, {:.2f}, {:.2f}", v, f.x, f.y, f.z);
+			}
+
+			const auto unk0 = deserialize_int<uint32_t>(rbm);
+
+			log(GREEN, "    vertices infos: {}", unk0);
+
+			serialize_params(out, unk0);
+
+			for (int v = 0; v < vertex_count; ++v)
+			{
+				auto uv = deserialize_general_data<vec2>(rbm);
+
+				/*vec2 fixed[4] =
+				{
+					{ 1.f, 1.f },
+					{ 1.f, 0.f },
+					{ 0.f, 1.f },
+					{ 0.f, 0.f },
+				};
+
+				static int i = 0;
+
+				uv = fixed[i];
+
+				i = (i + 1) % 4;*/
+
+				serialize_params(out, uv);
+
+				if (use_color)
+				{
+					const auto color = deserialize_int<uint32_t>(rbm);
+
+					serialize_params(out, color);
+
+					log(GREEN, "    color {}: {:x}", v, color);
+				}
+
+				if (use_normals)
+				{
+					const auto _nx = deserialize_int<int8_t>(rbm);
+					const auto _ny = deserialize_int<int8_t>(rbm);
+					const auto _nz = deserialize_int<int8_t>(rbm);
+					const auto _nw = deserialize_int<int8_t>(rbm);
+
+					const auto nx = util::pack::unpack_float(_nx, 127.f);
+					const auto ny = util::pack::unpack_float(_ny, 127.f);
+					const auto nz = util::pack::unpack_float(_nz, 127.f);
+					const auto nw = util::pack::unpack_float(_nw, 127.f);
+
+					serialize_params(out, util::pack::pack_float<int8_t>(nx, 127.f));
+					serialize_params(out, util::pack::pack_float<int8_t>(ny, 127.f));
+					serialize_params(out, util::pack::pack_float<int8_t>(nz, 127.f));
+					serialize_params(out, util::pack::pack_float<int8_t>(nw, 127.f));
+
+					log(GREEN, "    normal {}: {:.2f} {:.2f} {:.2f}", v, nx, ny, nz);
+				}
+
+				log(GREEN, "    uv {}: {:.2f}, {:.2f}", v, uv.x, uv.y);
+			}
+
+			auto indices_count = deserialize_int(rbm);
+
+			log(RED, "trash indices: {}", indices_count);
+
+			serialize_params(out, indices_count);
+
+			if (indices_count == 0)
+			{
+				indices_count = deserialize_int(rbm);
+
+				serialize_params(out, indices_count);
+			}
+
+			log(GREEN, "    indices_count: {}", indices_count);
+
+			for (int v = 0; v < indices_count; ++v)
+			{
+				const auto index = deserialize_int<uint16_t>(rbm);
+
+				serialize_params(out, index);
+
+				log(GREEN, "    index {}: {}", v, index);
+			}
+
+			const auto block_end = deserialize_int<uint32_t>(rbm);
+
+			serialize_params(out, block_end);
+
+			if (block_end == 0x89ABCDEF)
+				log(CYAN, "    block ended");
+		}
+
+		std::ofstream test_file("test.rbm", std::ios::binary);
+
+		test_file.write((char*)out.data(), out.size());
 	}
 }

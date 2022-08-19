@@ -4,6 +4,9 @@
 
 #include <game/object/character/character.h>
 #include <game/object/item/item_pickup.h>
+#include <game/object/interactable/interactable.h>
+#include <game/object/vehicle/comps/vehicle_seat.h>
+#include <game/object/vehicle/vehicle.h>
 #include <game/object/physics/pfx_collision.h>
 
 void jc::hooks::init()
@@ -63,10 +66,16 @@ void jc::hooks::hook_game_fns()
 	alive_object::hook::apply();
 	item_pickup::hook::apply();
 	pfx_collision::hook::apply();
+	interactable::hook::apply();
+	vehicle_seat::hook::apply();
+	vehicle::hook::apply();
 }
 
 void jc::hooks::unhook_game_fns()
 {
+	vehicle::hook::undo();
+	vehicle_seat::hook::undo();
+	interactable::hook::undo();
 	pfx_collision::hook::undo();
 	item_pickup::hook::undo();
 	alive_object::hook::undo();

@@ -13,6 +13,9 @@
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/character/comps/stance_controller.h>
 #include <game/object/base/comps/physical.h>
+#include <game/object/vehicle/vehicle.h>
+#include <game/object/vehicle/comps/vehicle_seat.h>
+#include <game/object/interactable/interactable.h>
 #endif
 
 enet::PacketResult nh::player::state_sync(const enet::Packet& p)
@@ -314,6 +317,72 @@ enet::PacketResult nh::player::set_weapon(const enet::Packet& p)
 
 #ifdef JC_SERVER
 	g_net->send_broadcast_reliable(pc, PlayerPID_SetWeapon, player, weapon_id);
+#endif
+
+	return enet::PacketRes_Ok;
+}
+
+enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
+{
+#ifdef JC_CLIENT
+	const auto player = p.get_net_object<Player>();
+
+	if (!player)
+		return enet::PacketRes_BadArgs;
+#else
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+#endif
+
+	const auto vehicle_net = p.get_net_object<VehicleNetObject>();
+
+	if (!vehicle_net)
+		return enet::PacketRes_BadArgs;
+
+	const auto enter = p.get_bool();
+
+#ifdef JC_CLIENT
+	const auto vehicle = vehicle_net->get_object();
+	const auto seat = vehicle->get_driver_seat();
+	const auto interactable = seat->get_interactable();
+
+	if (enter)
+		interactable->interact_with(player->get_character());
+	else seat->kick_current();
+#else
+	log(GREEN, "some player is entering a vehicle");
+
+	g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, enter);
+#endif
+
+	return enet::PacketRes_Ok;
+}
+
+enet::PacketResult nh::player::vehicle_control(const enet::Packet& p)
+{
+#ifdef JC_CLIENT
+	const auto player = p.get_net_object<Player>();
+
+	if (!player)
+		return enet::PacketRes_BadArgs;
+#else
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+#endif
+
+	const auto vehicle_net = p.get_net_object<VehicleNetObject>();
+
+	if (!vehicle_net)
+		return enet::PacketRes_BadArgs;
+
+	const auto x = p.get_float();
+	const auto y = p.get_float();
+	const auto braking = p.get_bool();
+
+	vehicle_net->set_info(x, y, braking);
+
+#ifdef JC_SERVER
+	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleControl, player, vehicle_net, x, y, braking);
 #endif
 
 	return enet::PacketRes_Ok;
