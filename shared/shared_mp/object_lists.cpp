@@ -195,9 +195,11 @@ NetObject* ObjectLists::spawn_net_object(
 #ifdef JC_CLIENT
 	case NetObject_Damageable: object = CREATE_DAMAGEABLE_NET_OBJECT(nid, transform); break;
 	case NetObject_Blip: object = CREATE_BLIP_NET_OBJECT(nid, transform); break;
+	case NetObject_Vehicle: object = CREATE_VEHICLE_NET_OBJECT(nid, transform); break;
 #else
 	case NetObject_Damageable: object = CREATE_DAMAGEABLE_NET_OBJECT(sync_type, transform); break;
 	case NetObject_Blip: object = CREATE_BLIP_NET_OBJECT(sync_type, transform); break;
+	case NetObject_Vehicle: object = CREATE_VEHICLE_NET_OBJECT(sync_type, transform); break;
 #endif
 	default: log(RED, "Invalid net object type to spawn: {}", type);
 	}

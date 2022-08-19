@@ -31,6 +31,7 @@ enum _NetObjectType : NetObjectType
 	NetObject_Player,
 	NetObject_Damageable,
 	NetObject_Blip,
+	NetObject_Vehicle,
 	NetObject_Max,
 };
 
@@ -73,7 +74,7 @@ class NetObject
 {
 private:
 
-	NetObjectVars vars;
+	NetObjectVars vars {};
 
 	Player* streamer = nullptr;
 

@@ -416,7 +416,7 @@ void jc::test_units::test_0()
 
 		auto _char = info.character ? info.character : local_char;
 
-		auto r = info.vehicle->get_driver_seat();
+		/*auto r = info.vehicle->get_driver_seat();
 
 		log(RED, "{:x} {:x}", ptr(info.vehicle), ptr(r.obj));
 
@@ -427,7 +427,7 @@ void jc::test_units::test_0()
 			//info.vehicle->set_velocity(vec3(0.f, 10.f, 0.f));
 
 			log(GREEN, "warped? {:x}", jc::read<ptr>(ptr(*r), 0x48));
-		}
+		}*/
 	}
 
 	static LocalPlayer* npc_lp = nullptr;

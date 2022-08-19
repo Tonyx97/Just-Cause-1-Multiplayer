@@ -13,5 +13,5 @@ class Helicopter : public AirVehicle
 {
 public:
 
-	IMPL_OBJECT_TYPE_ID("CCar");
+	IMPL_OBJECT_TYPE_ID("CHelicopter");
 };

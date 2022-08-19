@@ -32,9 +32,9 @@ enet::PacketResult nh::world::spawn_object(const enet::Packet& p)
 	const auto transform = p.get_raw<TransformTR>();
 
 #ifdef JC_CLIENT
-	g_net->spawn_net_object(nid, net_type, transform);
+	const auto obj = g_net->spawn_net_object(nid, net_type, transform);
 #else
-	g_net->spawn_net_object(net_type, SyncType_Distance, transform);
+	const auto obj = g_net->spawn_net_object(SyncType_Distance, net_type, transform);
 #endif
 
 	return enet::PacketRes_Ok;
@@ -51,7 +51,7 @@ enet::PacketResult nh::world::destroy_object(const enet::Packet& p)
 	if (!net_obj)
 		return enet::PacketRes_BadArgs;
 
-	log(GREEN, "a net object with nid was destroyed, type {}", net_obj->get_nid(), net_obj->get_type());
+	log(GREEN, "A net object with nid was destroyed, type {}", net_obj->get_nid(), net_obj->get_type());
 
 	g_net->destroy_net_object(net_obj);
 

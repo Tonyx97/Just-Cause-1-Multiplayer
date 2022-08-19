@@ -2,7 +2,7 @@
 
 #include <mp/net.h>
 
-#include "blip.h"
+#include "blip_net.h"
 
 #ifdef JC_CLIENT
 #include <game/sys/core/factory_system.h>

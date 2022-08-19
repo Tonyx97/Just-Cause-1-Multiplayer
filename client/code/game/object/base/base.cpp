@@ -3,12 +3,25 @@
 #include <game/transform/transform.h>
 
 #include "base.h"
+
+#include "comps/physical.h"
+
 #include "../character/character.h"
 #include "../spawn_point/agent_spawn_point.h"
 #include "../spawn_point/vehicle_spawn_point.h"
 #include "../rigid_object/animated_rigid_object.h"
 #include "../sound/sound_game_obj.h"
 #include "../damageable_object/damageable_object.h"
+#include "../vehicle/sea_vehicle.h"
+#include "../vehicle/land_vehicle.h"
+#include "../vehicle/air_vehicle.h"
+#include "../vehicle/car.h"
+#include "../vehicle/motorbike.h"
+#include "../vehicle/tank.h"
+#include "../vehicle/helicopter.h"
+#include "../vehicle/airplane.h"
+#include "../vehicle/submarine.h"
+#include "../vehicle/boat.h"
 
 #include <game/sys/time/time_system.h>
 
@@ -181,6 +194,24 @@ void ObjectBase::set_transform(const Transform& transform)
 	case Character::CLASS_ID():
 	{
 		jc::this_call<void>(jc::character::fn::SET_TRANSFORM, this, &transform);
+		break;
+	}
+	case Vehicle::CLASS_ID():
+	case LandVehicle::CLASS_ID():
+	case SeaVehicle::CLASS_ID():
+	case AirVehicle::CLASS_ID():
+	case Car::CLASS_ID():
+	case MotorBike::CLASS_ID():
+	case Tank::CLASS_ID():
+	case Helicopter::CLASS_ID():
+	case AirPlane::CLASS_ID():
+	case Submarine::CLASS_ID():
+	case Boat::CLASS_ID():
+	{
+		const auto physical = get_physical();
+
+		physical->set_transform(transform);
+
 		break;
 	}
 	default: jc::v_call(this, jc::object_base::vt::SET_TRANSFORM, &transform);

@@ -139,6 +139,13 @@ void jc::mp::logic::on_tick()
 
 				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Damageable, transform);
 			}
+
+			if (g_key->is_key_pressed(VK_F4))
+			{
+				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
+
+				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Vehicle, transform);
+			}
 		}
 }
 
@@ -198,6 +205,7 @@ void jc::mp::logic::on_update_objects()
 			break;
 		}
 		case NetObject_Damageable:
+		case NetObject_Vehicle:
 		{
 			// check if we own this damageable, if so,
 			// let's sync it with the server and other players

@@ -38,6 +38,7 @@ public:
 	void set_max_vehicle_spawns(int v);
 	void destroy_character_handle(CharacterHandle* v);
 	void destroy_damageable_object(DamageableObject* v);
+	void destroy_vehicle(Vehicle* v);
 	void destroy_agent_spawn_point(AgentSpawnPoint* v);
 	void destroy_vehicle_spawn_point(VehicleSpawnPoint* v);
 	void destroy_map_icon(UIMapIcon* v);

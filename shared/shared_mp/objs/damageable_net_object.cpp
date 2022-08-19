@@ -69,6 +69,9 @@ bool DamageableNetObject::spawn()
 	obj = g_factory->spawn_damageable_object(get_position(), "building_blocks\\general\\oil_barrel_red.lod", "models\\building_blocks\\general\\oil_barrel.pfx");
 
 	check(obj, "Could not create damageable object");
+
+	set_hp(obj->get_real_hp());
+	set_max_hp(obj->get_max_hp());
 	
 	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
 #endif

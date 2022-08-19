@@ -50,6 +50,8 @@ bool NetObject::sync()
 	const float real_hp = object_base->get_real_hp(),
 				real_max_hp = object_base->get_max_hp();
 
+	log(GREEN, "{} {}", real_hp, real_max_hp);
+
 	if ((real_transform.t != get_position() || real_transform.r != get_rotation()) && vars.transform_timer.ready())
 		g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Transform, (vars.transform = real_transform).pack());
 

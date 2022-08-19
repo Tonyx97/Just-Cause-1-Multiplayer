@@ -116,6 +116,7 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 			break;
 		}
 		case NetObject_Damageable:
+		case NetObject_Vehicle:
 		{
 			const auto object = g_net->spawn_net_object(_info.nid, _info.type, TransformTR(_info.position, _info.rotation));
 

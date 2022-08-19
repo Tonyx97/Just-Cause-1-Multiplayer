@@ -17,6 +17,11 @@ void PfxBase::set_velocity(const vec3& v)
 	jc::v_call(this, jc::pfx_base::vt::SET_VELOCITY, &v);
 }
 
+void PfxBase::set_transform(const Transform& v)
+{
+	jc::v_call(this, jc::pfx_base::vt::SET_TRANSFORM, &v);
+}
+
 vec3 PfxBase::get_velocity() const
 {
 	vec3 out;

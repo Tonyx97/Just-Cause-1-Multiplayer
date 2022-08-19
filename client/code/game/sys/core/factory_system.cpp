@@ -113,6 +113,11 @@ void FactorySystem::destroy_damageable_object(DamageableObject* v)
 	damageables.erase(v);
 }
 
+void FactorySystem::destroy_vehicle(Vehicle* v)
+{
+	vehicles.erase(v);
+}
+
 void FactorySystem::destroy_agent_spawn_point(AgentSpawnPoint* v)
 {
 	agent_spawns.erase(v);
