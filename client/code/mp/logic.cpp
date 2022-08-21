@@ -148,14 +148,14 @@ void jc::mp::logic::on_tick()
 			{
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
-				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Damageable, transform);
+				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Damageable, 0ui16, transform);
 			}
 
 			if (g_key->is_key_pressed(VK_F4))
 			{
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
-				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Vehicle, transform);
+				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Vehicle, 56ui16, transform);
 			}
 		}
 }
@@ -248,7 +248,6 @@ void jc::mp::logic::on_update_objects()
 		{
 			if (!obj->sync())
 			{
-
 			}
 
 			break;

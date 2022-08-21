@@ -202,8 +202,6 @@ void Net::refresh_net_object_sync()
 			}
 		});
 
-		//log(RED, "checking distance objects: {}", distance_objs.size());
-
 		for (auto net_obj : distance_objs)
 		{
 			Player* new_streamer = nullptr;

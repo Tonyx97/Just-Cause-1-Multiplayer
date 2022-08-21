@@ -84,6 +84,8 @@ private:
 
 	NID nid = INVALID_NID;
 
+	uint16_t object_id = 0ui16;
+
 	bool spawned = false;
 
 public:
@@ -124,6 +126,7 @@ public:
 	void set_streamer(Player* v);
 	void set_spawned(bool v);
 	void set_sync_type(SyncType v) { sync_type = v; }
+	void set_object_id(uint16_t v) { object_id = v; }
 	void set_transform(const TransformTR& transform);
 	void set_transform(const TransformPackedTR& packed_transform);
 	void set_position(const vec3& v);
@@ -138,6 +141,8 @@ public:
 	bool is_spawned() const { return spawned; }
 	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
 	bool equal(NID _nid) const { return nid == _nid; }
+
+	uint16_t get_object_id() const { return object_id; }
 
 	NID get_nid() const { return nid; }
 

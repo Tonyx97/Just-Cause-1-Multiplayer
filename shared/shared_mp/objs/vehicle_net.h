@@ -4,16 +4,27 @@
 
 class VehicleNetObject : public NetObject
 {
+public:
+
+	// joystick / keyword variables
+	//
+	struct ControlInfo
+	{
+		float x = 0.f,
+			  y = 0.f,
+			  forward = 0.f,
+			  backward = 0.f;
+
+		bool braking = false;
+	};
+
 private:
 
 #ifdef JC_CLIENT
 	class Vehicle* obj = nullptr;
 #endif
 
-	float x = 0.f,
-		  y = 0.f;
-
-	bool braking = false;
+	ControlInfo control_info {};
 
 public:
 
@@ -34,9 +45,9 @@ public:
 
 	void on_sync() override;
 	void on_net_var_change(NetObjectVarType var_type) override;
-	void set_info(float x, float y, bool braking);
+	void set_control_info(float x, float y, float forward, float backward, bool braking);
 
-	std::tuple<float, float, bool> get_info() const { return { x, y, braking }; }
+	const ControlInfo& get_control_info() const { return control_info; }
 
 	bool spawn() override;
 };

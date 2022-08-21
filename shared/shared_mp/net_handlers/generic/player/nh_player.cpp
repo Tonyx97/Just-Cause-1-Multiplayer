@@ -341,6 +341,17 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 
 	const auto enter = p.get_bool();
 
+	if (enter)
+	{
+		vehicle_net->set_sync_type(SyncType_Locked);
+		vehicle_net->set_streamer(player);
+	}
+	else
+	{
+		vehicle_net->set_sync_type(SyncType_Distance);
+		vehicle_net->set_streamer(nullptr);
+	}
+
 #ifdef JC_CLIENT
 	const auto vehicle = vehicle_net->get_object();
 	const auto seat = vehicle->get_driver_seat();
@@ -375,14 +386,19 @@ enet::PacketResult nh::player::vehicle_control(const enet::Packet& p)
 	if (!vehicle_net)
 		return enet::PacketRes_BadArgs;
 
+	if (!vehicle_net->is_owned_by(player))
+		return enet::PacketRes_NotAllowed;
+
 	const auto x = p.get_float();
 	const auto y = p.get_float();
+	const auto forward = p.get_float();
+	const auto backward = p.get_float();
 	const auto braking = p.get_bool();
 
-	vehicle_net->set_info(x, y, braking);
+	vehicle_net->set_control_info(x, y, forward, backward, braking);
 
 #ifdef JC_SERVER
-	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleControl, player, vehicle_net, x, y, braking);
+	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleControl, player, vehicle_net, x, y, forward, backward, braking);
 #endif
 
 	return enet::PacketRes_Ok;

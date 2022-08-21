@@ -143,6 +143,7 @@ public:
 	void respawn(float hp, float max_hp);
 	void transfer_net_object_ownership_to(NetObject* obj, Player* new_streamer);
 	void set_net_object_ownership_of(NetObject* obj);
+	void remove_net_object_ownership(NetObject* obj);
 	void remove_all_ownerships();
 #endif
 

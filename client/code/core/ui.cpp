@@ -369,6 +369,7 @@ void UI::render_admin_panel()
 	if (!show_admin_panel)
 		return;
 
+	ImGui::SetNextWindowSize({ 700.f, 700.f });
 	ImGui::Begin("Admin Panel");
 
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
@@ -553,27 +554,11 @@ void UI::render_admin_panel()
 
 		if (ImGui::Button("Spawn Vehicle##ap.veh.spw"))
 		{
-			static VehicleSpawnPoint* spawn_point = nullptr;
+			TransformTR transform(g_world->get_localplayer_character()->get_position() + vec3(2.f, 1.f, 0.f));
 
-			/*if (spawn_point)
-				if (auto type = jc::read<ptr>(spawn_point, 0x134))
-					if (auto map = jc::read<object_base_map*>(type, 0xD4))
-					{
-						map->walk();
-					}*/
+			g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Vehicle, static_cast<uint16_t>(veh_to_spawn), transform);
 
-			if (!spawn_point)
-			{
-				spawn_point = g_factory->create_vehicle_spawn_point(g_world->get_localplayer_character()->get_position() + vec3(2.5f, 0.5f, 0.f), veh_to_spawn, veh_faction);
-
-			}
-			else
-			{
-				g_factory->destroy_vehicle_spawn_point(spawn_point);
-				spawn_point = nullptr;
-			}
-
-			log(GREEN, "CVSP: {:x}", ptr(spawn_point));
+			log(RED, "wants to spawn {}", veh_to_spawn);
 		}
 
 		ImGui::TreePop();

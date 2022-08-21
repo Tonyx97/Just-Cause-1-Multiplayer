@@ -7,11 +7,61 @@
 
 #include <mp/chat/chat.h>
 
+#include <game/object/vehicle/vehicle.h>
+
+#define DEBUG_KEY_INPUT 0
+
 // avoids the cursor centering
 //
 patch<2> reset_cursor_patch(0x40346E);
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+DEFINE_HOOK_THISCALL(get_joystick_value, 0x48C8B0, float, int _this, int key)
+{
+	auto res = get_joystick_value_hook.call(_this, key);
+
+	switch (key)
+	{
+	case 3:
+	case 4:
+	case 5:
+	case 6: break;
+	default:
+	{
+#if DEBUG_KEY_INPUT
+		if (res != 0.f)
+			log(RED, "[JOYSTICK KEY] 0x{:x} -> {}, {:x}", key, res, RET_ADDRESS);
+#endif
+	}
+	}
+		
+	return res;
+}
+
+DEFINE_HOOK_THISCALL(is_key_pressed, 0x48C850, bool, int _this, int key)
+{
+	auto res = is_key_pressed_hook.call(_this, key);
+
+#if DEBUG_KEY_INPUT
+	if (res)
+		log(RED, "[KEY PRESS] 0x{:x} -> {}, {:x}", key, res, ptr(_ReturnAddress()));
+#endif
+
+	return res;
+}
+
+DEFINE_HOOK_THISCALL(is_key_down, 0x48C800, bool, int _this, int key)
+{
+	auto res = is_key_down_hook.call(_this, key);
+
+#if DEBUG_KEY_INPUT
+	if (res)
+		log(RED, "[KEY DOWN] 0x{:x} -> {}, {:x}", key, res, ptr(_ReturnAddress()));
+#endif
+
+	return res;
+}
 
 LRESULT WINAPI wnd_proc_callback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -82,6 +132,20 @@ void Keycode::init()
 
 void Keycode::destroy()
 {
+}
+
+void Keycode::hook_key_input()
+{
+	get_joystick_value_hook.hook();
+	is_key_pressed_hook.hook();
+	is_key_down_hook.hook();
+}
+
+void Keycode::unhook_key_input()
+{
+	is_key_down_hook.unhook();
+	is_key_pressed_hook.unhook();
+	get_joystick_value_hook.unhook();
 }
 
 void Keycode::clear_states()

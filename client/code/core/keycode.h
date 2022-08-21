@@ -132,6 +132,8 @@ public:
 	void init();
 	void destroy();
 
+	void hook_key_input();
+	void unhook_key_input();
 	void clear_states();
 	void set_key_input(uint32_t key, bool state);
 	void set_wnd_proc(HWND wnd);

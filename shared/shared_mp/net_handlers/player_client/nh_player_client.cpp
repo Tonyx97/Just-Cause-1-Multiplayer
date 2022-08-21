@@ -118,7 +118,7 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 		case NetObject_Damageable:
 		case NetObject_Vehicle:
 		{
-			const auto object = g_net->spawn_net_object(_info.nid, _info.type, TransformTR(_info.position, _info.rotation));
+			const auto object = g_net->spawn_net_object(_info.nid, _info.type, _info.object_id, TransformTR(_info.position, _info.rotation));
 
 			object->set_hp(_info.hp);
 			object->set_max_hp(_info.max_hp);
@@ -129,7 +129,7 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 		}
 		case NetObject_Blip:
 		{
-			const auto object = g_net->spawn_net_object(_info.nid, _info.type, TransformTR(_info.position, _info.rotation));
+			const auto object = g_net->spawn_net_object(_info.nid, _info.type, _info.object_id, TransformTR(_info.position, _info.rotation));
 
 			log(PURPLE, "Created net object with NID {:x} and type {}", object->get_nid(), object->get_type());
 

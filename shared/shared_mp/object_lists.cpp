@@ -186,6 +186,7 @@ NetObject* ObjectLists::spawn_net_object(
 	SyncType sync_type,
 #endif
 	NetObjectType type,
+	uint16_t object_id,
 	const TransformTR& transform)
 {
 	NetObject* object = nullptr;
@@ -210,10 +211,11 @@ NetObject* ObjectLists::spawn_net_object(
 	{
 		check(add_net_object(object), "Could not add a net object");
 
+		object->set_object_id(object_id);
 		object->spawn();
 
 #ifdef JC_SERVER
-		g_net->send_broadcast_joined_reliable<ChannelID_World>(WorldPID_SpawnObject, object, transform);
+		g_net->send_broadcast_joined_reliable<ChannelID_World>(WorldPID_SpawnObject, object, object_id, transform);
 #endif
 	}
 

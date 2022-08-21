@@ -29,12 +29,13 @@ enet::PacketResult nh::world::spawn_object(const enet::Packet& p)
 	const auto net_type = p.get_integral<NetObjectType>();
 #endif
 
+	const auto object_id = p.get_u16();
 	const auto transform = p.get_raw<TransformTR>();
 
 #ifdef JC_CLIENT
-	const auto obj = g_net->spawn_net_object(nid, net_type, transform);
+	const auto obj = g_net->spawn_net_object(nid, net_type, object_id, transform);
 #else
-	const auto obj = g_net->spawn_net_object(SyncType_Distance, net_type, transform);
+	const auto obj = g_net->spawn_net_object(SyncType_Distance, net_type, object_id, transform);
 #endif
 
 	return enet::PacketRes_Ok;
@@ -61,7 +62,11 @@ enet::PacketResult nh::world::destroy_object(const enet::Packet& p)
 enet::PacketResult nh::world::set_ownership(const enet::Packet& p)
 {
 #ifdef JC_CLIENT
-	const auto new_streamer = p.get_net_object<Player>();
+	Player* new_streamer = nullptr;
+
+	if (const auto acquire_ownership = p.get_bool())
+		new_streamer = p.get_net_object<Player>();
+
 	const auto net_obj = p.get_net_object();
 
 	if (!net_obj)

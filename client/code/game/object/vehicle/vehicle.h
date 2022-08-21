@@ -4,10 +4,13 @@
 
 #include "comps/vehicle_seat.h"
 
+class Vehicle;
+
 namespace jc::vehicle
 {
 	static constexpr uint32_t DRIVER_SEAT			= 0xA0;
 	static constexpr uint32_t PASSENGER_SEAT		= 0xA4;
+	static constexpr uint32_t ROOFTOP_SEAT			= 0xA8;
 	static constexpr uint32_t SPECIAL_SEAT			= 0xAC;
 
 	namespace vt
@@ -17,6 +20,7 @@ namespace jc::vehicle
 		static constexpr uint32_t GET_DRIVER_SEAT		= 53;
 		static constexpr uint32_t GET_PASSENGER_SEAT	= 54;
 		static constexpr uint32_t GET_SPECIAL_SEAT		= 55;
+		static constexpr uint32_t HONK					= 76;
 	}
 
 	namespace hook

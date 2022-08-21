@@ -32,39 +32,6 @@
 
 #include <net/serializer.h>
 
-DEFINE_HOOK_THISCALL(_is_key_pressed, 0x48C850, bool, int _this, int key)
-{
-	const auto res = _is_key_pressed_hook.call(_this, key);
-
-	if (res)
-		log(RED, "[KEY PRESS] {:x} -> {} from {:x}", key, res, ptr(_ReturnAddress()));
-
-	return res;
-}
-
-DEFINE_HOOK_THISCALL(_is_key_down, 0x48C800, bool, int _this, int key)
-{
-	const auto res = _is_key_down_hook.call(_this, key);
-
-	if (res)
-		log(RED, "[KEY DOWN] {:x} -> {} from {:x}", key, res, ptr(_ReturnAddress()));
-
-	return res;
-}
-
-DEFINE_HOOK_THISCALL(_is_key_down2, 0x48C8B0, float, int _this, int key)
-{
-	const auto res = _is_key_down2_hook.call(_this, key);
-
-	if (RET_ADDRESS == 0x851d6a)
-		return 0.f;
-
-	if (res)
-		log(RED, "[JOYSTICK KEY] {:x} -> {} from {:x}", key, res, ptr(_ReturnAddress()));
-
-	return res;
-}
-
 // 40E940 = FnThatReadsAssetFromDisk
 
 DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* name, int type, ptr data, ptr size)
@@ -89,21 +56,22 @@ DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* n
 	return resource_request_hook.call(a1, name, type, data, size);
 }
 
+DEFINE_HOOK_THISCALL(_set_boat_vel, 0x8BC010, void, int _this, float v)
+{
+	_set_boat_vel_hook.call(_this, v);
+}
+
 void jc::test_units::init()
 {
+	//_set_boat_vel_hook.hook();
 	//resource_request_hook.hook();
-	_is_key_pressed_hook.hook();
-	//_is_key_down_hook.hook();
-	//_is_key_down2_hook.hook();
 	//_test_hook.hook();
 }
 
 void jc::test_units::destroy()
 {
+	//_set_boat_vel_hook.unhook();
 	//resource_request_hook.unhook();
-	_is_key_pressed_hook.unhook();
-	//_is_key_down_hook.unhook();
-	//_is_key_down2_hook.unhook();
 	//_test_hook.unhook();
 }
 
@@ -121,8 +89,6 @@ void jc::test_units::test_0()
 
 	static std::vector<ref<Vehicle>> vehs;
 
-	jc::nop(0x850012, 8);
-
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
 		//jc::this_call(0x4CE770, localplayer, g_player_global_info->get_localplayer_handle_base());
@@ -131,7 +97,7 @@ void jc::test_units::test_0()
 
 		const auto seat = veh->get_driver_seat();
 
-		jc::this_call(0x76C010, *seat);
+		//jc::this_call(0x74DE20, *seat, true);
 
 		//const auto interactable = seat->get_interactable();
 		//interactable->interact_with(local_char);
@@ -220,14 +186,14 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_ADD))
 	{
-		if (!npc_lp)
+		/*if (!npc_lp)
 		{
 			npc_lp = game::malloc<LocalPlayer>(0x53C);
 
 			jc::this_call(0x4C03B0, npc_lp);
 
 			log(GREEN, "npc lp: {:x} {:x}", ptr(npc_lp), ptr(localplayer));
-		}
+		}*/
 		
 		if (!info.handle)
 		{
@@ -239,9 +205,15 @@ void jc::test_units::test_0()
 			log(CYAN, "handle base from character {:x}", ptr(info.character->get_handle_base()));
 			log(CYAN, "char {:x}", ptr(info.character));
 
-			info.character->set_position(local_pos + vec3(0.f, 50.f, 0.f));
+			info.character->set_position(local_pos + vec3(0.f, 0.f, 0.f));
 
 			info.character->set_model(6);
+
+			const auto veh = BITCAST(Vehicle*, g_global_ptr);
+			const auto seat = veh->get_driver_seat();
+			const auto interactable = seat->get_interactable();
+
+			interactable->interact_with(info.character);
 			
 			//info.character->set_body_stance(29);
 			//info.character->set_body_stance(27);

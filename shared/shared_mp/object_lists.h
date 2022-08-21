@@ -92,5 +92,6 @@ public:
 		SyncType sync_type,
 #endif
 		NetObjectType type,
+		uint16_t object_id,
 		const TransformTR& transform);
 };

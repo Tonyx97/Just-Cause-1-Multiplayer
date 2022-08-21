@@ -55,6 +55,7 @@ namespace jc::game_control
 		"CFactionRelationSetter",
 		"CPause",
 		"CSpawnGroup",
+		"CSafeArea",
 	};
 
 	static constexpr bool enable_block = true;

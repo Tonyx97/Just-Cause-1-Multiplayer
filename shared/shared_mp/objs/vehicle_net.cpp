@@ -13,7 +13,7 @@ VehicleNetObject::VehicleNetObject(NID nid, const TransformTR& transform)
 {
 	set_nid(nid);
 	set_transform(transform);
-	//set_transform_timer(50);
+	set_transform_timer(5000);
 }
 
 ObjectBase* VehicleNetObject::get_object_base()
@@ -54,11 +54,13 @@ void VehicleNetObject::on_net_var_change(NetObjectVarType var_type)
 #endif
 }
 
-void VehicleNetObject::set_info(float x, float y, bool braking)
+void VehicleNetObject::set_control_info(float x, float y, float forward, float backward, bool braking)
 {
-	this->x = x;
-	this->y = y;
-	this->braking = braking;
+	control_info.x = x;
+	control_info.y = y;
+	control_info.forward = forward;
+	control_info.backward = backward;
+	control_info.braking = braking;
 }
 
 bool VehicleNetObject::spawn()
@@ -73,7 +75,7 @@ bool VehicleNetObject::spawn()
 	}
 
 #ifdef JC_CLIENT
-	obj = g_factory->spawn_vehicle(54, get_position());
+	obj = g_factory->spawn_vehicle(get_object_id(), get_position());
 
 	check(obj, "Could not create vehicle");
 

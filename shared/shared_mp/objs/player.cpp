@@ -173,15 +173,22 @@ void Player::transfer_net_object_ownership_to(NetObject* obj, Player* new_stream
 	const auto old_streamer_pc = client;
 	const auto new_streamer_pc = new_streamer->get_client();
 
-	old_streamer_pc->send_reliable<ChannelID_World>(WorldPID_SetOwnership, new_streamer, obj);
-	new_streamer_pc->send_reliable<ChannelID_World>(WorldPID_SetOwnership, new_streamer, obj);
+	old_streamer_pc->send_reliable<ChannelID_World>(WorldPID_SetOwnership, true, new_streamer, obj);
+	new_streamer_pc->send_reliable<ChannelID_World>(WorldPID_SetOwnership, true, new_streamer, obj);
 }
 
 void Player::set_net_object_ownership_of(NetObject* obj)
 {
 	check(obj, "Net object must be valid");
 
-	client->send_reliable<ChannelID_World>(WorldPID_SetOwnership, this, obj);
+	client->send_reliable<ChannelID_World>(WorldPID_SetOwnership, true, this, obj);
+}
+
+void Player::remove_net_object_ownership(NetObject* obj)
+{
+	check(obj, "Net object must be valid");
+
+	client->send_reliable<ChannelID_World>(WorldPID_SetOwnership, false, obj);
 }
 
 void Player::remove_all_ownerships()

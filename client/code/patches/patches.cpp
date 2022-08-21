@@ -215,6 +215,12 @@ void jc::patches::apply()
 
 	jc::write(std::pow(250.f, 2.f), 0xA56990);
 
+	// patches vehicles get input conditional so it will try to get the input from all vehicles
+	// no matter what, this helps us syncing the movement of vehicles easily without too much overkill
+
+	jc::nop(0x850012, 8);	// for land vehicles
+	jc::nop(0x8BBA29, 8);	// for sea vehicles
+
 #if FAST_LOAD
 	// apply CInfoMessage patch
 

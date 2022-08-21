@@ -147,15 +147,22 @@ bool NetObject::sync()
 void NetObject::set_streamer(Player* v)
 {
 #ifdef JC_SERVER
-	// if the object currently has a streamer and we want to set a new valid streamer
-	// then we will transfer the ownership to the new streamer. On the contrary, if this object
-	// has no streamer but we want to set a new one, we will simply set the ownership to the new
-	// streamer
-
-	if (streamer && v)
-		streamer->transfer_net_object_ownership_to(this, v);
+	if (streamer)
+	{
+		// if the object has a streamer, then we want to know if we have to transfer it to another
+		// player or simply remove any ownership
+		
+		if (v)
+			streamer->transfer_net_object_ownership_to(this, v);
+		else streamer->remove_net_object_ownership(this);
+	}
 	else if (!streamer && v)
+	{
+		// if the object had no streamer but we want to set one then simply
+		// set the object's ownership to the player
+		
 		v->set_net_object_ownership_of(this);
+	}
 #endif
 
 	streamer = v;

@@ -9,6 +9,17 @@
 
 namespace jc::vehicle_seat::hook
 {
+	DEFINE_HOOK_THISCALL(warp_character, 0x74DC30, void, VehicleSeat* seat, Character* character, CharacterHandleBase* unk, bool unk2)
+	{
+		/*if (const auto localplayer = g_net->get_localplayer())
+			if (const auto local_char = localplayer->get_character(); character == local_char)
+				if (const auto vehicle = seat->get_vehicle())
+					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, false, true);*/
+
+		return warp_character_hook.call(seat, character, unk, unk2);
+	}
+
 	// the enter hook is in the interactable since the engine does it directly
 	// using the interactable
 
@@ -20,7 +31,7 @@ namespace jc::vehicle_seat::hook
 			if (const auto local_char = localplayer->get_character(); character == local_char)
 				if (const auto vehicle = seat->get_vehicle())
 					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, false);
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, false, false);
 
 		return leave_hook.call(seat);
 	}
@@ -28,19 +39,21 @@ namespace jc::vehicle_seat::hook
 	void apply()
 	{
 		leave_hook.hook();
+		warp_character_hook.hook();
 	}
 
 	void undo()
 	{
+		warp_character_hook.unhook();
 		leave_hook.unhook();
 	}
 }
 
 void VehicleSeat::warp_character(Character* character)
 {
-	if (!get_character())
+	//if (!get_character())
 	{
-		jc::v_call(this, jc::vehicle_seat::vt::WARP_CHARACTER, character, character->get_handle_base(), false);
+		jc::vehicle_seat::hook::warp_character_hook.call(this, character, character->get_handle_base(), false);
 
 		jc::this_call(0x5A1D40, character, true);
 	}

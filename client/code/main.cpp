@@ -112,6 +112,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 		g_renderer->hook_present();
 		g_game_status->hook_dispatcher();
+		g_key->hook_key_input();
 
 		log(GREEN, "Hooking...");
 
@@ -156,6 +157,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 			g_game_status->unhook_dispatcher();
 			g_renderer->unhook_present();
 			g_game_control->unhook_create_object();
+			g_key->unhook_key_input();
 
 			jc::hooks::unhook_game_fns();
 
@@ -295,7 +297,9 @@ DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filena
 	Buffer savegame;
 
 	savegame.add(1.f);
-	savegame.add(Transform(vec3(2857.f, 92.f, -3604.f)));
+	savegame.add(Transform(vec3(658.f, 100.08f, 4773.71f)));
+	//savegame.add(Transform(vec3(2891.f, 71.65f, -3438.51f)));
+	//savegame.add(Transform(vec3(2857.f, 92.f, -3604.f)));
 	//savegame.add(Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
 	savegame.add(0);	// ammo grenades
 

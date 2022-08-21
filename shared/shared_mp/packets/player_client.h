@@ -19,6 +19,8 @@ ALIGN_PUSH(1)
 
 		float hp,
 			  max_hp;
+
+		uint16_t object_id;
 	};
 ALIGN_POP()
 
@@ -54,8 +56,9 @@ ALIGN_POP()
 			const auto rotation = enet::deserialize_general_data<quat>(data);
 			const float hp = enet::deserialize_float(data);
 			const float max_hp = enet::deserialize_float(data);
+			const auto object_id = enet::deserialize_int<uint16_t>(data);
 
-			net_objects.emplace_back(nid, type, position, rotation, hp, max_hp);
+			net_objects.emplace_back(nid, type, position, rotation, hp, max_hp, object_id);
 		}
 
 		return *this;

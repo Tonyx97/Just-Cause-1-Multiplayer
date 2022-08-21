@@ -71,6 +71,7 @@ namespace jc::character::hook
 			case 6:
 			case 9:
 			case 10:
+			case 12:
 			case 13:
 			case 14:
 			case 15:
