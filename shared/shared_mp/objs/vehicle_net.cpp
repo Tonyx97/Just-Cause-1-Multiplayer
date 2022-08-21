@@ -13,7 +13,7 @@ VehicleNetObject::VehicleNetObject(NID nid, const TransformTR& transform)
 {
 	set_nid(nid);
 	set_transform(transform);
-	set_transform_timer(5000);
+	//set_transform_timer(5000);
 }
 
 ObjectBase* VehicleNetObject::get_object_base()
@@ -56,11 +56,26 @@ void VehicleNetObject::on_net_var_change(NetObjectVarType var_type)
 
 void VehicleNetObject::set_control_info(float x, float y, float forward, float backward, bool braking)
 {
+#ifdef JC_CLIENT
+	if (!sync_this_tick)
+		sync_this_tick = (
+			x != control_info.x ||
+			y != control_info.y ||
+			forward != control_info.forward ||
+			backward != control_info.backward ||
+			braking != control_info.braking);
+#endif
+
 	control_info.x = x;
 	control_info.y = y;
 	control_info.forward = forward;
 	control_info.backward = backward;
 	control_info.braking = braking;
+}
+
+void VehicleNetObject::set_control_info(const ControlInfo& v)
+{
+	set_control_info(v.x, v.y, v.forward, v.backward, v.braking);
 }
 
 bool VehicleNetObject::spawn()

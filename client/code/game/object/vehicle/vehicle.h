@@ -28,6 +28,10 @@ namespace jc::vehicle
 		void apply();
 		void undo();
 	}
+
+	bool getting_helicopter_input();
+
+	void dispatch_helicopter_input(int control, float* value);
 }
 
 enum VehicleFaction

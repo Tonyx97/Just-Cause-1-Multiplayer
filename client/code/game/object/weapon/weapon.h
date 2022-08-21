@@ -60,6 +60,7 @@ public:
 
 	uint8_t get_id() const;
 
+	int32_t get_bullet_type() const;
 	int32_t get_type_id() const;
 	int32_t get_max_mag_ammo();
 	int32_t get_bullets_to_fire();

@@ -8,20 +8,17 @@
 #include <mp/chat/chat.h>
 
 #include <game/object/vehicle/vehicle.h>
+#include <game/sys/world/player_global_info.h>
 
-#define DEBUG_KEY_INPUT 0
+#define DEBUG_JOYSTICK 0
+#define DEBUG_KEY_PRESS 0
+#define DEBUG_KEY_DOWN 0
 
-// avoids the cursor centering
-//
-patch<2> reset_cursor_patch(0x40346E);
-
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-DEFINE_HOOK_THISCALL(get_joystick_value, 0x48C8B0, float, int _this, int key)
+DEFINE_HOOK_THISCALL(get_joystick_value, 0x48C8B0, float, CharacterHandleBase* _this, int control)
 {
-	auto res = get_joystick_value_hook.call(_this, key);
+	auto res = get_joystick_value_hook.call(_this, control);
 
-	switch (key)
+	switch (control)
 	{
 	case 3:
 	case 4:
@@ -29,9 +26,28 @@ DEFINE_HOOK_THISCALL(get_joystick_value, 0x48C8B0, float, int _this, int key)
 	case 6: break;
 	default:
 	{
-#if DEBUG_KEY_INPUT
-		if (res != 0.f)
-			log(RED, "[JOYSTICK KEY] 0x{:x} -> {}, {:x}", key, res, RET_ADDRESS);
+		// helicopter input sync requires more work than any other vehicle so
+		// we need to sync the joystick values from other players
+
+		if (jc::vehicle::getting_helicopter_input())
+			jc::vehicle::dispatch_helicopter_input(control, &res);
+
+#if DEBUG_JOYSTICK
+		switch (key)
+		{
+		case 0x2E:
+		case 0x2F:
+		case 0x30:
+		case 0x31:
+		case 0x32:
+		case 0x33:
+		case 0x34:
+		case 0x35:
+		{
+			if (res != 0.f)
+				log(RED, "[JOYSTICK KEY] 0x{:x} -> {}, {:x}", key, res, RET_ADDRESS);
+		}
+		}
 #endif
 	}
 	}
@@ -39,29 +55,35 @@ DEFINE_HOOK_THISCALL(get_joystick_value, 0x48C8B0, float, int _this, int key)
 	return res;
 }
 
-DEFINE_HOOK_THISCALL(is_key_pressed, 0x48C850, bool, int _this, int key)
+DEFINE_HOOK_THISCALL(is_key_pressed, 0x48C850, bool, CharacterHandleBase* _this, int control)
 {
-	auto res = is_key_pressed_hook.call(_this, key);
+	auto res = is_key_pressed_hook.call(_this, control);
 
-#if DEBUG_KEY_INPUT
+#if DEBUG_KEY_PRESS
 	if (res)
-		log(RED, "[KEY PRESS] 0x{:x} -> {}, {:x}", key, res, ptr(_ReturnAddress()));
+		log(RED, "[KEY PRESS] 0x{:x} -> {}, {:x}", control, res, ptr(_ReturnAddress()));
 #endif
 
 	return res;
 }
 
-DEFINE_HOOK_THISCALL(is_key_down, 0x48C800, bool, int _this, int key)
+DEFINE_HOOK_THISCALL(is_key_down, 0x48C800, bool, CharacterHandleBase* _this, int control)
 {
-	auto res = is_key_down_hook.call(_this, key);
+	auto res = is_key_down_hook.call(_this, control);
 
-#if DEBUG_KEY_INPUT
+#if DEBUG_KEY_DOWN
 	if (res)
-		log(RED, "[KEY DOWN] 0x{:x} -> {}, {:x}", key, res, ptr(_ReturnAddress()));
+		log(RED, "[KEY DOWN] 0x{:x} -> {}, {:x}", control, res, ptr(_ReturnAddress()));
 #endif
 
 	return res;
 }
+
+// avoids the cursor centering
+//
+patch reset_cursor_patch(0x40346E);
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT WINAPI wnd_proc_callback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -222,6 +244,21 @@ bool Keycode::is_key_pressed(uint32_t key) const
 bool Keycode::is_key_released(uint32_t key) const
 {
 	return keys_input[key].released;
+}
+
+bool Keycode::game_is_key_down(int32_t control) const
+{
+	return is_key_down_hook.call(g_player_global_info->get_localplayer_handle_base(), control);
+}
+
+bool Keycode::game_is_key_pressed(int32_t control) const
+{
+	return is_key_pressed_hook.call(g_player_global_info->get_localplayer_handle_base(), control);
+}
+
+float Keycode::game_get_joystick_value(int32_t control) const
+{
+	return get_joystick_value_hook.call(g_player_global_info->get_localplayer_handle_base(), control);
 }
 
 std::tuple<float, float> Keycode::get_mouse_wheel_value() const

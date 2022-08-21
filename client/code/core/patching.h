@@ -4,10 +4,10 @@
 * NOTE: Make sure the memory that we are going to patch has RW access
 * or it will blow up
 */
-template <size_t S, bool scoped = true>
+template <bool scoped = true>
 struct scoped_patch
 {
-	uint8_t previous[S] = { 0u };
+	std::vector<uint8_t> previous {};
 
 	void* address = nullptr;
 
@@ -32,8 +32,12 @@ struct scoped_patch
 		if (active)
 			return;
 
-		memcpy(previous, address, S);
-		memcpy(address, new_bytes.data(), S);
+		const auto size = new_bytes.size();
+
+		previous.resize(size);
+
+		memcpy(previous.data(), address, size);
+		memcpy(address, new_bytes.data(), size);
 
 		active = true;
 	}
@@ -45,11 +49,10 @@ struct scoped_patch
 
 		active = false;
 
-		memcpy(address, previous, S);
+		memcpy(address, previous.data(), previous.size());
 	}
 };
 
-template <size_t S>
-struct patch : public scoped_patch<S, false>
+struct patch : public scoped_patch<false>
 {
 };

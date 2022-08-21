@@ -61,6 +61,11 @@ uint8_t WeaponInfo::get_id() const
 	return static_cast<uint8_t>(jc::read<int32_t>(this, jc::weapon_info::ID));
 }
 
+int32_t WeaponInfo::get_bullet_type() const
+{
+	return jc::read<int32_t>(this, jc::weapon_info::BULLET_TYPE);
+}
+
 int32_t WeaponInfo::get_type_id() const
 {
 	return jc::read<int32_t>(this, jc::weapon_info::TYPE_ID);

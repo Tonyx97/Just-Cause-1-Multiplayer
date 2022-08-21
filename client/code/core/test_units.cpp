@@ -56,21 +56,21 @@ DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* n
 	return resource_request_hook.call(a1, name, type, data, size);
 }
 
-DEFINE_HOOK_THISCALL(_set_boat_vel, 0x8BC010, void, int _this, float v)
+DEFINE_HOOK_THISCALL(_set_boat_vel, 0x8521D0, void, int _this, float v)
 {
 	_set_boat_vel_hook.call(_this, v);
 }
 
 void jc::test_units::init()
 {
-	//_set_boat_vel_hook.hook();
+	_set_boat_vel_hook.hook();
 	//resource_request_hook.hook();
 	//_test_hook.hook();
 }
 
 void jc::test_units::destroy()
 {
-	//_set_boat_vel_hook.unhook();
+	_set_boat_vel_hook.unhook();
 	//resource_request_hook.unhook();
 	//_test_hook.unhook();
 }

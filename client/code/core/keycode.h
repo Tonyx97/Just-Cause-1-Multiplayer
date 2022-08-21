@@ -145,6 +145,11 @@ public:
 	bool is_key_pressed(uint32_t key) const;
 	bool is_key_released(uint32_t key) const;
 
+	bool game_is_key_down(int32_t control) const;
+	bool game_is_key_pressed(int32_t control) const;
+
+	float game_get_joystick_value(int32_t control) const;
+
 	std::tuple<float, float> get_mouse_wheel_value() const;
 };
 

@@ -188,7 +188,17 @@ namespace jc::character::hook
 		// obviously...
 
 		if (g_net->get_player_by_character(character))
+		{
+			// make sure we don't allow the engine to remove this player if
+			// this function returns false, there is another condition which
+			// check flags, if flag 1 << 6 is not set, then it will destroy the
+			// character right away, I think this flag is related to being dead
+			// inside a vehicle
+
+			character->set_flag(1 << 6);
+
 			return false;
+		}
 
 		// we implement our own logic of this function, we can modify the amount of time
 		// a character can stay death before its destruction or we can just skip it in the future
@@ -457,7 +467,7 @@ void Character::init_model()
 	// make sure we patch/skip the weapon belt recreation, because, for some reason, they added
 	// that inside this character info function
 
-	scoped_patch<8> sp(jc::g::patch::AVOID_WEAPON_BELT_RECREATION_WHILE_CHAR_INIT.address, { 0xE9, 0x8C, 0x0, 0x0, 0x0, 0x90, 0x90, 0x90 });
+	scoped_patch sp(jc::g::patch::AVOID_WEAPON_BELT_RECREATION_WHILE_CHAR_INIT.address, { 0xE9, 0x8C, 0x0, 0x0, 0x0, 0x90, 0x90, 0x90 });
 
 	jc::v_call<ptr>(this, jc::alive_object::vt::INITIALIZE_MODELS, get_info());
 }

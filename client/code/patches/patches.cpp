@@ -18,17 +18,17 @@ namespace jc::patches
 #if FAST_LOAD
 	// savegame integrity check patch so we can change the buffer to proper stuff
 	// 
-	patch<2> savegame_integrity_patch(0x4925D5);
+	patch savegame_integrity_patch(0x4925D5);
 
 	// minimal savegame buffer deserialization patch
 	// 
-	patch<5> savegame_minimal_load_patch(0x4F3D02);
+	patch savegame_minimal_load_patch(0x4F3D02);
 
 	// avoid CInfoMessage to show stuff that we don't want to,
 	// this happens because we don't setup the localizations
 	// so messages like "You were killed" would show up etc
 	//
-	patch<5> info_message_patch(0x7E2632);
+	patch info_message_patch(0x7E2632);
 #endif
 
 	// sets the head interpolation value to 1.0 all the time
@@ -36,47 +36,48 @@ namespace jc::patches
 	// setting its own values (we load 1.0 and jump straight to the
 	// head interpolation writing instruction)
 	//
-	patch<13> head_rotation_patch(0x64B1F4);
+	patch head_rotation_patch(0x64B1F4);
 
 	// avoids the engine to drop the current weapon upon a character's death
 	// because this causes issues with the weapon sync
 	//
-	patch<2> drop_weapon_on_death_patch(0x590810);
+	patch drop_weapon_on_death_patch(0x590810);
 
 	// avoids the idle animation when the local player is standing still
 	// and not moving
 	//
-	patch<2> no_idle_animation(0x591443);
+	patch no_idle_animation(0x591443);
 
 	// avoids the trashy blur that happens when the localplayer dies,
 	// but most importantly, the state is not reset such as the UI etc
 	// this allows us to directly respawn our localplayer's character
 	// so it works without too much overkill
 	//
-	patch<5> death_state(0x4D15BF);
+	patch death_state(0x4D15BF);
 
 	// avoids the red effect when the localplayer is low on health
 	//
-	patch<5> set_health_red_fx(0x5981F9);
+	patch set_health_red_fx(0x5981F9);
 
 	// do not make the death camera slower, just keep rotating baby
 	//
-	patch<2> death_camera_velocity(0x605755);
+	patch death_camera_velocity(0x605755);
 
 	// patch to properly create synced shots in remote players,
 	// since the spread is clientside, the bullets could hit or not in remote players causing
 	// a sense of desync, this patch will sync the rand seed across all players and each
 	// player will generate the correct set of PRGN so they stay the same
 	//
-	patch<20> fire_bullet_patch(0x61F6AB);
+	patch fire_bullet_patch(0x61F6AB);
 
 	// removes the heat haze effect from scoped weapons because it's shit
 	//
-	patch<8> scope_heat_haze_patch(0x5B86AD);
+	patch scope_heat_haze_patch(0x5B86AD);
 
 	// removes engine overriding of last muzzle transform in weapon because
 	// we will use our own
-	patch<2> last_muzzle_transform_patch(0x61F1D9);
+	//
+	patch last_muzzle_transform_patch(0x61F1D9);
 }
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
@@ -114,28 +115,35 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 		if (const auto player = g_net->get_player_by_character(owner))
 			if (const auto weapon_info = weapon->get_info())
 			{
-				// if the player is local then just get our aim target and calculate the
-				// proper direction, otherwise, we want to grab the muzzle and aim target
-				// from the remote Player instance
-
-				const auto muzzle = player->get_muzzle_position();
-			
-				auto direction = player->get_bullet_direction();
-
-				// modify direction if this weapon fires more than 1 bullet at the same time
-				// the rand seed used to generate the direction modifier is synced across all players
-				// so all bullets should be the same in other's players instances
-
-				if (player->should_use_multiple_rand_seed())
+				if (weapon_info->get_bullet_type() != 4)
 				{
-					const auto rand_vector = player->generate_bullet_rand_spread();
-					const auto accuracy = 3.f * glm::radians(1.f - weapon_info->get_accuracy(false));
-					const auto rotation_matrix = glm::yawPitchRoll(rand_vector.x * accuracy, rand_vector.y * accuracy, rand_vector.z * accuracy);
+					// if the player is local then just get our aim target and calculate the
+					// proper direction, otherwise, we want to grab the muzzle and aim target
+					// from the remote Player instance
 
-					direction = vec4(direction, 0.f) * rotation_matrix;
+					const auto muzzle = player->get_muzzle_position();
+
+					auto direction = player->get_bullet_direction();
+
+					// modify direction if this weapon fires more than 1 bullet at the same time
+					// the rand seed used to generate the direction modifier is synced across all players
+					// so all bullets should be the same in other's players instances
+
+					if (player->should_use_multiple_rand_seed())
+					{
+						const auto rand_vector = player->generate_bullet_rand_spread();
+						const auto accuracy = 3.f * glm::radians(1.f - weapon_info->get_accuracy(false));
+						const auto rotation_matrix = glm::yawPitchRoll(rand_vector.x * accuracy, rand_vector.y * accuracy, rand_vector.z * accuracy);
+
+						direction = vec4(direction, 0.f) * rotation_matrix;
+					}
+
+					*final_muzzle_transform = Transform::look_at(muzzle, muzzle + direction);
 				}
-
-				*final_muzzle_transform = Transform::look_at(muzzle, muzzle + direction);
+				else
+				{
+					// todojc - vehicle weapons?
+				}
 			}
 }
 

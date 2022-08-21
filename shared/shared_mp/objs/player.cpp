@@ -109,7 +109,7 @@ void Player::correct_position()
 
 void Player::update_blip()
 {
-	blip->set_position(get_position());
+	blip->set_position(get_character()->get_position());
 }
 
 void Player::set_multiple_rand_seed(uint16_t v)
@@ -248,6 +248,7 @@ bool Player::spawn()
 		check(handle, "Could not create the player's character");
 
 		log(PURPLE, "Player {:x} spawned now {:x}", get_nid(), ptr(get_character()));
+		log(PURPLE, "Handle {:x}", ptr(handle));
 
 		blip = g_factory->create_map_icon("player_blip", get_position());
 
