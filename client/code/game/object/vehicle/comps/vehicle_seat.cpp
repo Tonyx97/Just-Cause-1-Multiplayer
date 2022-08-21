@@ -31,21 +31,33 @@ namespace jc::vehicle_seat::hook
 			if (const auto local_char = localplayer->get_character(); character == local_char)
 				if (const auto vehicle = seat->get_vehicle())
 					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, false, false);
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, false);
 
 		return leave_hook.call(seat);
 	}
 
+	DEFINE_HOOK_THISCALL(instant_leave, 0x5AD280, void, Vehicle* vehicle, Character* character, bool is_local)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto local_char = localplayer->get_character(); character == local_char)
+				if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+					g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, false);
+
+		return instant_leave_hook.call(vehicle, character, is_local);
+	}
+
 	void apply()
 	{
-		leave_hook.hook();
 		warp_character_hook.hook();
+		leave_hook.hook();
+		instant_leave_hook.hook();
 	}
 
 	void undo()
 	{
-		warp_character_hook.unhook();
+		instant_leave_hook.unhook();
 		leave_hook.unhook();
+		warp_character_hook.unhook();
 	}
 }
 

@@ -18,7 +18,7 @@ namespace jc::prof
     void init(const char* name)
     {
 #if defined(JC_CLIENT) && !defined(JC_DBG)
-		return;
+		//return;
 #endif
         if (console_allocated)
 			return;

@@ -115,7 +115,7 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 		if (const auto player = g_net->get_player_by_character(owner))
 			if (const auto weapon_info = weapon->get_info())
 			{
-				if (weapon_info->get_bullet_type() != 4)
+				//if (weapon_info->get_bullet_type() != 4)
 				{
 					// if the player is local then just get our aim target and calculate the
 					// proper direction, otherwise, we want to grab the muzzle and aim target
@@ -140,10 +140,10 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 
 					*final_muzzle_transform = Transform::look_at(muzzle, muzzle + direction);
 				}
-				else
+				/*else
 				{
 					// todojc - vehicle weapons?
-				}
+				}*/
 			}
 }
 

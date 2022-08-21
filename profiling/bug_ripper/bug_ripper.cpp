@@ -104,6 +104,41 @@ namespace jc::bug_ripper
 
 		if (!exception_on_game && !exception_on_mod)
 			return EXCEPTION_CONTINUE_SEARCH;
+			
+		/*if (auto mod_base = get_module_info_if_valid(eip, trash))
+		{
+			std::wstring shite = trash;
+			std::string shit = std::string(shite.begin(), shite.end());
+			log(RED, "crashed {:x} {}", eip, shit);
+		}
+
+		Sleep(2500);*/
+
+		//log(RED, "logging");
+		
+		for (int i = 0; i < 0x2000; i += 0x4)
+		{
+			auto read_val = *(uintptr_t*)(ep->ContextRecord->Esp + i);
+
+			if (game_mod.contains_address(read_val) || mod_mod.contains_address(read_val))
+			{
+				wchar_t stack_ptr_mod_name[256] { 0 };
+
+				const auto absolute_read_val = read_val;
+
+				if (auto stack_ptr_mod = get_module_info_if_valid(read_val, stack_ptr_mod_name))
+				{
+					std::wstring mod_wstr = stack_ptr_mod_name;
+					std::string mod_str = std::string(mod_wstr.begin(), mod_wstr.end());
+
+					log(RED, "{:x} {} {:x} {:x}", ep->ContextRecord->Esp + i, mod_str, read_val, absolute_read_val);
+				}
+			}
+		}
+
+		//log(RED, "done");
+
+		//Sleep(10000);
 
 		wchar_t mod_name[256] { 0 };
 
@@ -112,13 +147,10 @@ namespace jc::bug_ripper
 #ifdef JC_CLIENT
 			ShowWindow(g_ui->get_window(), SW_HIDE);
 			ShowCursor(true);
-#endif
 
 			auto dialog = CreateDialogW(mod_mod.as_module(), MAKEINTRESOURCEW(IDD_CRASH_DIALOG), nullptr, crash_wnd_proc);
 
-#ifdef JC_CLIENT
 			SendMessageW(dialog, WM_SETICON, ICON_SMALL, GET_GAME_ICON());
-#endif
 
 			RECT rect;
 
@@ -130,13 +162,22 @@ namespace jc::bug_ripper
 			SetWindowText(dialog, L"Just Cause Multiplayer (Bug Ripper)");
 			SetWindowPos(dialog, HWND_TOPMOST, (GetSystemMetrics(SM_CXSCREEN) - width) / 2, (GetSystemMetrics(SM_CYSCREEN) - height) / 2, width, height, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 			BringWindowToTop(dialog);
+#endif
 
 			std::wstring buffer = L"The game crashed, we need to gather information about this crash.\r\nPlease send us report so we can fix the issue as soon as possible.\r\nMore Information about this crash in game's logs.\r\n\r\n";
 			
 			if (!std::filesystem::is_directory("Crash Logs"))
 				std::filesystem::create_directory("Crash Logs");
 
-			std::wofstream log("Crash Logs\\CRASH DUMP " + util::time::get_str_date() + ' ' + util::time::get_str_time_path() + ".log", std::ios::trunc);
+#ifdef JC_CLIENT
+			std::string str_date = util::time::get_str_date();
+			std::string str_time_path = util::time::get_str_time_path();
+#else
+			std::string str_date = "test";
+			std::string str_time_path = "path";
+#endif
+
+			std::wofstream log("Crash Logs\\CRASH DUMP " + str_date + ' ' + str_time_path + ".log", std::ios::trunc);
 
 			log << "- Exception Code: " << std::hex << ep->ExceptionRecord->ExceptionCode << std::endl;
 			log << "- GP Registers:" << std::endl;
@@ -186,6 +227,7 @@ namespace jc::bug_ripper
 
 			buffer += std::format(L"Exception Address: {} + {:#x}", mod_name, eip);
 
+#ifdef JC_CLIENT
 			SetWindowTextW(GetDlgItem(dialog, IDC_INFO_EDIT), buffer.c_str());
 
 			while (!g_can_close_crash_wnd)
@@ -198,6 +240,7 @@ namespace jc::bug_ripper
 			}
 
 			DestroyWindow(dialog);
+#endif
 
 			std::exit(0);
 		}
