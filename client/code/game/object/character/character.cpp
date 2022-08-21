@@ -87,6 +87,7 @@ namespace jc::character::hook
 			case 54:	// vehicle seating
 			case 56:	// vehicle looking behind
 			case 58:	// lift motorbike from the ground
+			case 60:	// jump out of vehicle
 			case 74:
 			case 75:
 			case 77:
@@ -405,8 +406,6 @@ namespace jc::character::hook
 
 	void apply()
 	{
-		character_test_hook.hook();
-
 		update_hook.hook();
 		set_body_stance_hook.hook();
 		set_arms_stance_hook.hook();
@@ -418,12 +417,12 @@ namespace jc::character::hook
 		reload_current_weapon_hook.hook();
 		force_launch_hook.hook();
 		character_proxy_add_velocity_hook.hook();
+		//character_test_hook.hook();
 	}
 
 	void undo()
 	{
-		character_test_hook.unhook();
-
+		//character_test_hook.unhook();
 		character_proxy_add_velocity_hook.unhook();
 		force_launch_hook.unhook();
 		reload_current_weapon_hook.unhook();

@@ -227,6 +227,26 @@ void Net::refresh_net_object_sync()
 			}
 		}
 	}
+
+	static TimerRaw destroy_dead_vehicles(10000);
+
+	if (destroy_dead_vehicles.ready())
+	{
+		std::vector<VehicleNetObject*> vehicles_to_destroy;
+
+		for_each_net_object([&](NID nid, NetObject* obj)
+		{
+			if (const auto vehicle = obj->cast<VehicleNetObject>())
+				if (vehicle->get_hp() <= 0.f)
+					vehicles_to_destroy.push_back(vehicle);
+		});
+
+		for (auto vehicle : vehicles_to_destroy)
+			destroy_net_object(vehicle);
+
+		if (vehicles_to_destroy.size() > 0u)
+			log(YELLOW, "{} vehicles destroyed", vehicles_to_destroy.size());
+	}
 }
 
 void Net::sync_net_objects()
