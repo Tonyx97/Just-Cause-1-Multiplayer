@@ -19,12 +19,7 @@ class CharacterHandle;
 
 struct CharacterHandleEntry
 {
-	union
-	{
-		CharacterHandle* handle;
-
-		int index;
-	};
+	CharacterHandle* handle;
 
 	uint32_t id;
 };

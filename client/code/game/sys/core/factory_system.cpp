@@ -1,4 +1,5 @@
 #include <defs/standard.h>
+#include <defs/client_basic.h>
 
 #include "../game/game_control.h"
 
@@ -56,10 +57,12 @@ using namespace jc::factory_system::v;
 
 void FactorySystem::init()
 {
-	//set_max_vehicle_spawns(8);
-	// 
-	//set_max_character_spawns(0);
-	//set_max_vehicle_spawns(0);
+#if FAST_LOAD
+	set_max_character_spawns(8);
+	set_max_vehicle_spawns(8);
+#else
+	set_max_character_spawns(0);
+#endif
 }
 
 void FactorySystem::destroy()
@@ -82,11 +85,6 @@ void FactorySystem::destroy()
 	objectives.clear();
 	traffic_lights.clear();
 	sounds.clear();
-
-	// set the default amount of spawns for characters and vehicles
-
-	set_max_character_spawns(8);
-	set_max_vehicle_spawns(4);
 }
 
 void FactorySystem::set_max_character_spawns(int v)

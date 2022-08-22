@@ -6,6 +6,8 @@
 
 #include <core/keycode.h>
 
+#include <game/sys/world/world.h>
+
 #include <game/object/character/character.h>
 #include <game/object/character/comps/vehicle_controller.h>
 
@@ -31,10 +33,15 @@ namespace jc::vehicle
 namespace jc::vehicle::hook
 {
 	template <typename VType, typename T>
-	void land_vehicle_get_input(VType vehicle, void* player, float* y, float* x, bool* braking, const T& hk)
+	void land_vehicle_get_input(VType vehicle, CharacterController* controller, float* y, float* x, bool* braking, const T& hk)
 	{
+		if (!vehicle->is_alive())
+			return;
+
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle)->cast<VehicleNetObject>())
 		{
+			const auto local_char = g_world->get_localplayer_character();
+
 			const auto& info = vehicle_net->get_control_info();
 
 			if (vehicle_net->is_owned())
@@ -62,14 +69,19 @@ namespace jc::vehicle::hook
 		float dummy_x, dummy_y;
 		bool dummy_braking;
 
-		hk(vehicle, player, &dummy_x, &dummy_y, &dummy_braking);
+		hk(vehicle, controller, &dummy_x, &dummy_y, &dummy_braking);
 	}
 
 	template <typename VType, typename T>
-	void airplane_get_input(VType vehicle, void* player, float* y, float* x, float* forward, float* backward, const T& hk)
+	void airplane_get_input(VType vehicle, CharacterController* controller, float* y, float* x, float* forward, float* backward, const T& hk)
 	{
+		if (!vehicle->is_alive())
+			return;
+
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle)->cast<VehicleNetObject>())
 		{
+			const auto local_char = g_world->get_localplayer_character();
+
 			const auto& info = vehicle_net->get_control_info();
 
 			if (vehicle_net->is_owned())
@@ -78,24 +90,11 @@ namespace jc::vehicle::hook
 				*forward = g_key->game_get_joystick_value(0x37) - g_key->game_get_joystick_value(0x38);
 				*x = g_key->game_get_joystick_value(0x3A) - g_key->game_get_joystick_value(0x39);
 
-				const auto driver_seat = vehicle->get_driver_seat();
-				const auto driver_character = driver_seat->get_character();
-
 				if (g_key->game_is_key_down(0x3D))
-				{
 					*y = g_key->game_get_joystick_value(0x3D);
 
-					if (driver_character)
-						jc::this_call(0x5A1E10, driver_character);
-				}
-
 				if (g_key->game_is_key_down(0x3E))
-				{
 					*y = -g_key->game_get_joystick_value(0x3E);
-
-					if (driver_character)
-						jc::this_call(0x5A1E70, driver_character);
-				}
 
 				if (*x != info.x || *y != info.y || *forward != info.forward || *backward != info.backward)
 				{
@@ -115,31 +114,34 @@ namespace jc::vehicle::hook
 
 		float dummy_x, dummy_y, dummy_forward, dummy_backward;
 
-		hk(vehicle, player, &dummy_x, &dummy_y, &dummy_forward, &dummy_backward);
+		hk(vehicle, controller, &dummy_x, &dummy_y, &dummy_forward, &dummy_backward);
 	}
 
-	DEFINE_HOOK_THISCALL(car_get_input, 0x82C990, void, Car* car, void* player, float* y, float* x, bool* braking)
+	DEFINE_HOOK_THISCALL(car_get_input, 0x82C990, void, Car* car, CharacterController* controller, float* y, float* x, bool* braking)
 	{
-		land_vehicle_get_input(car, player, y, x, braking, car_get_input_hook.original);
+		land_vehicle_get_input(car, controller, y, x, braking, car_get_input_hook.original);
 	}
 
-	DEFINE_HOOK_THISCALL(motorbike_get_input, 0x709E60, void, MotorBike* motorbike, void* player, float* y, float* x, bool* braking)
+	DEFINE_HOOK_THISCALL(motorbike_get_input, 0x709E60, void, MotorBike* motorbike, CharacterController* controller, float* y, float* x, bool* braking)
 	{
-		land_vehicle_get_input(motorbike, player, y, x, braking, motorbike_get_input_hook.original);
+		land_vehicle_get_input(motorbike, controller, y, x, braking, motorbike_get_input_hook.original);
 	}
 
-	DEFINE_HOOK_THISCALL(airplane_get_input, 0x831570, void, AirPlane* airplane, void* player, float* y, float* x, float* forward, float* backward)
+	DEFINE_HOOK_THISCALL(airplane_get_input, 0x831570, void, AirPlane* airplane, CharacterController* controller, float* y, float* x, float* forward, float* backward)
 	{
-		airplane_get_input(airplane, player, y, x, forward, backward, airplane_get_input_hook.original);
+		airplane_get_input(airplane, controller, y, x, forward, backward, airplane_get_input_hook.original);
 	}
 
-	DEFINE_HOOK_THISCALL(helicopter_get_input, 0x82D310, void, Helicopter* helicopter, void* player, float* y, float* x, float* forward, float* backward)
+	DEFINE_HOOK_THISCALL(helicopter_get_input, 0x82D310, void, Helicopter* helicopter, CharacterController* controller, float* y, float* x, float* forward, float* backward)
 	{
+		if (!helicopter->is_alive())
+			return;
+
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(helicopter)->cast<VehicleNetObject>())
 		{
 			heli_x = heli_y = heli_forward = heli_backward = 0.f;
 			helicopter_input_dispatching = vehicle_net;
-			helicopter_get_input_hook.call(helicopter, player, y, x, forward, backward);
+			helicopter_get_input_hook.call(helicopter, controller, y, x, forward, backward);
 			helicopter_input_dispatching = nullptr;
 
 			if (vehicle_net->should_sync_this_tick())
@@ -153,8 +155,11 @@ namespace jc::vehicle::hook
 		}
 	}
 
-	DEFINE_HOOK_THISCALL(boat_get_input, 0x8326D0, void, Boat* boat, void* player, float* y, float* x)
+	DEFINE_HOOK_THISCALL(boat_get_input, 0x8326D0, void, Boat* boat, CharacterController* controller, float* y, float* x)
 	{
+		if (!boat->is_alive())
+			return;
+
 		// todojc - stupid boats won't work with players for some reasons
 
 		//boat_get_input_hook.original(boat, player, y, x);
@@ -189,10 +194,14 @@ bool jc::vehicle::getting_helicopter_input()
 void jc::vehicle::dispatch_helicopter_input(int control, float* value)
 {
 	const auto vehicle_net = helicopter_input_dispatching;
+	const auto vehicle = vehicle_net->get_object();
+	const auto local_char = g_world->get_localplayer_character();
+	const auto driver_seat = vehicle->get_driver_seat();
+	const auto driver_character = driver_seat->get_character();
 
 	auto info = vehicle_net->get_control_info();
 
-	if (vehicle_net->is_owned())
+	if (vehicle_net->is_owned() && driver_character == local_char)
 	{
 		switch (control)
 		{

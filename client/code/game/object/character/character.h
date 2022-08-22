@@ -7,16 +7,6 @@
 
 #include <game/shared/character.h>
 
-class Transform;
-class WeaponBelt;
-class VehicleController;
-class hkCharacterProxy;
-class BodyStanceController;
-class ArmsStanceController;
-class NPCVariant;
-class CharacterHandleBase;
-class Weapon;
-
 namespace jc::character
 {
 	static constexpr uint32_t GRENADES_AMMO				= 0x90; // int32_t
@@ -77,6 +67,17 @@ namespace jc::character
 		void undo();
 	}
 }
+
+class Transform;
+class WeaponBelt;
+class VehicleController;
+class hkCharacterProxy;
+class BodyStanceController;
+class ArmsStanceController;
+class NPCVariant;
+class CharacterController;
+class Weapon;
+class Vehicle;
 
 struct CharacterInfo
 {
@@ -139,6 +140,8 @@ public:
 	void set_aim_target(const vec3& v);
 	void fire_current_weapon(int32_t weapon_id, const vec3& muzzle, const vec3& aim_target);
 	void reload_current_weapon();
+	void set_enter_vehicle_stance(bool instant);
+	void hopp_into_vehicle();
 
 	bool has_flag(uint32_t mask) const;
 	bool is_on_ground() const;
@@ -153,11 +156,13 @@ public:
 	float get_roll_clamp() const;
 	float get_air_time() const;
 
-	CharacterHandleBase* get_handle_base() const;
+	CharacterController* get_controller() const;
 
 	Character* get_facing_object() const;
 
 	WeaponBelt* get_weapon_belt() const;
+
+	Vehicle* get_vehicle() const;
 
 	VehicleController* get_vehicle_controller() const;
 

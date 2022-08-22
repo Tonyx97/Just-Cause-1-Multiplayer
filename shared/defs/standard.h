@@ -37,8 +37,6 @@
 #include <math/math.h>
 
 #ifdef JC_CLIENT
-#define FAST_LOAD 1
-
 #include "main.h"
 
 #include <d3dx9math.h>

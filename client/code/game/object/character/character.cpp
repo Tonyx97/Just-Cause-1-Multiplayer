@@ -2,9 +2,13 @@
 
 #include "character.h"
 
+#include "comps/vehicle_controller.h"
+#include "comps/stance_controller.h"
+
 #include "../weapon/weapon.h"
 #include "../weapon/weapon_belt.h"
 #include "../character_handle/character_handle.h"
+#include "../vehicle/vehicle.h"
 
 #include <game/transform/transform.h>
 #include <game/sys/world/world.h>
@@ -24,10 +28,6 @@
 #include "../vars/anims.h"
 #include "../exported_entity/exported_entity.h"
 #include "../resource/ee_resource.h"
-
-// hooks
-
-#include "comps/stance_controller.h"
 
 namespace jc::character::hook
 {
@@ -84,6 +84,8 @@ namespace jc::character::hook
 			case 37:	// close vehicle door from inside
 			case 43:	// enter vehicle
 			case 45:	// close vehicle door from outside
+			case 51:
+			case 52:
 			case 54:	// vehicle seating
 			case 56:	// vehicle looking behind
 			case 58:	// lift motorbike from the ground
@@ -153,6 +155,25 @@ namespace jc::character::hook
 					if (!player->is_dispatching_movement())
 						return;
 			}
+			else
+			{
+				switch (id)
+				{
+				case 1:
+				case 2:
+				case 3:
+				case 4:
+				case 9:
+				case 10:
+				case 12:
+				case 13:
+				case 14:
+				case 54:
+				case 56: break;
+				default:
+					log(GREEN, "[DBG] Character body stance set to: {} from {:x}", id, RET_ADDRESS);
+				}
+			}
 		}
 
 		set_body_stance_hook.call(stance, id);
@@ -196,7 +217,7 @@ namespace jc::character::hook
 			// character right away, I think this flag is related to being dead
 			// inside a vehicle
 
-			character->set_flag(1 << 6);
+			//character->set_flag(1 << 6);
 
 			return false;
 		}
@@ -383,25 +404,28 @@ namespace jc::character::hook
 		character_proxy_add_velocity_hook.call(proxy, velocity, rotation);
 	}
 
-	DEFINE_HOOK_THISCALL(character_test, 0x744CF0, void, hkCharacterProxy* proxy, mat4* m, vec3* velocity, float delta)
+	DEFINE_HOOK_THISCALL(set_enter_vehicle_stance, 0x5A1D40, void, Character* character, bool instant)
 	{
-		/*switch (const auto ret = RET_ADDRESS)
-		{
-		default:
-		{
-			log(RED, "[{}] WARNING {}", CURR_FN, ret);
+		/*if (const auto lp = g_net->get_localplayer())
+			if (const auto local_char = lp->get_character())
+				if (character == local_char)
+					if (const auto vehicle = local_char->get_vehicle())
+						if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Enter, false);*/
 
-			// block the localplayer from modifying a remote player's velocity
+		set_enter_vehicle_stance_hook.call(character, instant);
+	}
 
-			if (const auto lp = g_net->get_localplayer())
-				if (const auto local_char = lp->get_character())
-					if (const auto character = proxy->get_character(); character && !character->is_on_ground())
-						if (character != local_char && g_net->get_player_by_character(character))
-							return;
-		}
-		}*/
+	DEFINE_HOOK_THISCALL_S(hopp_into_vehicle_stance, 0x59F620, void, Character* character)
+	{
+		if (const auto lp = g_net->get_localplayer())
+			if (const auto local_char = lp->get_character())
+				if (character == local_char)
+					if (const auto vehicle = local_char->get_vehicle())
+						if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Enter, true);
 
-		character_test_hook.call(proxy, m, velocity, delta);
+		hopp_into_vehicle_stance_hook.call(character);
 	}
 
 	void apply()
@@ -417,12 +441,14 @@ namespace jc::character::hook
 		reload_current_weapon_hook.hook();
 		force_launch_hook.hook();
 		character_proxy_add_velocity_hook.hook();
-		//character_test_hook.hook();
+		set_enter_vehicle_stance_hook.hook();
+		hopp_into_vehicle_stance_hook.hook();
 	}
 
 	void undo()
 	{
-		//character_test_hook.unhook();
+		hopp_into_vehicle_stance_hook.unhook();
+		set_enter_vehicle_stance_hook.unhook();
 		character_proxy_add_velocity_hook.unhook();
 		force_launch_hook.unhook();
 		reload_current_weapon_hook.unhook();
@@ -836,6 +862,16 @@ void Character::reload_current_weapon()
 	jc::this_call<bool>(jc::character::fn::RELOAD_CURRENT_WEAPON, this);
 }
 
+void Character::set_enter_vehicle_stance(bool instant)
+{
+	jc::character::hook::set_enter_vehicle_stance_hook.call(this, instant);
+}
+
+void Character::hopp_into_vehicle()
+{
+	jc::character::hook::hopp_into_vehicle_stance_hook.call(this);
+}
+
 bool Character::has_flag(uint32_t mask) const
 {
 	return get_flags() & mask;
@@ -881,27 +917,21 @@ float Character::get_air_time() const
 	return jc::read<float>(this, jc::character::AIR_TIME);
 }
 
-CharacterHandleBase* Character::get_handle_base() const
+CharacterController* Character::get_controller() const
 {
-	CharacterHandleBase* handle_base = nullptr;
-
-	log(RED, "wtf {:x} {:x}", ptr(this), ptr(g_world->get_localplayer_character()));
+	CharacterController* controller = nullptr;
 
 	if (this == g_world->get_localplayer_character())
-	{
-		handle_base = g_player_global_info->get_localplayer_handle_base();
-	}
+		controller = g_player_global_info->get_local_controller();
 
-	log(RED, "{:x}", ptr(handle_base));
-
-	if (!handle_base)
+	if (!controller)
 		if (const auto handle_entry = REF(CharacterHandleEntry*, this, jc::character::HANDLE_ENTRY))
 			if (const auto handle = g_ai->get_character_handle_from_entry(handle_entry))
-				handle_base = handle->get_base();
+				controller = handle->get_controller();
 
-	check(handle_base, "Invalid handle base");
+	check(controller, "Invalid character controller {:x}", ptr(this));
 
-	return handle_base;
+	return controller;
 }
 
 Character* Character::get_facing_object() const
@@ -912,6 +942,12 @@ Character* Character::get_facing_object() const
 WeaponBelt* Character::get_weapon_belt() const
 {
 	return jc::read<WeaponBelt*>(this, jc::character::WEAPON_BELT);
+}
+
+Vehicle* Character::get_vehicle() const
+{
+	const auto veh_controller = get_vehicle_controller();
+	return veh_controller ? veh_controller->get_vehicle() : nullptr;
 }
 
 VehicleController* Character::get_vehicle_controller() const

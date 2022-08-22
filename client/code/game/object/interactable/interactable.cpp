@@ -22,18 +22,18 @@ namespace jc::interactable::hook
 
 	void apply()
 	{
-		interact_with_hook.hook();
+		//interact_with_hook.hook();
 	}
 
 	void undo()
 	{
-		interact_with_hook.unhook();
+		//interact_with_hook.unhook();
 	}
 }
 
 void Interactable::interact_with(Character* character)
 {
-	jc::interactable::hook::interact_with_hook.call(this, character);
+	//jc::interactable::hook::interact_with_hook.call(this, character);
 }
 
 ObjectBase* Interactable::get_target() const

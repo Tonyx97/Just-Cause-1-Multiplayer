@@ -56,21 +56,23 @@ DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* n
 	return resource_request_hook.call(a1, name, type, data, size);
 }
 
-DEFINE_HOOK_THISCALL(_set_boat_vel, 0x8521D0, void, int _this, float v)
+DEFINE_HOOK_THISCALL(_set_boat_vel, 0x62C2C0, bool, int _this, float a1, float a2)
 {
-	_set_boat_vel_hook.call(_this, v);
+	auto res = _set_boat_vel_hook.call(_this, a1, a2);
+	log(RED, "{:x} {:x} {} {} -> {}", RET_ADDRESS, _this, a1, a2, res);
+	return res;
 }
 
 void jc::test_units::init()
 {
-	_set_boat_vel_hook.hook();
+	//_set_boat_vel_hook.hook();
 	//resource_request_hook.hook();
 	//_test_hook.hook();
 }
 
 void jc::test_units::destroy()
 {
-	_set_boat_vel_hook.unhook();
+	//_set_boat_vel_hook.unhook();
 	//resource_request_hook.unhook();
 	//_test_hook.unhook();
 }
@@ -91,7 +93,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
-		//jc::this_call(0x4CE770, localplayer, g_player_global_info->get_localplayer_handle_base());
+		//jc::this_call(0x4CE770, localplayer, g_player_global_info->get_local_controller());
 
 		auto veh = BITCAST(Vehicle*, g_global_ptr);
 
@@ -179,9 +181,35 @@ void jc::test_units::test_0()
 
 	static LocalPlayer* npc_lp = nullptr;
 
-	if (info.handle && npc_lp)
+	if (g_key->is_key_pressed(VK_NUMPAD7))
 	{
-		jc::this_call(0x4CB8C0, npc_lp);
+		if (const auto veh = BITCAST(Vehicle*, g_global_ptr))
+		{
+			const auto seat = veh->get_driver_seat();
+
+			jc::write(jc::read<uint16_t>(*seat, 0x194) | (1 << 0), *seat, 0x194);
+		}
+	}
+
+	static bool entered = false;
+
+	if (info.handle && !entered)
+	{
+		if (const auto veh = BITCAST(Vehicle*, g_global_ptr))
+		{
+			const auto seat = veh->get_driver_seat();
+
+			jc::v_call(*seat, 2, info.character, info.character->get_controller(), true);
+
+			if (seat->get_character() == info.character)
+			{
+				log(GREEN, "can enter now");
+
+				jc::this_call(0x5A1D40, info.character, true);
+
+				entered = true;
+			}
+		}
 	}
 
 	if (g_key->is_key_pressed(VK_ADD))
@@ -201,19 +229,21 @@ void jc::test_units::test_0()
 			info.character = info.handle->get_character();
 
 			log(CYAN, "handle {:x}", ptr(info.handle));
-			log(CYAN, "handle base {:x}", ptr(info.handle->get_base()));
-			log(CYAN, "handle base from character {:x}", ptr(info.character->get_handle_base()));
+			log(CYAN, "handle base {:x}", ptr(info.handle->get_controller()));
+			log(CYAN, "handle base from character {:x}", ptr(info.character->get_controller()));
 			log(CYAN, "char {:x}", ptr(info.character));
 
 			info.character->set_position(local_pos + vec3(0.f, 0.f, 0.f));
-
 			info.character->set_model(6);
 
-			const auto veh = BITCAST(Vehicle*, g_global_ptr);
-			const auto seat = veh->get_driver_seat();
-			const auto interactable = seat->get_interactable();
+			if (const auto veh = BITCAST(Vehicle*, g_global_ptr))
+			{
+				const auto seat = veh->get_driver_seat();
+				const auto interactable = seat->get_interactable();
 
-			interactable->interact_with(info.character);
+				//interactable->interact_with(info.character);
+				//seat->warp_character(info.character, true);
+			}
 			
 			//info.character->set_body_stance(29);
 			//info.character->set_body_stance(27);
@@ -243,21 +273,6 @@ void jc::test_units::test_0()
 	static AnimatedRigidObject* garage_door = nullptr;
 
 	static TrafficLight* tl = nullptr;
-
-	if (g_key->is_key_pressed(VK_NUMPAD7))
-	{
-		//tl->set_light(TrafficLight_Red);
-
-		//g_weapon->dump();
-
-		//jc::this_call(0x5A13B0, info.character);
-
-		//local_char->set_body_stance(29);
-		//local_char->set_body_stance(30);
-		//local_char->set_added_velocity({ 0.f, 100.f, 0.f });
-
-		log(RED, "called");
-	}
 
 	if (g_key->is_key_down(VK_NUMPAD1))
 	{

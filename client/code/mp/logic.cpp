@@ -49,8 +49,7 @@ void jc::mp::logic::on_tick()
 			const bool hip_aiming = localplayer->is_hip_aiming();
 			const bool full_aiming = localplayer->is_full_aiming();
 			const auto aim_target = local_char->get_aim_target();
-			const auto veh_controller = local_char->get_vehicle_controller();
-			const auto vehicle = veh_controller ? veh_controller->get_vehicle() : nullptr;
+			const auto vehicle = local_char->get_vehicle();
 			const auto& move_info = localplayer->get_movement_info();
 			const auto move_angle = move_info.angle;
 
@@ -155,7 +154,7 @@ void jc::mp::logic::on_tick()
 			{
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
-				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Vehicle, 56ui16, transform);
+				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Vehicle, 0ui16, transform);
 			}
 		}
 }

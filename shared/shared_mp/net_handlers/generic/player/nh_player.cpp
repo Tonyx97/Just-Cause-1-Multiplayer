@@ -339,32 +339,69 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 	if (!vehicle_net)
 		return enet::PacketRes_BadArgs;
 
-	const auto enter = p.get_bool();
-
-	if (enter)
+	switch (const auto command = p.get_u8())
 	{
-		vehicle_net->set_sync_type(SyncType_Locked);
-		vehicle_net->set_streamer(player);
-	}
-	else
+	case VehicleEnterExit_OpenDoor:
+	case VehicleEnterExit_Exit:
 	{
-		vehicle_net->set_sync_type(SyncType_Distance);
-		vehicle_net->set_streamer(nullptr);
-	}
+		log(GREEN, "opening door...");
 
 #ifdef JC_CLIENT
-	const auto vehicle = vehicle_net->get_object();
-	const auto seat = vehicle->get_driver_seat();
-	const auto interactable = seat->get_interactable();
-
-	if (enter)
-		interactable->interact_with(player->get_character());
-	else seat->kick_current();
-#else
-	log(GREEN, "some player is entering a vehicle");
-
-	g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, enter);
+		const auto vehicle = vehicle_net->get_object();
+		const auto seat = vehicle->get_driver_seat();
+		const auto player_char = player->get_character();
 #endif
+
+		if (command == VehicleEnterExit_OpenDoor)
+		{
+#ifdef JC_CLIENT
+			seat->open_door(player_char);
+#else
+			vehicle_net->set_sync_type(SyncType_Locked);
+			vehicle_net->set_streamer(player);
+
+			g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command);
+#endif
+		}
+		else
+		{
+			log(GREEN, "exiting vehicle...");
+
+			const bool instant = p.get_bool();
+
+#ifdef JC_CLIENT
+			seat->kick_current(instant);
+#else
+			vehicle_net->set_sync_type(SyncType_Distance);
+			vehicle_net->set_streamer(nullptr);
+
+			g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command, instant);
+#endif
+		}
+
+		break;
+	}
+	case VehicleEnterExit_Enter:
+	{
+		const bool instant = p.get_bool();
+
+		log(GREEN, "entering vehicle... {}", instant);
+
+#ifdef JC_CLIENT
+		const auto player_char = player->get_character();
+
+		if (instant)
+			player_char->hopp_into_vehicle();
+		else player_char->set_enter_vehicle_stance(false);
+#else
+		vehicle_net->set_sync_type(SyncType_Locked);
+		vehicle_net->set_streamer(player);
+
+		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command, instant);
+#endif
+		break;
+	}
+	}
 
 	return enet::PacketRes_Ok;
 }
@@ -386,8 +423,12 @@ enet::PacketResult nh::player::vehicle_control(const enet::Packet& p)
 	if (!vehicle_net)
 		return enet::PacketRes_BadArgs;
 
+#ifdef JC_SERVER
+	// check if we should update and broadcast the new info
+
 	if (!vehicle_net->is_owned_by(player))
 		return enet::PacketRes_NotAllowed;
+#endif
 
 	const auto x = p.get_float();
 	const auto y = p.get_float();

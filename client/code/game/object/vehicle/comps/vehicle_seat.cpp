@@ -9,7 +9,20 @@
 
 namespace jc::vehicle_seat::hook
 {
-	DEFINE_HOOK_THISCALL(warp_character, 0x74DC30, void, VehicleSeat* seat, Character* character, CharacterHandleBase* unk, bool unk2)
+	DEFINE_HOOK_THISCALL(driver_seat_enter, 0x76A3A0, void, VehicleSeat* seat, Character* character, CharacterController* unk, bool unk2)
+	{
+		log(RED, "driver seat enter {}", unk2);
+
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto local_char = localplayer->get_character(); character == local_char)
+				if (const auto vehicle = seat->get_vehicle())
+					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_OpenDoor);
+
+		driver_seat_enter_hook.call(seat, character, unk, unk2);
+	}
+
+	DEFINE_HOOK_THISCALL(warp_character, 0x74DC30, void, VehicleSeat* seat, Character* character, CharacterController* unk, bool unk2)
 	{
 		/*if (const auto localplayer = g_net->get_localplayer())
 			if (const auto local_char = localplayer->get_character(); character == local_char)
@@ -20,20 +33,24 @@ namespace jc::vehicle_seat::hook
 		return warp_character_hook.call(seat, character, unk, unk2);
 	}
 
-	// the enter hook is in the interactable since the engine does it directly
-	// using the interactable
-
 	DEFINE_HOOK_THISCALL_S(leave, 0x76C010, void, VehicleSeat* seat)
 	{
-		const auto character = seat->get_character();
+		const auto some_f = jc::read<float>(seat, 0x1A4);
 
-		if (const auto localplayer = g_net->get_localplayer())
-			if (const auto local_char = localplayer->get_character(); character == local_char)
-				if (const auto vehicle = seat->get_vehicle())
-					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, false);
+		if (some_f < -3.f)
+		{
+			log(RED, "leave vehicle {}", jc::read<float>(seat, 0x1A4));
 
-		return leave_hook.call(seat);
+			const auto character = seat->get_character();
+
+			if (const auto localplayer = g_net->get_localplayer())
+				if (const auto local_char = localplayer->get_character(); character == local_char)
+					if (const auto vehicle = seat->get_vehicle())
+						if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Exit, false);
+
+			leave_hook.call(seat);
+		}
 	}
 
 	DEFINE_HOOK_THISCALL(instant_leave, 0x5AD280, void, Vehicle* vehicle, Character* character, bool is_local)
@@ -41,45 +58,75 @@ namespace jc::vehicle_seat::hook
 		if (const auto localplayer = g_net->get_localplayer())
 			if (const auto local_char = localplayer->get_character(); character == local_char)
 				if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-					g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, false);
+					g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Exit, true);
 
 		return instant_leave_hook.call(vehicle, character, is_local);
 	}
 
 	void apply()
 	{
+		driver_seat_enter_hook.hook();
 		warp_character_hook.hook();
 		leave_hook.hook();
-		instant_leave_hook.hook();
+		//instant_leave_hook.hook();
 	}
 
 	void undo()
 	{
-		instant_leave_hook.unhook();
+		//instant_leave_hook.unhook();
 		leave_hook.unhook();
 		warp_character_hook.unhook();
+		driver_seat_enter_hook.unhook();
 	}
 }
 
-void VehicleSeat::warp_character(Character* character)
+void VehicleSeat::warp_character(Character* character, bool unk)
 {
-	//if (!get_character())
-	{
-		jc::vehicle_seat::hook::warp_character_hook.call(this, character, character->get_handle_base(), false);
-
-		jc::this_call(0x5A1D40, character, true);
-	}
+	jc::v_call(this, jc::vehicle_seat::vt::WARP_CHARACTER, character, character->get_controller(), unk);
 }
 
 void VehicleSeat::open_door(Character* character)
 {
-	jc::v_call(this, jc::vehicle_seat::vt::WARP_CHARACTER, character, character->get_handle_base(), true);
+	log(RED, "making a character open the vehicle");
+
+	const auto current_character = get_character();
+
+	if (current_character == character || current_character)
+		return;
+
+	jc::vehicle_seat::hook::driver_seat_enter_hook.call(this, character, character->get_controller(), true);
+	//jc::v_call(this, jc::vehicle_seat::vt::WARP_CHARACTER, character, character->get_controller(), true);
+
+	if (get_character() == character)
+	{
+		character->set_enter_vehicle_stance(false);
+
+		log(GREEN, "character stance changed to enter vehicle");
+	}
 }
 
-void VehicleSeat::kick_current()
+void VehicleSeat::kick_current(bool instant)
 {
 	if (get_character())
+	{
+		log(RED, "leave vehicle {}", jc::read<float>(this, 0x1A4));
+
+		log(RED, "making a character leave the vehicle");
+
 		jc::vehicle_seat::hook::leave_hook.call(this);
+	}
+
+	/*if (get_character())
+	{
+		if (instant)
+			jc::vehicle_seat::hook::instant_leave_hook.call(get_vehicle(), get_character(), false);
+		else jc::vehicle_seat::hook::leave_hook.call(this);
+	}*/
+}
+
+uint8_t VehicleSeat::get_type() const
+{
+	return static_cast<uint8_t>(jc::v_call<int>(this, jc::vehicle_seat::vt::GET_TYPE));
 }
 
 Vehicle* VehicleSeat::get_vehicle() const

@@ -5,6 +5,7 @@
 
 #include <defs/libs.h>
 #include <defs/standard.h>
+#include <defs/client_basic.h>
 
 #include <timer/timer.h>
 

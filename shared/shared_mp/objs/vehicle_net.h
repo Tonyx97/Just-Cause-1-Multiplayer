@@ -2,6 +2,13 @@
 
 #include <shared_mp/objs/net_object.h>
 
+enum VehicleEnterExitCommand : uint8_t
+{
+	VehicleEnterExit_OpenDoor,
+	VehicleEnterExit_Enter,
+	VehicleEnterExit_Exit,
+};
+
 class VehicleNetObject : public NetObject
 {
 public:

@@ -1,4 +1,5 @@
 #include <defs/standard.h>
+#include <defs/client_basic.h>
 
 #include "game_control.h"
 
@@ -58,7 +59,11 @@ namespace jc::game_control
 		"CSafeArea",
 	};
 
+#if FAST_LOAD
 	static constexpr bool enable_block = true;
+#else
+	static constexpr bool enable_block = false;
+#endif
 
 	bool ignore_blocked_objects = false;
 }

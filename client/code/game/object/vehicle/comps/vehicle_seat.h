@@ -8,7 +8,8 @@ namespace jc::vehicle_seat
 
 	namespace vt
 	{
-		static constexpr uint32_t WARP_CHARACTER = 2;
+		static constexpr uint32_t GET_TYPE			= 1;
+		static constexpr uint32_t WARP_CHARACTER	= 2;
 	}
 
 	namespace hook
@@ -21,14 +22,25 @@ namespace jc::vehicle_seat
 class Interactable;
 class Vehicle;
 
+enum VehicleSeatType : uint8_t
+{
+	VehicleSeat_None,
+	VehicleSeat_Roof,
+	VehicleSeat_Driver,
+	VehicleSeat_Special,
+	VehicleSeat_Passenger,
+};
+
 class VehicleSeat
 {
 private:
 public:
 
-	void warp_character(Character* character);
+	void warp_character(Character* character, bool unk = false);
 	void open_door(Character* character);
-	void kick_current();
+	void kick_current(bool instant);
+
+	uint8_t get_type() const;
 
 	Vehicle* get_vehicle() const;
 	Character* get_character() const;

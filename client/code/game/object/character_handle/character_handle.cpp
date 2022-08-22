@@ -52,9 +52,9 @@ CharacterHandle* CharacterHandle::create(CharacterInfo* info, Transform* transfo
 	return this;
 }
 
-CharacterHandleBase* CharacterHandle::get_base() const
+CharacterController* CharacterHandle::get_controller() const
 {
-    return REF(CharacterHandleBase*, this, jc::character_handle::HANDLE_BASE);
+    return REF(CharacterController*, this, jc::character_handle::CHARACTER_CONTROLLER);
 }
 
 Character* CharacterHandle::get_character() const

@@ -10,7 +10,7 @@ void PlayerGlobalInfo::destroy()
 {
 }
 
-CharacterHandleBase* PlayerGlobalInfo::get_localplayer_handle_base() const
+CharacterController* PlayerGlobalInfo::get_local_controller() const
 {
-	return jc::read<CharacterHandleBase*>(this, jc::player_global_info::PLAYER_HANDLE_BASE);
+	return jc::read<CharacterController*>(this, jc::player_global_info::PLAYER_CONTROLLER);
 }

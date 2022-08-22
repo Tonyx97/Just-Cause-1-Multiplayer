@@ -1,4 +1,5 @@
 #include <defs/standard.h>
+#include <defs/client_basic.h>
 
 #include "patches.h"
 
