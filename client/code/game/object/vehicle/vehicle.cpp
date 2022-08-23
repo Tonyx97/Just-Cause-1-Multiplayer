@@ -24,16 +24,16 @@ namespace jc::vehicle
 {
 	VehicleNetObject* helicopter_input_dispatching = nullptr;
 
-	float heli_x = 0.f,
-		  heli_y = 0.f,
-		  heli_forward = 0.f,
-		  heli_backward = 0.f;
+	float heli_c0 = 0.f,
+		  heli_c1 = 0.f,
+		  heli_c2 = 0.f,
+		  heli_c3 = 0.f;
 }
 
 namespace jc::vehicle::hook
 {
 	template <typename VType, typename T>
-	void land_vehicle_get_input(VType vehicle, CharacterController* controller, float* y, float* x, bool* braking, const T& hk)
+	void land_vehicle_get_input(VType vehicle, CharacterController* controller, float* c0, float* c1, bool* braking, const T& hk)
 	{
 		if (!vehicle->is_alive())
 			return;
@@ -46,22 +46,22 @@ namespace jc::vehicle::hook
 
 			if (vehicle_net->is_owned())
 			{
-				*y = g_key->game_get_joystick_value(0x24) - g_key->game_get_joystick_value(0x25);
-				*x = g_key->game_get_joystick_value(0x27) - g_key->game_get_joystick_value(0x26);
+				*c0 = g_key->game_get_joystick_value(0x24) - g_key->game_get_joystick_value(0x25);
+				*c1 = g_key->game_get_joystick_value(0x27) - g_key->game_get_joystick_value(0x26);
 
 				*braking = g_key->game_is_key_down(0x28);
 
-				if (*x != info.x || *y != info.y || *braking != info.braking)
+				if (*c0 != info.c0 || *c1 != info.c1 || *braking != info.braking)
 				{
-					vehicle_net->set_control_info(*x, *y, 0.f, 0.f, *braking);
+					vehicle_net->set_control_info(*c0, *c1, 0.f, 0.f, *braking);
 
-					g_net->send_reliable(PlayerPID_VehicleControl, vehicle_net, *x, *y, 0.f, 0.f, *braking);
+					g_net->send_reliable(PlayerPID_VehicleControl, vehicle_net, info.pack());
 				}
 			}
 			else
 			{
-				*x = info.x;
-				*y = info.y;
+				*c0 = info.c0;
+				*c1 = info.c1;
 				*braking = info.braking;
 			}
 		}
@@ -73,7 +73,7 @@ namespace jc::vehicle::hook
 	}
 
 	template <typename VType, typename T>
-	void airplane_get_input(VType vehicle, CharacterController* controller, float* y, float* x, float* forward, float* backward, const T& hk)
+	void airplane_get_input(VType vehicle, CharacterController* controller, float* c0, float* c1, float* c2, float* c3, const T& hk)
 	{
 		if (!vehicle->is_alive())
 			return;
@@ -86,29 +86,29 @@ namespace jc::vehicle::hook
 
 			if (vehicle_net->is_owned())
 			{
-				*backward = 0.f;
-				*forward = g_key->game_get_joystick_value(0x37) - g_key->game_get_joystick_value(0x38);
-				*x = g_key->game_get_joystick_value(0x3A) - g_key->game_get_joystick_value(0x39);
+				*c3 = 0.f;
+				*c2 = g_key->game_get_joystick_value(0x37) - g_key->game_get_joystick_value(0x38);
+				*c1 = g_key->game_get_joystick_value(0x3A) - g_key->game_get_joystick_value(0x39);
 
 				if (g_key->game_is_key_down(0x3D))
-					*y = g_key->game_get_joystick_value(0x3D);
+					*c0 = g_key->game_get_joystick_value(0x3D);
 
 				if (g_key->game_is_key_down(0x3E))
-					*y = -g_key->game_get_joystick_value(0x3E);
+					*c0 = -g_key->game_get_joystick_value(0x3E);
 
-				if (*x != info.x || *y != info.y || *forward != info.forward || *backward != info.backward)
+				if (*c1 != info.c1 || *c0 != info.c0 || *c2 != info.c2 || *c3 != info.c3)
 				{
-					vehicle_net->set_control_info(*x, *y, *forward, *backward);
+					vehicle_net->set_control_info(*c1, *c0, *c2, *c3);
 
-					g_net->send_reliable(PlayerPID_VehicleControl, vehicle_net, *x, *y, *forward, *backward, false);
+					g_net->send_reliable(PlayerPID_VehicleControl, vehicle_net, info.pack());
 				}
 			}
 			else
 			{
-				*x = info.x;
-				*y = info.y;
-				*forward = info.forward;
-				*backward = info.backward;
+				*c1 = info.c1;
+				*c0 = info.c0;
+				*c2 = info.c2;
+				*c3 = info.c3;
 			}
 		}
 
@@ -117,38 +117,38 @@ namespace jc::vehicle::hook
 		hk(vehicle, controller, &dummy_x, &dummy_y, &dummy_forward, &dummy_backward);
 	}
 
-	DEFINE_HOOK_THISCALL(car_get_input, 0x82C990, void, Car* car, CharacterController* controller, float* y, float* x, bool* braking)
+	DEFINE_HOOK_THISCALL(car_get_input, 0x82C990, void, Car* car, CharacterController* controller, float* c0, float* c1, bool* braking)
 	{
-		land_vehicle_get_input(car, controller, y, x, braking, car_get_input_hook.original);
+		land_vehicle_get_input(car, controller, c0, c1, braking, car_get_input_hook.original);
 	}
 
-	DEFINE_HOOK_THISCALL(motorbike_get_input, 0x709E60, void, MotorBike* motorbike, CharacterController* controller, float* y, float* x, bool* braking)
+	DEFINE_HOOK_THISCALL(motorbike_get_input, 0x709E60, void, MotorBike* motorbike, CharacterController* controller, float* c0, float* c1, bool* braking)
 	{
-		land_vehicle_get_input(motorbike, controller, y, x, braking, motorbike_get_input_hook.original);
+		land_vehicle_get_input(motorbike, controller, c0, c1, braking, motorbike_get_input_hook.original);
 	}
 
-	DEFINE_HOOK_THISCALL(airplane_get_input, 0x831570, void, AirPlane* airplane, CharacterController* controller, float* y, float* x, float* forward, float* backward)
+	DEFINE_HOOK_THISCALL(airplane_get_input, 0x831570, void, AirPlane* airplane, CharacterController* controller, float* c0, float* c1, float* forward, float* backward)
 	{
-		airplane_get_input(airplane, controller, y, x, forward, backward, airplane_get_input_hook.original);
+		airplane_get_input(airplane, controller, c0, c1, forward, backward, airplane_get_input_hook.original);
 	}
 
-	DEFINE_HOOK_THISCALL(helicopter_get_input, 0x82D310, void, Helicopter* helicopter, CharacterController* controller, float* y, float* x, float* forward, float* backward)
+	DEFINE_HOOK_THISCALL(helicopter_get_input, 0x82D310, void, Helicopter* helicopter, CharacterController* controller, float* c0, float* c1, float* forward, float* backward)
 	{
 		if (!helicopter->is_alive())
 			return;
 
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(helicopter)->cast<VehicleNetObject>())
 		{
-			heli_x = heli_y = heli_forward = heli_backward = 0.f;
+			heli_c0 = heli_c1 = heli_c2 = heli_c3 = 0.f;
 			helicopter_input_dispatching = vehicle_net;
-			helicopter_get_input_hook.call(helicopter, controller, y, x, forward, backward);
+			helicopter_get_input_hook.call(helicopter, controller, c0, c1, forward, backward);
 			helicopter_input_dispatching = nullptr;
 
 			if (vehicle_net->is_owned() && vehicle_net->should_sync_this_tick())
 			{
 				const auto& info = vehicle_net->get_control_info();
 
-				g_net->send_reliable(PlayerPID_VehicleControl, vehicle_net, info.x, info.y, info.forward, info.backward, false);
+				g_net->send_reliable(PlayerPID_VehicleControl, vehicle_net, info.pack());
 
 				vehicle_net->reset_sync();
 			}
@@ -203,20 +203,20 @@ void jc::vehicle::dispatch_helicopter_input(int control, float* value)
 	{
 		switch (control)
 		{
-		case 0x2E: info.forward = *value - heli_forward; break;		// forward
-		case 0x2F: heli_forward = *value; break;					// backward
-		case 0x30: info.backward = *value - heli_backward; break;	// left
-		case 0x31: heli_backward = *value; break;					// right
-		case 0x32: info.x = *value - heli_x; break;					// left siding
-		case 0x33: heli_x = *value; break;							// right siding
+		case 0x2E: info.c2 = *value - heli_c2; break;		// forward
+		case 0x2F: heli_c2 = *value; break;					// backward
+		case 0x30: info.c3 = *value - heli_c3; break;		// left
+		case 0x31: heli_c3 = *value; break;					// right
+		case 0x32: info.c0 = *value - heli_c0; break;		// left siding
+		case 0x33: heli_c0 = *value; break;					// right siding
 		case 0x34:
 		{
 			// up
 
-			heli_y = *value;
+			heli_c1 = *value;
 
-			if (heli_y > 0.f)
-				info.y = heli_y;
+			if (heli_c1 > 0.f)
+				info.c1 = heli_c1;
 
 			break;
 		}
@@ -224,8 +224,8 @@ void jc::vehicle::dispatch_helicopter_input(int control, float* value)
 		{
 			// down
 
-			if (heli_y <= 0.f)
-				info.y = *value;
+			if (heli_c1 <= 0.f)
+				info.c1 = *value;
 
 			break;
 		}
@@ -237,14 +237,14 @@ void jc::vehicle::dispatch_helicopter_input(int control, float* value)
 	{
 		switch (control)
 		{
-		case 0x2E: *value = info.forward; break;
+		case 0x2E: *value = info.c2; break;
 		case 0x2F: *value = 0.f; break;
-		case 0x30: *value = info.backward; break;
+		case 0x30: *value = info.c3; break;
 		case 0x31: *value = 0.f; break;
-		case 0x32: *value = info.x; break;
+		case 0x32: *value = info.c0; break;
 		case 0x33: *value = 0.f; break;
-		case 0x34: *value = info.y; break;
-		case 0x35: *value = -info.y; break;
+		case 0x34: *value = info.c1; break;
+		case 0x35: *value = -info.c1; break;
 		}
 	}
 }

@@ -430,16 +430,12 @@ enet::PacketResult nh::player::vehicle_control(const enet::Packet& p)
 		return enet::PacketRes_NotAllowed;
 #endif
 
-	const auto x = p.get_float();
-	const auto y = p.get_float();
-	const auto forward = p.get_float();
-	const auto backward = p.get_float();
-	const auto braking = p.get_bool();
+	const auto packed_info = p.get_raw<VehicleNetObject::PackedControlInfo>();
 
-	vehicle_net->set_control_info(x, y, forward, backward, braking);
+	vehicle_net->set_control_info(packed_info);
 
 #ifdef JC_SERVER
-	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleControl, player, vehicle_net, x, y, forward, backward, braking);
+	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleControl, player, vehicle_net, packed_info);
 #endif
 
 	return enet::PacketRes_Ok;

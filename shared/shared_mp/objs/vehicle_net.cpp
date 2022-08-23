@@ -7,6 +7,7 @@
 #ifdef JC_CLIENT
 #include <game/sys/core/factory_system.h>
 
+#include <game/object/base/comps/physical.h>
 #include <game/object/vehicle/vehicle.h>
 
 VehicleNetObject::VehicleNetObject(NID nid, const TransformTR& transform)
@@ -48,35 +49,35 @@ void VehicleNetObject::on_net_var_change(NetObjectVarType var_type)
 	case NetObjectVar_Transform:
 	case NetObjectVar_Position:
 	case NetObjectVar_Rotation: obj->set_transform(Transform(get_position(), get_rotation())); break;
-	//case NetObjectVar_Velocity: obj->get_physical()->set_velocity(get_velocity()); break;
+	case NetObjectVar_Velocity: obj->get_physical()->set_velocity(get_velocity()); break;
 	case NetObjectVar_Health: obj->set_hp(get_hp()); break;
 	case NetObjectVar_MaxHealth: obj->set_max_hp(get_max_hp()); break;
 }
 #endif
 }
 
-void VehicleNetObject::set_control_info(float x, float y, float forward, float backward, bool braking)
+void VehicleNetObject::set_control_info(float c0, float c1, float c2, float c3, bool braking)
 {
 #ifdef JC_CLIENT
 	if (!sync_this_tick)
 		sync_this_tick = (
-			x != control_info.x ||
-			y != control_info.y ||
-			forward != control_info.forward ||
-			backward != control_info.backward ||
+			c0 != control_info.c0 ||
+			c1 != control_info.c1 ||
+			c2 != control_info.c2 ||
+			c3 != control_info.c3 ||
 			braking != control_info.braking);
 #endif
 
-	control_info.x = x;
-	control_info.y = y;
-	control_info.forward = forward;
-	control_info.backward = backward;
+	control_info.c0 = c0;
+	control_info.c1 = c1;
+	control_info.c2 = c2;
+	control_info.c3 = c3;
 	control_info.braking = braking;
 }
 
 void VehicleNetObject::set_control_info(const ControlInfo& v)
 {
-	set_control_info(v.x, v.y, v.forward, v.backward, v.braking);
+	set_control_info(v.c0, v.c1, v.c2, v.c3, v.braking);
 }
 
 bool VehicleNetObject::spawn()
