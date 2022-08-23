@@ -167,18 +167,28 @@ namespace jc::vehicle::hook
 		//*y = 1.f;
 	}
 
+	DEFINE_HOOK_THISCALL_S(land_vehicle_honk, 0x856060, void, LandVehicle* land_vehicle)
+	{
+		if (const auto vehicle_net = g_net->get_net_object_by_game_object(land_vehicle)->cast<VehicleNetObject>())
+			g_net->send_reliable(PlayerPID_VehicleHonk, vehicle_net);
+
+		land_vehicle_honk_hook.call(land_vehicle);
+	}
+
 	void apply()
 	{
 		car_get_input_hook.hook();
 		motorbike_get_input_hook.hook();
 		airplane_get_input_hook.hook();
 		helicopter_get_input_hook.hook();
+		land_vehicle_honk_hook.hook();
 		//boat_get_input_hook.hook();
 	}
 
 	void undo()
 	{
 		//boat_get_input_hook.unhook();
+		land_vehicle_honk_hook.unhook();
 		helicopter_get_input_hook.unhook();
 		airplane_get_input_hook.unhook();
 		motorbike_get_input_hook.unhook();
@@ -249,9 +259,89 @@ void jc::vehicle::dispatch_helicopter_input(int control, float* value)
 	}
 }
 
+void Vehicle::write_engine_state(bool v)
+{
+	jc::write(v, this, jc::vehicle::ENGINE_STATE);
+}
+
+void Vehicle::start_engine_sound(bool v)
+{
+	if (v)
+		jc::v_call(this, jc::vehicle::vt::START_ENGINE_SOUND);
+	else jc::v_call(this, jc::vehicle::vt::STOP_ENGINE_SOUND);
+}
+
 void Vehicle::set_velocity(const vec3& v)
 {
 	jc::v_call(this, jc::vehicle::vt::SET_VELOCITY, &v);
+}
+
+void Vehicle::honk()
+{
+	switch (get_type())
+	{
+	case VehicleTypeID_Car:
+	case VehicleTypeID_MotorBike:
+	{
+		// todojc - wtf is this (clean this when we know exactly what it is, with names etc)
+
+		const auto sound_comp = get_sound_component();
+
+		auto res = (*(int(__thiscall**)(ptr, int, ptr))(**(ptr**)(sound_comp + 0xC0) + 0x30))(
+			*(ptr*)(sound_comp + 0xC0),
+			5,
+			*(ptr*)(sound_comp + 4));
+
+		if (res)
+		{
+			if ((*(int(__thiscall**)(int))(*(ptr*)res + 0x6C))(res))
+			{
+				ptr v3 = (*(ptr(__thiscall**)(int))(*(ptr*)res + 0x6C))(res);
+				(*(void(__thiscall**)(int, int))(*(ptr*)v3 + 0x10))(v3, sound_comp + 0x50);
+				(*(int(__thiscall**)(int))(*(ptr*)res + 0x18))(res);
+			}
+		}
+	}
+	}
+}
+
+void Vehicle::set_engine_state(bool v, bool sync)
+{
+	if (get_engine_state() == v)
+		return;
+
+	switch (get_type())
+	{
+	case VehicleTypeID_Car:
+	case VehicleTypeID_MotorBike:
+	case VehicleTypeID_Tank:
+	case VehicleTypeID_Boat:
+	case VehicleTypeID_Submarine:
+	{
+		write_engine_state(v);
+		start_engine_sound(v);
+		break;
+	}
+	}
+
+	if (sync)
+		if (const auto vehicle_net = g_net->get_net_object_by_game_object(this)->cast<VehicleNetObject>())
+			g_net->send_reliable(PlayerPID_VehicleEngineState, vehicle_net, v);
+}
+
+bool Vehicle::get_engine_state() const
+{
+	return jc::read<bool>(this, jc::vehicle::ENGINE_STATE);
+}
+
+ptr Vehicle::get_sound_component() const
+{
+	return jc::read<ptr>(this, jc::vehicle::SOUND_COMPONENT);
+}
+
+uint8_t Vehicle::get_type() const
+{
+	return static_cast<uint8_t>(jc::v_call<int>(this, jc::vehicle::vt::GET_TYPE));
 }
 
 vec3 Vehicle::get_velocity() const

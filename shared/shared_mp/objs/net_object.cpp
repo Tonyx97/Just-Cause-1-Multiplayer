@@ -53,11 +53,7 @@ bool NetObject::sync()
 				real_max_hp = object_base->get_max_hp();
 
 	if ((real_transform.t != get_position() || real_transform.r != get_rotation()) && vars.transform_timer.ready())
-	{
 		g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Transform, (vars.transform = real_transform).pack());
-
-		//g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Velocity, physical->get_velocity());
-	}
 
 	switch (get_type())
 	{
@@ -69,10 +65,13 @@ bool NetObject::sync()
 	}
 	}
 
-	if (real_hp != get_hp())
+	const auto hp = get_hp(),
+			   max_hp = get_max_hp();
+
+	if (real_hp != get_hp() || hp == jc::nums::MAXF)
 		g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Health, vars.hp = real_hp);
 
-	if (real_max_hp != get_max_hp())
+	if (real_max_hp != get_max_hp() || max_hp == jc::nums::MAXF)
 		g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_MaxHealth, vars.max_hp = real_max_hp);
 
 	// parent object sync
@@ -177,9 +176,7 @@ void NetObject::set_spawned(bool v)
 	// if we just spawned the object then let the parent
 	// class know so they can set the basic vars
 
-	if (spawned)
-		for (uint8_t i = NetObjectVar_Begin; i < NetObjectVar_End; ++i)
-			on_net_var_change(i);
+	on_net_var_change(NetObjectVar_Transform);
 }
 
 void NetObject::set_transform(const TransformTR& transform)

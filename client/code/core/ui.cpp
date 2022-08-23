@@ -20,6 +20,7 @@
 #include <game/object/localplayer/localplayer.h>
 #include <game/object/agent_type/npc_variant.h>
 #include <game/object/vars/exported_entities.h>
+#include <game/object/vehicle/vehicle.h>
 
 #include <mp/chat/chat.h>
 #include <mp/net.h>
@@ -295,7 +296,7 @@ void UI::render_players()
 
 	g_net->for_each_player([&](Player* player)
 	{
-		if (player->is_local() || ! player->is_spawned())
+		if (player->is_local() || !player->is_spawned())
 			return;
 
 		const auto player_char = player->get_character();
@@ -584,7 +585,7 @@ void UI::overlay_debug()
 			vec2 sp_root;
 
 			if (camera->w2s(bullet->get_position(), sp_root))
-				v_list->AddText({ sp_root.x, sp_root.y }, green_color, "BULLET");
+				v_list->AddText({ sp_root.x, sp_root.y }, green_color, "PEW");
 		}
 	});
 
@@ -673,6 +674,10 @@ void UI::overlay_debug()
 			}
 		}
 
+		if (g_key->is_key_pressed(KEY_X))
+			if (auto veh = local_player_pawn->get_vehicle())
+				veh->set_engine_state(!veh->get_engine_state());
+
 		ptr			   closest_hp_ptr = 0;
 		static Weapon* closest_weapon = nullptr;
 		float		   closest_ped_distance = FLT_MAX;
@@ -743,12 +748,12 @@ void UI::overlay_debug()
 				//v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 10.f }, is_visible ? green_color : red_color, std::format("{:x}", ptr(pawn)).c_str());
 				pad += 1;
 			}
-			if (true)
+			/*if (true)
 			{
 				const auto id = pawn->get_body_stance()->get_movement_id();
 				v_list->AddText({ root_screen_position.x, root_screen_position.y + pad * 15.f }, is_visible ? green_color : red_color, std::format("{}", id).c_str());
 				pad += 1;
-			}
+			}*/
 			if (show_skeleton)
 			{
 				static std::vector<std::pair<BoneID, BoneID>> connections = {

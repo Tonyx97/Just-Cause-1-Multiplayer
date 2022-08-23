@@ -78,6 +78,8 @@ public:
 	bool is_timed_out() const { return timed_out; }
 
 	ENetPeer* get_peer() const { return peer; }
+
+	ENetAddress* get_address() const { return &peer->address; }
 #endif
 };
 

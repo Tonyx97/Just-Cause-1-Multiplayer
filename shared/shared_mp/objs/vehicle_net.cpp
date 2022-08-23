@@ -96,9 +96,6 @@ bool VehicleNetObject::spawn()
 
 	check(obj, "Could not create vehicle");
 
-	set_hp(obj->get_real_hp());
-	set_max_hp(obj->get_max_hp());
-
 	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
 #endif
 

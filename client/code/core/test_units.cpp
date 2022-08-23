@@ -190,7 +190,24 @@ void jc::test_units::test_0()
 
 			const auto seat = veh->get_driver_seat();
 
-			//jc::write(jc::read<uint16_t>(*seat, 0x194) | (1 << 0), *seat, 0x194);
+			const auto sound_comp = jc::read<ptr>(veh, 0x404);
+
+			auto res = (*(int(__thiscall**)(ptr, int, ptr))(**(ptr**)(sound_comp + 0xC0) + 0x30))(
+				*(ptr*)(sound_comp + 0xC0),
+				5,
+				*(ptr*)(sound_comp + 4));
+
+			if (res)
+			{
+				if ((*(int(__thiscall**)(int))(*(ptr*)res + 0x6C))(res))
+				{
+					ptr v3 = (*(ptr(__thiscall**)(int))(*(ptr*)res + 0x6C))(res);
+					(*(void(__thiscall**)(int, int))(*(ptr*)v3 + 0x10))(v3, sound_comp + 0x50);
+					(*(int(__thiscall**)(int))(*(ptr*)res + 0x18))(res);
+
+					log(GREEN, "played");
+				}
+			}
 		}
 	}
 

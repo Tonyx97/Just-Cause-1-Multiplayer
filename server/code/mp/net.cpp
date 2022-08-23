@@ -102,6 +102,8 @@ void Net::setup_channels()
 		case PlayerPID_SetWeapon:					return nh::player::set_weapon(p);
 		case PlayerPID_EnterExitVehicle:			return nh::player::enter_exit_vehicle(p);
 		case PlayerPID_VehicleControl:				return nh::player::vehicle_control(p);
+		case PlayerPID_VehicleHonk:					return nh::player::vehicle_honk(p);
+		case PlayerPID_VehicleEngineState:			return nh::player::vehicle_engine_state(p);
 		}
 
 		return enet::PacketRes_NotFound;
@@ -147,7 +149,28 @@ void Net::tick()
 		}
 		case ENET_EVENT_TYPE_CONNECT:
 		{
+			PlayerClient* timed_out_player = nullptr;
+
+			for_each_player_client([&](NID, PlayerClient* pc)
+			{
+				if (timed_out_player)
+					return;
+
+				const auto pc_address = *pc->get_address();
+
+				if (in6_equal(e.peer->address, pc_address))
+					timed_out_player = pc;
+			});
+
+			if (timed_out_player)
+			{
+				log(RED, "A player with the same address exists, destroying the old one...");
+
+				remove_player_client(timed_out_player);
+			}
+
 			add_player_client(e.peer);
+
 			break;
 		}
 		case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
@@ -220,11 +243,7 @@ void Net::refresh_net_object_sync()
 			});
 
 			if (net_obj->get_streamer() != new_streamer)
-			{
-				log(GREEN, "New streamer for this net object {:x} -> {:x}", ptr(net_obj), ptr(new_streamer));
-
 				net_obj->set_streamer(new_streamer);
-			}
 		}
 	}
 

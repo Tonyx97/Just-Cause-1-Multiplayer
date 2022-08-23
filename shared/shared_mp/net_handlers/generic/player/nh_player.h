@@ -11,4 +11,6 @@ namespace nh::player
 	enet::PacketResult set_weapon(const enet::Packet& p);
 	enet::PacketResult enter_exit_vehicle(const enet::Packet& p);
 	enet::PacketResult vehicle_control(const enet::Packet& p);
+	enet::PacketResult vehicle_honk(const enet::Packet& p);
+	enet::PacketResult vehicle_engine_state(const enet::Packet& p);
 }

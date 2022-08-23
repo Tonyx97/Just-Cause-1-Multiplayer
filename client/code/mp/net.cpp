@@ -240,6 +240,8 @@ void Net::setup_channels()
 		case PlayerPID_SetWeapon:				return nh::player::set_weapon(p);
 		case PlayerPID_EnterExitVehicle:		return nh::player::enter_exit_vehicle(p);
 		case PlayerPID_VehicleControl:			return nh::player::vehicle_control(p);
+		case PlayerPID_VehicleHonk:				return nh::player::vehicle_honk(p);
+		case PlayerPID_VehicleEngineState:		return nh::player::vehicle_engine_state(p);
 		}
 
 		return enet::PacketRes_NotFound;

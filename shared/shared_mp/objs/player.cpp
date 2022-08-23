@@ -173,6 +173,9 @@ void Player::transfer_net_object_ownership_to(NetObject* obj, Player* new_stream
 	const auto old_streamer_pc = client;
 	const auto new_streamer_pc = new_streamer->get_client();
 
+	log(YELLOW, "{} lost ownerships of a net object type {}", this->get_nick(), this->get_type());
+	log(GREEN, "{} now owns a net object type {}", this->get_nick(), this->get_type());
+
 	old_streamer_pc->send_reliable<ChannelID_World>(WorldPID_SetOwnership, true, new_streamer, obj);
 	new_streamer_pc->send_reliable<ChannelID_World>(WorldPID_SetOwnership, true, new_streamer, obj);
 }
@@ -180,6 +183,8 @@ void Player::transfer_net_object_ownership_to(NetObject* obj, Player* new_stream
 void Player::set_net_object_ownership_of(NetObject* obj)
 {
 	check(obj, "Net object must be valid");
+
+	log(GREEN, "{} now owns a net object type {}", this->get_type(), this->get_nick());
 
 	client->send_reliable<ChannelID_World>(WorldPID_SetOwnership, true, this, obj);
 }

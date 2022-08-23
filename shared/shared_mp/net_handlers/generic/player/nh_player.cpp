@@ -440,3 +440,57 @@ enet::PacketResult nh::player::vehicle_control(const enet::Packet& p)
 
 	return enet::PacketRes_Ok;
 }
+
+enet::PacketResult nh::player::vehicle_honk(const enet::Packet& p)
+{
+#ifdef JC_CLIENT
+#else
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+#endif
+
+	const auto vehicle_net = p.get_net_object<VehicleNetObject>();
+
+	if (!vehicle_net)
+		return enet::PacketRes_BadArgs;
+
+#ifdef JC_CLIENT
+	const auto vehicle = vehicle_net->get_object();
+
+	vehicle->honk();
+#endif
+
+#ifdef JC_SERVER
+	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleHonk, vehicle_net);
+#endif
+
+	return enet::PacketRes_Ok;
+}
+
+enet::PacketResult nh::player::vehicle_engine_state(const enet::Packet& p)
+{
+#ifdef JC_CLIENT
+#else
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+#endif
+
+	const auto vehicle_net = p.get_net_object<VehicleNetObject>();
+
+	if (!vehicle_net)
+		return enet::PacketRes_BadArgs;
+
+	const bool state = p.get_bool();
+
+#ifdef JC_CLIENT
+	const auto vehicle = vehicle_net->get_object();
+
+	vehicle->set_engine_state(state);
+#endif
+
+#ifdef JC_SERVER
+	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleEngineState, vehicle_net, state);
+#endif
+
+	return enet::PacketRes_Ok;
+}
