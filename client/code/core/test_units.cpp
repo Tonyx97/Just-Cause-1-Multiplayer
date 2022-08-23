@@ -28,6 +28,7 @@
 #include <game/object/localplayer/localplayer.h>
 #include <game/object/physics/pfx_collision.h>
 #include <game/object/physics/pfx_base.h>
+#include <game/object/base/comps/physical.h>
 #include <game/sys/all.h>
 
 #include <net/serializer.h>
@@ -185,9 +186,11 @@ void jc::test_units::test_0()
 	{
 		if (const auto veh = BITCAST(Vehicle*, g_global_ptr))
 		{
+			//veh->get_physical()->set_velocity(veh->get_physical()->get_velocity() + vec3(0.f, 5.f, 0.f));
+
 			const auto seat = veh->get_driver_seat();
 
-			jc::write(jc::read<uint16_t>(*seat, 0x194) | (1 << 0), *seat, 0x194);
+			//jc::write(jc::read<uint16_t>(*seat, 0x194) | (1 << 0), *seat, 0x194);
 		}
 	}
 

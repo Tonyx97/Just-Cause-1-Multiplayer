@@ -68,12 +68,12 @@ namespace jc::vehicle_seat::hook
 		driver_seat_enter_hook.hook();
 		warp_character_hook.hook();
 		leave_hook.hook();
-		//instant_leave_hook.hook();
+		instant_leave_hook.hook();
 	}
 
 	void undo()
 	{
-		//instant_leave_hook.unhook();
+		instant_leave_hook.unhook();
 		leave_hook.unhook();
 		warp_character_hook.unhook();
 		driver_seat_enter_hook.unhook();
@@ -95,33 +95,25 @@ void VehicleSeat::open_door(Character* character)
 		return;
 
 	jc::vehicle_seat::hook::driver_seat_enter_hook.call(this, character, character->get_controller(), true);
-	//jc::v_call(this, jc::vehicle_seat::vt::WARP_CHARACTER, character, character->get_controller(), true);
-
-	if (get_character() == character)
-	{
-		character->set_enter_vehicle_stance(false);
-
-		log(GREEN, "character stance changed to enter vehicle");
-	}
 }
 
 void VehicleSeat::kick_current(bool instant)
 {
-	if (get_character())
+	if (!get_character())
+		return;
+
+	log(RED, "leave vehicle {}", jc::read<float>(this, 0x1A4));
+	log(RED, "making a character leave the vehicle");
+
+	if (instant)
+		jc::vehicle_seat::hook::instant_leave_hook.call(get_vehicle(), get_character(), false);
+	else
 	{
-		log(RED, "leave vehicle {}", jc::read<float>(this, 0x1A4));
+		const auto some_f = jc::read<float>(this, 0x1A4);
 
-		log(RED, "making a character leave the vehicle");
-
-		jc::vehicle_seat::hook::leave_hook.call(this);
+		if (some_f < -3.f)
+			jc::vehicle_seat::hook::leave_hook.call(this);
 	}
-
-	/*if (get_character())
-	{
-		if (instant)
-			jc::vehicle_seat::hook::instant_leave_hook.call(get_vehicle(), get_character(), false);
-		else jc::vehicle_seat::hook::leave_hook.call(this);
-	}*/
 }
 
 uint8_t VehicleSeat::get_type() const

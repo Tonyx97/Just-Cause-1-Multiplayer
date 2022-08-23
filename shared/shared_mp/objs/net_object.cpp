@@ -17,6 +17,7 @@ NetObject::NetObject()
 {
 #ifdef JC_CLIENT
 	vars.transform_timer(16 * 3);
+	vars.velocity_timer(0);
 #else
 	nid = enet::GET_FREE_NID();
 #endif
@@ -63,12 +64,8 @@ bool NetObject::sync()
 	case NetObject_Player: break;
 	default:
 	{
-		/*if (glm::length(vars.pending_velocity) > 0.f)
-		{
-			g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Velocity, vars.velocity = vars.pending_velocity);
-
-			vars.pending_velocity = {};
-		}*/
+		if (vars.velocity_timer.get_interval() > 0 && vars.velocity_timer.ready())
+			g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Velocity, vars.velocity = physical->get_velocity());
 	}
 	}
 
@@ -88,6 +85,11 @@ bool NetObject::sync()
 void NetObject::set_transform_timer(int64_t v)
 {
 	vars.transform_timer(v);
+}
+
+void NetObject::set_velocity_timer(int64_t v)
+{
+	vars.velocity_timer(v);
 }
 
 bool NetObject::is_owned() const

@@ -14,6 +14,7 @@ VehicleNetObject::VehicleNetObject(NID nid, const TransformTR& transform)
 	set_nid(nid);
 	set_transform(transform);
 	//set_transform_timer(5000);
+	set_velocity_timer(500);
 }
 
 ObjectBase* VehicleNetObject::get_object_base()

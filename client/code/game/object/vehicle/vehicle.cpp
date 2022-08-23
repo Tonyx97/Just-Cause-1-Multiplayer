@@ -144,7 +144,7 @@ namespace jc::vehicle::hook
 			helicopter_get_input_hook.call(helicopter, controller, y, x, forward, backward);
 			helicopter_input_dispatching = nullptr;
 
-			if (vehicle_net->should_sync_this_tick())
+			if (vehicle_net->is_owned() && vehicle_net->should_sync_this_tick())
 			{
 				const auto& info = vehicle_net->get_control_info();
 
@@ -196,12 +196,10 @@ void jc::vehicle::dispatch_helicopter_input(int control, float* value)
 	const auto vehicle_net = helicopter_input_dispatching;
 	const auto vehicle = vehicle_net->get_object();
 	const auto local_char = g_world->get_localplayer_character();
-	const auto driver_seat = vehicle->get_driver_seat();
-	const auto driver_character = driver_seat->get_character();
 
 	auto info = vehicle_net->get_control_info();
 
-	if (vehicle_net->is_owned() && driver_character == local_char)
+	if (vehicle_net->is_owned())
 	{
 		switch (control)
 		{
@@ -232,9 +230,6 @@ void jc::vehicle::dispatch_helicopter_input(int control, float* value)
 			break;
 		}
 		}
-
-		// check for syncing in this tick ONLY when the control we received
-		// it's the second complementary of the first one
 
 		vehicle_net->set_control_info(info);
 	}

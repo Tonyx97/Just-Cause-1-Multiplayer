@@ -79,6 +79,12 @@ namespace jc::patches
 	// we will use our own
 	//
 	patch last_muzzle_transform_patch(0x61F1D9);
+
+	// removes automatic movement from active handles to dead handles of characters
+	// destruction of any character (player or npc) will be handled by the mod/scripting
+	// to avoid problems with the engine itself
+	//
+	patch ai_core_dead_handles_patch(0x584C64);
 }
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
@@ -89,6 +95,27 @@ DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1
 		*a2 = "";
 
 	return res;
+}
+
+DEFINE_HOOK_CCALL(fn_ret_1, 0x62A510, int)
+{
+	switch (RET_ADDRESS)
+	{
+	// PlayerController & NPCController handlers
+
+	case 0x850165:	// LandVehicle check to see if the driver is an npc or a player
+	// All AirVehicle checks to see if the driver is an npc or a player
+	case 0x8B53DB:
+	case 0x8B5B7D:
+	// All Helicopter checks to see if the driver is an npc or a player
+	case 0x82D398:
+	case 0x82D70D:
+	case 0x82D782:
+	case 0x82D7F1:
+		return false;
+	}
+
+	return fn_ret_1_hook.call();
 }
 
 void __fastcall hk_head_rotation_patch(Skeleton* skeleton, ptr _)
@@ -230,6 +257,17 @@ void jc::patches::apply()
 	jc::nop(0x850012, 8);	// for land vehicles
 	jc::nop(0x8BBA29, 8);	// for sea vehicles
 
+	// apply character's fly stance to local's patch
+	// this avoids the engine setting the flying npc animation and will
+	// use the player one instead
+
+	jc::nop(0x5A3D83, 18);
+
+	// avoid weird 2d sounds
+
+	play_ambience_2d_sounds_hook.hook();
+	fn_ret_1_hook.hook();
+
 #if FAST_LOAD
 	// apply CInfoMessage patch
 
@@ -303,16 +341,6 @@ void jc::patches::apply()
 		0xEB, 0x66	// jmp
 	});
 
-	// apply character's fly stance to local's patch
-	// this avoids the engine setting the flying npc animation and will
-	// use the player one instead
-
-	jc::nop(0x5A3D83, 18);
-
-	// avoid weird 2d sounds
-
-	play_ambience_2d_sounds_hook.hook();
-
 	// fire bullet sync patch
 
 	auto fire_bullet_offset = jc::calc_call_offset(0x61F6AB + 0xD, hk_fire_bullet_patch);
@@ -343,10 +371,18 @@ void jc::patches::apply()
 	{
 		0xEB, 0x1C			// jmp
 	});
+
+	// apply active to dead handles patch
+
+	ai_core_dead_handles_patch._do(
+	{
+		0xE9, 0xE5, 0x00, 0x00, 0x00
+	});
 }
 
 void jc::patches::undo()
 {
+	ai_core_dead_handles_patch._undo();
 	last_muzzle_transform_patch._undo();
 	death_camera_velocity._undo();
 	set_health_red_fx._undo();
@@ -362,6 +398,7 @@ void jc::patches::undo()
 	info_message_patch._undo();
 #endif
 	
+	fn_ret_1_hook.unhook();
 	play_ambience_2d_sounds_hook.unhook();
 
 	jc::write(20ui8, 0x5A4400);

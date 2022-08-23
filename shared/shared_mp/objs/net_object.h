@@ -60,6 +60,7 @@ class Player;
 struct NetObjectVars
 {
 	TimerRaw transform_timer;
+	TimerRaw velocity_timer;
 
 	TransformTR transform {};
 
@@ -111,6 +112,7 @@ public:
 #ifdef JC_CLIENT
 	void set_nid(NID v) { nid = v; }
 	void set_transform_timer(int64_t v);
+	void set_velocity_timer(int64_t v);
 
 	bool is_owned() const;
 #endif

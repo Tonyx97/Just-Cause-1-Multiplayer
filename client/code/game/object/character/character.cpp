@@ -204,23 +204,22 @@ namespace jc::character::hook
 
 	DEFINE_HOOK_THISCALL_S(can_be_destroyed, 0x595F10, bool, Character* character)
 	{
+		switch (RET_ADDRESS)
+		{
+		case 0x584E3F: check(false, "[{}] This was removed in the previous update, deprecated and shouldn't be called, contact the dev", CURR_FN); break;
+		}
+
+		return false;
+
+		// todojc - remove the whole function code if the assert above doesn't get triggered in the future
+
 		// if our local player is being checked here, it means PlayerSettings is trying to
 		// get us to the game continue menu, we will return false all the time so we can implement our
 		// own spawing and also we avoid the stupid menu that serves no purpose, same for remote players
 		// obviously...
 
 		if (g_net->get_player_by_character(character))
-		{
-			// make sure we don't allow the engine to remove this player if
-			// this function returns false, there is another condition which
-			// check flags, if flag 1 << 6 is not set, then it will destroy the
-			// character right away, I think this flag is related to being dead
-			// inside a vehicle
-
-			//character->set_flag(1 << 6);
-
 			return false;
-		}
 
 		// we implement our own logic of this function, we can modify the amount of time
 		// a character can stay death before its destruction or we can just skip it in the future
@@ -406,12 +405,12 @@ namespace jc::character::hook
 
 	DEFINE_HOOK_THISCALL(set_enter_vehicle_stance, 0x5A1D40, void, Character* character, bool instant)
 	{
-		/*if (const auto lp = g_net->get_localplayer())
+		if (const auto lp = g_net->get_localplayer())
 			if (const auto local_char = lp->get_character())
 				if (character == local_char)
 					if (const auto vehicle = local_char->get_vehicle())
 						if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Enter, false);*/
+							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Enter, false);
 
 		set_enter_vehicle_stance_hook.call(character, instant);
 	}
