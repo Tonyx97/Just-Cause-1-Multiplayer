@@ -304,7 +304,7 @@ void UI::render_players()
 
 		constexpr float MAX_DISTANCE = 1000.f;
 
-		if (auto distance_to_player = glm::distance(local_char->get_position(), player_pos); distance_to_player > -1.f && distance_to_player < MAX_DISTANCE)
+		if (auto distance_to_player = glm::distance(local_char->get_position(), player_pos); distance_to_player > 0.f && distance_to_player < MAX_DISTANCE)
 		{
 			const auto head_pos = player_char->get_bone_position(BoneID::Head);
 
@@ -385,9 +385,13 @@ void UI::render_admin_panel()
 	if (ImGui::TreeNode("Server"))
 	{
 		float day_time = g_day_cycle->get_hour();
+		float timescale = g_time->get_time_scale();
 
 		if (ImGui::SliderFloat("Day Hour##ap.sv.time", &day_time, 0.f, 24.f))
 			g_net->send_reliable<ChannelID_Debug>(DbgPID_SetTime, day_time);
+
+		if (ImGui::SliderFloat("Time Scale (lol)##ap.sv.ts", &timescale, 0.01f, 5.f))
+			g_net->send_reliable<ChannelID_World>(WorldPID_SetTimeScale, timescale);
 
 		ImGui::TreePop();
 	}

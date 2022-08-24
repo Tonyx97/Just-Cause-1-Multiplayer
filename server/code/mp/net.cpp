@@ -81,6 +81,7 @@ void Net::setup_channels()
 	{
 		switch (auto id = p.get_id())
 		{
+		case WorldPID_SetTimeScale:		return nh::world::time_scale(p);
 		case WorldPID_SpawnObject:		return nh::world::spawn_object(p);
 		case WorldPID_DestroyObject:	return nh::world::destroy_object(p);
 		case WorldPID_SyncObject:		return nh::world::sync_object(p);

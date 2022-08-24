@@ -6,7 +6,23 @@
 
 #ifdef JC_CLIENT
 #include <game/sys/world/day_cycle.h>
+#include <game/sys/time/time_system.h>
 #endif
+
+enet::PacketResult nh::world::time_scale(const enet::Packet& p)
+{
+	const float time_scale = p.get_float();
+
+#ifdef JC_CLIENT
+	g_time->set_time_scale(time_scale);
+#else
+	g_net->get_settings().set_time_scale(time_scale);
+
+	g_net->send_broadcast_joined_reliable<ChannelID_World>(WorldPID_SetTimeScale, time_scale);
+#endif
+
+	return enet::PacketRes_Ok;
+}
 
 enet::PacketResult nh::world::day_time(const enet::Packet& p)
 {
