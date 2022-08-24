@@ -57,15 +57,54 @@ DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* n
 	return resource_request_hook.call(a1, name, type, data, size);
 }
 
-DEFINE_HOOK_THISCALL(_set_boat_vel, 0x62C2C0, bool, int _this, float a1, float a2)
+DEFINE_HOOK_THISCALL_S(_test1, 0x595EF0, bool, int _this)
 {
-	auto res = _set_boat_vel_hook.call(_this, a1, a2);
-	log(RED, "{:x} {:x} {} {} -> {}", RET_ADDRESS, _this, a1, a2, res);
+	auto res = _test1_hook.call(_this);
+
+	/*if (res && _this != ptr(g_world->get_localplayer_character()))
+		log(RED, "1 {:x} {:x}", RET_ADDRESS, _this);*/
+
 	return res;
 }
 
+DEFINE_HOOK_THISCALL_S(_test2, 0x597B80, bool, int _this)
+{
+	auto res = _test2_hook.call(_this);
+
+	/*if (res && _this != ptr(g_world->get_localplayer_character()))
+		log(RED, "2 {:x} {:x}", RET_ADDRESS, _this);*/
+
+	return res;
+}
+
+DEFINE_HOOK_THISCALL_S(_test3, 0x596420, bool, int _this)
+{
+	auto res = _test3_hook.call(_this);
+
+	/*if (res && _this != ptr(g_world->get_localplayer_character()))
+		log(RED, "3 {:x} {:x}", RET_ADDRESS, _this);*/
+
+	return res;
+}
+
+DEFINE_HOOK_THISCALL_S(_test4, 0x59A560, bool, int _this)
+{
+	auto res = _test4_hook.call(_this);
+
+	if (res && _this != ptr(g_world->get_localplayer_character()))
+		log(RED, "4 {:x} {:x}", RET_ADDRESS, _this);
+
+	return res;
+}
+
+
 void jc::test_units::init()
 {
+	_test1_hook.hook();
+	_test2_hook.hook();
+	_test3_hook.hook();
+	_test4_hook.hook();
+
 	//_set_boat_vel_hook.hook();
 	//resource_request_hook.hook();
 	//_test_hook.hook();
@@ -73,6 +112,11 @@ void jc::test_units::init()
 
 void jc::test_units::destroy()
 {
+	_test1_hook.unhook();
+	_test2_hook.unhook();
+	_test3_hook.unhook();
+	_test4_hook.unhook();
+
 	//_set_boat_vel_hook.unhook();
 	//resource_request_hook.unhook();
 	//_test_hook.unhook();
@@ -213,8 +257,16 @@ void jc::test_units::test_0()
 
 	static bool entered = false;
 
-	if (info.handle && !entered)
+	if (info.handle)
 	{
+		auto t = ptr(info.character);
+
+		float v3 = *(float*)(t + 0xA30) * *(float*)(t + 0xA30)
+			+ *(float*)(t + 0xA2C) * *(float*)(t + 0xA2C)
+			+ *(float*)(t + 0xA28) * *(float*)(t + 0xA28);
+
+		log(RED, "{} < 16.f", v3);
+
 		if (const auto veh = BITCAST(Vehicle*, g_global_ptr))
 		{
 			const auto seat = veh->get_driver_seat();

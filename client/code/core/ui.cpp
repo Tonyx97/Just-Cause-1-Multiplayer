@@ -332,7 +332,7 @@ void UI::render_players()
 						out.y - 2.5f * hp_bar_size_adjust,
 						hp * 100.f,
 						2.5f * hp_bar_size_adjust,
-						{ 1.f - hp, hp, 0.f, 1.f });
+						{ hp_bar_size_adjust - hp, hp, 0.f, 1.f });
 				}
 
 				g_ui->add_text(player->get_nick().c_str(), out.x, out.y - 10.f - 18.f * name_size_adjust, 18.f * name_size_adjust, { 1.f, 1.f, 1.f, 1.f }, true);

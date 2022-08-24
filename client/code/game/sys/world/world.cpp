@@ -6,6 +6,7 @@
 
 void World::init()
 {
+	set_character_update_max_distance(500.f);
 }
 
 void World::destroy()
@@ -15,6 +16,16 @@ void World::destroy()
 void World::set_localplayer(LocalPlayer* v)
 {
 	jc::write(v, this, jc::world::LOCALPLAYER);
+}
+
+void World::set_character_update_max_distance(float v)
+{
+	jc::write(static_cast<int>(v), this, jc::world::CHARACTER_UPDATE_MAX_DISTANCE);
+}
+
+float World::get_character_update_max_distance() const
+{
+	return static_cast<float>(jc::read<int32_t>(this, jc::world::CHARACTER_UPDATE_MAX_DISTANCE));
 }
 
 jc::stl::vector<Character*> World::get_characters() const
