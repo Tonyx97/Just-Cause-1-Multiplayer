@@ -111,11 +111,19 @@ DEFINE_HOOK_CCALL(fn_ret_1, 0x62A510, int)
 	// All AirVehicle checks to see if the driver is an npc or a player
 	case 0x8B53DB:
 	case 0x8B5B7D:
+	// Airplane checks to see if the driver is an npc or a player
+	case 0x8315C7:
 	// All Helicopter checks to see if the driver is an npc or a player
 	case 0x82D398:
 	case 0x82D70D:
 	case 0x82D782:
 	case 0x82D7F1:
+	// For land vehicles, it seems everytime a player's char enters a vehicle
+	// it will increase some speed multiplier causing insane desync after a few
+	// vehicle reenters lmao
+	case 0x62E04F:
+	case 0x62E0A3:
+	case 0x62E342:
 		return false;
 	}
 
@@ -147,7 +155,9 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 		if (const auto player = g_net->get_player_by_character(owner))
 			if (const auto weapon_info = weapon->get_info())
 			{
-				//if (weapon_info->get_bullet_type() != 4)
+				// hand guns first
+
+				if (!weapon_info->is_vehicle_weapon())
 				{
 					// if the player is local then just get our aim target and calculate the
 					// proper direction, otherwise, we want to grab the muzzle and aim target
@@ -172,10 +182,14 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 
 					*final_muzzle_transform = Transform::look_at(muzzle, muzzle + direction);
 				}
-				/*else
+				else
 				{
-					// todojc - vehicle weapons?
-				}*/
+					// handle vehicle weapons
+
+					const auto muzzle = weapon->get_muzzle_transform()->get_position();
+
+					*final_muzzle_transform = Transform::look_at(muzzle, weapon->get_aim_target());
+				}
 			}
 }
 
@@ -371,10 +385,10 @@ void jc::patches::apply()
 
 	// apply weapon last muzzle transform patch
 
-	last_muzzle_transform_patch._do(
+	/*last_muzzle_transform_patch._do(
 	{
 		0xEB, 0x1C			// jmp
-	});
+	});*/
 
 	// apply active to dead handles patch
 

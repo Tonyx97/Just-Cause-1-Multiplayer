@@ -148,7 +148,7 @@ bool NetObject::sync()
 void NetObject::set_streamer(Player* v)
 {
 #ifdef JC_SERVER
-	if (streamer)
+	if (streamer && v != streamer)
 	{
 		// if the object has a streamer, then we want to know if we have to transfer it to another
 		// player or simply remove any ownership

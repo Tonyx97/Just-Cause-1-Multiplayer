@@ -36,7 +36,7 @@ class VehicleSeat
 private:
 public:
 
-	void warp_character(Character* character, bool unk = false);
+	void warp_character(Character* character, bool warp = false);
 	void open_door(Character* character);
 	void kick_current(bool instant);
 

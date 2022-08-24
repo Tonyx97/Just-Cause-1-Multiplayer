@@ -15,6 +15,7 @@ namespace jc::g
 		namespace fn
 		{
 			static constexpr uint32_t ROTATE_POINT_BY_MATRIX = 0x412E00;
+			static constexpr uint32_t LOOK_AT = 0x413420;
 			static constexpr uint32_t FLOAT_TO_INT16 = 0x45C650;
 		}
 	}

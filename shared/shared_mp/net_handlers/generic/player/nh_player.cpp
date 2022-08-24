@@ -339,66 +339,59 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 	if (!vehicle_net)
 		return enet::PacketRes_BadArgs;
 
+#ifdef JC_CLIENT
+	const auto vehicle = vehicle_net->get_object();
+	const auto seat = vehicle->get_driver_seat();
+	const auto player_char = player->get_character();
+#endif
+
 	switch (const auto command = p.get_u8())
 	{
 	case VehicleEnterExit_OpenDoor:
-	case VehicleEnterExit_Exit:
 	{
-		log(GREEN, "opening door...");
+		log(GREEN, "opening vehicle door...");
 
 #ifdef JC_CLIENT
-		const auto vehicle = vehicle_net->get_object();
-		const auto seat = vehicle->get_driver_seat();
-		const auto player_char = player->get_character();
-#endif
-
-		if (command == VehicleEnterExit_OpenDoor)
-		{
-#ifdef JC_CLIENT
-			seat->open_door(player_char);
+		seat->open_door(player_char);
 #else
-			vehicle_net->set_sync_type(SyncType_Locked);
-			vehicle_net->set_streamer(player);
+		vehicle_net->set_sync_type(SyncType_Locked);
+		vehicle_net->set_streamer(player);
 
-			g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command);
+		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command);
 #endif
-		}
-		else
-		{
-			log(GREEN, "exiting vehicle...");
-
-			const bool instant = p.get_bool();
-
-#ifdef JC_CLIENT
-			seat->kick_current(instant);
-#else
-			vehicle_net->set_sync_type(SyncType_Distance);
-			vehicle_net->set_streamer(nullptr);
-
-			g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command, instant);
-#endif
-		}
 
 		break;
 	}
 	case VehicleEnterExit_Enter:
 	{
-		const bool instant = p.get_bool();
-
-		log(GREEN, "entering vehicle... {}", instant);
+		log(GREEN, "entering vehicle...");
 
 #ifdef JC_CLIENT
-		const auto player_char = player->get_character();
-
-		if (instant)
-			player_char->hopp_into_vehicle();
-		else player_char->set_enter_vehicle_stance(false);
+		seat->warp_character(player_char, true);
 #else
 		vehicle_net->set_sync_type(SyncType_Locked);
 		vehicle_net->set_streamer(player);
 
+		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command);
+#endif
+
+		break;
+	}
+	case VehicleEnterExit_Exit:
+	{
+		const bool instant = p.get_bool();
+
+		log(GREEN, "exiting vehicle... {}", instant);
+
+#ifdef JC_CLIENT
+		seat->kick_current(instant);
+#else
+		vehicle_net->set_sync_type(SyncType_Distance);
+		vehicle_net->set_streamer(nullptr);
+
 		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command, instant);
 #endif
+
 		break;
 	}
 	}
@@ -431,8 +424,9 @@ enet::PacketResult nh::player::vehicle_control(const enet::Packet& p)
 #endif
 
 	const auto packed_info = p.get_raw<VehicleNetObject::PackedControlInfo>();
+	const auto unpacked_info = VehicleNetObject::ControlInfo(packed_info);
 
-	vehicle_net->set_control_info(packed_info);
+	vehicle_net->set_control_info(unpacked_info);
 
 #ifdef JC_SERVER
 	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleControl, player, vehicle_net, packed_info);

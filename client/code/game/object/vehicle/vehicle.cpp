@@ -91,9 +91,9 @@ namespace jc::vehicle::hook
 
 			if (vehicle_net->is_owned())
 			{
-				*c3 = 0.f;
-				*c2 = g_key->game_get_joystick_value(0x37) - g_key->game_get_joystick_value(0x38);
 				*c1 = g_key->game_get_joystick_value(0x3A) - g_key->game_get_joystick_value(0x39);
+				*c2 = g_key->game_get_joystick_value(0x37) - g_key->game_get_joystick_value(0x38);
+				*c3 = 0.f;
 
 				if (g_key->game_is_key_down(0x3D))
 					*c0 = g_key->game_get_joystick_value(0x3D);
@@ -101,17 +101,17 @@ namespace jc::vehicle::hook
 				if (g_key->game_is_key_down(0x3E))
 					*c0 = -g_key->game_get_joystick_value(0x3E);
 
-				if (*c1 != info.c1 || *c0 != info.c0 || *c2 != info.c2 || *c3 != info.c3)
+				if (*c0 != info.c0 || *c1 != info.c1 || *c2 != info.c2 || *c3 != info.c3)
 				{
-					vehicle_net->set_control_info(*c1, *c0, *c2, *c3);
+					vehicle_net->set_control_info(*c0, *c1, *c2, *c3);
 
 					g_net->send_reliable(PlayerPID_VehicleControl, vehicle_net, info.pack());
 				}
 			}
 			else
 			{
-				*c1 = info.c1;
 				*c0 = info.c0;
+				*c1 = info.c1;
 				*c2 = info.c2;
 				*c3 = info.c3;
 			}
@@ -132,12 +132,12 @@ namespace jc::vehicle::hook
 		land_vehicle_get_input(motorbike, controller, c0, c1, braking, motorbike_get_input_hook.original);
 	}
 
-	DEFINE_HOOK_THISCALL(airplane_get_input, 0x831570, void, AirPlane* airplane, CharacterController* controller, float* c0, float* c1, float* forward, float* backward)
+	DEFINE_HOOK_THISCALL(airplane_get_input, 0x831570, void, AirPlane* airplane, CharacterController* controller, float* c0, float* c1, float* c2, float* c3)
 	{
-		airplane_get_input(airplane, controller, c0, c1, forward, backward, airplane_get_input_hook.original);
+		airplane_get_input(airplane, controller, c0, c1, c2, c3, airplane_get_input_hook.original);
 	}
 
-	DEFINE_HOOK_THISCALL(helicopter_get_input, 0x82D310, void, Helicopter* helicopter, CharacterController* controller, float* c0, float* c1, float* forward, float* backward)
+	DEFINE_HOOK_THISCALL(helicopter_get_input, 0x82D310, void, Helicopter* helicopter, CharacterController* controller, float* c0, float* c1, float* c2, float* c3)
 	{
 		if (!helicopter->is_alive())
 			return;
@@ -146,7 +146,7 @@ namespace jc::vehicle::hook
 		{
 			heli_c0 = heli_c1 = heli_c2 = heli_c3 = 0.f;
 			helicopter_input_dispatching = vehicle_net;
-			helicopter_get_input_hook.call(helicopter, controller, c0, c1, forward, backward);
+			helicopter_get_input_hook.call(helicopter, controller, c0, c1, c2, c3);
 			helicopter_input_dispatching = nullptr;
 
 			if (vehicle_net->is_owned() && vehicle_net->should_sync_this_tick())

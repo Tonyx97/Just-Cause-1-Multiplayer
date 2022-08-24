@@ -57,14 +57,17 @@ DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* n
 	return resource_request_hook.call(a1, name, type, data, size);
 }
 
-DEFINE_HOOK_THISCALL_S(_test1, 0x595EF0, bool, int _this)
+DEFINE_HOOK_THISCALL(_test1, 0x93DE90, void, int _this, int a2)
 {
-	auto res = _test1_hook.call(_this);
+	_test1_hook.call(_this, a2);
 
-	/*if (res && _this != ptr(g_world->get_localplayer_character()))
-		log(RED, "1 {:x} {:x}", RET_ADDRESS, _this);*/
+	log(RED, "{}", jc::read<float>(_this, 0xC));
 
-	return res;
+	/*if (jc::read<float>(_this, 0x10) > 2000.f)
+	{
+		jc::write<float>(99999.f, _this, 0x10);
+		jc::write<float>(99999.f, _this, 0xC);
+	}*/
 }
 
 DEFINE_HOOK_THISCALL_S(_test2, 0x597B80, bool, int _this)
@@ -100,10 +103,10 @@ DEFINE_HOOK_THISCALL_S(_test4, 0x59A560, bool, int _this)
 
 void jc::test_units::init()
 {
-	_test1_hook.hook();
-	_test2_hook.hook();
+	//_test1_hook.hook();
+	/*_test2_hook.hook();
 	_test3_hook.hook();
-	_test4_hook.hook();
+	_test4_hook.hook();*/
 
 	//_set_boat_vel_hook.hook();
 	//resource_request_hook.hook();
@@ -113,9 +116,9 @@ void jc::test_units::init()
 void jc::test_units::destroy()
 {
 	_test1_hook.unhook();
-	_test2_hook.unhook();
+	/*_test2_hook.unhook();
 	_test3_hook.unhook();
-	_test4_hook.unhook();
+	_test4_hook.unhook();*/
 
 	//_set_boat_vel_hook.unhook();
 	//resource_request_hook.unhook();
@@ -234,7 +237,11 @@ void jc::test_units::test_0()
 
 			const auto seat = veh->get_driver_seat();
 
-			const auto sound_comp = jc::read<ptr>(veh, 0x404);
+			if (local_char->get_vehicle())
+				seat->kick_current(true);
+			else seat->warp_character(local_char, true);
+
+			/*const auto sound_comp = jc::read<ptr>(veh, 0x404);
 
 			auto res = (*(int(__thiscall**)(ptr, int, ptr))(**(ptr**)(sound_comp + 0xC0) + 0x30))(
 				*(ptr*)(sound_comp + 0xC0),
@@ -251,7 +258,7 @@ void jc::test_units::test_0()
 
 					log(GREEN, "played");
 				}
-			}
+			}*/
 		}
 	}
 

@@ -61,7 +61,7 @@ DEFINE_HOOK_THISCALL(is_key_pressed, 0x48C850, bool, CharacterController* _this,
 
 #if DEBUG_KEY_PRESS
 	if (res)
-		log(RED, "[KEY PRESS] 0x{:x} -> {}, {:x}", control, res, ptr(_ReturnAddress()));
+		log(RED, "[KEY PRESS] 0x{:x} -> {}, {:x}", control, res, RET_ADDRESS);
 #endif
 
 	return res;
@@ -73,7 +73,7 @@ DEFINE_HOOK_THISCALL(is_key_down, 0x48C800, bool, CharacterController* _this, in
 
 #if DEBUG_KEY_DOWN
 	if (res)
-		log(RED, "[KEY DOWN] 0x{:x} -> {}, {:x}", control, res, ptr(_ReturnAddress()));
+		log(RED, "[KEY DOWN] 0x{:x} -> {}, {:x}", control, res, RET_ADDRESS);
 #endif
 
 	return res;

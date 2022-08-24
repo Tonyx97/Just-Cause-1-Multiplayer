@@ -333,7 +333,7 @@ namespace jc::character::hook
 									muzzle,
 									direction);
 							}
-					}
+						}
 		
 		return res;
 	}
@@ -405,24 +405,24 @@ namespace jc::character::hook
 
 	DEFINE_HOOK_THISCALL(set_enter_vehicle_stance, 0x5A1D40, void, Character* character, bool instant)
 	{
-		if (const auto lp = g_net->get_localplayer())
+		/*if (const auto lp = g_net->get_localplayer())
 			if (const auto local_char = lp->get_character())
 				if (character == local_char)
 					if (const auto vehicle = local_char->get_vehicle())
 						if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Enter, false);
+							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Enter, false);*/
 
 		set_enter_vehicle_stance_hook.call(character, instant);
 	}
 
 	DEFINE_HOOK_THISCALL_S(hopp_into_vehicle_stance, 0x59F620, void, Character* character)
 	{
-		if (const auto lp = g_net->get_localplayer())
+		/*if (const auto lp = g_net->get_localplayer())
 			if (const auto local_char = lp->get_character())
 				if (character == local_char)
 					if (const auto vehicle = local_char->get_vehicle())
 						if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Enter, true);
+							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Enter, true);*/
 
 		hopp_into_vehicle_stance_hook.call(character);
 	}

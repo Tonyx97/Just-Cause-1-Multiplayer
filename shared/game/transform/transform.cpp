@@ -97,7 +97,7 @@ Transform Transform::look_at(const vec3& eye, const vec3& target)
 {
 	Transform t;
 
-	jc::this_call(0x413420, &t, &eye, &target, &jc::vec::UP);
+	jc::this_call(jc::g::math::fn::LOOK_AT, &t, &eye, &target, &jc::vec::UP);
 
 	return t;
 }

@@ -51,9 +51,14 @@ void WeaponInfo::set_infinite_ammo(bool v)
 	jc::write(v, this, jc::weapon_info::INFINITE_AMMO);
 }
 
-bool WeaponInfo::can_create_shells()
+bool WeaponInfo::can_create_shells() const
 {
 	return jc::read<bool>(this, jc::weapon_info::CAN_CREATE_SHELLS);
+}
+
+bool WeaponInfo::is_vehicle_weapon() const
+{
+	return !((get_flags() >> 4) & 1);
 }
 
 uint8_t WeaponInfo::get_id() const
@@ -84,6 +89,11 @@ int32_t WeaponInfo::get_bullets_to_fire()
 int32_t WeaponInfo::get_fire_sound_id()
 {
 	return jc::read<int32_t>(this, jc::weapon_info::FIRE_SOUND_ID);
+}
+
+uint32_t WeaponInfo::get_flags() const
+{
+	return jc::read<uint32_t>(this, jc::weapon_info::FLAGS);
 }
 
 float WeaponInfo::get_bullet_force1() const
