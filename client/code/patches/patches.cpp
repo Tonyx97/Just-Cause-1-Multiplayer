@@ -75,11 +75,6 @@ namespace jc::patches
 	//
 	patch scope_heat_haze_patch(0x5B86AD);
 
-	// removes engine overriding of last muzzle transform in weapon because
-	// we will use our own
-	//
-	patch last_muzzle_transform_patch(0x61F1D9);
-
 	// removes automatic movement from active handles to dead handles of characters
 	// destruction of any character (player or npc) will be handled by the mod/scripting
 	// to avoid problems with the engine itself
@@ -409,7 +404,6 @@ void jc::patches::undo()
 {
 	land_vehicle_engine_patch._undo();
 	ai_core_dead_handles_patch._undo();
-	last_muzzle_transform_patch._undo();
 	death_camera_velocity._undo();
 	set_health_red_fx._undo();
 	death_state._undo();
