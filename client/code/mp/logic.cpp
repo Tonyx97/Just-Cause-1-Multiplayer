@@ -154,7 +154,7 @@ void jc::mp::logic::on_tick()
 			{
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
-				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Vehicle, 0ui16, transform);
+				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Vehicle, 51ui16, transform);
 			}
 		}
 }

@@ -46,9 +46,14 @@ namespace jc::vehicle::hook
 
 			if (vehicle_net->is_owned())
 			{
-				*c0 = g_key->game_get_joystick_value(0x24) - g_key->game_get_joystick_value(0x25);
-				*c1 = g_key->game_get_joystick_value(0x27) - g_key->game_get_joystick_value(0x26);
+				// accept movement controls (forward and backward) only when the engine is turned on,
+				// braking and wheels should be available even if the engine is turned off obviously
 
+				if (vehicle->get_engine_state())
+					*c0 = g_key->game_get_joystick_value(0x24) - g_key->game_get_joystick_value(0x25);
+				else *c0 = 0.f;
+
+				*c1 = g_key->game_get_joystick_value(0x27) - g_key->game_get_joystick_value(0x26);
 				*braking = g_key->game_is_key_down(0x28);
 
 				if (*c0 != info.c0 || *c1 != info.c1 || *braking != info.braking)
@@ -266,6 +271,11 @@ void Vehicle::write_engine_state(bool v)
 
 void Vehicle::start_engine_sound(bool v)
 {
+	const auto sound_component = get_sound_component();
+	const auto sound_flags = jc::read<uint32_t>(sound_component, 0x40);
+
+	jc::write(sound_flags & ~(1 << 0), sound_component, 0x40);
+
 	if (v)
 		jc::v_call(this, jc::vehicle::vt::START_ENGINE_SOUND);
 	else jc::v_call(this, jc::vehicle::vt::STOP_ENGINE_SOUND);

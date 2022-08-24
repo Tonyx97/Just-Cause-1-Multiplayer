@@ -85,6 +85,10 @@ namespace jc::patches
 	// to avoid problems with the engine itself
 	//
 	patch ai_core_dead_handles_patch(0x584C64);
+
+	// patches the automatic turning of the land vehicle's engine
+	//
+	patch land_vehicle_engine_patch(0x85053A);
 }
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
@@ -378,10 +382,18 @@ void jc::patches::apply()
 	{
 		0xE9, 0xE5, 0x00, 0x00, 0x00
 	});
+
+	// apply land vehicle's engine patch
+
+	land_vehicle_engine_patch._do(
+	{
+		0xE9, 0xC5, 0x00, 0x00, 0x00
+	});
 }
 
 void jc::patches::undo()
 {
+	land_vehicle_engine_patch._undo();
 	ai_core_dead_handles_patch._undo();
 	last_muzzle_transform_patch._undo();
 	death_camera_velocity._undo();
