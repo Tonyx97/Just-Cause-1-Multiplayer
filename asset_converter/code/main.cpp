@@ -154,11 +154,12 @@ int main()
 		const auto ext = p.extension().string();
 
 		bool ok = false;
+		bool valid_format = false;
 
-		if (ext == ".fbx" || ext == ".3ds" || ext == ".obj")
+		if (valid_format = (ext == ".fbx" || ext == ".3ds" || ext == ".obj"))
 			ok = convert_to_rbm(path, filename, ext);
 
-		if (!ok)
+		if (valid_format && !ok)
 			log(RED, "Could not convert file '{}'", path);
 	}
 
