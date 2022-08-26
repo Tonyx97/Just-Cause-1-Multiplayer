@@ -160,17 +160,15 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		std::string model = "m488.rbm"; // "crate_custom_png.rbm"
+		std::string model = "mim.rbm"; // "crate_custom_png.rbm"
 
-		g_texture_system->load_texture("dummy_black.dds");
+		g_texture_system->load_texture("mim.jpg");
 		g_model_system->load_rbm(model);
-		g_physics->load_pfx("crate.pfx");
 
-		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), model, "crate.pfx");
+		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), model, "");
 
-		g_physics->unload_pfx("crate.pfx");
 		g_model_system->unload_rbm(model);
-		g_texture_system->unload_texture("dummy_black.dds");
+		g_texture_system->unload_texture("mim.dds");
 	}
 
 	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))

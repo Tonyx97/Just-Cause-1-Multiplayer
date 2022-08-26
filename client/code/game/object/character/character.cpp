@@ -306,15 +306,18 @@ namespace jc::character::hook
 
 								direction = vec4(direction, 0.f) * rotation_matrix;
 
+								const auto packed_direction = jc::math::pack_vec3(direction, 1.f);
+								const auto unpacked_direction = jc::math::unpack_vec3(packed_direction, 1.f);
+
 								localplayer->set_multiple_rand_seed(0u);
-								localplayer->set_bullet_direction(muzzle, direction);
+								localplayer->set_bullet_direction(muzzle, unpacked_direction);
 
 								g_net->send_reliable(
 									PlayerPID_StanceAndMovement,
 									PlayerStanceID_Fire,
 									weapon->get_id(),
 									muzzle,
-									direction);
+									packed_direction);
 							}
 							else if (bullets > 1)
 							{
@@ -322,8 +325,11 @@ namespace jc::character::hook
 
 								const auto rand_seed = static_cast<uint16_t>(1u + (static_cast<uint16_t>(__rdtsc()) & 0xFFFE));
 
+								const auto packed_direction = jc::math::pack_vec3(direction, 1.f);
+								const auto unpacked_direction = jc::math::unpack_vec3(packed_direction, 1.f);
+
 								localplayer->set_multiple_rand_seed(rand_seed);
-								localplayer->set_bullet_direction(muzzle, direction);
+								localplayer->set_bullet_direction(muzzle, unpacked_direction);
 
 								g_net->send_reliable(
 									PlayerPID_StanceAndMovement,
@@ -331,7 +337,7 @@ namespace jc::character::hook
 									rand_seed,
 									weapon->get_id(),
 									muzzle,
-									direction);
+									packed_direction);
 							}
 						}
 		

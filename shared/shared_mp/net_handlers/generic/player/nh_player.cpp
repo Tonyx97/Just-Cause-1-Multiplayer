@@ -247,15 +247,15 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	{
 		const auto weapon_id = p.get_u8();
 		const auto muzzle_pos = p.get_raw<vec3>();
-		const auto direction = p.get_raw<vec3>();
+		const auto packed_direction = p.get_raw<i16vec3>();
 
 #ifdef JC_CLIENT
 		player->set_multiple_rand_seed(0u);
 #else
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, weapon_id, muzzle_pos, direction);
+		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, weapon_id, muzzle_pos, packed_direction);
 #endif
 
-		player->fire_current_weapon(weapon_id, muzzle_pos, direction);
+		player->fire_current_weapon(weapon_id, muzzle_pos, jc::math::unpack_vec3(packed_direction, 1.f));
 
 		break;
 	}
@@ -264,15 +264,15 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 		const auto rand_seed = p.get_u16();
 		const auto weapon_id = p.get_u8();
 		const auto muzzle_pos = p.get_raw<vec3>();
-		const auto direction = p.get_raw<vec3>();
+		const auto packed_direction = p.get_raw<i16vec3>();
 
 #ifdef JC_CLIENT
 		player->set_multiple_rand_seed(rand_seed);
 #else
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, rand_seed, weapon_id, muzzle_pos, direction);
+		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, rand_seed, weapon_id, muzzle_pos, packed_direction);
 #endif
 
-		player->fire_current_weapon(weapon_id, muzzle_pos, direction);
+		player->fire_current_weapon(weapon_id, muzzle_pos, jc::math::unpack_vec3(packed_direction, 1.f));
 
 		break;
 	}

@@ -358,6 +358,73 @@ void UI::render_admin_panel()
 	if (!local_char)
 		return;
 
+	// init stuff
+
+	static void* mem = 0;
+
+	if (!mem)	// create new weapon :o
+	{
+		mem = jc::game::malloc(0x17C);
+
+		std::string model = "m488.rbm";
+
+		object_base_map map{};
+		map.insert<object_base_map::Int>(0x2419daa1, 15); // int
+		map.insert<object_base_map::Int>(0x2caec4c6, 3); // int
+		map.insert<object_base_map::Int>(0x2e3e2094, 1); // int
+		map.insert<object_base_map::Int>(0x2ecc28f9, -1); // int
+		map.insert<object_base_map::Int>(0x3c6afa74, -1); // int
+		map.insert<object_base_map::Int>(0x67f4b92, 1); // int
+		map.insert<object_base_map::Int>(0x73c279d9, 7); // int
+		map.insert<object_base_map::Int>(0x7932fd00, 3); // int
+		map.insert<object_base_map::Int>(0x92d1b4b0, 1); // int
+		map.insert<object_base_map::Int>(0x983bdc19, 16); // int
+		map.insert<object_base_map::Int>(0xb48c8992, 14); // int
+		map.insert<object_base_map::Int>(0xc17ff89f, 100); // int
+		map.insert<object_base_map::Int>(0xdc4e8e89, 12); // int
+		map.insert<object_base_map::Int>(0xe43f6ff8, 0); // int
+		map.insert<object_base_map::Int>(0xea9b2d84, 2); // int
+		map.insert<object_base_map::Int>(0xebb4f93f, 1); // int
+		map.insert<object_base_map::Int>(0xf776041b, 1); // int
+		map.insert<object_base_map::Float>(0x2524eee2, 7.00f); // float
+		map.insert<object_base_map::Float>(0x3ae7b611, 500.00f); // float - max radius
+		map.insert<object_base_map::Float>(0x3c973815, 1.00f); // float
+		map.insert<object_base_map::Float>(0x43d3fa78, 1.00f); // float
+		map.insert<object_base_map::Float>(0x51905fda, 50.00f); // float
+		map.insert<object_base_map::Float>(0x58dd9170, 50.00f); // float
+		map.insert<object_base_map::Float>(0x61d710ac, 100.00f); // float
+		map.insert<object_base_map::Float>(0x6e24e123, 1.50f); // float
+		map.insert<object_base_map::Float>(0x72fdb359, 500.00f); // float
+		map.insert<object_base_map::Float>(0x737cf1df, 1.25f); // float
+		map.insert<object_base_map::Float>(0x83fcbe6d, 0.32f); // float
+		map.insert<object_base_map::Float>(0x88bbee10, 1.20f); // float
+		map.insert<object_base_map::Float>(0x8dccf8a, 200.00f); // float
+		map.insert<object_base_map::Float>(0x9db0dcdf, 130.00f); // float
+		map.insert<object_base_map::Float>(0xb27fbdf, 9000.00f); // float
+		map.insert<object_base_map::Float>(0xc5a583e4, 7.00f); // float
+		map.insert<object_base_map::Float>(0xc9dae566, 1.00f); // float
+		map.insert<object_base_map::Float>(0xe775a5da, 2.00f); // float
+		map.insert<object_base_map::Float>(0xe807fbbe, 0.10f); // float
+		map.insert<object_base_map::Float>(0xf400ec2a, 1.00f); // float
+		map.insert<object_base_map::Float>(0xfdc2fc1f, 60.00f); // float
+		map.insert<object_base_map::Float>(0xfde6d38c, 0.01f); // float
+		map.insert<object_base_map::String>(0xa9818615, R"(VFX_I_Muzzle_Rocket_Launcher)"); // string
+		map.insert<object_base_map::String>(0xb231ec06, R"(M488)"); // string
+		map.insert<object_base_map::String>(0xb3776904, R"(360_exp_4_1)"); // string
+		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(Rocket Launcher)"); // string
+		map.insert<object_base_map::String>(ObjectBase::Hash_Model, model); // string
+
+		g_texture_system->load_texture("dummy_black.dds");
+		g_model_system->load_rbm(model);
+
+		jc::this_call(0x713D00, mem);
+		jc::this_call(0x7142B0, mem, &map);
+		jc::this_call(0x57ED80, ptr(g_weapon.get()) + 0x4, &mem);
+
+		/*g_texture_system->unload_texture("dummy_black.dds");
+		g_model_system->unload_rbm(model);*/
+	}
+
 	// weapon stuff
 
 	if (auto current_weapon = local_char->get_weapon_belt()->get_current_weapon())
@@ -459,6 +526,9 @@ void UI::render_admin_panel()
 
 		if (ImGui::Button("Give weapon##ap.weap.giv"))
 			local_char->set_weapon(weapon_ids[weapon_to_give], false);
+
+		if (ImGui::Button("Give New Weapon :O##ap.weap.givnew"))
+			local_char->set_weapon(100, false);
 
 		ImGui::TreePop();
 	}

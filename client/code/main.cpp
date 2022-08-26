@@ -224,6 +224,21 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 	else if (g_game_control)
 		g_game_control->on_tick();
 
+	if (static bool ay = false; !ay && g_net->is_joined())
+	{
+		std::string model = "mim.rbm";
+
+		g_texture_system->load_texture("mim.jpg");
+		g_model_system->load_rbm(model);
+
+		g_factory->spawn_simple_rigid_object(vec3(626.96f, 100.07f, 4887.83f), model, "");
+
+		g_model_system->unload_rbm(model);
+		g_texture_system->unload_texture("mim.dds");
+
+		ay = true;
+	}
+
 	return tick_hook.call(_this);
 }
 
