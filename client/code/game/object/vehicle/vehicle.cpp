@@ -201,13 +201,13 @@ namespace jc::vehicle::hook
 		});
 
 		const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle)->cast<VehicleNetObject>();
-		const auto weapon_index = static_cast<uint8_t>(vehicle->get_current_weapon_index());
-		const auto weapon_type = static_cast<uint8_t>(vehicle->get_current_weapon_type());
 
 		if (vehicle_net)
 			vehicle_net->set_fire_info(fire_info);
 		else return vehicle_fire_hook.call(vehicle);
 
+		const auto weapon_index = static_cast<uint8_t>(vehicle->get_current_weapon_index());
+		const auto weapon_type = static_cast<uint8_t>(vehicle->get_current_weapon_type());
 		const auto ok = vehicle_fire_hook.call(vehicle);
 
 		if (ok)
