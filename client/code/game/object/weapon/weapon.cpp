@@ -58,7 +58,7 @@ bool WeaponInfo::can_create_shells() const
 
 bool WeaponInfo::is_vehicle_weapon() const
 {
-	return !((get_flags() >> 4) & 1);
+	return get_icon_id() == -1;
 }
 
 uint8_t WeaponInfo::get_id() const
@@ -76,6 +76,11 @@ int32_t WeaponInfo::get_type_id() const
 	return jc::read<int32_t>(this, jc::weapon_info::TYPE_ID);
 }
 
+int32_t WeaponInfo::get_icon_id() const
+{
+	return jc::read<int32_t>(this, jc::weapon_info::ICON_ID);
+}
+
 int32_t WeaponInfo::get_max_mag_ammo()
 {
 	return jc::read<int32_t>(this, jc::weapon_info::MAX_MAG_AMMO);
@@ -89,11 +94,6 @@ int32_t WeaponInfo::get_bullets_to_fire()
 int32_t WeaponInfo::get_fire_sound_id()
 {
 	return jc::read<int32_t>(this, jc::weapon_info::FIRE_SOUND_ID);
-}
-
-uint32_t WeaponInfo::get_flags() const
-{
-	return jc::read<uint32_t>(this, jc::weapon_info::FLAGS);
 }
 
 float WeaponInfo::get_bullet_force1() const

@@ -31,9 +31,9 @@ namespace jc::weapon
 namespace jc::weapon_info
 {
 	static constexpr uint32_t ID				= 0x0; // int32_t
+	static constexpr uint32_t ICON_ID			= 0x4; // int32_t
 	static constexpr uint32_t TYPE_ID			= 0xC; // int32_t
 	static constexpr uint32_t BULLET_TYPE		= 0x10; // int
-	static constexpr uint32_t FLAGS				= 0x2C; // int
 	static constexpr uint32_t MAX_MAG_AMMO		= 0x38; // int
 	static constexpr uint32_t BULLETS_TO_FIRE	= 0x44; // int
 	static constexpr uint32_t ACCURACY_AI		= 0x48; // float
@@ -71,11 +71,10 @@ public:
 
 	int32_t get_bullet_type() const;
 	int32_t get_type_id() const;
+	int32_t get_icon_id() const;
 	int32_t get_max_mag_ammo();
 	int32_t get_bullets_to_fire();
 	int32_t get_fire_sound_id();
-
-	uint32_t get_flags() const;
 
 	float get_bullet_force1() const;
 	float get_bullet_force2() const;

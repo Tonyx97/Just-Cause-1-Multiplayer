@@ -211,7 +211,7 @@ void jc::test_units::test_0()
 	{
 		auto mem = jc::game::malloc(0x17C);
 
-		std::string model = "m488_fixed.rbm"; // "crate_custom_png.rbm"
+		std::string model = "m488.rbm"; // "crate_custom_png.rbm"
 
 		object_base_map map{};
 		map.insert<object_base_map::Int>(0x2419daa1, 15); // int
@@ -236,8 +236,8 @@ void jc::test_units::test_0()
 		map.insert<object_base_map::Float>(0x3c973815, 1.00f); // float
 		map.insert<object_base_map::Float>(0x43d3fa78, 1.00f); // float
 		map.insert<object_base_map::Float>(0x51905fda, 50.00f); // float
-		map.insert<object_base_map::Float>(0x58dd9170, 5.00f); // float
-		map.insert<object_base_map::Float>(0x61d710ac, 2700.00f); // float
+		map.insert<object_base_map::Float>(0x58dd9170, 50.00f); // float - max radius
+		map.insert<object_base_map::Float>(0x61d710ac, 100.00f); // float
 		map.insert<object_base_map::Float>(0x6e24e123, 1.50f); // float
 		map.insert<object_base_map::Float>(0x72fdb359, 500.00f); // float
 		map.insert<object_base_map::Float>(0x737cf1df, 1.25f); // float
@@ -253,9 +253,9 @@ void jc::test_units::test_0()
 		map.insert<object_base_map::Float>(0xf400ec2a, 1.00f); // float
 		map.insert<object_base_map::Float>(0xfdc2fc1f, 60.00f); // float
 		map.insert<object_base_map::Float>(0xfde6d38c, 0.01f); // float
-		map.insert<object_base_map::String>(0xa9818615, R"(missile_launch)"); // string
+		map.insert<object_base_map::String>(0xa9818615, R"(VFX_I_Muzzle_Rocket_Launcher)"); // string
 		map.insert<object_base_map::String>(0xb231ec06, R"(M488)"); // string
-		map.insert<object_base_map::String>(0xb3776904, R"(360_exp_7_1)"); // string
+		map.insert<object_base_map::String>(0xb3776904, R"(360_exp_4_1)"); // string
 		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(Rocket Launcher)"); // string
 		map.insert<object_base_map::String>(ObjectBase::Hash_Model, model); // string
 
@@ -266,7 +266,7 @@ void jc::test_units::test_0()
 		jc::this_call(0x7142B0, mem, &map);
 		jc::this_call(0x57ED80, ptr(g_weapon.get()) + 0x4, &mem);
 
-		local_char->get_weapon_belt()->add_weapon(100);
+		local_char->set_weapon(100, false);
 
 		//g_factory->spawn_damageable_object(local_pos + vec3(2.f, 0.f, 0.f), "building_blocks\\general\\oil_barrel_red.lod", "models\\building_blocks\\general\\oil_barrel.pfx");
 

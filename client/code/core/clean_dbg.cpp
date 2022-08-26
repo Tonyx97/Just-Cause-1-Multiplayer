@@ -146,7 +146,10 @@ DEFINE_HOOK_CCALL(hash_str, 0x473720, uint32_t, std::string* str)
 		std::lock_guard lock(g_hash_dump_lock);
 
 		if (!g_hashes.contains(*str))
+		{
+			log(CYAN, "{} -> 0x{:x}", str->c_str(), res);
 			g_hashes.insert({ *str, { res, ptr(_ReturnAddress()) } });
+		}
 	}
 
 	return res;
