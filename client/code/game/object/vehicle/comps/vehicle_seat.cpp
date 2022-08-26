@@ -49,7 +49,11 @@ namespace jc::vehicle_seat::hook
 				if (const auto local_char = localplayer->get_character(); character == local_char)
 					if (const auto vehicle = seat->get_vehicle())
 						if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+						{
+							localplayer->set_vehicle(nullptr);
+
 							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Exit, false);
+						}
 
 			leave_hook.call(seat);
 		}
@@ -60,7 +64,11 @@ namespace jc::vehicle_seat::hook
 		if (const auto localplayer = g_net->get_localplayer())
 			if (const auto local_char = localplayer->get_character(); character == local_char)
 				if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+				{
+					localplayer->set_vehicle(nullptr);
+
 					g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Exit, true);
+				}
 
 		return instant_leave_hook.call(vehicle, character, is_local);
 	}
