@@ -15,6 +15,11 @@ namespace jc::stl
 		auto begin() const		{ return first; }
 		auto end() const		{ return last; }
 
-		T operator[] (int i) const { return begin() + i; }
+		T operator[] (int i) const
+		{
+			check(i >= 0 && i < static_cast<int>(size()), "{} out of bounds access", typeid(*this).name());
+
+			return *(begin() + i);
+		}
 	};
 }

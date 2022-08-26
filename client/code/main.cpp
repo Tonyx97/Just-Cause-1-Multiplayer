@@ -89,7 +89,6 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 		log(GREEN, "Initializing patches...");
 
-		jc::clean_dbg::init();
 		jc::patches::apply();
 		jc::test_units::init();
 
@@ -166,7 +165,6 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 			jc::test_units::destroy();
 			jc::patches::undo();
-			jc::clean_dbg::destroy();
 
 			// unhook all
 
@@ -352,6 +350,7 @@ void dll_thread()
 
 	util::init();
 	jc::hooks::init();
+	jc::clean_dbg::init();
 
 	init_window_context_hook.hook();
 
@@ -391,6 +390,7 @@ void dll_thread()
 
 	init_window_context_hook.unhook();
 
+	jc::clean_dbg::destroy();
 	jc::hooks::unhook_queued();
 	jc::hooks::destroy();
 	jc::bug_ripper::destroy();

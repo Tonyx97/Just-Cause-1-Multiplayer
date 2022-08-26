@@ -9,6 +9,7 @@
 
 #include <game/object/base/comps/physical.h>
 #include <game/object/vehicle/vehicle.h>
+#include <game/object/weapon/weapon.h>
 
 VehicleNetObject::VehicleNetObject(NID nid, const TransformTR& transform)
 {
@@ -21,6 +22,27 @@ VehicleNetObject::VehicleNetObject(NID nid, const TransformTR& transform)
 ObjectBase* VehicleNetObject::get_object_base()
 {
 	return get_object();
+}
+
+void VehicleNetObject::fire()
+{
+	for (const auto& info : fire_info)
+		if (const auto weapon = obj->get_weapon(info.index))
+		{
+			weapon->set_last_shot_time(jc::nums::MAXF);
+			weapon->force_fire();
+			weapon->set_enabled(true);
+			weapon->update();
+		}
+}
+
+const VehicleNetObject::FireInfo* VehicleNetObject::get_fire_info_from_weapon(Weapon* weapon) const
+{
+	for (const auto& info : fire_info)
+		if (obj->get_weapon(info.index) == weapon)
+			return &info;
+
+	return nullptr;
 }
 #else
 VehicleNetObject::VehicleNetObject(SyncType sync_type, const TransformTR& transform)
@@ -78,6 +100,22 @@ void VehicleNetObject::set_control_info(float c0, float c1, float c2, float c3, 
 void VehicleNetObject::set_control_info(const ControlInfo& v)
 {
 	set_control_info(v.c0, v.c1, v.c2, v.c3, v.braking);
+}
+
+void VehicleNetObject::set_weapon_info(uint32_t index, uint32_t type)
+{
+	weapon_index = index;
+	weapon_type = type;
+
+#ifdef JC_CLIENT
+	obj->set_current_weapon_index(index);
+	obj->set_current_weapon_type(type);
+#endif
+}
+
+void VehicleNetObject::set_fire_info(const std::vector<FireInfo>& v)
+{
+	fire_info = v;
 }
 
 bool VehicleNetObject::spawn()

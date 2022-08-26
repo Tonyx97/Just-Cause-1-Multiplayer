@@ -10,6 +10,7 @@
 
 #include <game/object/character/character.h>
 #include <game/object/character/comps/vehicle_controller.h>
+#include <game/object/weapon/weapon.h>
 
 #include <shared_mp/objs/vehicle_net.h>
 
@@ -174,10 +175,45 @@ namespace jc::vehicle::hook
 
 	DEFINE_HOOK_THISCALL_S(land_vehicle_honk, 0x856060, void, LandVehicle* land_vehicle)
 	{
+		if (!land_vehicle->is_alive())
+			return;
+
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(land_vehicle)->cast<VehicleNetObject>())
 			g_net->send_reliable(PlayerPID_VehicleHonk, vehicle_net);
 
 		land_vehicle_honk_hook.call(land_vehicle);
+	}
+
+	DEFINE_HOOK_THISCALL_S(vehicle_fire, 0x636820, bool, Vehicle* vehicle)
+	{
+		if (!vehicle->is_alive())
+			return false;
+
+		std::vector<VehicleNetObject::FireInfo> fire_info;
+
+		vehicle->for_each_current_weapon([&](int i, Weapon* weapon, uint32_t)
+		{
+			const auto muzzle = weapon->get_muzzle_transform()->get_position();
+			const auto aim_target = weapon->get_aim_target();
+			const auto direction = glm::normalize(aim_target - muzzle);
+
+			fire_info.emplace_back(i, muzzle, direction);
+		});
+
+		const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle)->cast<VehicleNetObject>();
+		const auto weapon_index = static_cast<uint8_t>(vehicle->get_current_weapon_index());
+		const auto weapon_type = static_cast<uint8_t>(vehicle->get_current_weapon_type());
+
+		if (vehicle_net)
+			vehicle_net->set_fire_info(fire_info);
+		else return vehicle_fire_hook.call(vehicle);
+
+		const auto ok = vehicle_fire_hook.call(vehicle);
+
+		if (ok)
+			g_net->send_reliable<ChannelID_Generic>(PlayerPID_VehicleFire, vehicle_net, weapon_index, weapon_type, fire_info);
+
+		return ok;
 	}
 
 	void apply()
@@ -186,14 +222,16 @@ namespace jc::vehicle::hook
 		motorbike_get_input_hook.hook();
 		airplane_get_input_hook.hook();
 		helicopter_get_input_hook.hook();
-		land_vehicle_honk_hook.hook();
 		//boat_get_input_hook.hook();
+		land_vehicle_honk_hook.hook();
+		vehicle_fire_hook.hook();
 	}
 
 	void undo()
 	{
-		//boat_get_input_hook.unhook();
+		vehicle_fire_hook.unhook();
 		land_vehicle_honk_hook.unhook();
+		//boat_get_input_hook.unhook();
 		helicopter_get_input_hook.unhook();
 		airplane_get_input_hook.unhook();
 		motorbike_get_input_hook.unhook();
@@ -271,11 +309,6 @@ void Vehicle::write_engine_state(bool v)
 
 void Vehicle::start_engine_sound(bool v)
 {
-	const auto sound_component = get_sound_component();
-	const auto sound_flags = jc::read<uint32_t>(sound_component, 0x40);
-
-	jc::write(sound_flags & ~(1 << 0), sound_component, 0x40);
-
 	if (v)
 		jc::v_call(this, jc::vehicle::vt::START_ENGINE_SOUND);
 	else jc::v_call(this, jc::vehicle::vt::STOP_ENGINE_SOUND);
@@ -330,6 +363,14 @@ void Vehicle::set_engine_state(bool v, bool sync)
 	{
 		write_engine_state(v);
 		start_engine_sound(v);
+
+		const auto sound_component = get_sound_component();
+		const auto sound_flags = jc::read<uint32_t>(sound_component, 0x40);
+
+		if (sync)
+			jc::write(sound_flags | (1 << 0), sound_component, 0x40);
+		else jc::write(sound_flags | ~(1 << 0), sound_component, 0x40);
+
 		break;
 	}
 	}
@@ -337,6 +378,36 @@ void Vehicle::set_engine_state(bool v, bool sync)
 	if (sync)
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(this)->cast<VehicleNetObject>())
 			g_net->send_reliable(PlayerPID_VehicleEngineState, vehicle_net, v);
+}
+
+void Vehicle::set_current_weapon_index(uint32_t v)
+{
+	jc::write(v, this, jc::vehicle::CURRENT_WEAPON_INDEX);
+}
+
+void Vehicle::set_current_weapon_type(uint32_t v)
+{
+	jc::write(v, this, jc::vehicle::CURRENT_WEAPON_TYPE);
+}
+
+void Vehicle::for_each_weapon(const vehicle_weapon_fn_t& fn)
+{
+	const auto weapons = jc::read<jc::stl::vector<VehicleWeapon*>>(this, jc::vehicle::WEAPONS);
+
+	for (int i = 0; auto veh_weapon : weapons)
+		if (const auto weapon = veh_weapon->get_weapon())
+			fn(i++, weapon, veh_weapon->get_type());
+}
+
+void Vehicle::for_each_current_weapon(const vehicle_weapon_fn_t& fn)
+{
+	const auto current_weapon_type = get_current_weapon_type();
+
+	for_each_weapon([&](int i, Weapon* weapon, uint32_t type)
+	{
+		if (type == current_weapon_type || i == current_weapon_type)
+			fn(i, weapon, type);
+	});
 }
 
 bool Vehicle::get_engine_state() const
@@ -354,11 +425,27 @@ uint8_t Vehicle::get_type() const
 	return static_cast<uint8_t>(jc::v_call<int>(this, jc::vehicle::vt::GET_TYPE));
 }
 
+uint32_t Vehicle::get_current_weapon_index() const
+{
+	return jc::read<uint32_t>(this, jc::vehicle::CURRENT_WEAPON_INDEX);
+}
+
+uint32_t Vehicle::get_current_weapon_type() const
+{
+	return jc::read<uint32_t>(this, jc::vehicle::CURRENT_WEAPON_TYPE);
+}
+
 vec3 Vehicle::get_velocity() const
 {
 	vec3 out;
 
 	return *jc::v_call<vec3*>(this, jc::vehicle::vt::GET_VELOCITY, &out);
+}
+
+Weapon* Vehicle::get_weapon(int i) const
+{
+	const auto veh_weapon = jc::read<jc::stl::vector<VehicleWeapon*>>(this, jc::vehicle::WEAPONS)[i];
+	return veh_weapon ? veh_weapon->get_weapon() : nullptr;
 }
 
 ref<VehicleSeat> Vehicle::get_driver_seat() const

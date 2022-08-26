@@ -13,6 +13,9 @@ namespace jc::vehicle
 	static constexpr uint32_t ROOFTOP_SEAT			= 0xA8;
 	static constexpr uint32_t SPECIAL_SEAT			= 0xAC;
 	static constexpr uint32_t ENGINE_STATE			= 0x231;
+	static constexpr uint32_t CURRENT_WEAPON_TYPE	= 0x220;
+	static constexpr uint32_t CURRENT_WEAPON_INDEX	= 0x224;
+	static constexpr uint32_t WEAPONS				= 0x29C;
 	static constexpr uint32_t SOUND_COMPONENT		= 0x404;
 
 	namespace vt
@@ -39,6 +42,19 @@ namespace jc::vehicle
 	void dispatch_helicopter_input(int control, float* value);
 }
 
+class Weapon;
+class Vehicle;
+
+class VehicleWeapon
+{
+private:
+public:
+
+	uint32_t get_type() const { return jc::read<uint32_t>(this); }
+	Weapon* get_weapon() const { return jc::read<Weapon*>(this, 0x144); }
+	Vehicle* get_vehicle() const { return jc::read<Vehicle*>(this, 0x1F8); }
+};
+
 enum VehicleFaction
 {
 	VehFaction_None,
@@ -64,6 +80,8 @@ enum VehicleTypeID : uint8_t
 	VehicleTypeID_Submarine,
 };
 
+using vehicle_weapon_fn_t = std::function<void(int, Weapon*, uint32_t)>;
+
 class Vehicle : public ActionPointOwner
 {
 private:
@@ -78,6 +96,10 @@ public:
 	void set_velocity(const vec3& v);
 	void honk();
 	void set_engine_state(bool v, bool sync = true);
+	void set_current_weapon_index(uint32_t v);
+	void set_current_weapon_type(uint32_t v);
+	void for_each_weapon(const vehicle_weapon_fn_t& fn);
+	void for_each_current_weapon(const vehicle_weapon_fn_t& fn);
 
 	bool get_engine_state() const;
 
@@ -85,7 +107,12 @@ public:
 
 	uint8_t get_type() const;
 
+	uint32_t get_current_weapon_index() const;
+	uint32_t get_current_weapon_type() const;
+
 	vec3 get_velocity() const;
+
+	Weapon* get_weapon(int i) const;
 
 	ref<VehicleSeat> get_driver_seat() const;
 	ref<VehicleSeat> get_passenger_seat() const;

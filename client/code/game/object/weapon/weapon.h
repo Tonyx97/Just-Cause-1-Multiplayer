@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../base/base.h"
+
 namespace jc::weapon
 {
 	static constexpr uint32_t GRIP_TRANSFORM		  = 0x38; // Transform
@@ -19,6 +21,11 @@ namespace jc::weapon
 	static constexpr uint32_t TOTAL_BULLETS_FIRED	  = 0x1C4; // int32_t
 	static constexpr uint32_t TOTAL_BULLETS_FIRED_NOW = 0x1C8; // int32_t
 	static constexpr uint32_t TRIGGER_PULLED		  = 0x1CC; // bool
+
+	namespace vt
+	{
+		static constexpr uint32_t SET_ENABLED		= 36;	// todojc - this is from Item, once the class is done, move it there
+	}
 }
 
 namespace jc::weapon_info
@@ -80,7 +87,7 @@ public:
 	const char* get_name();
 };
 
-class Weapon
+class Weapon : public ObjectBase
 {
 public:
 	void set_ammo(int32_t v);
@@ -90,6 +97,7 @@ public:
 	void set_last_muzzle_transform(const Transform& v);
 	void set_aim_target(const vec3& v);
 	void force_fire();
+	void set_enabled(bool v);
 
 	bool is_reloading() const;
 	bool is_firing() const;

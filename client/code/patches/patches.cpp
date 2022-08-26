@@ -11,6 +11,9 @@
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
 #include <game/object/weapon/weapon.h>
+#include <game/object/vehicle/vehicle.h>
+
+#include <shared_mp/objs/vehicle_net.h>
 
 #include <mp/net.h>
 
@@ -74,6 +77,11 @@ namespace jc::patches
 	// removes the heat haze effect from scoped weapons because it's shit
 	//
 	patch scope_heat_haze_patch(0x5B86AD);
+
+	// removes engine overriding of last muzzle transform in weapon because
+	// we will use our own
+	//
+	patch last_muzzle_transform_patch(0x61F1D9);
 
 	// removes automatic movement from active handles to dead handles of characters
 	// destruction of any character (player or npc) will be handled by the mod/scripting
@@ -181,9 +189,9 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 				{
 					// handle vehicle weapons
 
-					const auto muzzle = weapon->get_muzzle_transform()->get_position();
-
-					*final_muzzle_transform = Transform::look_at(muzzle, weapon->get_aim_target());
+					if (const auto vehicle_net = player->get_vehicle())
+						if (const auto fire_info = vehicle_net->get_fire_info_from_weapon(weapon))
+							*final_muzzle_transform = Transform::look_at(fire_info->muzzle, fire_info->muzzle + fire_info->direction);
 				}
 			}
 }
@@ -380,10 +388,10 @@ void jc::patches::apply()
 
 	// apply weapon last muzzle transform patch
 
-	/*last_muzzle_transform_patch._do(
+	last_muzzle_transform_patch._do(
 	{
 		0xEB, 0x1C			// jmp
-	});*/
+	});
 
 	// apply active to dead handles patch
 

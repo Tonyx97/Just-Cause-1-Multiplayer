@@ -14,6 +14,7 @@
 #include <game/object/character/comps/vehicle_controller.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/weapon/weapon_belt.h>
+#include <game/object/vehicle/vehicle.h>
 
 #include <core/keycode.h>
 
@@ -36,7 +37,7 @@ void jc::mp::logic::on_tick()
 			const auto weapon_belt = local_char->get_weapon_belt();
 			const auto current_weapon = weapon_belt->get_current_weapon();
 			const auto current_weapon_info = current_weapon ? current_weapon->get_info() : nullptr;
-			const auto current_weapon_id = current_weapon_info ? current_weapon_info->get_id() : 0;
+			const auto current_weapon_id = current_weapon_info ? current_weapon_info->get_id() : 0ui8;
 			const auto flags = local_char->get_flags();
 			const auto transform = local_char->get_transform();
 			const auto velocity = local_char->get_velocity();
@@ -64,7 +65,7 @@ void jc::mp::logic::on_tick()
 			// resync state
 
 			if (state_sync_timer.ready())
-				g_net->send_reliable(PlayerPID_StateSync, current_weapon_id);
+				g_net->send_reliable(PlayerPID_StateSync, current_weapon_id, g_net->get_net_object_by_game_object(vehicle));
 
 			// we need to check if we are in a vehicle or not, if so, we won't send stuff such as our transform,
 			// the movement info etc we will save a lot of bandwidth and performance with this optimization

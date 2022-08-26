@@ -148,8 +148,14 @@ namespace enet
 	//
 	inline void serialize_net_object(std::vector<uint8_t>& buffer, NetObject* v)
 	{
-		serialize_int(buffer, v->get_nid());
-		serialize_int(buffer, v->get_type());
+		const auto nid = v ? v->get_nid() : INVALID_NID;
+
+		if (nid != INVALID_NID)
+		{
+			serialize_int(buffer, nid);
+			serialize_int(buffer, v->get_type());
+		}
+		else serialize_int(buffer, INVALID_NID);
 	}
 
 	// serialize a group of parameters at the same time

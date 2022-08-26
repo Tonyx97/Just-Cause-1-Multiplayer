@@ -10,6 +10,8 @@ enum VehicleEnterExitCommand : uint8_t
 	VehicleEnterExit_Exit,
 };
 
+class Weapon;
+
 class VehicleNetObject : public NetObject
 {
 public:
@@ -22,6 +24,14 @@ public:
 			   c3 = 0;
 
 		bool braking = false;
+	};
+
+	struct FireInfo
+	{
+		int index;
+
+		vec3 muzzle,
+			 direction;
 	};
 
 	// joystick / keyword variables
@@ -68,6 +78,11 @@ private:
 
 	ControlInfo control_info {};
 
+	std::vector<FireInfo> fire_info;
+
+	uint32_t weapon_index = 0u,
+			 weapon_type = 0u;
+
 public:
 
 	static constexpr NetObjectType TYPE() { return NetObject_Vehicle; }
@@ -81,9 +96,12 @@ public:
 
 	class ObjectBase* get_object_base() override;
 
+	void fire();
 	void reset_sync() { sync_this_tick = false; }
 
 	bool should_sync_this_tick() const { return sync_this_tick; }
+
+	const FireInfo* get_fire_info_from_weapon(Weapon* weapon) const;
 #else
 	VehicleNetObject(SyncType sync_type, const TransformTR& transform);
 #endif
@@ -93,6 +111,11 @@ public:
 	void on_net_var_change(NetObjectVarType var_type) override;
 	void set_control_info(float c0, float c1, float c2, float c3, bool braking = false);
 	void set_control_info(const ControlInfo& v);
+	void set_weapon_info(uint32_t index, uint32_t type);
+	void set_fire_info(const std::vector<FireInfo>& v);
+
+	uint32_t get_weapon_index() const { return weapon_index; }
+	uint32_t get_weapon_type() const { return weapon_type; }
 
 	const ControlInfo& get_control_info() const { return control_info; }
 

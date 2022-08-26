@@ -7,6 +7,7 @@
 #include <game/shared/npc_variant.h>
 
 class PlayerClient;
+class VehicleNetObject;
 class CharacterHandle;
 class UIMapIcon;
 
@@ -93,6 +94,8 @@ private:
 	MovementInfo move_info {};
 	SkinInfo skin_info {};
 
+	VehicleNetObject* vehicle = nullptr;
+
 	PlayerClient* client = nullptr;
 
 #ifdef JC_CLIENT
@@ -176,6 +179,7 @@ public:
 	void fire_current_weapon(int32_t weapon_id = 0, const vec3& muzzle = {}, const vec3& dir = {});
 	void reload();
 	void set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);
+	void set_vehicle(VehicleNetObject* v);
 
 	bool is_alive() const { return get_hp() > 0.f; }
 	bool is_hip_aiming() const { return dyn_info.hip_aim; }
@@ -191,6 +195,8 @@ public:
 	uint32_t get_arms_stance_id() const { return dyn_info.arms_stance_id; }
 
 	float get_head_interpolation() const { return dyn_info.head_interpolation; }
+
+	VehicleNetObject* get_vehicle() const { return vehicle; }
 
 	const vec3& get_head_rotation() const { return dyn_info.head_rotation; }
 	const vec3& get_aim_target() const { return dyn_info.aim_target; }

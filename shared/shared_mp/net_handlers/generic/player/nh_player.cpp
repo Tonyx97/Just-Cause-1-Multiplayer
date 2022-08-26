@@ -31,11 +31,19 @@ enet::PacketResult nh::player::state_sync(const enet::Packet& p)
 #endif
 
 	const auto curr_weapon = p.get_u8();
+	const auto curr_vehicle = p.get_net_object();
 
 	player->set_weapon_id(curr_weapon);
 
+	if (player->get_vehicle() != curr_vehicle)
+	{
+		if (curr_vehicle)
+			player->set_vehicle(curr_vehicle->cast<VehicleNetObject>());
+		else player->set_vehicle(nullptr);
+	}
+
 #ifdef JC_SERVER
-	g_net->send_broadcast_reliable(pc, PlayerPID_StateSync, player, curr_weapon);
+	g_net->send_broadcast_reliable(pc, PlayerPID_StateSync, player, curr_weapon, curr_vehicle);
 #endif
 
 	return enet::PacketRes_Ok;
@@ -366,6 +374,8 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 	{
 		log(GREEN, "entering vehicle...");
 
+		player->set_vehicle(vehicle_net);
+
 #ifdef JC_CLIENT
 		seat->warp_character(player_char, true);
 #else
@@ -455,6 +465,9 @@ enet::PacketResult nh::player::vehicle_honk(const enet::Packet& p)
 #endif
 
 #ifdef JC_SERVER
+	if (!vehicle_net->is_owned_by(player))
+		return enet::PacketRes_NotAllowed;
+
 	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleHonk, vehicle_net);
 #endif
 
@@ -474,6 +487,11 @@ enet::PacketResult nh::player::vehicle_engine_state(const enet::Packet& p)
 	if (!vehicle_net)
 		return enet::PacketRes_BadArgs;
 
+#ifdef JC_SERVER
+	if (!vehicle_net->is_owned_by(player))
+		return enet::PacketRes_NotAllowed;
+#endif
+
 	const bool state = p.get_bool();
 
 #ifdef JC_CLIENT
@@ -484,6 +502,42 @@ enet::PacketResult nh::player::vehicle_engine_state(const enet::Packet& p)
 
 #ifdef JC_SERVER
 	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleEngineState, vehicle_net, state);
+#endif
+
+	return enet::PacketRes_Ok;
+}
+
+enet::PacketResult nh::player::vehicle_fire(const enet::Packet& p)
+{
+#ifdef JC_CLIENT
+#else
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+#endif
+
+	const auto vehicle_net = p.get_net_object<VehicleNetObject>();
+
+	if (!vehicle_net)
+		return enet::PacketRes_BadArgs;
+
+#ifdef JC_SERVER
+	if (!vehicle_net->is_owned_by(player))
+		return enet::PacketRes_NotAllowed;
+#endif
+
+	const auto weapon_index = p.get_u8();
+	const auto weapon_type = p.get_u8();
+	const auto fire_info = p.get_vector<VehicleNetObject::FireInfo>();
+
+	vehicle_net->set_weapon_info(weapon_index, weapon_type);
+	vehicle_net->set_fire_info(fire_info);
+
+#ifdef JC_CLIENT
+	vehicle_net->fire();
+#endif
+
+#ifdef JC_SERVER
+	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleFire, vehicle_net, weapon_index, weapon_type, fire_info);
 #endif
 
 	return enet::PacketRes_Ok;

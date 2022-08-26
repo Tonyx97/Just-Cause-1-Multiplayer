@@ -162,6 +162,11 @@ void Weapon::force_fire()
 	jc::write(true, this, jc::weapon::CAN_FIRE);
 }
 
+void Weapon::set_enabled(bool v)
+{
+	jc::v_call(this, jc::weapon::vt::SET_ENABLED, v);
+}
+
 bool Weapon::is_reloading() const
 {
 	return jc::read<bool>(this, jc::weapon::RELOADING);

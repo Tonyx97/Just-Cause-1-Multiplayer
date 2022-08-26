@@ -47,6 +47,7 @@ enum PlayerPacketID : PacketID
 	PlayerPID_VehicleControl,						// sync vehicle controls
 	PlayerPID_VehicleHonk,							// sync vehicle honking
 	PlayerPID_VehicleEngineState,					// sync vehicle engine state
+	PlayerPID_VehicleFire,							// sync vehicle firing
 	PlayerPID_Max
 };
 

@@ -184,7 +184,7 @@ void Player::set_net_object_ownership_of(NetObject* obj)
 {
 	check(obj, "Net object must be valid");
 
-	log(GREEN, "{} now owns a net object type {}", this->get_type(), this->get_nick());
+	log(GREEN, "{} now owns a net object type {}", this->get_nick(), this->get_type());
 
 	client->send_reliable<ChannelID_World>(WorldPID_SetOwnership, true, this, obj);
 }
@@ -444,4 +444,11 @@ void Player::set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_
 #ifdef JC_CLIENT
 	verify_exec([&](Character* c) { c->set_npc_variant(cloth_skin, head_skin, cloth_color, props, false); });
 #endif
+}
+
+void Player::set_vehicle(VehicleNetObject* v)
+{
+	log(RED, "{}'s vehicle: {:x}", get_nick(), v ? v->get_nid() : INVALID_NID);
+
+	vehicle = v;
 }
