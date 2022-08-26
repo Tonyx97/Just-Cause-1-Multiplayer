@@ -23,6 +23,18 @@ namespace util
 
 	namespace string
 	{
+		inline std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+
+		inline std::wstring convert(const std::string& str)
+		{
+			return converter.from_bytes(str);
+		}
+
+		inline std::string convert(const std::wstring& str)
+		{
+			return converter.to_bytes(str);
+		}
+
 		inline std::vector<std::string> split(const std::string& str, char delimiter)
 		{
 			std::stringstream ss(str);
@@ -467,6 +479,10 @@ namespace util
 		}
 
 		void get_desktop_resolution(int32_t& x, int32_t& y);
+
+		bool set_current_directory(const std::wstring& new_dir);
+
+		std::wstring get_current_directory();
 
 		std::tuple<void*, size_t> load_resource(void* mod_base, int id, LPWSTR type);
 	}

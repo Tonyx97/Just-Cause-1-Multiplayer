@@ -128,8 +128,7 @@ namespace jc::bug_ripper
 
 				if (auto stack_ptr_mod = get_module_info_if_valid(read_val, stack_ptr_mod_name))
 				{
-					std::wstring mod_wstr = stack_ptr_mod_name;
-					std::string mod_str = std::string(mod_wstr.begin(), mod_wstr.end());
+					std::string mod_str = util::string::convert(stack_ptr_mod_name);
 
 					log(RED, "{:x} {} {:x} {:x}", ep->ContextRecord->Esp + i, mod_str, read_val, absolute_read_val);
 				}

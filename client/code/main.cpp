@@ -422,6 +422,18 @@ long GET_GAME_ICON()
 	return icon;
 }
 
+std::wstring GET_MODULE_PATH()
+{
+	wchar_t filename[MAX_PATH] = { 0 };
+
+	GetModuleFileNameW(g_module, filename, MAX_PATH);
+
+	if (GetLastError() != ERROR_SUCCESS)
+		return {};
+
+	return std::filesystem::path(filename).parent_path().wstring() + L'\\';
+}
+
 BOOL APIENTRY DllMain(HMODULE instance, DWORD reason, LPVOID)
 {
 	if (reason == DLL_PROCESS_ATTACH)

@@ -232,7 +232,7 @@ void jc::test_units::test_0()
 		map.insert<object_base_map::Int>(0xebb4f93f, 1); // int
 		map.insert<object_base_map::Int>(0xf776041b, 1); // int
 		map.insert<object_base_map::Float>(0x2524eee2, 7.00f); // float
-		map.insert<object_base_map::Float>(0x3ae7b611, 50.00f); // float
+		map.insert<object_base_map::Float>(0x3ae7b611, 500.00f); // float
 		map.insert<object_base_map::Float>(0x3c973815, 1.00f); // float
 		map.insert<object_base_map::Float>(0x43d3fa78, 1.00f); // float
 		map.insert<object_base_map::Float>(0x51905fda, 50.00f); // float
@@ -245,7 +245,7 @@ void jc::test_units::test_0()
 		map.insert<object_base_map::Float>(0x88bbee10, 1.20f); // float
 		map.insert<object_base_map::Float>(0x8dccf8a, 200.00f); // float
 		map.insert<object_base_map::Float>(0x9db0dcdf, 130.00f); // float
-		map.insert<object_base_map::Float>(0xb27fbdf, 300.00f); // float
+		map.insert<object_base_map::Float>(0xb27fbdf, 9000.00f); // float
 		map.insert<object_base_map::Float>(0xc5a583e4, 7.00f); // float
 		map.insert<object_base_map::Float>(0xc9dae566, 1.00f); // float
 		map.insert<object_base_map::Float>(0xe775a5da, 2.00f); // float

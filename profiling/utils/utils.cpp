@@ -68,6 +68,25 @@ void util::win::get_desktop_resolution(int32_t& x, int32_t& y)
 	y = info.rcMonitor.bottom - info.rcMonitor.top;
 }
 
+bool util::win::set_current_directory(const std::wstring& new_dir)
+{
+	SetCurrentDirectoryW(new_dir.c_str());
+
+	return GetLastError() == ERROR_SUCCESS;
+}
+
+std::wstring util::win::get_current_directory()
+{
+	wchar_t dir[MAX_PATH] = { 0 };
+
+	GetCurrentDirectoryW(MAX_PATH, dir);
+
+	if (GetLastError() != ERROR_SUCCESS)
+		return {};
+
+	return std::wstring(dir);
+}
+
 std::tuple<void*, size_t> util::win::load_resource(void* mod_base, int id, LPWSTR type)
 {
 	const auto mod_module = (HMODULE)mod_base;
@@ -107,7 +126,11 @@ std::string util::fs::strip_parent_path(const std::string& str)
 
 std::vector<uint8_t> util::fs::read_bin_file(const std::string& filename)
 {
+#ifdef JC_CLIENT
+	std::ifstream file(GET_MODULE_PATH() + string::convert(filename), std::ios::binary);
+#else
 	std::ifstream file(filename, std::ios::binary);
+#endif
 
 	if (!file)
 		return {};
