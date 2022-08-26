@@ -242,7 +242,7 @@ void UI::render()
 
 	static bool open_overlay = true;
 
-	ImGui::SetNextWindowPos({ 0.f, 0.f }, ImGuiCond_Always);
+	ImGui::SetNextWindowPos({ 0.f, 0.f }, ImGuiCond_Once);
 	ImGui::SetNextWindowSize({ static_cast<float>(camera->get_width()), static_cast<float>(camera->get_height()) });
 
 	constexpr auto window_flags = ImGuiWindowFlags_NoBackground |
@@ -300,7 +300,7 @@ void UI::render_players()
 			return;
 
 		const auto player_char = player->get_character();
-		const auto player_pos = player->get_position();
+		const auto player_pos = player_char->get_position();
 
 		constexpr float MAX_DISTANCE = 1000.f;
 
@@ -437,7 +437,7 @@ void UI::render_admin_panel()
 	if (!show_admin_panel)
 		return;
 
-	ImGui::SetNextWindowSize({ 700.f, 700.f });
+	ImGui::SetNextWindowSize({ 700.f, 700.f }, ImGuiCond_Once);
 	ImGui::Begin("Admin Panel");
 
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
@@ -457,7 +457,7 @@ void UI::render_admin_panel()
 		if (ImGui::SliderFloat("Day Hour##ap.sv.time", &day_time, 0.f, 24.f))
 			g_net->send_reliable<ChannelID_Debug>(DbgPID_SetTime, day_time);
 
-		if (ImGui::SliderFloat("Time Scale (lol)##ap.sv.ts", &timescale, 0.01f, 5.f))
+		if (ImGui::SliderFloat("Time Scale (lol, don't touch sir)##ap.sv.ts", &timescale, 0.01f, 5.f))
 			g_net->send_reliable<ChannelID_World>(WorldPID_SetTimeScale, timescale);
 
 		ImGui::TreePop();

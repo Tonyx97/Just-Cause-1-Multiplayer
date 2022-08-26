@@ -84,6 +84,7 @@ namespace jc::character::hook
 			case 37:	// close vehicle door from inside
 			case 43:	// enter vehicle
 			case 45:	// close vehicle door from outside
+			case 48:	// inside airplane
 			case 51:
 			case 52:
 			case 54:	// vehicle seating

@@ -62,7 +62,13 @@ void enet::call_channel_dispatcher(const ENetEvent& e)
 #ifdef JC_CLIENT
 	if (fake_lag <= 0)
 #endif
+	{
+#ifdef JC_SERVER
+		check(g_net->has_player_client(p.get_pc()), "Trying to handle a packet from a player who isn't even added to the list, pid {}, pc {:x}", p.get_id(), ptr(p.get_pc()));
+#endif
+
 		call_channel_dispatcher_internal(p);
+	}
 #ifdef JC_CLIENT
 	else
 	{

@@ -109,7 +109,10 @@ void Player::correct_position()
 
 void Player::update_blip()
 {
-	blip->set_position(get_character()->get_position());
+	if (vehicle)
+		set_position(vehicle->get_position());
+
+	blip->set_position(get_position());
 }
 
 void Player::set_multiple_rand_seed(uint16_t v)
@@ -215,7 +218,10 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 	case NetObjectVar_Position:
 	case NetObjectVar_Rotation:
 	{
-		if (!is_local())
+		// we don't want to modify the transform of this player if it's local
+		// or if it's inside a vehicle
+
+		if (!is_local() && !vehicle)
 		{
 			// when receiving a transform from a remote player, we want to correct it by interpolating
 			// the current transform with the one we just received

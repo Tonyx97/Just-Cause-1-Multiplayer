@@ -363,14 +363,6 @@ void Vehicle::set_engine_state(bool v, bool sync)
 	{
 		write_engine_state(v);
 		start_engine_sound(v);
-
-		const auto sound_component = get_sound_component();
-		const auto sound_flags = jc::read<uint32_t>(sound_component, 0x40);
-
-		if (sync)
-			jc::write(sound_flags | (1 << 0), sound_component, 0x40);
-		else jc::write(sound_flags | ~(1 << 0), sound_component, 0x40);
-
 		break;
 	}
 	}
@@ -395,8 +387,12 @@ void Vehicle::for_each_weapon(const vehicle_weapon_fn_t& fn)
 	const auto weapons = jc::read<jc::stl::vector<VehicleWeapon*>>(this, jc::vehicle::WEAPONS);
 
 	for (int i = 0; auto veh_weapon : weapons)
+	{
 		if (const auto weapon = veh_weapon->get_weapon())
-			fn(i++, weapon, veh_weapon->get_type());
+			fn(i, weapon, veh_weapon->get_type());
+
+		++i;
+	}
 }
 
 void Vehicle::for_each_current_weapon(const vehicle_weapon_fn_t& fn)

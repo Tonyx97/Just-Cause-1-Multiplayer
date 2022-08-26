@@ -38,9 +38,9 @@ PlayerClient* ObjectLists::add_player_client(ENetPeer* peer)
 {
 	const auto pc = CREATE_PLAYER_CLIENT(peer);
 
-	peer->data = pc;
-
 	check(add_net_object(pc->get_player()), "Could not add a player client");
+
+	peer->data = pc;
 
 	return pc;
 }
@@ -57,6 +57,11 @@ bool ObjectLists::remove_player_client(PlayerClient* pc)
 	return true;
 }
 
+bool ObjectLists::has_player_client(PlayerClient* pc) const
+{
+	return player_clients_set.contains(pc);
+}
+
 void ObjectLists::clear_object_list()
 {
 	// erase Player instances in this list because PlayerClient 
@@ -70,12 +75,17 @@ void ObjectLists::clear_object_list()
 	
 	while (it != player_clients.end())
 	{
-		DESTROY_PLAYER_CLIENT(it->second);
+		const auto pc = it->second;
+
+		DESTROY_PLAYER_CLIENT(pc);
+
+		player_clients_set.erase(pc);
 
 		it = player_clients.erase(it);
 	}
 
 	check(player_clients.empty(), "Player client list must be empty");
+	check(player_clients_set.empty(), "Player client set must be empty");
 
 	// free all net objects remaining that are not Player
 
@@ -99,7 +109,11 @@ NetObject* ObjectLists::add_net_object(NetObject* net_obj)
 	{
 	case NetObject_Player:
 	{
-		player_clients.insert({ nid, BITCAST(Player*, net_obj)->get_client()});
+		const auto pc = BITCAST(Player*, net_obj)->get_client();
+
+		player_clients.insert({ nid, pc });
+		player_clients_set.insert(pc);
+
 		break;
 	}
 	default:
@@ -128,7 +142,11 @@ bool ObjectLists::remove_net_object(NetObject* net_obj)
 	{
 	case NetObject_Player:
 	{
+		const auto player = net_obj->cast_safe<Player>();
+
 		player_clients.erase(nid);
+		player_clients_set.erase(player->get_client());
+
 		break;
 	}
 	default:

@@ -58,7 +58,7 @@ bool WeaponInfo::can_create_shells() const
 
 bool WeaponInfo::is_vehicle_weapon() const
 {
-	return get_icon_id() == -1;
+	return get_icon_id() == 0;
 }
 
 uint8_t WeaponInfo::get_id() const

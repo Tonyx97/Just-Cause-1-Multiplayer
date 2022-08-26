@@ -134,20 +134,19 @@ namespace enet
 		Packet& operator=(Packet&& other)
 		{
 #ifdef JC_SERVER
-			pc = other.pc;
+			pc = std::exchange(other.pc, nullptr);
 #endif
 
-			initial_data = data = other.data;
-			peer = other.peer;
-			packet = other.packet;
-			offset = other.offset;
-			id = other.id;
-			time = other.time;
-			channel = other.channel;
-			as_view = other.as_view;
+			initial_data = data = std::move(other.data);
+			peer = std::exchange(other.peer, nullptr);
+			packet = std::exchange(other.packet, nullptr);
+			offset = std::exchange(other.offset, 0u);
+			id = std::exchange(other.id, 0ui8);
+			time = std::exchange(other.time, 0.f);
+			channel = std::exchange(other.channel, 0ui8);
+			as_view = std::exchange(other.as_view, false);
 
 			other.destroyed = true;
-			other.packet = nullptr;
 
 			return *this;
 		}

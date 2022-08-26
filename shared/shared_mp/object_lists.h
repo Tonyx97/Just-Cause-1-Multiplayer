@@ -13,6 +13,8 @@ protected:
 	void clear_object_list();
 
 private:
+
+	std::unordered_set<PlayerClient*> player_clients_set;
 	std::unordered_map<NID, PlayerClient*> player_clients;
 	std::unordered_map<NID, NetObject*> net_objects;
 
@@ -31,6 +33,7 @@ public:
 #endif
 
 	bool remove_player_client(PlayerClient* pc);
+	bool has_player_client(PlayerClient* pc) const;
 
 	template <typename T = NetObject>
 	T* get_net_object_by_nid(NID nid)

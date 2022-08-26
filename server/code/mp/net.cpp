@@ -151,6 +151,8 @@ void Net::tick()
 		}
 		case ENET_EVENT_TYPE_CONNECT:
 		{
+			e.peer->data = nullptr;
+
 			PlayerClient* timed_out_player = nullptr;
 
 			for_each_player_client([&](NID, PlayerClient* pc)

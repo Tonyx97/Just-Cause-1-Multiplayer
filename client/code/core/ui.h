@@ -18,7 +18,11 @@ private:
 
 	// ImGui bindings.
 	//
+#ifdef JC_DBG
 	bool show_skeleton		 = true,
+#else
+	bool show_skeleton		 = false,
+#endif
 		 show_velocity		 = false,
 		 show_distance		 = false,
 		 show_health		 = false,

@@ -6,6 +6,8 @@
 #include <core/ui.h>
 #endif
 
+#define FORCE_ENABLE_BUG_RIPPER 1
+
 #define IDD_CRASH_DIALOG            114
 #define IDC_SEND_DESC				9701
 #define IDC_SEND_QUESTION			9702
@@ -38,10 +40,10 @@ namespace jc::bug_ripper
 
 	bool init(void* mod_base)
 	{
-#ifdef _DEBUG
+#if defined(JC_DBG) && !FORCE_ENABLE_BUG_RIPPER
 		return true;
 #else
-		if (AddVectoredExceptionHandler(1, global_veh))
+		if (AddVectoredExceptionHandler(FALSE, global_veh))
 		{
 			game_mod.base = ptr(GetModuleHandle(nullptr));
 			mod_mod.base = ptr(mod_base);
@@ -68,7 +70,7 @@ namespace jc::bug_ripper
 
 	bool destroy()
 	{
-#ifdef JC_DBG
+#if defined(JC_DBG) && !FORCE_ENABLE_BUG_RIPPER
 		return true;
 #else
 		return RemoveVectoredExceptionHandler(global_veh);
@@ -97,55 +99,29 @@ namespace jc::bug_ripper
 
 	long show_and_dump_crash(_EXCEPTION_POINTERS* ep)
 	{
+		return EXCEPTION_CONTINUE_SEARCH;
 		auto eip = uintptr_t(ep->ExceptionRecord->ExceptionAddress);
 
 		const bool exception_on_game = game_mod.contains_address(eip);
 		const bool exception_on_mod = mod_mod.contains_address(eip);
 
-		if (!exception_on_game && !exception_on_mod)
-			return EXCEPTION_CONTINUE_SEARCH;
-			
-		/*if (auto mod_base = get_module_info_if_valid(eip, trash))
-		{
-			std::wstring shite = trash;
-			std::string shit = std::string(shite.begin(), shite.end());
-			log(RED, "crashed {:x} {}", eip, shit);
-		}
-
-		Sleep(2500);*/
-
-		//log(RED, "logging");
-		
-		for (int i = 0; i < 0x2000; i += 0x4)
-		{
-			auto read_val = *(uintptr_t*)(ep->ContextRecord->Esp + i);
-
-			if (game_mod.contains_address(read_val) || mod_mod.contains_address(read_val))
-			{
-				wchar_t stack_ptr_mod_name[256] { 0 };
-
-				const auto absolute_read_val = read_val;
-
-				if (auto stack_ptr_mod = get_module_info_if_valid(read_val, stack_ptr_mod_name))
-				{
-					std::string mod_str = util::string::convert(stack_ptr_mod_name);
-
-					log(RED, "{:x} {} {:x} {:x}", ep->ContextRecord->Esp + i, mod_str, read_val, absolute_read_val);
-				}
-			}
-		}
-
-		//log(RED, "done");
-
-		//Sleep(10000);
-
 		wchar_t mod_name[256] { 0 };
 
 		if (auto mod_base = get_module_info_if_valid(eip, mod_name))
 		{
+			if (mod_base == BITCAST(uintptr_t, GetModuleHandleW(L"KERNELBASE")))
+				return EXCEPTION_CONTINUE_SEARCH;
+
 #ifdef JC_CLIENT
-			ShowWindow(g_ui->get_window(), SW_HIDE);
+			// hide the fucking game
+
+			const auto game_hwnd = g_ui->get_window();
+
+			ShowWindow(game_hwnd, SW_HIDE);
+			UpdateWindow(game_hwnd);
 			ShowCursor(true);
+
+			// show crash dialog
 
 			auto dialog = CreateDialogW(mod_mod.as_module(), MAKEINTRESOURCEW(IDD_CRASH_DIALOG), nullptr, crash_wnd_proc);
 
@@ -172,57 +148,106 @@ namespace jc::bug_ripper
 			std::string str_date = util::time::get_str_date();
 			std::string str_time_path = util::time::get_str_time_path();
 #else
-			std::string str_date = "test";
-			std::string str_time_path = "path";
+			std::string str_date = std::to_string(util::rand::rand_int(0, 0x7FFFFFFF));
+			std::string str_time_path = std::to_string(util::rand::rand_int(0, 0x7FFFFFFF));
 #endif
 
-			std::wofstream log("Crash Logs\\CRASH DUMP " + str_date + ' ' + str_time_path + ".log", std::ios::trunc);
+			std::wofstream log_file("Crash Logs\\CRASH DUMP " + str_date + ' ' + str_time_path + ".log", std::ios::trunc);
 
-			log << "- Exception Code: " << std::hex << ep->ExceptionRecord->ExceptionCode << std::endl;
-			log << "- GP Registers:" << std::endl;
-			log << "\tEip: " << mod_name << " + 0x" << std::hex << eip << std::endl;
-			log << "\tEbp: 0x" << std::hex << ep->ContextRecord->Ebp << std::endl;
-			log << "\tEax: 0x" << std::hex << ep->ContextRecord->Eax << std::endl;
-			log << "\tEbx: 0x" << std::hex << ep->ContextRecord->Ebx << std::endl;
-			log << "\tEcx: 0x" << std::hex << ep->ContextRecord->Ecx << std::endl;
-			log << "\tEdx: 0x" << std::hex << ep->ContextRecord->Edx << std::endl;
-			log << "\tEsp: 0x" << std::hex << ep->ContextRecord->Esp << std::endl;
-			log << "\tEsi: 0x" << std::hex << ep->ContextRecord->Esi << std::endl;
-			log << "\tEdi: 0x" << std::hex << ep->ContextRecord->Edi << std::endl;
-			log << "- Debug Registers:" << std::endl;
-			log << "\tContextFlags: 0x" << std::hex << ep->ContextRecord->ContextFlags << std::endl;
-			log << "\tDR0: 0x" << std::hex << ep->ContextRecord->Dr0 << std::endl;
-			log << "\tDR1: 0x" << std::hex << ep->ContextRecord->Dr1 << std::endl;
-			log << "\tDR2: 0x" << std::hex << ep->ContextRecord->Dr2 << std::endl;
-			log << "\tDR3: 0x" << std::hex << ep->ContextRecord->Dr3 << std::endl;
-			log << "\tDR6: 0x" << std::hex << ep->ContextRecord->Dr6 << std::endl;
-			log << "\tDR7: 0x" << std::hex << ep->ContextRecord->Dr7 << std::endl;
-			log << "- Segment Registers & CPU flags:" << std::endl;
-			log << "\tSegCs: 0x" << std::hex << ep->ContextRecord->SegCs << std::endl;
-			log << "\tSegDs: 0x" << std::hex << ep->ContextRecord->SegDs << std::endl;
-			log << "\tSegEs: 0x" << std::hex << ep->ContextRecord->SegEs << std::endl;
-			log << "\tSegFs: 0x" << std::hex << ep->ContextRecord->SegFs << std::endl;
-			log << "\tSegGs: 0x" << std::hex << ep->ContextRecord->SegGs << std::endl;
-			log << "\tSegSs: 0x" << std::hex << ep->ContextRecord->SegSs << std::endl;
-			log << "\tEFlags: 0x" << std::hex << ep->ContextRecord->EFlags << std::endl;
-			log << "- Stack: " << std::hex << ep->ContextRecord->Esp << std::endl;
+			log_file << "- Exception Code: " << std::hex << ep->ExceptionRecord->ExceptionCode << std::endl;
+			log_file << "- GP Registers:" << std::endl;
+			log_file << "\tEip: " << mod_name << " + 0x" << std::hex << eip << std::endl;
+			log_file << "\tEbp: 0x" << std::hex << ep->ContextRecord->Ebp << std::endl;
+			log_file << "\tEax: 0x" << std::hex << ep->ContextRecord->Eax << std::endl;
+			log_file << "\tEbx: 0x" << std::hex << ep->ContextRecord->Ebx << std::endl;
+			log_file << "\tEcx: 0x" << std::hex << ep->ContextRecord->Ecx << std::endl;
+			log_file << "\tEdx: 0x" << std::hex << ep->ContextRecord->Edx << std::endl;
+			log_file << "\tEsp: 0x" << std::hex << ep->ContextRecord->Esp << std::endl;
+			log_file << "\tEsi: 0x" << std::hex << ep->ContextRecord->Esi << std::endl;
+			log_file << "\tEdi: 0x" << std::hex << ep->ContextRecord->Edi << std::endl;
+			log_file << "- Debug Registers:" << std::endl;
+			log_file << "\tContextFlags: 0x" << std::hex << ep->ContextRecord->ContextFlags << std::endl;
+			log_file << "\tDR0: 0x" << std::hex << ep->ContextRecord->Dr0 << std::endl;
+			log_file << "\tDR1: 0x" << std::hex << ep->ContextRecord->Dr1 << std::endl;
+			log_file << "\tDR2: 0x" << std::hex << ep->ContextRecord->Dr2 << std::endl;
+			log_file << "\tDR3: 0x" << std::hex << ep->ContextRecord->Dr3 << std::endl;
+			log_file << "\tDR6: 0x" << std::hex << ep->ContextRecord->Dr6 << std::endl;
+			log_file << "\tDR7: 0x" << std::hex << ep->ContextRecord->Dr7 << std::endl;
+			log_file << "- Segment Registers & CPU flags:" << std::endl;
+			log_file << "\tSegCs: 0x" << std::hex << ep->ContextRecord->SegCs << std::endl;
+			log_file << "\tSegDs: 0x" << std::hex << ep->ContextRecord->SegDs << std::endl;
+			log_file << "\tSegEs: 0x" << std::hex << ep->ContextRecord->SegEs << std::endl;
+			log_file << "\tSegFs: 0x" << std::hex << ep->ContextRecord->SegFs << std::endl;
+			log_file << "\tSegGs: 0x" << std::hex << ep->ContextRecord->SegGs << std::endl;
+			log_file << "\tSegSs: 0x" << std::hex << ep->ContextRecord->SegSs << std::endl;
+			log_file << "\tEFlags: 0x" << std::hex << ep->ContextRecord->EFlags << std::endl;
+			log_file << "- Stack: " << std::hex << ep->ContextRecord->Esp << std::endl;
 
-			for (int i = 0; i < 0x1000; i += 0x4)
 			{
-				auto read_val = *(uintptr_t*)(ep->ContextRecord->Esp + i);
+				DWORD machine = IMAGE_FILE_MACHINE_I386;
 
-				if (game_mod.contains_address(read_val) || mod_mod.contains_address(read_val))
+				CONTEXT context{};
+				context.ContextFlags = CONTEXT_FULL;
+
+				RtlCaptureContext(&context);
+
+				SymInitialize(GetCurrentProcess(), NULL, TRUE);
+				SymSetOptions(SYMOPT_LOAD_LINES | SYMOPT_DEFERRED_LOADS);
+
+				STACKFRAME64 frame{};
+
+				frame.AddrPC.Offset = ep->ContextRecord->Eip;
+				frame.AddrFrame.Offset = ep->ContextRecord->Ebp;
+				frame.AddrStack.Offset = ep->ContextRecord->Eip;
+				frame.AddrPC.Mode = AddrModeFlat;
+				frame.AddrFrame.Mode = AddrModeFlat;
+				frame.AddrStack.Mode = AddrModeFlat;
+
+				while (StackWalk64(machine, GetCurrentProcess(), GetCurrentThread(), &frame, &context, NULL, SymFunctionTableAccess64, SymGetModuleBase64, NULL))
 				{
-					wchar_t stack_ptr_mod_name[256] { 0 };
-				
-					const auto absolute_read_val = read_val;
+					wchar_t mod_name_buffer[MAX_PATH] = { 0 };
 
-					if (auto stack_ptr_mod = get_module_info_if_valid(read_val, stack_ptr_mod_name))
-						log << "\t*0x" << std::hex << ep->ContextRecord->Esp + i << ": " << stack_ptr_mod_name << " + 0x" << std::hex << read_val << " (0x" << std::hex << absolute_read_val << ")" << std::endl;
+					std::wstring mod_name,
+								 fn_name;
+
+					const auto address = static_cast<uintptr_t>(frame.AddrPC.Offset);
+
+					if (const auto mod_base = SymGetModuleBase(GetCurrentProcess(), address))
+					{
+						GetModuleFileNameW((HMODULE)mod_base, mod_name_buffer, MAX_PATH);
+
+						mod_name = mod_name_buffer;
+
+						char symbol_buffer[sizeof(IMAGEHLP_SYMBOL) + 255] = { 0 };
+
+						PIMAGEHLP_SYMBOL symbol = (PIMAGEHLP_SYMBOL)symbol_buffer;
+
+						symbol->SizeOfStruct = sizeof(symbol_buffer);
+						symbol->MaxNameLength = MAX_PATH;
+
+						if (SymGetSymFromAddr(GetCurrentProcess(), address, NULL, symbol))
+							fn_name = util::string::convert(symbol->Name);
+
+#ifdef JC_CLIENT
+						if (mod_base == game_mod.base)
+						{
+							log_file << "[" << mod_name << " + 0x" << std::hex << address - mod_base << "] 0x"
+								<< std::hex << address
+								<< '\n';
+						}
+						else
+#endif
+						{
+							log_file << "[" << mod_name << " + 0x" << std::hex << address - mod_base << "] 0x"
+								<< std::hex << address << " = "
+								<< fn_name << ""
+								<< '\n';
+						}
+					}
 				}
 			}
 
-			log.close();
+			log_file.close();
 
 			buffer += std::format(L"Exception Address: {} + {:#x}", mod_name, eip);
 
