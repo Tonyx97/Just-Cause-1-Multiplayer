@@ -27,6 +27,8 @@ bool convert_to_rbm(const std::string& path, const std::string& filename, const 
 	auto scene = imp.ReadFile(
 		path,
 		aiProcess_FlipUVs |
+		aiProcess_MakeLeftHanded |
+		aiProcess_FlipWindingOrder |
 		aiProcess_Triangulate |
 		aiProcess_CalcTangentSpace |
 		aiProcess_ForceGenNormals |

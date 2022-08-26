@@ -211,7 +211,7 @@ void jc::test_units::test_0()
 	{
 		auto mem = jc::game::malloc(0x17C);
 
-		std::string model = "modernsport_body_lod1.rbm"; // "crate_custom_png.rbm"
+		std::string model = "m488_fixed.rbm"; // "crate_custom_png.rbm"
 
 		object_base_map map{};
 		map.insert<object_base_map::Int>(0x2419daa1, 15); // int
@@ -259,7 +259,7 @@ void jc::test_units::test_0()
 		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(Rocket Launcher)"); // string
 		map.insert<object_base_map::String>(ObjectBase::Hash_Model, model); // string
 
-		g_texture_system->load_texture("v3401_bike_mugello_modernsport_body_dif.dds");
+		g_texture_system->load_texture("dummy_black.dds");
 		g_model_system->load_rbm(model);
 
 		jc::this_call(0x713D00, mem);
