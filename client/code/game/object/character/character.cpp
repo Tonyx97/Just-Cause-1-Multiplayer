@@ -95,6 +95,8 @@ namespace jc::character::hook
 			case 75:
 			case 77:
 			case 78:
+			case 79:
+			case 81:
 			case 88: return true;
 			}
 
@@ -240,8 +242,13 @@ namespace jc::character::hook
 		{
 			if (const auto local_char = localplayer->get_character(); character == local_char)
 				localplayer->set_movement_info(angle, right, forward, aiming);
-			else if (auto player = g_net->get_player_by_character(character))
-				return;
+
+			// vehicles use this function to make a character enter a vehicle
+			// so we should let the engine do the thing (we will keep this code
+			// just in case we need it in future with a few patches)
+
+			/*else if (auto player = g_net->get_player_by_character(character))
+				return;*/
 		}
 
 		dispatch_movement_hook.call(character, angle, right, forward, aiming);
@@ -410,18 +417,6 @@ namespace jc::character::hook
 		character_proxy_add_velocity_hook.call(proxy, velocity, rotation);
 	}
 
-	DEFINE_HOOK_THISCALL(set_enter_vehicle_stance, 0x5A1D40, void, Character* character, bool instant)
-	{
-		/*if (const auto lp = g_net->get_localplayer())
-			if (const auto local_char = lp->get_character())
-				if (character == local_char)
-					if (const auto vehicle = local_char->get_vehicle())
-						if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Enter, false);*/
-
-		set_enter_vehicle_stance_hook.call(character, instant);
-	}
-
 	DEFINE_HOOK_THISCALL_S(hopp_into_vehicle_stance, 0x59F620, void, Character* character)
 	{
 		/*if (const auto lp = g_net->get_localplayer())
@@ -447,14 +442,12 @@ namespace jc::character::hook
 		reload_current_weapon_hook.hook();
 		force_launch_hook.hook();
 		character_proxy_add_velocity_hook.hook();
-		set_enter_vehicle_stance_hook.hook();
 		hopp_into_vehicle_stance_hook.hook();
 	}
 
 	void undo()
 	{
 		hopp_into_vehicle_stance_hook.unhook();
-		set_enter_vehicle_stance_hook.unhook();
 		character_proxy_add_velocity_hook.unhook();
 		force_launch_hook.unhook();
 		reload_current_weapon_hook.unhook();
@@ -868,12 +861,17 @@ void Character::reload_current_weapon()
 	jc::this_call<bool>(jc::character::fn::RELOAD_CURRENT_WEAPON, this);
 }
 
-void Character::set_enter_vehicle_stance(bool instant)
+void Character::set_stance_enter_vehicle_right(bool skip_anim)
 {
-	jc::character::hook::set_enter_vehicle_stance_hook.call(this, instant);
+	jc::this_call(jc::character::fn::SET_STANCE_ENTER_VEH_RIGHT, this, skip_anim);
 }
 
-void Character::hopp_into_vehicle()
+void Character::set_stance_enter_vehicle_left(bool skip_anim)
+{
+	jc::this_call(jc::character::fn::SET_STANCE_ENTER_VEH_LEFT, this, skip_anim);
+}
+
+void Character::set_stance_enter_vehicle_no_anim()
 {
 	jc::character::hook::hopp_into_vehicle_stance_hook.call(this);
 }

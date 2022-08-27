@@ -10,16 +10,17 @@
 
 namespace jc::vehicle_seat::hook
 {
-	DEFINE_HOOK_THISCALL(driver_seat_enter, 0x76A3A0, void, VehicleSeat* seat, Character* character, CharacterController* unk, bool unk2)
+	DEFINE_HOOK_THISCALL(driver_seat_enter, 0x76A3A0, void, VehicleSeat* seat, Character* character, CharacterController* controller, bool unk2)
 	{
-		/*if (const auto localplayer = g_net->get_localplayer())
-			if (const auto local_char = localplayer->get_character(); character == local_char)
-				if (const auto vehicle = seat->get_vehicle())
-					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-						if (unk2)
-							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_OpenDoor);*/
+		// the engine forces the controller to be the player one, causing insane
+		// issues because other players can make other exist the vehicle in their
+		// remote game, we will get the actual controller of the player so it works properly
+		// if the character is an actual player
 
-		driver_seat_enter_hook.call(seat, character, unk, unk2);
+		if (const auto player = g_net->get_player_by_character(character))
+			return driver_seat_enter_hook.call(seat, character, character->get_controller(), unk2);
+
+		driver_seat_enter_hook.call(seat, character, controller, unk2);
 	}
 
 	DEFINE_HOOK_THISCALL(warp_character, 0x74DC30, void, VehicleSeat* seat, Character* character, CharacterController* unk, bool unk2)
@@ -100,7 +101,7 @@ void VehicleSeat::warp_character(Character* character, bool warp)	// 76578B
 	jc::vehicle_seat::hook::driver_seat_enter_hook.call(this, character, character->get_controller(), false);
 
 	if (warp)
-		character->set_enter_vehicle_stance(true);
+		character->set_stance_enter_vehicle_right(true);
 }
 
 void VehicleSeat::open_door(Character* character)

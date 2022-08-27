@@ -355,7 +355,58 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 
 	switch (const auto command = p.get_u8())
 	{
-	case VehicleEnterExit_OpenDoor:
+	case VehicleEnterExit_RequestEnter:
+	{
+#ifdef JC_CLIENT
+		const auto seat = vehicle->get_driver_seat();
+		const auto interactable = seat->get_interactable();
+
+		interactable->interact_with(player_char);
+#else
+		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command);
+#endif
+
+		break;
+	}
+	case VehicleEnterExit_Enter:
+	{
+		log(GREEN, "entering vehicle...");
+
+		player->set_vehicle(vehicle_net);
+
+#ifdef JC_CLIENT
+		// todojc
+#else
+		vehicle_net->set_sync_type(SyncType_Locked);
+		vehicle_net->set_streamer(player);
+
+		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command);
+#endif
+
+		break;
+	}
+	case VehicleEnterExit_Exit:
+	{
+		const bool instant = p.get_bool();
+
+		log(GREEN, "exiting vehicle... {}", instant);
+
+		player->set_vehicle(nullptr);
+
+#ifdef JC_CLIENT
+		seat->kick_current(instant);
+#else
+		vehicle_net->set_sync_type(SyncType_Distance);
+		vehicle_net->set_streamer(nullptr);
+
+		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command, instant);
+#endif
+
+		break;
+	}
+	}
+
+	/*case VehicleEnterExit_OpenDoor:
 	{
 		log(GREEN, "opening vehicle door...");
 
@@ -377,7 +428,7 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 		player->set_vehicle(vehicle_net);
 
 #ifdef JC_CLIENT
-		seat->warp_character(player_char, true);
+		//seat->warp_character(player_char, true);
 #else
 		vehicle_net->set_sync_type(SyncType_Locked);
 		vehicle_net->set_streamer(player);
@@ -393,8 +444,10 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 
 		log(GREEN, "exiting vehicle... {}", instant);
 
+		player->set_vehicle(nullptr);
+
 #ifdef JC_CLIENT
-		seat->kick_current(instant);
+		//seat->kick_current(instant);
 #else
 		vehicle_net->set_sync_type(SyncType_Distance);
 		vehicle_net->set_streamer(nullptr);
@@ -403,8 +456,7 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 #endif
 
 		break;
-	}
-	}
+	}*/
 
 	return enet::PacketRes_Ok;
 }

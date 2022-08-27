@@ -4,9 +4,8 @@
 
 enum VehicleEnterExitCommand : uint8_t
 {
-	VehicleEnterExit_OpenDoor,
+	VehicleEnterExit_RequestEnter,
 	VehicleEnterExit_Enter,
-	VehicleEnterExit_VerifyEnter,
 	VehicleEnterExit_Exit,
 };
 

@@ -57,6 +57,10 @@ void jc::mp::logic::on_tick()
 			const auto& move_info = localplayer->get_movement_info();
 			const auto move_angle = move_info.angle;
 
+			/*const auto vehicle_net = localplayer->get_vehicle();
+			const auto vehicle = vehicle_net ? vehicle_net->get_object() : nullptr;
+			const auto old_vehicle = local_char->get_vehicle();*/
+
 			// health
 
 			if (hp != localplayer->get_hp())
@@ -182,6 +186,9 @@ void jc::mp::logic::on_update_objects()
 				return;
 
 			const auto player_char = player->get_character();
+			const auto vehicle_net = player->get_vehicle();
+			const auto vehicle = vehicle_net ? vehicle_net->get_object() : nullptr;
+			const auto old_vehicle = player_char->get_vehicle();
 
 			// update player's blip
 

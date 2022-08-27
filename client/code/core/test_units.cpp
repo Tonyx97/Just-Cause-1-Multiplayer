@@ -290,13 +290,13 @@ void jc::test_units::test_0()
 	{
 		if (const auto veh = BITCAST(Vehicle*, g_global_ptr))
 		{
-			//veh->get_physical()->set_velocity(veh->get_physical()->get_velocity() + vec3(0.f, 5.f, 0.f));
-
 			const auto seat = veh->get_driver_seat();
 
-			if (local_char->get_vehicle())
+			seat->kick_current(true);
+
+			/*if (local_char->get_vehicle())
 				seat->kick_current(true);
-			else seat->warp_character(local_char, true);
+			else seat->warp_character(local_char, true);*/
 
 			/*const auto sound_comp = jc::read<ptr>(veh, 0x404);
 
@@ -325,25 +325,34 @@ void jc::test_units::test_0()
 	{
 		auto t = ptr(info.character);
 
-		float v3 = *(float*)(t + 0xA30) * *(float*)(t + 0xA30)
-			+ *(float*)(t + 0xA2C) * *(float*)(t + 0xA2C)
-			+ *(float*)(t + 0xA28) * *(float*)(t + 0xA28);
-
-		log(RED, "{} < 16.f", v3);
-
-		if (const auto veh = BITCAST(Vehicle*, g_global_ptr))
+		if (const auto veh = BITCAST(Vehicle*, g_global_ptr); veh && !entered)
 		{
 			const auto seat = veh->get_driver_seat();
+			const auto seat_ptr = ptr(*seat);
 
-			jc::v_call(*seat, 2, info.character, info.character->get_controller(), true);
+			//seat->open_door(info.character);
 
 			if (seat->get_character() == info.character)
 			{
-				log(GREEN, "can enter now");
+				if (!jc::this_call(0x5A1F30, info.character))
+				{
+					log(BLUE, "Part 2");
 
-				jc::this_call(0x5A1D40, info.character, true);
+					*(uint8_t*)(seat_ptr + 0x152) = 0;
 
-				entered = true;
+					const auto type = seat->get_type();
+
+					if (type != VehicleSeat_Special)
+					{
+						if (type == VehicleSeat_Passenger)
+							info.character->set_stance_enter_vehicle_right(false);
+						else if (type == VehicleSeat_Driver)
+							info.character->set_stance_enter_vehicle_left(false);
+					}
+
+					entered = true;
+				}
+				else log(BLUE, "if needed, code is at 0x88102A");
 			}
 		}
 	}
@@ -369,15 +378,19 @@ void jc::test_units::test_0()
 			log(CYAN, "handle base from character {:x}", ptr(info.character->get_controller()));
 			log(CYAN, "char {:x}", ptr(info.character));
 
-			info.character->set_position(local_pos + vec3(0.f, 0.f, 0.f));
+			info.character->set_position(local_pos + vec3(-1.f, 0.f, 0.f));
 			info.character->set_model(6);
+
+			entered = false;
 
 			if (const auto veh = BITCAST(Vehicle*, g_global_ptr))
 			{
 				const auto seat = veh->get_driver_seat();
 				const auto interactable = seat->get_interactable();
 
-				//interactable->interact_with(info.character);
+				//seat->warp_character(info.character, true);
+
+				interactable->interact_with(info.character);
 				//seat->warp_character(info.character, true);
 			}
 			

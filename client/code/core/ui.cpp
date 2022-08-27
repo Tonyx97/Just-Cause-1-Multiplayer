@@ -242,7 +242,7 @@ void UI::render()
 
 	static bool open_overlay = true;
 
-	ImGui::SetNextWindowPos({ 0.f, 0.f }, ImGuiCond_Once);
+	ImGui::SetNextWindowPos({ 0.f, 0.f });
 	ImGui::SetNextWindowSize({ static_cast<float>(camera->get_width()), static_cast<float>(camera->get_height()) });
 
 	constexpr auto window_flags = ImGuiWindowFlags_NoBackground |

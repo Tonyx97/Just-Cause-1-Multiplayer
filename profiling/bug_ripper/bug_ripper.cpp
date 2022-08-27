@@ -6,7 +6,7 @@
 #include <core/ui.h>
 #endif
 
-#define FORCE_ENABLE_BUG_RIPPER 1
+#define FORCE_ENABLE_BUG_RIPPER 0
 
 #define IDD_CRASH_DIALOG            114
 #define IDC_SEND_DESC				9701

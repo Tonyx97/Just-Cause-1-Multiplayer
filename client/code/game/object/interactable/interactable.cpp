@@ -15,25 +15,25 @@ namespace jc::interactable::hook
 			if (const auto local_char = localplayer->get_character(); character == local_char)
 				if (const auto target = interactable->get_target())
 					if (const auto vehicle_net = g_net->get_net_object_by_game_object(target))
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, true);
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_RequestEnter);
 
 		return interact_with_hook.call(interactable, character);
 	}
 
 	void apply()
 	{
-		//interact_with_hook.hook();
+		interact_with_hook.hook();
 	}
 
 	void undo()
 	{
-		//interact_with_hook.unhook();
+		interact_with_hook.unhook();
 	}
 }
 
 void Interactable::interact_with(Character* character)
 {
-	//jc::interactable::hook::interact_with_hook.call(this, character);
+	jc::interactable::hook::interact_with_hook.call(this, character);
 }
 
 ObjectBase* Interactable::get_target() const
