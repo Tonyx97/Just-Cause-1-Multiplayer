@@ -38,10 +38,110 @@ std::atomic_bool mod_unloaded = false;
 bool initialized = false;
 bool game_focused = true;
 
+struct InlineHook
+{
+public:
+
+	struct Parameter
+	{
+		ptr esp, ebp;
+	};
+
+private:
+
+	patch to_shell_patch;
+
+	uint8_t* shell_base = nullptr;
+
+public:
+
+	InlineHook() {}
+
+	template <typename Tx, typename Ty>
+	InlineHook(Tx address, Ty hk)
+	{
+		hde32s hde;
+
+		size_t original_code_len = 0u;
+
+		// get all following instructions until we reached a size of 5 to fit
+		// the jump which is 5 bytes
+
+		while (int len = hde32_disasm(BITCAST(void*, address + original_code_len), &hde))
+			if ((original_code_len += len) >= 5)
+				break;
+
+		uint8_t shell_bytecode[] =
+		{
+			0x68, 0x00, 0x00, 0x00, 0x00,	// push <return address>
+			0x50,							// push eax
+			0x53,							// push ebx
+			0x89, 0xE0,						// mov eax, esp
+			0x89, 0xEB,						// mov ebx, ebp
+			0x60,							// pushad
+			0x9C,							// pushf
+			0x53,							// push ebx
+			0x50,							// push eax
+			0xE8, 0x00, 0x00, 0x00, 0x00,	// call the hook
+			0x58,							// pop eax
+			0x5B,							// pop ebx
+			0x9D,							// popf
+			0x61,							// popad
+			0x5B,							// pop ebx
+			0x58,							// pop eax
+			0xC3,							// ret
+		};
+
+		const auto shellcode_size = original_code_len + sizeof(shell_bytecode);
+		const auto shellcode_call_offset = 15;
+		
+		// allocate original code and shell memory
+
+		shell_base = new uint8_t[shellcode_size];
+
+		const auto orginal_code_address = shell_base;
+		const auto shell_address = shell_base + original_code_len;
+
+		// write return address at the beginning of the shell
+		// which will be pushed to use ret later
+
+		*(int32_t*)(shell_bytecode + 1) = address + original_code_len;
+
+		// write call offset from the shell call to our hook
+
+		*(int32_t*)(shell_bytecode + shellcode_call_offset + 1) = jc::calc_call_offset(shell_address + shellcode_call_offset, hk).value;
+
+		// copy original code and the shell code into the shell memory
+
+		memcpy(orginal_code_address, BITCAST(void*, address), original_code_len);
+		memcpy(shell_address, shell_bytecode, shellcode_size);
+
+		// write jump in the target address
+
+		to_shell_patch.jump(address, shell_base);
+	}
+
+	~InlineHook()
+	{
+		to_shell_patch._undo();
+
+		delete[] shell_base;
+	}
+};
+
+InlineHook* test;
+
+void test_hk(InlineHook::Parameter ctx)
+{
+	log(GREEN, "wo nice {:x} {:x} = {:x}", ctx.esp, ctx.ebp, jc::read<ptr>(ctx.ebp, -0x1CC));
+}
+
 DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 {
 	if (!initialized)
 	{
+		test = JC_ALLOC(InlineHook, 0x78680B, test_hk);
+
 		g_registry.init();
 
 		char nick[256] = { 0 };

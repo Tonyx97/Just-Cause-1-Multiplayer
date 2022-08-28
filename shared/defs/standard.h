@@ -42,6 +42,7 @@
 #include <d3dx9math.h>
 
 #include <MinHook.h>
+#include <hde32.h>
 
 #include <stl/ref.h>
 #include <stl/vec.h>

@@ -13,6 +13,8 @@ struct scoped_patch
 
 	bool active = false;
 
+	scoped_patch() {}
+
 	template <typename T>
 	scoped_patch(T addy, const std::vector<uint8_t>& new_bytes = {})
 		: address(BITCAST(void*, addy))
@@ -27,8 +29,16 @@ struct scoped_patch
 			_undo();
 	}
 
+	template <typename T>
+	void set_address(const T& addy)
+	{
+		address = BITCAST(void*, addy);
+	}
+
 	void _do(const std::vector<uint8_t>& new_bytes)
 	{
+		check(address, "Invalid address");
+
 		if (active)
 			return;
 
@@ -44,6 +54,8 @@ struct scoped_patch
 
 	void nop(int size)
 	{
+		check(address, "Invalid address");
+
 		std::vector<uint8_t> nop_bytes(size);
 
 		std::ranges::generate_n(nop_bytes.begin(), nop_bytes.size(), []() { return 0x90; });
@@ -51,8 +63,34 @@ struct scoped_patch
 		_do(nop_bytes);
 	}
 
+
+	template <typename Tx, typename Ty>
+	void jump(Tx from, Ty to)
+	{
+		const auto offset = jc::calc_call_offset(address = BITCAST(void*, from), to);
+
+		_do(
+		{
+			0xE9,
+			offset.b0,
+			offset.b1,
+			offset.b2,
+			offset.b3,
+		});
+	}
+
+	template <typename T>
+	void jump(const T& to)
+	{
+		check(address, "Invalid address");
+
+		jump(address, to);
+	}
+
 	void _undo()
 	{
+		check(address, "Invalid address");
+
 		if (!active)
 			return;
 
