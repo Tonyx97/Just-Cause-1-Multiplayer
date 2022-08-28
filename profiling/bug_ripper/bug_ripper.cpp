@@ -4,6 +4,7 @@
 
 #ifdef JC_CLIENT
 #include <core/ui.h>
+#include <core/hooks.h>
 #endif
 
 #define FORCE_ENABLE_BUG_RIPPER 0
@@ -38,33 +39,34 @@ namespace jc::bug_ripper
 	Module game_mod {},
 		   mod_mod {};
 
+#ifdef JC_CLIENT
+	DEFINE_HOOK_STDCALL(game_unhandled_exception_filter, 0x99974C, LONG, _EXCEPTION_POINTERS* ep)
+	{
+		// re-route the exception handling to ours
+
+		return global_veh(ep);
+	}
+#endif
+
 	bool init(void* mod_base)
 	{
+		game_mod.base = ptr(GetModuleHandle(nullptr));
+		mod_mod.base = ptr(mod_base);
+
+		util::mem::for_each_module(GetCurrentProcessId(), [&](uintptr_t base_addr, uint32_t size, const wchar_t*)
+		{
+			if (base_addr == game_mod.base)
+				game_mod.size = size;
+			else if (base_addr == mod_mod.base)
+				mod_mod.size = size;
+
+			return game_mod.size > 0 && mod_mod.size > 0;
+		}, {});
+
 #if defined(JC_DBG) && !FORCE_ENABLE_BUG_RIPPER
 		return true;
 #else
-		if (AddVectoredExceptionHandler(FALSE, global_veh))
-		{
-			game_mod.base = ptr(GetModuleHandle(nullptr));
-			mod_mod.base = ptr(mod_base);
-
-			util::mem::for_each_module(GetCurrentProcessId(), [&](uintptr_t base_addr, uint32_t size, const wchar_t*)
-			{
-				if (base_addr == game_mod.base)
-					game_mod.size = size;
-				else if (base_addr == mod_mod.base)
-					mod_mod.size = size;
-
-				return game_mod.size > 0 && mod_mod.size > 0;
-			}, {});
-
-			log(RED, "Game Info: {:x} {}", game_mod.base, game_mod.size);
-			log(RED, "Module Info: {:x} {}", mod_mod.base, mod_mod.size);
-
-			return true;
-		}
-
-		return false;
+		return AddVectoredExceptionHandler(FALSE, global_veh);
 #endif
 	}
 
@@ -99,7 +101,6 @@ namespace jc::bug_ripper
 
 	long show_and_dump_crash(_EXCEPTION_POINTERS* ep)
 	{
-		return EXCEPTION_CONTINUE_SEARCH;
 		auto eip = uintptr_t(ep->ExceptionRecord->ExceptionAddress);
 
 		const bool exception_on_game = game_mod.contains_address(eip);
@@ -109,7 +110,9 @@ namespace jc::bug_ripper
 
 		if (auto mod_base = get_module_info_if_valid(eip, mod_name))
 		{
-			if (mod_base == BITCAST(uintptr_t, GetModuleHandleW(L"KERNELBASE")))
+			static auto kernelbase = BITCAST(uintptr_t, GetModuleHandleW(L"KERNELBASE"));
+
+			if (mod_base == kernelbase)
 				return EXCEPTION_CONTINUE_SEARCH;
 
 #ifdef JC_CLIENT
@@ -272,6 +275,17 @@ namespace jc::bug_ripper
 		log(RED, "Continuing exception search...");
 
 		return EXCEPTION_CONTINUE_SEARCH;
+	}
+
+	bool reroute_exception_handler(bool place)
+	{
+#ifdef JC_CLIENT
+		if (place)
+			game_unhandled_exception_filter_hook.hook();
+		else  game_unhandled_exception_filter_hook.unhook();
+#endif
+
+		return true;
 	}
 }
 

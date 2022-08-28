@@ -42,6 +42,15 @@ struct scoped_patch
 		active = true;
 	}
 
+	void nop(int size)
+	{
+		std::vector<uint8_t> nop_bytes(size);
+
+		std::ranges::generate_n(nop_bytes.begin(), nop_bytes.size(), []() { return 0x90; });
+
+		_do(nop_bytes);
+	}
+
 	void _undo()
 	{
 		if (!active)

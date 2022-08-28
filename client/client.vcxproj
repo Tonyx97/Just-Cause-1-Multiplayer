@@ -212,7 +212,6 @@
     <ClCompile Include="code\game\object\character\character.cpp" />
     <ClCompile Include="code\game\object\character\comps\skeleton.cpp" />
     <ClCompile Include="code\game\object\sound\sound_bank.cpp" />
-    <ClCompile Include="code\game\object\character\comps\vehicle_controller.cpp" />
     <ClCompile Include="code\game\object\weapon\weapon_belt.cpp" />
     <ClCompile Include="code\game\sys\particle\particle_system.cpp" />
     <ClCompile Include="code\game\sys\resource\physics.cpp" />
@@ -338,7 +337,6 @@
     <ClInclude Include="code\game\object\character\character.h" />
     <ClInclude Include="code\game\object\character\comps\skeleton.h" />
     <ClInclude Include="code\game\object\sound\sound_bank.h" />
-    <ClInclude Include="code\game\object\character\comps\vehicle_controller.h" />
     <ClInclude Include="code\game\object\weapon\weapon_belt.h" />
     <ClInclude Include="code\game\sys\particle\particle_system.h" />
     <ClInclude Include="code\game\sys\resource\physics.h" />

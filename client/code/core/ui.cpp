@@ -9,7 +9,6 @@
 #include <game/transform/transform.h>
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
-#include <game/object/character/comps/vehicle_controller.h>
 #include <game/object/camera/camera.h>
 #include <game/object/weapon/bullet.h>
 #include <game/object/weapon/weapon.h>
@@ -160,6 +159,13 @@ void UI::dispatch()
 	begin();
 	render();
 	end();
+}
+
+void UI::toggle_admin_panel()
+{
+	show_admin_panel = !show_admin_panel;
+
+	g_key->block_input(show_admin_panel);
 }
 
 void UI::begin_window(const char* name, const ImVec2& pos, const ImVec2& size, const ImVec4& color)
@@ -432,8 +438,6 @@ void UI::render_admin_panel()
 		current_weapon->get_info()->set_infinite_ammo(infinite_ammo);
 	}
 
-	g_key->block_input(show_admin_panel);
-
 	if (!show_admin_panel)
 		return;
 
@@ -445,6 +449,9 @@ void UI::render_admin_panel()
 	if (ImGui::Button("Respawn / Revive"))
 		if (local_char->get_hp() <= 0.f)
 			g_world->get_localplayer()->respawn();
+
+	if (ImGui::Button("Almost ded"))
+		g_world->get_localplayer()->get_character()->set_hp(1.f);
 
 	if (g_key->is_key_pressed(KEY_F))
 		local_char->play_idle_stance();
@@ -515,10 +522,10 @@ void UI::render_admin_panel()
 			Weapon_Assault_Rifle_heavy,
 			Weapon_Assault_Rifle_high_tech,
 			Weapon_Shotgun_automatic,
-			Weapon_Grapplinghook,
+			/*Weapon_Grapplinghook,
 			Weapon_Timed_Explosive,
 			Weapon_Triggered_Explosive,
-			Weapon_Remote_Trigger,
+			Weapon_Remote_Trigger,*/
 		};
 
 		ImGui::Text("Selected Weapon Name: %s", jc::vars::weapons_id_to_type_name.find(weapon_ids[weapon_to_give])->second.c_str());
@@ -734,14 +741,14 @@ void UI::overlay_debug()
 					v_list->AddCircle({ out_sp.x, out_sp.y }, 5.f, 0xFF00FFFF, 30, 2.f);*/
 			}
 
-			if (const auto vehicle_controller = local_player_pawn->get_vehicle_controller())
+			if (const auto vehicle_seat = local_player_pawn->get_vehicle_seat())
 			{
-				ImGui::Text("VehicleController: 0x%x", vehicle_controller);
+				ImGui::Text("VehicleSeat: 0x%x", *vehicle_seat);
 
-				if (vec2 out_sp; camera->w2s(vehicle_controller->get_transform()->get_position(), out_sp))
-					v_list->AddCircle({ out_sp.x, out_sp.y }, 20.f, 0xFFFFFFFF, 30, 5.f);
+				/*if (vec2 out_sp; camera->w2s(vehicle_seat->get_transform()->get_position(), out_sp))
+					v_list->AddCircle({ out_sp.x, out_sp.y }, 20.f, 0xFFFFFFFF, 30, 5.f);*/
 
-				if (const auto vehicle = vehicle_controller->get_vehicle())
+				if (const auto vehicle = vehicle_seat->get_vehicle())
 				{
 					ImGui::Text("Vehicle: 0x%x", vehicle);
 				}

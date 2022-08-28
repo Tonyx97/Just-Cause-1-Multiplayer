@@ -23,3 +23,8 @@ void GameContext::set_fullscreen(bool enabled)
 {
 	jc::write(enabled, 0xAF1E08);
 }
+
+HWND GameContext::get_hwnd() const
+{
+	return jc::read<HWND>(this, jc::game_ctx::WINDOW_HANDLE);
+}

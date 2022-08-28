@@ -10,7 +10,8 @@
 
 namespace jc::vehicle_seat::hook
 {
-	DEFINE_HOOK_THISCALL(driver_seat_enter, 0x76A3A0, void, VehicleSeat* seat, Character* character, CharacterController* controller, bool unk2)
+	template <typename T>
+	void vehicle_seat_enter(VehicleSeat* seat, Character* character, CharacterController* controller, bool unk2, const T& hk)
 	{
 		// the engine forces the controller to be the player one, causing insane
 		// issues because other players can make other exist the vehicle in their
@@ -18,9 +19,29 @@ namespace jc::vehicle_seat::hook
 		// if the character is an actual player
 
 		if (const auto player = g_net->get_player_by_character(character))
-			return driver_seat_enter_hook.call(seat, character, character->get_controller(), unk2);
+			controller = character->get_controller();
 
-		driver_seat_enter_hook.call(seat, character, controller, unk2);
+		hk(seat, character, controller, unk2);
+	}
+
+	DEFINE_HOOK_THISCALL(driver_seat_dispatch_entry, 0x76A3A0, void, VehicleSeat* seat, Character* character, CharacterController* controller, bool unk2)
+	{
+		vehicle_seat_enter(seat, character, controller, unk2, driver_seat_dispatch_entry_hook.original);
+	}
+
+	DEFINE_HOOK_THISCALL(passenger_seat_dispatch_entry, 0x785760, void, VehicleSeat* seat, Character* character, CharacterController* controller, bool unk2)
+	{
+		vehicle_seat_enter(seat, character, controller, unk2, passenger_seat_dispatch_entry_hook.original);
+	}
+
+	DEFINE_HOOK_THISCALL(special_seat_dispatch_entry, 0x642FF0, void, VehicleSeat* seat, Character* character, CharacterController* controller, bool unk2)
+	{
+		vehicle_seat_enter(seat, character, controller, unk2, special_seat_dispatch_entry_hook.original);
+	}
+
+	DEFINE_HOOK_THISCALL(roof_seat_dispatch_entry, 0x8B1F00, void, VehicleSeat* seat, Character* character, CharacterController* controller, bool unk2)
+	{
+		vehicle_seat_enter(seat, character, controller, unk2, roof_seat_dispatch_entry_hook.original);
 	}
 
 	DEFINE_HOOK_THISCALL(warp_character, 0x74DC30, void, VehicleSeat* seat, Character* character, CharacterController* unk, bool unk2)
@@ -30,9 +51,11 @@ namespace jc::vehicle_seat::hook
 				if (const auto vehicle = seat->get_vehicle())
 					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
 					{
+						const auto char_vehicle = character->get_vehicle();
+
 						localplayer->set_vehicle(vehicle_net->cast<VehicleNetObject>());
 
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Enter);
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_Enter);
 					}
 
 		return warp_character_hook.call(seat, character, unk, unk2);
@@ -53,7 +76,7 @@ namespace jc::vehicle_seat::hook
 						{
 							localplayer->set_vehicle(nullptr);
 
-							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Exit, false);
+							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_Exit, false);
 						}
 
 			leave_hook.call(seat);
@@ -64,19 +87,28 @@ namespace jc::vehicle_seat::hook
 	{
 		if (const auto localplayer = g_net->get_localplayer())
 			if (const auto local_char = localplayer->get_character(); character == local_char)
-				if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-				{
-					localplayer->set_vehicle(nullptr);
+				if (const auto seat = local_char->get_vehicle_seat())
+					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+					{
+						localplayer->set_vehicle(nullptr);
 
-					g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Exit, true);
-				}
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_Exit, true);
+					}
 
 		return instant_leave_hook.call(vehicle, character, is_local);
 	}
 
 	void apply()
 	{
-		driver_seat_enter_hook.hook();
+		// specific seats dispatch entry hooks
+
+		driver_seat_dispatch_entry_hook.hook();
+		passenger_seat_dispatch_entry_hook.hook();
+		special_seat_dispatch_entry_hook.hook();
+		roof_seat_dispatch_entry_hook.hook();
+
+		// generic
+
 		warp_character_hook.hook();
 		leave_hook.hook();
 		instant_leave_hook.hook();
@@ -87,7 +119,13 @@ namespace jc::vehicle_seat::hook
 		instant_leave_hook.unhook();
 		leave_hook.unhook();
 		warp_character_hook.unhook();
-		driver_seat_enter_hook.unhook();
+
+		// specific seats dispatch entry hooks
+
+		roof_seat_dispatch_entry_hook.unhook();
+		special_seat_dispatch_entry_hook.unhook();
+		passenger_seat_dispatch_entry_hook.unhook();
+		driver_seat_dispatch_entry_hook.unhook();
 	}
 }
 
@@ -98,7 +136,7 @@ void VehicleSeat::warp_character(Character* character, bool warp)	// 76578B
 	if (current_character == character || current_character)
 		return;
 
-	jc::vehicle_seat::hook::driver_seat_enter_hook.call(this, character, character->get_controller(), false);
+	dispatch_entry(character, false);
 
 	if (warp)
 		character->set_stance_enter_vehicle_right(true);
@@ -111,7 +149,7 @@ void VehicleSeat::open_door(Character* character)
 	if (current_character == character || current_character)
 		return;
 
-	jc::vehicle_seat::hook::driver_seat_enter_hook.call(this, character, character->get_controller(), true);
+	dispatch_entry(character, true);
 }
 
 void VehicleSeat::kick_current(bool instant)
@@ -130,9 +168,47 @@ void VehicleSeat::kick_current(bool instant)
 	}
 }
 
+void VehicleSeat::add_flag(uint16_t flag)
+{
+	set_flags(get_flags() | flag);
+}
+
+void VehicleSeat::remove_flag(uint16_t flag)
+{
+	set_flags(get_flags() & ~flag);
+}
+
+void VehicleSeat::set_flags(uint16_t flags)
+{
+	jc::write(flags, this, jc::vehicle_seat::FLAGS);
+}
+
+void VehicleSeat::dispatch_entry(Character* character, bool unk)
+{
+	// we need this because we place hooks on the virtual functions
+
+	switch (get_type())
+	{
+	case VehicleSeat_Roof:		return jc::vehicle_seat::hook::roof_seat_dispatch_entry_hook.call(this, character, character->get_controller(), unk);
+	case VehicleSeat_Driver:	return jc::vehicle_seat::hook::driver_seat_dispatch_entry_hook.call(this, character, character->get_controller(), unk);
+	case VehicleSeat_Special:	return jc::vehicle_seat::hook::passenger_seat_dispatch_entry_hook.call(this, character, character->get_controller(), unk);
+	case VehicleSeat_Passenger:	return jc::vehicle_seat::hook::special_seat_dispatch_entry_hook.call(this, character, character->get_controller(), unk);
+	}
+}
+
+bool VehicleSeat::is_occupied() const
+{
+	return jc::v_call<bool>(this, jc::vehicle_seat::vt::IS_OCCUPIED);
+}
+
 uint8_t VehicleSeat::get_type() const
 {
 	return static_cast<uint8_t>(jc::v_call<int>(this, jc::vehicle_seat::vt::GET_TYPE));
+}
+
+uint16_t VehicleSeat::get_flags() const
+{
+	return jc::read<uint16_t>(this, jc::vehicle_seat::FLAGS);
 }
 
 Vehicle* VehicleSeat::get_vehicle() const
@@ -148,4 +224,13 @@ Character* VehicleSeat::get_character() const
 Interactable* VehicleSeat::get_interactable() const
 {
 	return jc::read<Interactable*>(this, jc::vehicle_seat::INTERACTABLE);
+}
+
+ref<VehicleSeat> VehicleSeat::get_ref()
+{
+	ref<VehicleSeat> r;
+
+	jc::this_call(jc::vehicle_seat::fn::GET_REF, this, &r);
+
+	return r;
 }

@@ -56,11 +56,10 @@ public:
 	void init();
 	void destroy();
 	void dispatch();
+	void toggle_admin_panel();
 	void begin_window(const char* name, const ImVec2& pos, const ImVec2& size, const ImVec4& color);
 	void end_window();
 	void draw_filled_rect(float x, float y, float w, float h, const ImVec4& color);
-
-	void toggle_admin_panel() { show_admin_panel = !show_admin_panel; }
 
 	bool is_destroying() const { return destroying; }
 	bool is_destroyed() const { return destroyed; }

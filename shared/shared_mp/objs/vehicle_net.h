@@ -2,11 +2,14 @@
 
 #include <shared_mp/objs/net_object.h>
 
+#include <game/shared/vehicle_seat.h>
+
 enum VehicleEnterExitCommand : uint8_t
 {
 	VehicleEnterExit_RequestEnter,
 	VehicleEnterExit_Enter,
 	VehicleEnterExit_Exit,
+	VehicleEnterExit_PassengerToDriverKick,
 };
 
 class Weapon;

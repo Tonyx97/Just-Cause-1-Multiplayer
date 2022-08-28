@@ -17,7 +17,6 @@
 #include <game/object/agent_type/npc_variant.h>
 #include <game/object/rigid_object/animated_rigid_object.h>
 #include <game/object/rigid_object/traffic_light.h>
-#include <game/object/character/comps/vehicle_controller.h>
 #include <game/object/weapon/weapon_belt.h>
 #include <game/object/sound/sound_game_obj.h>
 #include <game/object/mission/objective.h>
@@ -145,7 +144,8 @@ void jc::test_units::test_0()
 
 		auto veh = BITCAST(Vehicle*, g_global_ptr);
 
-		const auto seat = veh->get_driver_seat();
+		local_char->set_stance_exit_vehicle_forced();
+		veh->open_door(VehicleDoor_Left);
 
 		//jc::this_call(0x74DE20, *seat, true);
 
@@ -190,8 +190,8 @@ void jc::test_units::test_0()
 		Vehicle* vehicle = nullptr;
 	} static info;
 
-	if (auto veh_controller = local_char->get_vehicle_controller())
-		if (auto veh = veh_controller->get_vehicle())
+	if (auto veh_seat = local_char->get_vehicle_seat())
+		if (auto veh = veh_seat->get_vehicle())
 			info.vehicle = veh;
 
 	if (g_key->is_key_pressed(VK_F8))

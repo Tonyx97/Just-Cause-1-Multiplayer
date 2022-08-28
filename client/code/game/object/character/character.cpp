@@ -2,7 +2,6 @@
 
 #include "character.h"
 
-#include "comps/vehicle_controller.h"
 #include "comps/stance_controller.h"
 
 #include "../weapon/weapon.h"
@@ -80,10 +79,14 @@ namespace jc::character::hook
 			case 19:
 			case 24:
 			case 38:	// exit vehicle
-			case 39:	// open vehicle door
-			case 37:	// close vehicle door from inside
-			case 43:	// enter vehicle
-			case 45:	// close vehicle door from outside
+			case 39:	// open vehicle door (left)
+			case 37:	// close vehicle door from inside (left)
+			case 40:	// close vehicle door from inside (right)
+			case 41:	// open vehicle door (right)
+			case 43:	// enter vehicle (left)
+			case 44:	// enter vehicle (right)
+			case 45:	// close vehicle door from outside (left)
+			case 46:	// close vehicle door from outside (right)
 			case 48:	// inside airplane
 			case 51:
 			case 52:
@@ -91,6 +94,10 @@ namespace jc::character::hook
 			case 56:	// vehicle looking behind
 			case 58:	// lift motorbike from the ground
 			case 60:	// jump out of vehicle
+			case 61:	// enter vehicle roof
+			case 62:	// enter air vehicle roof
+			case 63:	// vehicle roof to driver seat
+			case 66:	// mounted gun
 			case 74:
 			case 75:
 			case 77:
@@ -417,16 +424,27 @@ namespace jc::character::hook
 		character_proxy_add_velocity_hook.call(proxy, velocity, rotation);
 	}
 
-	DEFINE_HOOK_THISCALL_S(hopp_into_vehicle_stance, 0x59F620, void, Character* character)
+	DEFINE_HOOK_THISCALL_S(set_stance_exit_vehicle_forced, fn::SET_STANCE_EXIT_VEHICLE_FORCED, void, Character* character)
 	{
-		/*if (const auto lp = g_net->get_localplayer())
-			if (const auto local_char = lp->get_character())
-				if (character == local_char)
-					if (const auto vehicle = local_char->get_vehicle())
-						if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_Enter, true);*/
+		if (const auto lp = g_net->get_localplayer())
+			if (const auto victim = g_net->get_player_by_character(character))
+				if (const auto vehicle_net = victim->get_vehicle())
+					if (const auto player_char = victim->get_character())
+						if (const auto seat = player_char->get_vehicle_seat())
+						{
+							switch (RET_ADDRESS)
+							{
+							case 0x7867DA:
+							{
+								if (seat->is_occupied())
+									g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_PassengerToDriverKick, victim);
 
-		hopp_into_vehicle_stance_hook.call(character);
+								break;
+							}
+							}
+						}
+
+		set_stance_exit_vehicle_forced_hook.call(character);
 	}
 
 	void apply()
@@ -442,12 +460,12 @@ namespace jc::character::hook
 		reload_current_weapon_hook.hook();
 		force_launch_hook.hook();
 		character_proxy_add_velocity_hook.hook();
-		hopp_into_vehicle_stance_hook.hook();
+		set_stance_exit_vehicle_forced_hook.hook();
 	}
 
 	void undo()
 	{
-		hopp_into_vehicle_stance_hook.unhook();
+		set_stance_exit_vehicle_forced_hook.unhook();
 		character_proxy_add_velocity_hook.unhook();
 		force_launch_hook.unhook();
 		reload_current_weapon_hook.unhook();
@@ -873,7 +891,12 @@ void Character::set_stance_enter_vehicle_left(bool skip_anim)
 
 void Character::set_stance_enter_vehicle_no_anim()
 {
-	jc::character::hook::hopp_into_vehicle_stance_hook.call(this);
+	check(false, "dont");
+}
+
+void Character::set_stance_exit_vehicle_forced()
+{
+	jc::character::hook::set_stance_exit_vehicle_forced_hook.call(this);
 }
 
 bool Character::has_flag(uint32_t mask) const
@@ -950,13 +973,22 @@ WeaponBelt* Character::get_weapon_belt() const
 
 Vehicle* Character::get_vehicle() const
 {
-	const auto veh_controller = get_vehicle_controller();
-	return veh_controller ? veh_controller->get_vehicle() : nullptr;
+	const auto seat = get_vehicle_seat();
+	return seat ? seat->get_vehicle() : nullptr;
 }
 
-VehicleController* Character::get_vehicle_controller() const
+ref<VehicleSeat> Character::get_vehicle_seat() const
 {
-	return jc::read<VehicleController*>(this, jc::character::VEHICLE_CONTROLLER);
+	if (const auto seat = jc::read<VehicleSeat*>(this, jc::character::VEHICLE_SEAT))
+	{
+		auto ref = seat->get_ref();
+
+		ref.inc();
+
+		return ref;
+	}
+
+	return {};
 }
 
 Skeleton* Character::get_skeleton() const

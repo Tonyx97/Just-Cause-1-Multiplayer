@@ -99,9 +99,6 @@
     <ClCompile Include="code\game\object\weapon\weapon_belt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\object\character\comps\vehicle_controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\game\sys\particle\particle_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -432,9 +429,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\weapon\weapon_belt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\game\object\character\comps\vehicle_controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\sys\particle\particle_system.h">

@@ -2,7 +2,8 @@
 
 namespace jc::interactable
 {
-	static constexpr uint32_t TARGET = 0x3C;		// ObjectBase*
+	static constexpr uint32_t OWNER		= 0x38;		// ObjectBase*
+	static constexpr uint32_t TARGET	= 0x3C;		// ObjectBase*
 
 	namespace vt
 	{
@@ -24,5 +25,6 @@ public:
 
 	void interact_with(Character* character);
 
+	ObjectBase* get_owner() const;
 	ObjectBase* get_target() const;
 };

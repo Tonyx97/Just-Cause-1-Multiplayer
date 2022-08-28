@@ -15,7 +15,8 @@ namespace jc::interactable::hook
 			if (const auto local_char = localplayer->get_character(); character == local_char)
 				if (const auto target = interactable->get_target())
 					if (const auto vehicle_net = g_net->get_net_object_by_game_object(target))
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, VehicleEnterExit_RequestEnter);
+						if (const auto seat = BITCAST(VehicleSeat*, interactable->get_owner()))
+							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_RequestEnter);
 
 		return interact_with_hook.call(interactable, character);
 	}
@@ -34,6 +35,11 @@ namespace jc::interactable::hook
 void Interactable::interact_with(Character* character)
 {
 	jc::interactable::hook::interact_with_hook.call(this, character);
+}
+
+ObjectBase* Interactable::get_owner() const
+{
+	return jc::read<ObjectBase*>(this, jc::interactable::OWNER);
 }
 
 ObjectBase* Interactable::get_target() const

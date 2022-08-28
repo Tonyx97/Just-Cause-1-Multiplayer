@@ -92,6 +92,14 @@ namespace jc::patches
 	// patches the automatic turning of the land vehicle's engine
 	//
 	patch land_vehicle_engine_patch(0x85053A);
+
+	// patches the heartbeat sound when the localplayer is below minimum regeneration
+	//
+	patch heartbeat_sound_patch(0x4CC713);
+
+	// patches the automatic game freeze the original devs coded for some reason
+	// 
+	patch game_freeze_patch(0x40342F);
 }
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
@@ -207,6 +215,14 @@ void jc::patches::apply_initial_patches()
 
 	jc::write(0x74ui8, 0x7FED33);
 #endif
+
+	// remove the localplayer minimum regeneration
+
+	jc::write(0.f, 0x4C0C07);
+
+	// avoid the engine from setting 0.25 for localplayer min regeneration
+
+	jc::nop(0x4F330E, 6);
 
 	// patch the loading screen lines (it's just ugly)
 	// and the text tips
@@ -406,10 +422,23 @@ void jc::patches::apply()
 	{
 		0xE9, 0xC5, 0x00, 0x00, 0x00
 	});
+
+	// apply heartbeat sound patch
+
+	heartbeat_sound_patch._do(
+	{
+		0xE9, 0xAE, 0x01, 0x00, 0x00
+	});
+
+	// apply game freeze patch
+
+	game_freeze_patch.nop(22);
 }
 
 void jc::patches::undo()
 {
+	game_freeze_patch._undo();
+	heartbeat_sound_patch._undo();
 	land_vehicle_engine_patch._undo();
 	ai_core_dead_handles_patch._undo();
 	death_camera_velocity._undo();

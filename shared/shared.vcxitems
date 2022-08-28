@@ -22,6 +22,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)game\shared\character.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)game\shared\npc_variant.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)game\shared\stances.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)game\shared\vehicle_seat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)game\transform\transform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)math\math.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\channels.h" />

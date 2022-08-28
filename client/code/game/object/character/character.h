@@ -15,7 +15,7 @@ namespace jc::character
 	static constexpr uint32_t BODY_STANCE_CONTROLLER	= 0x514; // BodyStanceController
 	static constexpr uint32_t ARMS_STANCE_CONTROLLER	= 0x568; // ArmsStanceController
 	static constexpr uint32_t TRANSFORM					= 0x5D8; // Transform
-	static constexpr uint32_t VEHICLE_CONTROLLER		= 0x878; // VehicleController*
+	static constexpr uint32_t VEHICLE_SEAT				= 0x878; // VehicleSeat*
 	static constexpr uint32_t DEATH_TIME				= 0x8E4; // float
 	static constexpr uint32_t VELOCITY					= 0x7DC; // vec3
 	static constexpr uint32_t AIM_TARGET				= 0x824; // vec3
@@ -32,27 +32,32 @@ namespace jc::character
 
 	namespace fn
 	{
-		static constexpr uint32_t SET_ANIMATION						= 0x5A1BE0;
-		static constexpr uint32_t SET_TRANSFORM						= 0x58F190;
-		static constexpr uint32_t SET_NPC_VARIANT					= 0x58CA20;
-		static constexpr uint32_t GET_HEAD_BONE_POSITION			= 0x58F610;
-		static constexpr uint32_t GET_PELVIS_BONE_POSITION			= 0x58F5A0;
-		static constexpr uint32_t GET_STOMACH_BONE_POSITION			= 0x58F530;
-		static constexpr uint32_t GET_RANDOM_BONE_POSITION			= 0x58F680;
-		static constexpr uint32_t GET_HEAD_BONE_TRANSFORM			= 0x58F6F0;
-		static constexpr uint32_t GET_PELVIS_BONE_TRANSFORM			= 0x58F760;
-		static constexpr uint32_t DESTROY_SKELETON					= 0x648990;
-		static constexpr uint32_t CREATE_SKELETON					= 0x648430;
-		static constexpr uint32_t CAN_BE_DESTROYED					= 0x595F10;
-		static constexpr uint32_t RESPAWN							= 0x598420;
-		static constexpr uint32_t GET_FACING_OBJECT					= 0x596DC0;
-		static constexpr uint32_t SET_DRAW_WEAPON					= 0x5A09A0;
-		static constexpr uint32_t DRAW_WEAPON_NOW					= 0x59F8E0;
-		static constexpr uint32_t RELOAD_CURRENT_WEAPON				= 0x5A0220;
-		static constexpr uint32_t FORCE_LAUNCH						= 0x5A34A0;
-		static constexpr uint32_t SET_STANCE_ENTER_VEH_RIGHT		= 0x5A1DB0;
-		static constexpr uint32_t SET_STANCE_ENTER_VEH_LEFT			= 0x5A1D40;
-		static constexpr uint32_t SET_STANCE_ENTER_VEH_SKIP_ANIM	= 0x59F620;
+		static constexpr uint32_t SET_ANIMATION								= 0x5A1BE0;
+		static constexpr uint32_t SET_TRANSFORM								= 0x58F190;
+		static constexpr uint32_t SET_NPC_VARIANT							= 0x58CA20;
+		static constexpr uint32_t GET_HEAD_BONE_POSITION					= 0x58F610;
+		static constexpr uint32_t GET_PELVIS_BONE_POSITION					= 0x58F5A0;
+		static constexpr uint32_t GET_STOMACH_BONE_POSITION					= 0x58F530;
+		static constexpr uint32_t GET_RANDOM_BONE_POSITION					= 0x58F680;
+		static constexpr uint32_t GET_HEAD_BONE_TRANSFORM					= 0x58F6F0;
+		static constexpr uint32_t GET_PELVIS_BONE_TRANSFORM					= 0x58F760;
+		static constexpr uint32_t DESTROY_SKELETON							= 0x648990;
+		static constexpr uint32_t CREATE_SKELETON							= 0x648430;
+		static constexpr uint32_t CAN_BE_DESTROYED							= 0x595F10;
+		static constexpr uint32_t RESPAWN									= 0x598420;
+		static constexpr uint32_t GET_FACING_OBJECT							= 0x596DC0;
+		static constexpr uint32_t SET_DRAW_WEAPON							= 0x5A09A0;
+		static constexpr uint32_t DRAW_WEAPON_NOW							= 0x59F8E0;
+		static constexpr uint32_t RELOAD_CURRENT_WEAPON						= 0x5A0220;
+		static constexpr uint32_t FORCE_LAUNCH								= 0x5A34A0;
+		static constexpr uint32_t SET_STANCE_ENTER_VEH_RIGHT				= 0x5A1DB0;
+		static constexpr uint32_t SET_STANCE_ENTER_VEH_LEFT					= 0x5A1D40;
+		static constexpr uint32_t SET_STANCE_ENTER_VEH_SKIP_ANIM			= 0x59F620;
+		static constexpr uint32_t SET_STANCE_ENTER_VEH_ROOF					= 0x59F530;
+		static constexpr uint32_t SET_STANCE_ENTER_AIRVEH_ROOF				= 0x59F570;
+		static constexpr uint32_t SET_STANCE_VEHICLE_ROOF_TO_DRIVER_SEAT	= 0x59F550;
+		static constexpr uint32_t SET_STANCE_TO_VEHICLE_ROOF				= 0x59F590;
+		static constexpr uint32_t SET_STANCE_EXIT_VEHICLE_FORCED			= 0x59F450;
 	}
 
 	namespace g
@@ -73,7 +78,7 @@ namespace jc::character
 
 class Transform;
 class WeaponBelt;
-class VehicleController;
+class VehicleSeat;
 class hkCharacterProxy;
 class BodyStanceController;
 class ArmsStanceController;
@@ -146,6 +151,7 @@ public:
 	void set_stance_enter_vehicle_right(bool skip_anim);
 	void set_stance_enter_vehicle_left(bool skip_anim);
 	void set_stance_enter_vehicle_no_anim();
+	void set_stance_exit_vehicle_forced();
 
 	bool has_flag(uint32_t mask) const;
 	bool is_on_ground() const;
@@ -168,7 +174,7 @@ public:
 
 	Vehicle* get_vehicle() const;
 
-	VehicleController* get_vehicle_controller() const;
+	ref<VehicleSeat> get_vehicle_seat() const;
 
 	Skeleton* get_skeleton() const;
 

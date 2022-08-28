@@ -10,8 +10,6 @@
 
 #include <game/object/base/comps/physical.h>
 #include <game/object/character/character.h>
-#include <game/object/character/comps/vehicle_controller.h>
-#include <game/object/character/comps/vehicle_controller.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/weapon/weapon_belt.h>
 #include <game/object/vehicle/vehicle.h>

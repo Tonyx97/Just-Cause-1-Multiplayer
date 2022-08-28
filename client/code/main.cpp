@@ -32,10 +32,11 @@
 
 HMODULE g_module = nullptr;
 
-bool initialized = false;
-
 std::atomic_bool unload_mod = false;
 std::atomic_bool mod_unloaded = false;
+
+bool initialized = false;
+bool game_focused = true;
 
 DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 {
@@ -222,7 +223,23 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		}
 	}
 	else if (g_game_control)
+	{
+		const auto game_hwnd = g_game_ctx->get_hwnd();
+
+		if (game_focused && game_hwnd != GetActiveWindow())
+		{
+			g_key->block_input(!(game_focused = false));
+		}
+		else if (!game_focused && game_hwnd == GetActiveWindow())
+		{
+			g_key->block_input(!(game_focused = true));
+		}
+
 		g_game_control->on_tick();
+
+	}
+
+	// todojc - debug shit
 
 	if (static bool ay = false; !ay && g_net->is_joined())
 	{
@@ -365,6 +382,7 @@ void dll_thread()
 
 	util::init();
 	jc::hooks::init();
+	jc::bug_ripper::reroute_exception_handler(true);
 	jc::clean_dbg::init();
 
 	init_window_context_hook.hook();
@@ -406,6 +424,7 @@ void dll_thread()
 	init_window_context_hook.unhook();
 
 	jc::clean_dbg::destroy();
+	jc::bug_ripper::reroute_exception_handler(false);
 	jc::hooks::unhook_queued();
 	jc::hooks::destroy();
 	jc::bug_ripper::destroy();

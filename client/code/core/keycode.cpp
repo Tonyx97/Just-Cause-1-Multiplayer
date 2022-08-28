@@ -79,7 +79,7 @@ DEFINE_HOOK_THISCALL(is_key_down, 0x48C800, bool, CharacterController* _this, in
 	return res;
 }
 
-// avoids the cursor centering
+// avoids the cursor centering (this patch is permanent, do not restore)
 //
 patch reset_cursor_patch(0x40346E);
 

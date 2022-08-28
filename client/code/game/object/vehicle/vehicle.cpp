@@ -9,7 +9,6 @@
 #include <game/sys/world/world.h>
 
 #include <game/object/character/character.h>
-#include <game/object/character/comps/vehicle_controller.h>
 #include <game/object/weapon/weapon.h>
 
 #include <shared_mp/objs/vehicle_net.h>
@@ -406,6 +405,15 @@ void Vehicle::for_each_current_weapon(const vehicle_weapon_fn_t& fn)
 	});
 }
 
+void Vehicle::open_door(uint8_t i)
+{
+	switch (i)
+	{
+	case VehicleDoor_Left:	jc::this_call(jc::vehicle::fn::OPEN_LEFT_DOOR, this, 4.f, 0.f); break;
+	case VehicleDoor_Right: jc::this_call(jc::vehicle::fn::OPEN_RIGHT_DOOR, this, 4.f, 0.f); break;
+	}
+}
+
 bool Vehicle::get_engine_state() const
 {
 	return jc::read<bool>(this, jc::vehicle::ENGINE_STATE);
@@ -442,6 +450,30 @@ Weapon* Vehicle::get_weapon(int i) const
 {
 	const auto veh_weapon = jc::read<jc::stl::vector<VehicleWeapon*>>(this, jc::vehicle::WEAPONS)[i];
 	return veh_weapon ? veh_weapon->get_weapon() : nullptr;
+}
+
+ref<VehicleSeat> Vehicle::get_seat_by_type(uint8_t type) const
+{
+	switch (type)
+	{
+	case VehicleSeat_Roof:			return std::move(get_roof_seat());
+	case VehicleSeat_Driver:		return std::move(get_driver_seat());
+	case VehicleSeat_Special:		return std::move(get_special_seat());
+	case VehicleSeat_Passenger:		return std::move(get_passenger_seat());
+	}
+
+	return {};
+}
+
+ref<VehicleSeat> Vehicle::get_roof_seat() const
+{
+	ref<VehicleSeat> r;
+
+	jc::v_call(this, jc::vehicle::vt::GET_ROOF_SEAT, &r);
+
+	r.inc();
+
+	return r;
 }
 
 ref<VehicleSeat> Vehicle::get_driver_seat() const
