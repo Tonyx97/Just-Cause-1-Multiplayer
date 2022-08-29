@@ -24,6 +24,7 @@ namespace jc::vehicle
 	{
 		static constexpr uint32_t OPEN_LEFT_DOOR		= 0x62C2C0;
 		static constexpr uint32_t OPEN_RIGHT_DOOR		= 0x62D170;
+		static constexpr uint32_t DETACH_LEFT_DOOR		= 0x62BE80;
 	}
 
 	namespace vt
@@ -130,6 +131,7 @@ public:
 	void for_each_weapon(const vehicle_weapon_fn_t& fn);
 	void for_each_current_weapon(const vehicle_weapon_fn_t& fn);
 	void open_door(uint8_t i);
+	void detach_door(uint8_t i);
 
 	bool get_engine_state() const;
 
