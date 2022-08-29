@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Windows.h>
-#include <DbgHelp.h>
 #include <utils/utils.h>
 
 #include <game/globals.h>
+
+#include <core/patching.h>
 
 class Transform;
 class Character;
@@ -56,6 +56,117 @@ struct DetourHook
 	operator bool() const { return created; }
 };
 
+struct InlineHook
+{
+public:
+
+	struct Parameter
+	{
+		ptr esp = 0u,
+			ebp = 0u;
+	};
+
+private:
+
+	patch to_shell_patch {};
+
+	Parameter parameter{};
+
+	ptr address = 0u,
+		hk = 0u;
+
+	uint8_t* shell_base = nullptr;
+
+public:
+
+	template <typename Tx, typename Ty>
+	InlineHook(Tx address, Ty hk) : address(BITCAST(ptr, address)), hk(BITCAST(ptr, hk)) {}
+
+	~InlineHook()
+	{
+	}
+
+	void hook()
+	{
+		hde32s hde;
+
+		size_t original_code_len = 0u;
+
+		// get all following instructions until we reached a size of 5 to fit
+		// the jump which is 5 bytes
+
+		while (int len = hde32_disasm(BITCAST(void*, address + original_code_len), &hde))
+			if ((original_code_len += len) >= 5)
+				break;
+
+		uint8_t shell_bytecode[] =
+		{
+			0x68, 0x00, 0x00, 0x00, 0x00,	// push <return address>
+			0x50,							// push eax
+			0xB8, 0x00, 0x00, 0x00, 0x00,	// mov eax, <parameter>
+			0x89, 0x20,						// mov [eax], esp
+			0x89, 0x68, 0x04,				// mov [eax + 0x4], ebp
+			0x60,							// pushad
+			0x9C,							// pushf
+			0x50,							// push eax
+			0xE8, 0x00, 0x00, 0x00, 0x00,	// call <hk>
+			0x58,							// pop eax
+			0x9D,							// popf
+			0x61,							// popad
+			0x58,							// pop eax
+			0xC3,							// ret
+		};
+
+		const auto shellcode_size = sizeof(shell_bytecode);
+		const auto total_shellcode_size = original_code_len + shellcode_size;
+		const auto shellcode_parameter_offset = 6;
+		const auto shellcode_call_offset = 19;
+
+		// allocate original code and shell memory
+
+		shell_base = new uint8_t[total_shellcode_size];
+
+		const auto orginal_code_address = shell_base;
+		const auto shell_address = shell_base + original_code_len;
+
+		// write return address at the beginning of the shell
+		// which will be pushed to use ret later
+
+		*(ptr*)(shell_bytecode + 1) = address + original_code_len;
+
+		// write the paremeter address in the shell
+
+		*(ptr*)(shell_bytecode + shellcode_parameter_offset + 1) = BITCAST(ptr, this) + offsetof(InlineHook, parameter);
+
+		// write call offset from the shell call to our hook
+
+		*(ptr*)(shell_bytecode + shellcode_call_offset + 1) = jc::calc_call_offset(shell_address + shellcode_call_offset, hk).value;
+
+		// copy original code and the shell code into the shell memory
+
+		memcpy(orginal_code_address, BITCAST(void*, address), original_code_len);
+		memcpy(shell_address, shell_bytecode, shellcode_size);
+
+		// write jump in the target address
+
+		to_shell_patch.jump(address, shell_base);
+	}
+
+	void unhook()
+	{
+		if (!shell_base)
+			return;
+
+		to_shell_patch._undo();
+
+		delete[] shell_base;
+
+		shell_base = nullptr;
+	}
+};
+
+// detour hooks
+
 #define HOOK_FIRST_ARG_(x, ...) x
 #define HOOK_FIRST_ARG(args)	HOOK_FIRST_ARG_ args
 
@@ -82,6 +193,15 @@ struct DetourHook
 #define DEFINE_HOOK_THISCALL_S(name, address, ret, arg)			DECLARE_HOOK_FN(name, ret, __fastcall, arg, void*) \
 																DECLARE_HOOK(name, address, ret, __thiscall, arg)\
 																DEFINE_HOOK_FN(name, ret, __fastcall, arg, void*)
+
+// inline hooks
+
+// all inline hooks are cdecl
+// ihp = the parameter for all inline hooks containing ESP and EBP
+//
+#define DEFINE_INLINE_HOOK_IMPL(name, address)	void __cdecl hk_##name(InlineHook::Parameter*); \
+												InlineHook name##_hook(address, &hk_##name); \
+												void __cdecl hk_##name(InlineHook::Parameter* ihp)
 
 namespace jc::hooks
 {

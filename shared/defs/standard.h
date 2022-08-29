@@ -50,7 +50,6 @@
 #include <stl/string.h>
 
 #include <core/hooks.h>
-#include <core/patching.h>
 
 #include <../rsrc/resource.h>
 #elif defined(JC_SERVER)

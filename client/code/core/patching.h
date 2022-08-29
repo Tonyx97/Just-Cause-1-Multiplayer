@@ -67,7 +67,9 @@ struct scoped_patch
 	template <typename Tx, typename Ty>
 	void jump(Tx from, Ty to)
 	{
-		const auto offset = jc::calc_call_offset(address = BITCAST(void*, from), to);
+		address = BITCAST(void*, from);
+
+		const auto offset = jc::calc_call_offset(address, to);
 
 		_do(
 		{
@@ -89,10 +91,10 @@ struct scoped_patch
 
 	void _undo()
 	{
-		check(address, "Invalid address");
-
 		if (!active)
 			return;
+
+		check(address, "Invalid address");
 
 		active = false;
 
