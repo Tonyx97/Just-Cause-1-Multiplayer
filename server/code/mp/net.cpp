@@ -160,9 +160,7 @@ void Net::tick()
 				if (timed_out_player)
 					return;
 
-				const auto pc_address = *pc->get_address();
-
-				if (in6_equal(e.peer->address, pc_address))
+				if (pc->compare_address(e.peer->address))
 					timed_out_player = pc;
 			});
 
