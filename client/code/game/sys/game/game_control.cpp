@@ -85,14 +85,14 @@ DEFINE_HOOK_THISCALL(create_object, 0x4EE350, ref<ObjectBase>*, GameControl* gc,
 		//log(RED, "created '{}'", class_name_str);
 	}
 
-	return create_object_hook.call(gc, r, class_name, enable_now);
+	return create_object_hook(gc, r, class_name, enable_now);
 }
 
 void* GameControl::create_object_internal(void* r, jc::stl::string* class_name, bool enable_now)
 {
 	jc::game_control::ignore_blocked_objects = true;
 
-	const auto res = create_object_hook.call(this, BITCAST(ref<ObjectBase>*, r), class_name, enable_now);
+	const auto res = create_object_hook(this, BITCAST(ref<ObjectBase>*, r), class_name, enable_now);
 
 	jc::game_control::ignore_blocked_objects = false;
 

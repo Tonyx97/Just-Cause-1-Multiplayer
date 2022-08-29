@@ -53,6 +53,12 @@ struct DetourHook
 		return original(args...);
 	}
 
+	template <typename... A>
+	__forceinline auto operator()(A... args)
+	{
+		return call(args...);
+	}
+
 	operator bool() const { return created; }
 };
 
@@ -64,6 +70,12 @@ public:
 	{
 		ptr esp = 0u,
 			ebp = 0u;
+
+		template <typename T>
+		T read_ebp(int offset)
+		{
+			return jc::read<T>(ebp, -offset);
+		}
 	};
 
 private:

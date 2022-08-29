@@ -146,7 +146,7 @@ namespace jc::vehicle::hook
 		{
 			heli_c0 = heli_c1 = heli_c2 = heli_c3 = 0.f;
 			helicopter_input_dispatching = vehicle_net;
-			helicopter_get_input_hook.call(helicopter, controller, c0, c1, c2, c3);
+			helicopter_get_input_hook(helicopter, controller, c0, c1, c2, c3);
 			helicopter_input_dispatching = nullptr;
 
 			if (vehicle_net->is_owned() && vehicle_net->should_sync_this_tick())
@@ -165,7 +165,7 @@ namespace jc::vehicle::hook
 		if (!boat->is_alive())
 			return;
 
-		// todojc - stupid boats won't work with players for some reasons
+		// todojc - stupid boats won't work with players for some reason
 
 		//boat_get_input_hook.original(boat, player, y, x);
 		//sea_vehicle_get_input(boat, player, y, x, boat_get_input_hook.original);
@@ -180,7 +180,7 @@ namespace jc::vehicle::hook
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(land_vehicle)->cast<VehicleNetObject>())
 			g_net->send_reliable(PlayerPID_VehicleHonk, vehicle_net);
 
-		land_vehicle_honk_hook.call(land_vehicle);
+		land_vehicle_honk_hook(land_vehicle);
 	}
 
 	DEFINE_HOOK_THISCALL_S(vehicle_fire, 0x636820, bool, Vehicle* vehicle)
@@ -203,11 +203,11 @@ namespace jc::vehicle::hook
 
 		if (vehicle_net)
 			vehicle_net->set_fire_info(fire_info);
-		else return vehicle_fire_hook.call(vehicle);
+		else return vehicle_fire_hook(vehicle);
 
 		const auto weapon_index = static_cast<uint8_t>(vehicle->get_current_weapon_index());
 		const auto weapon_type = static_cast<uint8_t>(vehicle->get_current_weapon_type());
-		const auto ok = vehicle_fire_hook.call(vehicle);
+		const auto ok = vehicle_fire_hook(vehicle);
 
 		if (ok)
 			g_net->send_reliable<ChannelID_Generic>(PlayerPID_VehicleFire, vehicle_net, weapon_index, weapon_type, fire_info);

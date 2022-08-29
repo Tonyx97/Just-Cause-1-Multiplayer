@@ -22,7 +22,7 @@ DEFINE_HOOK_FASTCALL(dispatch, 0x497A70, bool, GameStatus* gs)
 	//case GameStatus_Unload: g_net->set_loaded(false); break;
 	}
 
-	return dispatch_hook.call(gs);
+	return dispatch_hook(gs);
 }
 
 void GameStatus::init()

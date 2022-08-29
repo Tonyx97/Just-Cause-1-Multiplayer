@@ -58,7 +58,7 @@ namespace jc::vehicle_seat::hook
 						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_Enter);
 					}
 
-		return warp_character_hook.call(seat, character, unk, unk2);
+		return warp_character_hook(seat, character, unk, unk2);
 	}
 
 	DEFINE_HOOK_THISCALL_S(leave, 0x76C010, void, VehicleSeat* seat)
@@ -79,7 +79,7 @@ namespace jc::vehicle_seat::hook
 							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_Exit, false);
 						}
 
-			leave_hook.call(seat);
+			leave_hook(seat);
 		}
 	}
 
@@ -95,7 +95,27 @@ namespace jc::vehicle_seat::hook
 						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_Exit, true);
 					}
 
-		return instant_leave_hook.call(vehicle, character, is_local);
+		return instant_leave_hook(vehicle, character, is_local);
+	}
+
+	DEFINE_INLINE_HOOK_IMPL(passenger_to_driver_seat, 0x78680B)
+	{
+		const auto passenger_seat = ihp->read_ebp<VehicleSeat*>(0x1CC);
+
+		if (const auto lp = g_net->get_localplayer())
+			if (const auto passenger_char = passenger_seat->get_character(); passenger_char == lp->get_character())
+				if (const auto vehicle_net = lp->get_vehicle())
+				{
+					auto driver_char = ihp->read_ebp<Character*>(0x24);
+
+					if (!driver_char || !(driver_char->get_flags() & (1 << 10)))	// todore - not sure what's this flag but the engine does this
+						driver_char = nullptr;
+
+					const auto driver_player = g_net->get_player_by_character(driver_char); // could be null if there is no driver
+
+					if (passenger_seat->is_occupied())
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, passenger_seat->get_type(), VehicleEnterExit_PassengerToDriverKick, driver_player);
+				}
 	}
 
 	void apply()
@@ -106,6 +126,10 @@ namespace jc::vehicle_seat::hook
 		passenger_seat_dispatch_entry_hook.hook();
 		special_seat_dispatch_entry_hook.hook();
 		roof_seat_dispatch_entry_hook.hook();
+
+		// passenger seat hook to move from passenger to driver seat
+
+		passenger_to_driver_seat_hook.hook();
 
 		// generic
 
@@ -119,6 +143,8 @@ namespace jc::vehicle_seat::hook
 		instant_leave_hook.unhook();
 		leave_hook.unhook();
 		warp_character_hook.unhook();
+
+		passenger_to_driver_seat_hook.unhook();
 
 		// specific seats dispatch entry hooks
 
@@ -158,13 +184,13 @@ void VehicleSeat::kick_current(bool instant)
 		return;
 
 	if (instant)
-		jc::vehicle_seat::hook::instant_leave_hook.call(get_vehicle(), get_character(), false);
+		jc::vehicle_seat::hook::instant_leave_hook(get_vehicle(), get_character(), false);
 	else
 	{
 		const auto some_f = jc::read<float>(this, 0x1A4);
 
 		if (some_f < -3.f)
-			jc::vehicle_seat::hook::leave_hook.call(this);
+			jc::vehicle_seat::hook::leave_hook(this);
 	}
 }
 
@@ -189,10 +215,10 @@ void VehicleSeat::dispatch_entry(Character* character, bool unk)
 
 	switch (get_type())
 	{
-	case VehicleSeat_Roof:		return jc::vehicle_seat::hook::roof_seat_dispatch_entry_hook.call(this, character, character->get_controller(), unk);
-	case VehicleSeat_Driver:	return jc::vehicle_seat::hook::driver_seat_dispatch_entry_hook.call(this, character, character->get_controller(), unk);
-	case VehicleSeat_Special:	return jc::vehicle_seat::hook::passenger_seat_dispatch_entry_hook.call(this, character, character->get_controller(), unk);
-	case VehicleSeat_Passenger:	return jc::vehicle_seat::hook::special_seat_dispatch_entry_hook.call(this, character, character->get_controller(), unk);
+	case VehicleSeat_Roof:		return jc::vehicle_seat::hook::roof_seat_dispatch_entry_hook(this, character, character->get_controller(), unk);
+	case VehicleSeat_Driver:	return jc::vehicle_seat::hook::driver_seat_dispatch_entry_hook(this, character, character->get_controller(), unk);
+	case VehicleSeat_Special:	return jc::vehicle_seat::hook::passenger_seat_dispatch_entry_hook(this, character, character->get_controller(), unk);
+	case VehicleSeat_Passenger:	return jc::vehicle_seat::hook::special_seat_dispatch_entry_hook(this, character, character->get_controller(), unk);
 	}
 }
 

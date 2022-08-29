@@ -22,12 +22,12 @@ namespace jc::pfx_collision::hook
 							if (!net_obj->is_owned())
 								return;
 
-							process_hook.call(col, a1, a2);
+							process_hook(col, a1, a2);
 
 							net_obj->set_pending_velocity(pfx_base->get_velocity());
 						}
 
-		return process_hook.call(col, a1, a2);
+		return process_hook(col, a1, a2);
 	}
 
 	void apply()

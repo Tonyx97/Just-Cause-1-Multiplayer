@@ -60,7 +60,7 @@ namespace jc::alive_object::hook
 			}
 		}
 
-		set_health_hook.call(obj, hp);
+		set_health_hook(obj, hp);
 	}
 
 	void apply()
@@ -86,7 +86,7 @@ void AliveObject::remove_alive_flag(uint16_t v)
 
 void AliveObject::set_hp(float v)
 {
-	jc::alive_object::hook::set_health_hook.call(this, v);
+	jc::alive_object::hook::set_health_hook(this, v);
 }
 
 void AliveObject::set_max_hp(float v)

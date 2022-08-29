@@ -16,7 +16,7 @@
 
 DEFINE_HOOK_THISCALL(get_joystick_value, 0x48C8B0, float, CharacterController* _this, int control)
 {
-	auto res = get_joystick_value_hook.call(_this, control);
+	auto res = get_joystick_value_hook(_this, control);
 
 	switch (control)
 	{
@@ -57,7 +57,7 @@ DEFINE_HOOK_THISCALL(get_joystick_value, 0x48C8B0, float, CharacterController* _
 
 DEFINE_HOOK_THISCALL(is_key_pressed, 0x48C850, bool, CharacterController* _this, int control)
 {
-	auto res = is_key_pressed_hook.call(_this, control);
+	auto res = is_key_pressed_hook(_this, control);
 
 #if DEBUG_KEY_PRESS
 	if (res)
@@ -69,7 +69,7 @@ DEFINE_HOOK_THISCALL(is_key_pressed, 0x48C850, bool, CharacterController* _this,
 
 DEFINE_HOOK_THISCALL(is_key_down, 0x48C800, bool, CharacterController* _this, int control)
 {
-	auto res = is_key_down_hook.call(_this, control);
+	auto res = is_key_down_hook(_this, control);
 
 #if DEBUG_KEY_DOWN
 	if (res)
@@ -248,17 +248,17 @@ bool Keycode::is_key_released(uint32_t key) const
 
 bool Keycode::game_is_key_down(int32_t control) const
 {
-	return is_key_down_hook.call(g_player_global_info->get_local_controller(), control);
+	return is_key_down_hook(g_player_global_info->get_local_controller(), control);
 }
 
 bool Keycode::game_is_key_pressed(int32_t control) const
 {
-	return is_key_pressed_hook.call(g_player_global_info->get_local_controller(), control);
+	return is_key_pressed_hook(g_player_global_info->get_local_controller(), control);
 }
 
 float Keycode::game_get_joystick_value(int32_t control) const
 {
-	return get_joystick_value_hook.call(g_player_global_info->get_local_controller(), control);
+	return get_joystick_value_hook(g_player_global_info->get_local_controller(), control);
 }
 
 std::tuple<float, float> Keycode::get_mouse_wheel_value() const

@@ -52,7 +52,7 @@ namespace jc::character::hook
 		if (test)
 			jc::write(position, test, 0x4 + 0x30);*/
 
-		return update_hook.call(character, delta);
+		return update_hook(character, delta);
 	}
 
 	DEFINE_HOOK_THISCALL(set_body_stance, 0x625750, void, BodyStanceController* stance, uint32_t id)
@@ -87,6 +87,7 @@ namespace jc::character::hook
 			case 44:	// enter vehicle (right)
 			case 45:	// close vehicle door from outside (left)
 			case 46:	// close vehicle door from outside (right)
+			case 47:	// passenger to driver seat
 			case 48:	// inside airplane
 			case 51:
 			case 52:
@@ -94,7 +95,7 @@ namespace jc::character::hook
 			case 56:	// vehicle looking behind
 			case 58:	// lift motorbike from the ground
 			case 60:	// jump out of vehicle
-			case 61:	// enter vehicle roof
+			//case 61:	// enter vehicle roof
 			case 62:	// enter air vehicle roof
 			case 63:	// vehicle roof to driver seat
 			case 66:	// mounted gun
@@ -186,7 +187,7 @@ namespace jc::character::hook
 			}
 		}
 
-		set_body_stance_hook.call(stance, id);
+		set_body_stance_hook(stance, id);
 	}
 
 	DEFINE_HOOK_THISCALL(set_arms_stance, 0x744230, void, ArmsStanceController* stance, uint32_t id)
@@ -209,7 +210,7 @@ namespace jc::character::hook
 			}
 		}
 
-		set_arms_stance_hook.call(stance, id);
+		set_arms_stance_hook(stance, id);
 	}
 
 	DEFINE_HOOK_THISCALL_S(can_be_destroyed, 0x595F10, bool, Character* character)
@@ -258,12 +259,12 @@ namespace jc::character::hook
 				return;*/
 		}
 
-		dispatch_movement_hook.call(character, angle, right, forward, aiming);
+		dispatch_movement_hook(character, angle, right, forward, aiming);
 	}
 
 	DEFINE_HOOK_THISCALL_S(setup_punch, 0x5A4380, Character*, Character* character)
 	{
-		auto res = setup_punch_hook.call(character);
+		auto res = setup_punch_hook(character);
 
 		if (const auto local_char = g_world->get_localplayer_character())
 			if (character == local_char && res == character)
@@ -290,12 +291,12 @@ namespace jc::character::hook
 				localplayer->set_aim_info(is_hip_aim, is_full_aim, aim_target);
 			}
 
-		update_mid_hook.call(character);
+		update_mid_hook(character);
 	}
 
 	DEFINE_HOOK_THISCALL(fire_weapon, 0x59FD20, bool, Character* character, bool a2)
 	{
-		const auto res = fire_weapon_hook.call(character, a2);
+		const auto res = fire_weapon_hook(character, a2);
 
 		if (res)
 			if (const auto localplayer = g_net->get_localplayer())
@@ -371,7 +372,7 @@ namespace jc::character::hook
 					{
 						const auto was_reloading = current_weapon->is_reloading();
 
-						reload_current_weapon_hook.call(character);
+						reload_current_weapon_hook(character);
 
 						const auto is_reloading = current_weapon->is_reloading();
 
@@ -381,7 +382,7 @@ namespace jc::character::hook
 						return;
 					}
 
-		reload_current_weapon_hook.call(character);
+		reload_current_weapon_hook(character);
 	}
 
 	DEFINE_HOOK_THISCALL(force_launch, 0x5A34A0, void, Character* character, vec3* dir, float f1, float f2)
@@ -397,7 +398,7 @@ namespace jc::character::hook
 					return;
 			}
 
-		force_launch_hook.call(character, dir, f1, f2);
+		force_launch_hook(character, dir, f1, f2);
 	}
 
 	DEFINE_HOOK_THISCALL(character_proxy_add_velocity, 0x744B20, void, hkCharacterProxy* proxy, const vec3* velocity, vec4* rotation)
@@ -421,30 +422,7 @@ namespace jc::character::hook
 		}
 		}
 
-		character_proxy_add_velocity_hook.call(proxy, velocity, rotation);
-	}
-
-	DEFINE_HOOK_THISCALL_S(set_stance_exit_vehicle_forced, fn::SET_STANCE_EXIT_VEHICLE_FORCED, void, Character* character)
-	{
-		if (const auto lp = g_net->get_localplayer())
-			if (const auto victim = g_net->get_player_by_character(character))
-				if (const auto vehicle_net = victim->get_vehicle())
-					if (const auto player_char = victim->get_character())
-						if (const auto seat = player_char->get_vehicle_seat())
-						{
-							switch (RET_ADDRESS)
-							{
-							case 0x7867DA:
-							{
-								if (seat->is_occupied())
-									g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_PassengerToDriverKick, victim);
-
-								break;
-							}
-							}
-						}
-
-		set_stance_exit_vehicle_forced_hook.call(character);
+		character_proxy_add_velocity_hook(proxy, velocity, rotation);
 	}
 
 	void apply()
@@ -460,12 +438,10 @@ namespace jc::character::hook
 		reload_current_weapon_hook.hook();
 		force_launch_hook.hook();
 		character_proxy_add_velocity_hook.hook();
-		set_stance_exit_vehicle_forced_hook.hook();
 	}
 
 	void undo()
 	{
-		set_stance_exit_vehicle_forced_hook.unhook();
 		character_proxy_add_velocity_hook.unhook();
 		force_launch_hook.unhook();
 		reload_current_weapon_hook.unhook();
@@ -535,7 +511,7 @@ void Character::set_added_velocity(const vec3& v)
 	{
 		vec4 rotation = get_transform()[3];
 
-		jc::character::hook::character_proxy_add_velocity_hook.call(physical, &v, &rotation);
+		jc::character::hook::character_proxy_add_velocity_hook(physical, &v, &rotation);
 	}
 }
 
@@ -736,29 +712,29 @@ void Character::set_roll_clamp_enabled(bool v)
 
 void Character::dispatch_movement(float angle, float right, float forward, bool aiming)
 {
-	jc::character::hook::dispatch_movement_hook.call(this, angle, right, forward, aiming);
+	jc::character::hook::dispatch_movement_hook(this, angle, right, forward, aiming);
 }
 
 void Character::set_body_stance(uint32_t id)
 {
-	jc::character::hook::set_body_stance_hook.call(get_body_stance(), id);
+	jc::character::hook::set_body_stance_hook(get_body_stance(), id);
 }
 
 void Character::set_arms_stance(uint32_t id)
 {
-	jc::character::hook::set_arms_stance_hook.call(get_arms_stance(), id);
+	jc::character::hook::set_arms_stance_hook(get_arms_stance(), id);
 }
 
 void Character::setup_punch()
 {
-	jc::character::hook::setup_punch_hook.call(this);
+	jc::character::hook::setup_punch_hook(this);
 }
 
 void Character::force_launch(const vec3& vel, const vec3& dir, float f1, float f2)
 {
 	set_added_velocity(vel);
 
-	jc::character::hook::force_launch_hook.call(this, BITCAST(vec3*, &dir), f1, f2);
+	jc::character::hook::force_launch_hook(this, BITCAST(vec3*, &dir), f1, f2);
 }
 
 void Character::clear_weapon_belt()
@@ -896,7 +872,7 @@ void Character::set_stance_enter_vehicle_no_anim()
 
 void Character::set_stance_exit_vehicle_forced()
 {
-	jc::character::hook::set_stance_exit_vehicle_forced_hook.call(this);
+	jc::this_call(jc::character::fn::SET_STANCE_EXIT_VEHICLE_FORCED, this);
 }
 
 bool Character::has_flag(uint32_t mask) const

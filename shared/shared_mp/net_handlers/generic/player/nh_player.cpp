@@ -427,20 +427,25 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 	{
 		const auto victim = p.get_net_object<Player>();
 
-		if (!victim)
-			return enet::PacketRes_BadArgs;
+		log(GREEN, "exiting vehicle forced {:x}... ", victim ? victim->get_nid() : INVALID_NID);
 
-		log(GREEN, "exiting vehicle forced {:x}... ", victim->get_nid());
-
-		victim->set_vehicle(nullptr);
+		if (victim)
+			victim->set_vehicle(nullptr);
 
 #ifdef JC_CLIENT
-		const auto victim_char = victim->get_character();
 		const auto passenger_seat = vehicle->get_passenger_seat();
 
+		// make the passenger move to the driver seat
+
 		passenger_seat->add_flag(VehicleSeatFlag_MovePassengerToDriver);
-		victim_char->set_stance_exit_vehicle_forced();
-		vehicle->open_door(VehicleDoor_Left);
+
+		// if there is a driver then kick him out
+
+		if (const auto victim_char = victim ? victim->get_character() : nullptr)
+		{
+			victim_char->set_stance_exit_vehicle_forced();
+			vehicle->open_door(VehicleDoor_Left);
+		}
 #else
 		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, seat_type, command, victim);
 #endif

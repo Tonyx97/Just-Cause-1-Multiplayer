@@ -104,7 +104,7 @@ namespace jc::patches
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
 {
-	const auto res = play_ambience_2d_sounds_hook.call(a1, a2);
+	const auto res = play_ambience_2d_sounds_hook(a1, a2);
 
 	if (a2)
 		*a2 = "";
@@ -138,7 +138,7 @@ DEFINE_HOOK_CCALL(fn_ret_1, 0x62A510, int)
 		return false;
 	}
 
-	return fn_ret_1_hook.call();
+	return fn_ret_1_hook();
 }
 
 void __fastcall hk_head_rotation_patch(Skeleton* skeleton, ptr _)

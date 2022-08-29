@@ -252,7 +252,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		ay = true;
 	}
 
-	return tick_hook.call(_this);
+	return tick_hook(_this);
 }
 
 // patches the loading screen and the GuiLoadSave objects updating when
@@ -269,7 +269,7 @@ DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
 	log(GREEN, "continuing...");
 #endif
 
-	auto ok = init_window_context_hook.call(ctx);
+	auto ok = init_window_context_hook(ctx);
 
 	// apply initial patches before the game window opens
 
@@ -301,7 +301,7 @@ DEFINE_HOOK_STDCALL(load_save, 0x66D7F0, void*, ref<void*>* r)
 {
 	static void* main_load_save = nullptr;
 
-	auto res = load_save_hook.call(r);
+	auto res = load_save_hook(r);
 
 	if (!main_load_save && res)
 	{

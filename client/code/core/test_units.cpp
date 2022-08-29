@@ -53,12 +53,12 @@ DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* n
 
 	//while (!GetAsyncKeyState(VK_F3));
 
-	return resource_request_hook.call(a1, name, type, data, size);
+	return resource_request_hook(a1, name, type, data, size);
 }
 
 DEFINE_HOOK_THISCALL(_test1, 0x93DE90, void, int _this, int a2)
 {
-	_test1_hook.call(_this, a2);
+	_test1_hook(_this, a2);
 
 	log(RED, "{}", jc::read<float>(_this, 0xC));
 
@@ -71,7 +71,7 @@ DEFINE_HOOK_THISCALL(_test1, 0x93DE90, void, int _this, int a2)
 
 DEFINE_HOOK_THISCALL_S(_test2, 0x597B80, bool, int _this)
 {
-	auto res = _test2_hook.call(_this);
+	auto res = _test2_hook(_this);
 
 	/*if (res && _this != ptr(g_world->get_localplayer_character()))
 		log(RED, "2 {:x} {:x}", RET_ADDRESS, _this);*/
@@ -81,7 +81,7 @@ DEFINE_HOOK_THISCALL_S(_test2, 0x597B80, bool, int _this)
 
 DEFINE_HOOK_THISCALL_S(_test3, 0x596420, bool, int _this)
 {
-	auto res = _test3_hook.call(_this);
+	auto res = _test3_hook(_this);
 
 	/*if (res && _this != ptr(g_world->get_localplayer_character()))
 		log(RED, "3 {:x} {:x}", RET_ADDRESS, _this);*/
@@ -91,7 +91,7 @@ DEFINE_HOOK_THISCALL_S(_test3, 0x596420, bool, int _this)
 
 DEFINE_HOOK_THISCALL_S(_test4, 0x59A560, bool, int _this)
 {
-	auto res = _test4_hook.call(_this);
+	auto res = _test4_hook(_this);
 
 	if (res && _this != ptr(g_world->get_localplayer_character()))
 		log(RED, "4 {:x} {:x}", RET_ADDRESS, _this);
