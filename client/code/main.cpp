@@ -227,13 +227,9 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		const auto game_hwnd = g_game_ctx->get_hwnd();
 
 		if (game_focused && game_hwnd != GetActiveWindow())
-		{
 			g_key->block_input(!(game_focused = false));
-		}
 		else if (!game_focused && game_hwnd == GetActiveWindow())
-		{
 			g_key->block_input(!(game_focused = true));
-		}
 
 		g_game_control->on_tick();
 
