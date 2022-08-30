@@ -408,14 +408,9 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 		player->set_vehicle(nullptr);
 
 #ifdef JC_CLIENT
-		if (jump_out)
-			seat->jump_out_exit();
-		else
-		{
-			if (seat->is_instant_exit())
-				seat->instant_exit();
-			else seat->exit();
-		}
+		if (seat->is_instant_exit())
+			seat->instant_exit();
+		else seat->exit(jump_out);
 #else
 		// if the seat type is the driver then we want to reset the sync type
 		// and the streamer

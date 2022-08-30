@@ -403,6 +403,16 @@ void Vehicle::detach_door(uint8_t i)
 	}
 }
 
+void Vehicle::unk0(bool unk)
+{
+	jc::v_call(this, jc::vehicle::vt::UNK0, unk);
+}
+
+void Vehicle::unk1(bool unk)
+{
+	jc::v_call(this, jc::vehicle::vt::UNK1, unk);
+}
+
 bool Vehicle::open_door(uint8_t i)
 {
 	switch (i)
@@ -417,6 +427,16 @@ bool Vehicle::open_door(uint8_t i)
 bool Vehicle::get_engine_state() const
 {
 	return jc::read<bool>(this, jc::vehicle::ENGINE_STATE);
+}
+
+bool Vehicle::is_left_door_valid() const
+{
+	return jc::this_call<bool>(jc::vehicle::fn::IS_LEFT_DOOR_VALID, this);
+}
+
+bool Vehicle::is_left_door_closing() const
+{
+	return jc::this_call<bool>(jc::vehicle::fn::IS_LEFT_DOOR_CLOSING, this);
 }
 
 ptr Vehicle::get_sound_component() const

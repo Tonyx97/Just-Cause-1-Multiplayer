@@ -106,7 +106,7 @@ namespace jc::vehicle_seat::hook
 		return instant_exit_hook(vehicle, character, is_local);
 	}
 
-	DEFINE_INLINE_HOOK_IMPL(driver_seat_exit, 0x76C3C9)
+	DEFINE_INLINE_HOOK_IMPL(driver_seat_exit, 0x76C2E5)
 	{
 		const auto driver_seat = ihp->read_ebp<VehicleSeat*>(0x120);
 
@@ -115,9 +115,11 @@ namespace jc::vehicle_seat::hook
 				if (const auto vehicle = driver_seat->get_vehicle())
 					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
 					{
+						const auto jump_out = ihp->read_ebp<bool>(0xE);
+
 						localplayer->set_vehicle(nullptr);
 
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, driver_seat->get_type(), VehicleEnterExit_Exit, false);
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, driver_seat->get_type(), VehicleEnterExit_Exit, jump_out);
 					}
 	}
 
@@ -133,21 +135,6 @@ namespace jc::vehicle_seat::hook
 						localplayer->set_vehicle(nullptr);
 
 						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, passenger_seat->get_type(), VehicleEnterExit_Exit, false);
-					}
-	}
-
-	DEFINE_INLINE_HOOK_IMPL(driver_seat_forced_exit, 0x76C2F1)
-	{
-		const auto driver_seat = ihp->read_ebp<VehicleSeat*>(0x120);
-
-		if (const auto localplayer = g_net->get_localplayer())
-			if (const auto local_char = localplayer->get_character(); driver_seat->get_character() == local_char)
-				if (const auto vehicle = driver_seat->get_vehicle())
-					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-					{
-						localplayer->set_vehicle(nullptr);
-
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, driver_seat->get_type(), VehicleEnterExit_Exit, true);
 					}
 	}
 
@@ -174,7 +161,6 @@ namespace jc::vehicle_seat::hook
 		instant_exit_hook.hook(apply);
 		driver_seat_exit_hook.hook(apply);
 		passenger_seat_exit_hook.hook(apply);
-		driver_seat_forced_exit_hook.hook(apply);
 	}
 }
 
@@ -201,77 +187,75 @@ void VehicleSeat::open_door(Character* character)
 	dispatch_entry(character, true);
 }
 
-void VehicleSeat::exit()
+void VehicleSeat::exit(bool jump_out)
 {
-	const auto character = get_character();
+	if (const auto character = get_character())
+		if (const auto vehicle = get_vehicle())
+		{
+			switch (get_type())
+			{
+			case VehicleSeat_Driver:
+			{
+				// jump out bool is used only in the driver seat.
+				// the passenger seat handles it automatically
+				// depending on the vehicle's velocity
 
-	if (!character)
-		return;
+				if (jump_out)
+					jump_out_exit();
+				else
+				{
+					vehicle->unk0(true);
 
-	const auto vehicle = get_vehicle();
+					if (vehicle->open_door(VehicleDoor_Left))
+						character->get_body_stance()->set_stance(38);
 
-	if (!vehicle)
-		return;
+					add_flag2(1 << 6);
+					remove_flag2(1 << 4);
+					set_timer(1.f);
+				}
 
-	switch (get_type())
-	{
-	case VehicleSeat_Driver:
-	{
-		jc::v_call(vehicle, 57, true);
+				break;
+			}
+			case VehicleSeat_Passenger:
+			{
+				// exit in the passenger means either normal exit or jump out of the vehicle,
+				// it's all about the vehicle velocity so we don't need a different hook
+				
+				if (vehicle->open_door(VehicleDoor_Right))
+					character->get_body_stance()->set_stance(42);
 
-		if (vehicle->open_door(VehicleDoor_Left))
-			character->get_body_stance()->set_stance(38);
+				if (has_flag(1 << 0))
+					add_flag(1 << 6);
 
-		add_flag2(1 << 6);
-		remove_flag2(1 << 4);
-		set_timer(1.f);
+				add_flag(1 << 5);
+				remove_flag(1 << 0);
 
-		break;
-	}
-	case VehicleSeat_Passenger:
-	{
-		if (vehicle->open_door(VehicleDoor_Right))
-			character->get_body_stance()->set_stance(42);
+				jc::write(jc::game::encode_float(1.f), this, jc::vehicle_seat::UNK_FLOAT);
 
-		if (has_flag(1 << 0))
-			add_flag(1 << 6);
-
-		remove_flag(1 << 0);
-		add_flag(1 << 5);
-
-		jc::write(jc::game::encode_float(1.f), this, jc::vehicle_seat::UNK_FLOAT);
-
-		break;
-	}
-	}
+				break;
+			}
+			}
+		}
 }
 
 void VehicleSeat::instant_exit()
 {
-	if (!get_character())
-		return;
-
-	jc::vehicle_seat::hook::instant_exit_hook(get_vehicle(), get_character(), false);
+	if (const auto character = get_character())
+		if (const auto vehicle = get_vehicle())
+			jc::vehicle_seat::hook::instant_exit_hook(vehicle, character, false);
 }
 
 void VehicleSeat::jump_out_exit()
 {
-	const auto character = get_character();
+	if (const auto character = get_character())
+		if (const auto vehicle = get_vehicle())
+		{
+			vehicle->unk1(true);
+			vehicle->detach_door(VehicleDoor_Left);
 
-	if (!character)
-		return;
-
-	const auto vehicle = get_vehicle();
-
-	if (!vehicle)
-		return;
-
-	jc::v_call(vehicle, 58, true);
-
-	vehicle->detach_door(VehicleDoor_Left);
-	add_flag2(1 << 6);
-	add_flag2(1 << 4);
-	set_timer(1.f);
+			add_flag2((1 << 6) | (1 << 4));
+			set_timer(1.f);
+		}
 }
 
 void VehicleSeat::add_flag(uint16_t flag)
