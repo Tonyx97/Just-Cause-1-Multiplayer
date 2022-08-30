@@ -71,8 +71,7 @@ namespace jc::character
 
 	namespace hook
 	{
-		void apply();
-		void undo();
+		void enable(bool apply);
 	}
 }
 

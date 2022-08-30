@@ -95,7 +95,7 @@ namespace jc::character::hook
 			case 54:	// vehicle seating
 			case 56:	// vehicle looking behind
 			case 58:	// lift motorbike from the ground
-			case 60:	// jump out of vehicle
+			case 60:	// jump out of vehicle (left)
 			case 61:	// enter vehicle roof
 			case 62:	// enter air vehicle roof
 			case 63:	// vehicle roof to driver seat
@@ -106,6 +106,7 @@ namespace jc::character::hook
 			case 78:
 			case 79:
 			case 81:
+			case 82:	// jump out of vehicle (right)
 			case 88: return true;
 			}
 
@@ -426,34 +427,19 @@ namespace jc::character::hook
 		character_proxy_add_velocity_hook(proxy, velocity, rotation);
 	}
 
-	void apply()
+	void enable(bool apply)
 	{
-		update_hook.hook();
-		set_body_stance_hook.hook();
-		set_arms_stance_hook.hook();
-		can_be_destroyed_hook.hook();
-		dispatch_movement_hook.hook();
-		setup_punch_hook.hook();
-		update_mid_hook.hook();
-		fire_weapon_hook.hook();
-		reload_current_weapon_hook.hook();
-		force_launch_hook.hook();
-		character_proxy_add_velocity_hook.hook();
-	}
-
-	void undo()
-	{
-		character_proxy_add_velocity_hook.unhook();
-		force_launch_hook.unhook();
-		reload_current_weapon_hook.unhook();
-		fire_weapon_hook.unhook();
-		update_mid_hook.unhook();
-		setup_punch_hook.unhook();
-		dispatch_movement_hook.unhook();
-		can_be_destroyed_hook.unhook();
-		set_arms_stance_hook.unhook();
-		set_body_stance_hook.unhook();
-		update_hook.unhook();
+		update_hook.hook(apply);
+		set_body_stance_hook.hook(apply);
+		set_arms_stance_hook.hook(apply);
+		can_be_destroyed_hook.hook(apply);
+		dispatch_movement_hook.hook(apply);
+		setup_punch_hook.hook(apply);
+		update_mid_hook.hook(apply);
+		fire_weapon_hook.hook(apply);
+		reload_current_weapon_hook.hook(apply);
+		force_launch_hook.hook(apply);
+		character_proxy_add_velocity_hook.hook(apply);
 	}
 }
 

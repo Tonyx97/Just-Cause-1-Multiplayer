@@ -215,26 +215,15 @@ namespace jc::vehicle::hook
 		return ok;
 	}
 
-	void apply()
+	void enable(bool apply)
 	{
-		car_get_input_hook.hook();
-		motorbike_get_input_hook.hook();
-		airplane_get_input_hook.hook();
-		helicopter_get_input_hook.hook();
-		//boat_get_input_hook.hook();
-		land_vehicle_honk_hook.hook();
-		vehicle_fire_hook.hook();
-	}
-
-	void undo()
-	{
-		vehicle_fire_hook.unhook();
-		land_vehicle_honk_hook.unhook();
-		//boat_get_input_hook.unhook();
-		helicopter_get_input_hook.unhook();
-		airplane_get_input_hook.unhook();
-		motorbike_get_input_hook.unhook();
-		car_get_input_hook.unhook();
+		car_get_input_hook.hook(apply);
+		motorbike_get_input_hook.hook(apply);
+		airplane_get_input_hook.hook(apply);
+		helicopter_get_input_hook.hook(apply);
+		//boat_get_input_hook.hook(apply);
+		land_vehicle_honk_hook.hook(apply);
+		vehicle_fire_hook.hook(apply);
 	}
 }
 
@@ -405,15 +394,6 @@ void Vehicle::for_each_current_weapon(const vehicle_weapon_fn_t& fn)
 	});
 }
 
-void Vehicle::open_door(uint8_t i)
-{
-	switch (i)
-	{
-	case VehicleDoor_Left:	jc::this_call(jc::vehicle::fn::OPEN_LEFT_DOOR, this, 4.f, 0.f); break;
-	case VehicleDoor_Right: jc::this_call(jc::vehicle::fn::OPEN_RIGHT_DOOR, this, 4.f, 0.f); break;
-	}
-}
-
 void Vehicle::detach_door(uint8_t i)
 {
 	switch (i)
@@ -421,6 +401,17 @@ void Vehicle::detach_door(uint8_t i)
 	case VehicleDoor_Left:	jc::this_call(jc::vehicle::fn::DETACH_LEFT_DOOR, this); break;
 	//case VehicleDoor_Right: jc::this_call(jc::vehicle::fn::OPEN_RIGHT_DOOR, this); break;
 	}
+}
+
+bool Vehicle::open_door(uint8_t i)
+{
+	switch (i)
+	{
+	case VehicleDoor_Left:	return jc::this_call<bool>(jc::vehicle::fn::OPEN_LEFT_DOOR, this, 0.9f, 0.f);
+	case VehicleDoor_Right: return jc::this_call<bool>(jc::vehicle::fn::OPEN_RIGHT_DOOR, this, 0.9f, 0.f);
+	}
+
+	return false;
 }
 
 bool Vehicle::get_engine_state() const

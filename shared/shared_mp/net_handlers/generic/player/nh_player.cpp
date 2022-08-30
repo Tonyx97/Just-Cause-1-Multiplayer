@@ -347,14 +347,18 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 	if (!vehicle_net)
 		return enet::PacketRes_BadArgs;
 
-#ifdef JC_CLIENT
-	const auto vehicle = vehicle_net->get_object();
-	const auto player_char = player->get_character();
-#endif
-
 	const auto seat_type = p.get_u8();
 
 	log(GREEN, "vehicle seat type: {}", seat_type);
+
+#ifdef JC_CLIENT
+	const auto vehicle = vehicle_net->get_object();
+	const auto player_char = player->get_character();
+	const auto seat = vehicle->get_seat_by_type(seat_type);
+
+	if (!vehicle || !player_char || !seat)
+		return enet::PacketRes_BadArgs;
+#endif
 
 	switch (const auto command = p.get_u8())
 	{
@@ -363,7 +367,6 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 		log(GREEN, "requesting vehicle entry...");
 
 #ifdef JC_CLIENT
-		const auto seat = vehicle->get_seat_by_type(seat_type);
 		const auto interactable = seat->get_interactable();
 
 		interactable->interact_with(player_char);
@@ -398,16 +401,21 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 	}
 	case VehicleEnterExit_Exit:
 	{
-		const bool instant = p.get_bool();
+		const bool jump_out = p.get_bool();
 
-		log(GREEN, "exiting vehicle... {}", instant);
+		log(GREEN, "exiting vehicle... (jump out: {})", jump_out);
 
 		player->set_vehicle(nullptr);
 
 #ifdef JC_CLIENT
-		const auto seat = vehicle->get_driver_seat();
-
-		seat->kick_current(instant);
+		if (jump_out)
+			seat->jump_out_exit();
+		else
+		{
+			if (seat->is_instant_exit())
+				seat->instant_exit();
+			else seat->exit();
+		}
 #else
 		// if the seat type is the driver then we want to reset the sync type
 		// and the streamer
@@ -418,7 +426,7 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 			vehicle_net->set_streamer(nullptr);
 		}
 
-		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, seat_type, command, instant);
+		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, seat_type, command, jump_out);
 #endif
 
 		break;

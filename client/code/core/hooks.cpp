@@ -60,24 +60,13 @@ void jc::hooks::unhook_queued()
 	log(GREEN, "All hooks were destroyed");
 }
 
-void jc::hooks::hook_game_fns()
+void jc::hooks::hook_game_fns(bool enable)
 {
-	character::hook::apply();
-	alive_object::hook::apply();
-	item_pickup::hook::apply();
-	pfx_collision::hook::apply();
-	interactable::hook::apply();
-	vehicle_seat::hook::apply();
-	vehicle::hook::apply();
-}
-
-void jc::hooks::unhook_game_fns()
-{
-	vehicle::hook::undo();
-	vehicle_seat::hook::undo();
-	interactable::hook::undo();
-	pfx_collision::hook::undo();
-	item_pickup::hook::undo();
-	alive_object::hook::undo();
-	character::hook::undo();
+	character::hook::enable(enable);
+	alive_object::hook::enable(enable);
+	item_pickup::hook::enable(enable);
+	pfx_collision::hook::enable(enable);
+	interactable::hook::enable(enable);
+	vehicle_seat::hook::enable(enable);
+	vehicle::hook::enable(enable);
 }

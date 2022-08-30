@@ -119,7 +119,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 		// hook game fns
 
-		jc::hooks::hook_game_fns();
+		jc::hooks::hook_game_fns(true);
 
 		// initialize net
 
@@ -160,7 +160,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 			g_game_control->unhook_create_object();
 			g_key->unhook_key_input();
 
-			jc::hooks::unhook_game_fns();
+			jc::hooks::hook_game_fns(false);
 
 			// uninitialize MH
 
