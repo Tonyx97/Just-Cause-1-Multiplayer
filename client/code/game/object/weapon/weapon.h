@@ -99,7 +99,7 @@ public:
 	void set_enabled(bool v);
 
 	bool is_reloading() const;
-	bool is_firing() const;
+	bool can_fire() const;
 	bool is_trigger_pulled() const;
 
 	uint8_t get_id() const;

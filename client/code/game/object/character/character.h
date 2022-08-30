@@ -58,6 +58,8 @@ namespace jc::character
 		static constexpr uint32_t SET_STANCE_VEHICLE_ROOF_TO_DRIVER_SEAT	= 0x59F550;
 		static constexpr uint32_t SET_STANCE_TO_VEHICLE_ROOF				= 0x59F590;
 		static constexpr uint32_t SET_STANCE_EXIT_VEHICLE_FORCED			= 0x59F450;
+		static constexpr uint32_t SET_VEHICLE_SEAT							= 0x74DDC0;
+		
 	}
 
 	namespace g

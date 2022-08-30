@@ -27,11 +27,13 @@ namespace jc::vehicle
 		static constexpr uint32_t DETACH_LEFT_DOOR		= 0x62BE80;
 		static constexpr uint32_t IS_LEFT_DOOR_VALID	= 0x62CDF0;
 		static constexpr uint32_t IS_LEFT_DOOR_CLOSING	= 0x62CE30;
+		static constexpr uint32_t SET_DRIVER			= 0x62B570;
 	}
 
 	namespace vt
 	{
 		static constexpr uint32_t GET_TYPE				= 37;
+		static constexpr uint32_t SET_DRIVER			= 44;
 		static constexpr uint32_t GET_VELOCITY			= 48;
 		static constexpr uint32_t SET_VELOCITY			= 50;
 		static constexpr uint32_t GET_ROOF_SEAT			= 52;
