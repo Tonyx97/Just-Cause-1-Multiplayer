@@ -12,7 +12,8 @@ namespace jc::interactable
 
 	namespace hook
 	{
-		void enable(bool apply);
+		void apply();
+		void undo();
 	}
 }
 

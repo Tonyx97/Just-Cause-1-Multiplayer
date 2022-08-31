@@ -43,7 +43,8 @@ namespace jc::vehicle
 
 	namespace hook
 	{
-		void enable(bool apply);
+		void apply();
+		void undo();
 	}
 
 	bool getting_helicopter_input();
@@ -129,9 +130,9 @@ public:
 	void set_current_weapon_type(uint32_t v);
 	void for_each_weapon(const vehicle_weapon_fn_t& fn);
 	void for_each_current_weapon(const vehicle_weapon_fn_t& fn);
+	void open_door(uint8_t i);
 	void detach_door(uint8_t i);
 
-	bool open_door(uint8_t i);
 	bool get_engine_state() const;
 
 	ptr get_sound_component() const;

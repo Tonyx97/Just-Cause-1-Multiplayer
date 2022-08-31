@@ -21,9 +21,14 @@ namespace jc::interactable::hook
 		return interact_with_hook(interactable, character);
 	}
 
-	void enable(bool apply)
+	void apply()
 	{
-		interact_with_hook.hook(apply);
+		interact_with_hook.hook();
+	}
+
+	void undo()
+	{
+		interact_with_hook.unhook();
 	}
 }
 

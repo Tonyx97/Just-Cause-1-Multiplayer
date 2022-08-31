@@ -14,7 +14,8 @@ namespace jc::item_pickup
 
 	namespace hook
 	{
-		void enable(bool apply);
+		void apply();
+		void undo();
 	}
 }
 

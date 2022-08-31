@@ -7,7 +7,8 @@ namespace jc::pfx_collision
 
 	namespace hook
 	{
-		void enable(bool apply);
+		void apply();
+		void undo();
 	}
 }
 

@@ -18,7 +18,8 @@ namespace jc::alive_object
 
 	namespace hook
 	{
-		void enable(bool apply);
+		void apply();
+		void undo();
 	}
 }
 

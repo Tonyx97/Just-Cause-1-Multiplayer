@@ -26,13 +26,6 @@ struct DetourHook
 
 	DetourHook(ptr address, void* hk) : target(BITCAST(T, address)), hk(hk) {}
 
-	inline void hook(bool enable)
-	{
-		if (enable)
-			hook();
-		else unhook();
-	}
-
 	inline void hook()
 	{
 		if (created)
@@ -103,13 +96,6 @@ public:
 
 	~InlineHook()
 	{
-	}
-
-	void hook(bool v)
-	{
-		if (v)
-			hook();
-		else unhook();
 	}
 
 	void hook()
@@ -235,5 +221,6 @@ namespace jc::hooks
 	void destroy();
 	void hook_queued();
 	void unhook_queued();
-	void hook_game_fns(bool enable);
+	void hook_game_fns();
+	void unhook_game_fns();
 }

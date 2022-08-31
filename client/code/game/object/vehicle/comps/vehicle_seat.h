@@ -6,11 +6,8 @@ namespace jc::vehicle_seat
 {
 	static constexpr uint32_t CHARACTER			= 0x48;			// Character*
 	static constexpr uint32_t VEHICLE			= 0x4C;			// Vehicle*
-	static constexpr uint32_t UNLOCKED			= 0x150;		// bool
-	static constexpr uint32_t INSTANT_LEAVE		= 0x151;		// bool
 	static constexpr uint32_t INTERACTABLE		= 0x160;		// Interactable*
 	static constexpr uint32_t FLAGS				= 0x194;		// uint16_t
-	static constexpr uint32_t UNK_FLOAT			= 0x196;		// uint16_t
 	static constexpr uint32_t FLAGS2			= 0x19C;		// uint32_t
 	static constexpr uint32_t TIMER				= 0x1A4;		// float
 
@@ -28,7 +25,8 @@ namespace jc::vehicle_seat
 
 	namespace hook
 	{
-		void enable(bool apply);
+		void apply();
+		void undo();
 	}
 }
 
@@ -42,9 +40,7 @@ public:
 
 	void warp_character(Character* character, bool warp = false);
 	void open_door(Character* character);
-	void exit();
-	void instant_exit();
-	void jump_out_exit();
+	void kick_current(bool instant);
 	void add_flag(uint16_t flag);
 	void add_flag2(uint32_t flag);
 	void remove_flag(uint16_t flag);
@@ -55,10 +51,6 @@ public:
 	void set_timer(float v);
 
 	bool is_occupied() const;
-	bool is_locked() const;
-	bool is_instant_exit() const;
-	bool has_flag(uint16_t flag) const;
-	bool has_flag2(uint32_t flag) const;
 
 	uint8_t get_type() const;
 
