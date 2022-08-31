@@ -479,7 +479,7 @@ namespace jc::character::hook
 		reload_current_weapon_hook.hook(apply);
 		force_launch_hook.hook(apply);
 		character_proxy_add_velocity_hook.hook(apply);
-		//set_vehicle_seat_hook.hook(apply);
+		set_vehicle_seat_hook.hook(apply);
 	}
 }
 
