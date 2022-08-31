@@ -42,7 +42,7 @@ public:
 
 	void warp_character(Character* character, bool warp = false);
 	void open_door(Character* character);
-	void exit(bool jump_out);
+	void exit();
 	void instant_exit();
 	void jump_out_exit();
 	void add_flag(uint16_t flag);
