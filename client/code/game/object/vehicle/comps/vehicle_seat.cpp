@@ -114,18 +114,8 @@ namespace jc::vehicle_seat::hook
 					const auto driver_player = g_net->get_player_by_character(driver_char); // could be null if there is no driver
 
 					if (passenger_seat->is_occupied())
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, passenger_seat->get_type(), VehicleEnterExit_PassengerToDriver, driver_player);
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, passenger_seat->get_type(), VehicleEnterExit_PassengerToDriverKick, driver_player);
 				}
-	}
-
-	DEFINE_INLINE_HOOK_IMPL(driver_to_roof_seat, 0x76BECD)
-	{
-		const auto driver_seat = ihp->read_ebp<VehicleSeat*>(0x80);
-
-		if (const auto lp = g_net->get_localplayer())
-			if (const auto driver_char = driver_seat->get_character(); driver_char == lp->get_character())
-				if (const auto vehicle_net = lp->get_vehicle())
-					g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, driver_seat->get_type(), VehicleEnterExit_DriverToRoof);
 	}
 
 	void apply()
@@ -137,10 +127,9 @@ namespace jc::vehicle_seat::hook
 		special_seat_dispatch_entry_hook.hook();
 		roof_seat_dispatch_entry_hook.hook();
 
-		// hooks to sync and handle movements from seat to seat
+		// passenger seat hook to move from passenger to driver seat
 
 		passenger_to_driver_seat_hook.hook();
-		driver_to_roof_seat_hook.hook();
 
 		// generic
 
@@ -151,15 +140,10 @@ namespace jc::vehicle_seat::hook
 
 	void undo()
 	{
-		// generic
-
 		instant_leave_hook.unhook();
 		leave_hook.unhook();
 		warp_character_hook.unhook();
 
-		// hooks to sync and handle movements from seat to seat
-
-		driver_to_roof_seat_hook.unhook();
 		passenger_to_driver_seat_hook.unhook();
 
 		// specific seats dispatch entry hooks
@@ -215,29 +199,14 @@ void VehicleSeat::add_flag(uint16_t flag)
 	set_flags(get_flags() | flag);
 }
 
-void VehicleSeat::add_flag2(uint32_t flag)
-{
-	set_flags2(get_flags2() | flag);
-}
-
 void VehicleSeat::remove_flag(uint16_t flag)
 {
 	set_flags(get_flags() & ~flag);
 }
 
-void VehicleSeat::remove_flag2(uint32_t flag)
-{
-	set_flags2(get_flags2() & ~flag);
-}
-
 void VehicleSeat::set_flags(uint16_t flags)
 {
 	jc::write(flags, this, jc::vehicle_seat::FLAGS);
-}
-
-void VehicleSeat::set_flags2(uint32_t flags)
-{
-	jc::write(flags, this, jc::vehicle_seat::FLAGS2);
 }
 
 void VehicleSeat::dispatch_entry(Character* character, bool unk)
@@ -253,11 +222,6 @@ void VehicleSeat::dispatch_entry(Character* character, bool unk)
 	}
 }
 
-void VehicleSeat::set_timer(float v)
-{
-	jc::write(v, this, jc::vehicle_seat::TIMER);
-}
-
 bool VehicleSeat::is_occupied() const
 {
 	return jc::v_call<bool>(this, jc::vehicle_seat::vt::IS_OCCUPIED);
@@ -271,16 +235,6 @@ uint8_t VehicleSeat::get_type() const
 uint16_t VehicleSeat::get_flags() const
 {
 	return jc::read<uint16_t>(this, jc::vehicle_seat::FLAGS);
-}
-
-uint32_t VehicleSeat::get_flags2() const
-{
-	return jc::read<uint32_t>(this, jc::vehicle_seat::FLAGS2);
-}
-
-float VehicleSeat::get_timer() const
-{
-	return jc::read<float>(this, jc::vehicle_seat::TIMER);
 }
 
 Vehicle* VehicleSeat::get_vehicle() const

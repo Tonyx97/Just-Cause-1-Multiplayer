@@ -414,15 +414,6 @@ void Vehicle::open_door(uint8_t i)
 	}
 }
 
-void Vehicle::detach_door(uint8_t i)
-{
-	switch (i)
-	{
-	case VehicleDoor_Left:	jc::this_call(jc::vehicle::fn::DETACH_LEFT_DOOR, this); break;
-	//case VehicleDoor_Right: jc::this_call(jc::vehicle::fn::OPEN_RIGHT_DOOR, this); break;
-	}
-}
-
 bool Vehicle::get_engine_state() const
 {
 	return jc::read<bool>(this, jc::vehicle::ENGINE_STATE);

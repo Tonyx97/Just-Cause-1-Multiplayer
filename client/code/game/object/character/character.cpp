@@ -78,12 +78,11 @@ namespace jc::character::hook
 			case 17:
 			case 19:
 			case 24:
-			case 38:	// exit vehicle (left)
+			case 38:	// exit vehicle
 			case 39:	// open vehicle door (left)
 			case 37:	// close vehicle door from inside (left)
 			case 40:	// close vehicle door from inside (right)
 			case 41:	// open vehicle door (right)
-			case 42:	// exit vehicle (right)
 			case 43:	// enter vehicle (left)
 			case 44:	// enter vehicle (right)
 			case 45:	// close vehicle door from outside (left)
@@ -96,7 +95,7 @@ namespace jc::character::hook
 			case 56:	// vehicle looking behind
 			case 58:	// lift motorbike from the ground
 			case 60:	// jump out of vehicle
-			case 61:	// enter vehicle roof
+			//case 61:	// enter vehicle roof
 			case 62:	// enter air vehicle roof
 			case 63:	// vehicle roof to driver seat
 			case 66:	// mounted gun

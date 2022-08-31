@@ -9,8 +9,7 @@ enum VehicleEnterExitCommand : uint8_t
 	VehicleEnterExit_RequestEnter,
 	VehicleEnterExit_Enter,
 	VehicleEnterExit_Exit,
-	VehicleEnterExit_PassengerToDriver,
-	VehicleEnterExit_DriverToRoof,
+	VehicleEnterExit_PassengerToDriverKick,
 };
 
 class Weapon;

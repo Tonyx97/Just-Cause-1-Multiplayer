@@ -11,6 +11,5 @@ enum VehicleSeatType : uint8_t
 
 enum VehicleSeatFlags : uint16_t
 {
-	VehicleSeatFlag_PassengerToDriverSeat		= (1 << 2),
-	VehicleSeatFlag_DriverToRoofSeat			= (1 << 5),
+	VehicleSeatFlag_MovePassengerToDriver = (1 << 2),
 };

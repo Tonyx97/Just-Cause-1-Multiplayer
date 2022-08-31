@@ -292,13 +292,7 @@ void jc::test_units::test_0()
 		{
 			const auto seat = veh->get_driver_seat();
 
-			/*(*(void(__thiscall**)(Vehicle*, int))(*(ptr*)veh + 0xE8))(veh, 1);
-			veh->detach_door(VehicleDoor_Left);
-			seat->add_flag2(VehicleSeatFlag_DriverToRoofSeat);
-			seat->set_timer(1.f);
-			seat->add_flag2(1 << 6);*/
-			seat->set_timer(1.f);
-			seat->add_flag2(1 << 6);
+			seat->kick_current(true);
 
 			/*if (local_char->get_vehicle())
 				seat->kick_current(true);

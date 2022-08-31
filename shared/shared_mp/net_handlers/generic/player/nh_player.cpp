@@ -423,7 +423,7 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 
 		break;
 	}
-	case VehicleEnterExit_PassengerToDriver:
+	case VehicleEnterExit_PassengerToDriverKick:
 	{
 		const auto victim = p.get_net_object<Player>();
 
@@ -437,7 +437,7 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 
 		// make the passenger move to the driver seat
 
-		passenger_seat->add_flag(VehicleSeatFlag_PassengerToDriverSeat);
+		passenger_seat->add_flag(VehicleSeatFlag_MovePassengerToDriver);
 
 		// if there is a driver then kick him out
 
@@ -452,28 +452,59 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 
 		break;
 	}
-	case VehicleEnterExit_DriverToRoof:
+	}
+
+	/*case VehicleEnterExit_OpenDoor:
 	{
-		log(GREEN, "entering vehicle roof...");
+		log(GREEN, "opening vehicle door...");
 
 #ifdef JC_CLIENT
-		const auto driver_seat = vehicle->get_driver_seat();
-
-		// make the driver move to the roof seat
-
-		(*(void(__thiscall**)(Vehicle*, int))(*(ptr*)vehicle + 0xE8))(vehicle, 1);
-		vehicle->detach_door(VehicleDoor_Left);
-		driver_seat->add_flag2(VehicleSeatFlag_DriverToRoofSeat);
-		driver_seat->set_timer(1.f);
-		driver_seat->add_flag2(1 << 6);
-
+		seat->open_door(player_char);
 #else
-		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, seat_type, command);
+		vehicle_net->set_sync_type(SyncType_Locked);
+		vehicle_net->set_streamer(player);
+
+		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command);
 #endif
 
 		break;
 	}
+	case VehicleEnterExit_Enter:
+	{
+		log(GREEN, "entering vehicle...");
+
+		player->set_vehicle(vehicle_net);
+
+#ifdef JC_CLIENT
+		//seat->warp_character(player_char, true);
+#else
+		vehicle_net->set_sync_type(SyncType_Locked);
+		vehicle_net->set_streamer(player);
+
+		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command);
+#endif
+
+		break;
 	}
+	case VehicleEnterExit_Exit:
+	{
+		const bool instant = p.get_bool();
+
+		log(GREEN, "exiting vehicle... {}", instant);
+
+		player->set_vehicle(nullptr);
+
+#ifdef JC_CLIENT
+		//seat->kick_current(instant);
+#else
+		vehicle_net->set_sync_type(SyncType_Distance);
+		vehicle_net->set_streamer(nullptr);
+
+		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, command, instant);
+#endif
+
+		break;
+	}*/
 
 	return enet::PacketRes_Ok;
 }
