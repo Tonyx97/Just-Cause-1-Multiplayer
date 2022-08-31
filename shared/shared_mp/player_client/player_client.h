@@ -76,7 +76,6 @@ public:
 	void set_timed_out() { timed_out = true; }
 
 	bool is_timed_out() const { return timed_out; }
-	bool compare_address(const ENetAddress& peer);
 
 	ENetPeer* get_peer() const { return peer; }
 
