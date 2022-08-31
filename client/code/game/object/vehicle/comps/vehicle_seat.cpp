@@ -7,19 +7,24 @@
 #include <game/object/character/comps/stance_controller.h>
 #include <game/object/character/character.h>
 #include <game/object/vehicle/vehicle.h>
-#include <game/object/weapon/weapon.h>
-#include <game/object/mounted_gun/mounted_gun.h>
 
 namespace jc::vehicle_seat::hook
 {
-	DEFINE_HOOK_THISCALL(warp_character, 0x74DC30, void, VehicleSeat* seat, Character* character, CharacterController* controller, bool unk)
+	DEFINE_HOOK_THISCALL(warp_character, 0x74DC30, void, VehicleSeat* seat, Character* character, CharacterController* unk, bool unk2)
 	{
-		return warp_character_hook(seat, character, controller, unk);
-	}
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto local_char = localplayer->get_character(); character == local_char)
+				if (const auto vehicle = seat->get_vehicle())
+					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+					{
+						const auto char_vehicle = character->get_vehicle();
 
-	DEFINE_HOOK_THISCALL(reset_seat, 0x74DE20, void, VehicleSeat* seat, bool unk)
-	{
-		return reset_seat_hook(seat, unk);
+						localplayer->set_vehicle(vehicle_net->cast<VehicleNetObject>());
+
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_Enter);
+					}
+
+		return warp_character_hook(seat, character, unk, unk2);
 	}
 
 	template <typename T>
@@ -79,11 +84,10 @@ namespace jc::vehicle_seat::hook
 					if (!driver_char || !(driver_char->get_flags() & (1 << 10)))	// todore - not sure what's this flag but the engine does this
 						driver_char = nullptr;
 
-					// could be null if there is no driver
-					//
-					const auto driver_player = g_net->get_player_by_character(driver_char);
+					const auto driver_player = g_net->get_player_by_character(driver_char); // could be null if there is no driver
 
-					g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, passenger_seat->get_type(), VehicleEnterExit_PassengerToDriver, driver_player);
+					if (passenger_seat->is_occupied())
+						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, passenger_seat->get_type(), VehicleEnterExit_PassengerToDriver, driver_player);
 				}
 	}
 
@@ -93,7 +97,11 @@ namespace jc::vehicle_seat::hook
 			if (const auto local_char = localplayer->get_character(); character == local_char)
 				if (const auto seat = local_char->get_vehicle_seat())
 					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+					{
+						localplayer->set_vehicle(nullptr);
+
 						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_Exit, false);
+					}
 
 		return instant_exit_hook(vehicle, character, is_local);
 	}
@@ -109,6 +117,8 @@ namespace jc::vehicle_seat::hook
 					{
 						const auto jump_out = ihp->read_ebp<bool>(0xE);
 
+						localplayer->set_vehicle(nullptr);
+
 						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, driver_seat->get_type(), VehicleEnterExit_Exit, jump_out);
 					}
 	}
@@ -121,43 +131,18 @@ namespace jc::vehicle_seat::hook
 			if (const auto local_char = localplayer->get_character(); passenger_seat->get_character() == local_char)
 				if (const auto vehicle = passenger_seat->get_vehicle())
 					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
+					{
+						localplayer->set_vehicle(nullptr);
+
 						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, passenger_seat->get_type(), VehicleEnterExit_Exit, false);
-	}
-
-	// sync mounted guns fire
-	//
-	DEFINE_INLINE_HOOK_IMPL(special_seat_fire, 0x6444DD)
-	{
-		if (const auto special_seat = ihp->read_ebp<VehicleSeat*>(0x234))
-			if (const auto localplayer = g_net->get_localplayer())
-				if (const auto local_char = localplayer->get_character(); special_seat->get_character() == local_char)
-					if (const auto weapon = special_seat->get_weapon())
-						if (const auto vehicle_net = localplayer->get_vehicle())
-						{
-							// todojc - sync only mounted guns from vehicles for now,
-							// add general mounted gun sync when we create a mounted gun
-							// net object ez
-
-							if (weapon->can_fire())
-							{
-								VehicleNetObject::FireInfoBase fire_info;
-
-								fire_info.muzzle = weapon->get_muzzle_transform()->get_position();
-								fire_info.direction = glm::normalize(weapon->get_aim_target() - fire_info.muzzle);
-
-								vehicle_net->set_mounted_gun_fire_info(fire_info);
-
-								g_net->send_reliable<ChannelID_Generic>(PlayerPID_VehicleMountedGunFire, vehicle_net, fire_info);
-							}
-						}
+					}
 	}
 
 	void enable(bool apply)
 	{
-		// set/remove localplayer's vehicle net
+		// generic
 
 		warp_character_hook.hook(apply);
-		reset_seat_hook.hook(apply);
 
 		// specific seats dispatch entry hooks
 
@@ -176,10 +161,6 @@ namespace jc::vehicle_seat::hook
 		instant_exit_hook.hook(apply);
 		driver_seat_exit_hook.hook(apply);
 		passenger_seat_exit_hook.hook(apply);
-
-		// special seat hooks
-
-		special_seat_fire_hook.hook(apply);
 	}
 }
 
@@ -370,31 +351,14 @@ float VehicleSeat::get_timer() const
 	return jc::read<float>(this, jc::vehicle_seat::TIMER);
 }
 
-ObjectBase* VehicleSeat::get_attached_object() const
-{
-	return jc::read<ObjectBase*>(this, jc::vehicle_seat::ATTACHED_OBJECT);
-}
-
 Vehicle* VehicleSeat::get_vehicle() const
 {
-	const auto object = get_attached_object();
-	return object->is_vehicle() ? object->cast<Vehicle>() : nullptr;
-}
-
-MountedGun* VehicleSeat::get_mounted_gun() const
-{
-	const auto object = get_attached_object();
-	return object->get_typename_hash() == MountedGun::CLASS_ID() ? object->cast<MountedGun>() : nullptr;
+	return jc::read<Vehicle*>(this, jc::vehicle_seat::VEHICLE);
 }
 
 Character* VehicleSeat::get_character() const
 {
 	return jc::read<Character*>(this, jc::vehicle_seat::CHARACTER);
-}
-
-Weapon* VehicleSeat::get_weapon() const
-{
-	return jc::read<Weapon*>(this, jc::vehicle_seat::WEAPON);
 }
 
 Interactable* VehicleSeat::get_interactable() const

@@ -176,11 +176,9 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		g_factory->spawn_mounted_gun(local_pos + vec3(0.f, 1.f, 0.f));
-
-		/*g_anim_system->load_anim("test.anim");
+		g_anim_system->load_anim("test.anim");
 		local_char->set_animation("test.anim", 0.2f, true, true);
-		g_anim_system->unload_anim("test.anim");*/
+		g_anim_system->unload_anim("test.anim");
 
 		//local_char->set_animation("dance_hooker_NPC_2.anim", 0.2f, true, true);
 	}
@@ -292,15 +290,19 @@ void jc::test_units::test_0()
 	{
 		if (const auto veh = BITCAST(Vehicle*, g_global_ptr))
 		{
-			const auto seat = veh->get_special_seat();
+			const auto seat = veh->get_driver_seat();
 
-			if (const auto weapon = seat->get_weapon())
-			{
-				weapon->set_last_shot_time(jc::nums::MAXF);
-				weapon->force_fire();
-				weapon->set_enabled(true);
-				weapon->update();
-			}
+			/*(*(void(__thiscall**)(Vehicle*, int))(*(ptr*)veh + 0xE8))(veh, 1);
+			veh->detach_door(VehicleDoor_Left);
+			seat->add_flag2(VehicleSeatFlag_DriverToRoofSeat);
+			seat->set_timer(1.f);
+			seat->add_flag2(1 << 6);*/
+			seat->set_timer(1.f);
+			seat->add_flag2(1 << 6);
+
+			/*if (local_char->get_vehicle())
+				seat->kick_current(true);
+			else seat->warp_character(local_char, true);*/
 
 			/*const auto sound_comp = jc::read<ptr>(veh, 0x404);
 

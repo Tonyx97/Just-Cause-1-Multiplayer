@@ -427,38 +427,6 @@ namespace jc::character::hook
 		character_proxy_add_velocity_hook(proxy, velocity, rotation);
 	}
 
-	DEFINE_HOOK_THISCALL(set_vehicle_seat, jc::character::fn::SET_VEHICLE_SEAT, void, Character* character, ref<VehicleSeat>* seat_ref)
-	{
-		if (const auto lp = g_net->get_localplayer())
-			if (const auto local_char = lp->get_character(); local_char == character)
-			{
-				const auto curr_seat = local_char->get_vehicle_seat();
-				const auto& new_seat = *seat_ref;
-
-				VehicleSeat* from_to_seat = nullptr;
-				NetObject* new_vehicle_net = nullptr;
-
-				if (!curr_seat && new_seat)
-				{
-					new_vehicle_net = g_net->get_net_object_by_game_object(new_seat->get_vehicle());
-					from_to_seat = *new_seat;
-				}
-				else if (curr_seat && !new_seat)
-					from_to_seat = *curr_seat;
-				
-				if (from_to_seat)
-				{
-					// update localplayer's vehicle net
-
-					lp->set_vehicle(new_vehicle_net->cast<VehicleNetObject>());
-
-					g_net->send_reliable(PlayerPID_EnterExitVehicle, new_vehicle_net, from_to_seat->get_type(), VehicleEnterExit_SetVehicle);
-				}
-			}
-
-		set_vehicle_seat_hook(character, seat_ref);
-	}
-
 	void enable(bool apply)
 	{
 		update_hook.hook(apply);
@@ -472,7 +440,6 @@ namespace jc::character::hook
 		reload_current_weapon_hook.hook(apply);
 		force_launch_hook.hook(apply);
 		character_proxy_add_velocity_hook.hook(apply);
-		set_vehicle_seat_hook.hook(apply);
 	}
 }
 

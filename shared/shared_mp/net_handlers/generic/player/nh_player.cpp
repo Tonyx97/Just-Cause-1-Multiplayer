@@ -34,7 +34,13 @@ enet::PacketResult nh::player::state_sync(const enet::Packet& p)
 	const auto curr_vehicle = p.get_net_object();
 
 	player->set_weapon_id(curr_weapon);
-	player->set_vehicle(curr_vehicle->cast<VehicleNetObject>());
+
+	if (player->get_vehicle() != curr_vehicle)
+	{
+		if (curr_vehicle)
+			player->set_vehicle(curr_vehicle->cast<VehicleNetObject>());
+		else player->set_vehicle(nullptr);
+	}
 
 #ifdef JC_SERVER
 	g_net->send_broadcast_reliable(pc, PlayerPID_StateSync, player, curr_weapon, curr_vehicle);
@@ -307,6 +313,7 @@ enet::PacketResult nh::player::set_weapon(const enet::Packet& p)
 
 	if (!player)
 		return enet::PacketRes_BadArgs;
+
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
@@ -336,50 +343,13 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 #endif
 
 	const auto vehicle_net = p.get_net_object<VehicleNetObject>();
-	const auto seat_type = p.get_u8();
-	const auto command = p.get_u8();
-
-	//log(GREEN, "vehicle seat type: {}", seat_type);
-
-	// if command is SetVehicle then we know vehicle_net could be null so
-	// handle it as a special case outside the switch case
-
-	if (command == VehicleEnterExit_SetVehicle)
-	{
-		log(GREEN, "VehicleEnterExit_SetVehicle {:x}", ptr(vehicle_net));
-
-#ifdef JC_SERVER
-		const auto curr_vehicle = player->get_vehicle();
-
-		// if the seat type is the driver then we want to set the sync type and
-		// the streamer of this vehicle
-
-		if (seat_type == VehicleSeat_Driver)
-		{
-			if (vehicle_net)
-			{
-				log(BLUE, "LOCKED");
-				vehicle_net->set_sync_type(SyncType_Locked);
-				vehicle_net->set_streamer(player);
-			}
-			else if (curr_vehicle)	// remove this and replace it with a removal of the player in the VehicleNet
-			{
-				log(BLUE, "DISTANCED");
-				curr_vehicle->set_sync_type(SyncType_Distance);
-				curr_vehicle->set_streamer(nullptr);
-			}
-		}
-
-		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, seat_type, command);
-#endif
-
-		player->set_vehicle(vehicle_net);
-
-		return enet::PacketRes_Ok;
-	}
 
 	if (!vehicle_net)
 		return enet::PacketRes_BadArgs;
+
+	const auto seat_type = p.get_u8();
+
+	log(GREEN, "vehicle seat type: {}", seat_type);
 
 #ifdef JC_CLIENT
 	const auto vehicle = vehicle_net->get_object();
@@ -390,11 +360,11 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 		return enet::PacketRes_BadArgs;
 #endif
 
-	switch (command)
+	switch (const auto command = p.get_u8())
 	{
 	case VehicleEnterExit_RequestEnter:
 	{
-		//log(GREEN, "VehicleEnterExit_RequestEnter");
+		log(GREEN, "requesting vehicle entry...");
 
 #ifdef JC_CLIENT
 		const auto interactable = seat->get_interactable();
@@ -406,17 +376,51 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 
 		break;
 	}
+	case VehicleEnterExit_Enter:
+	{
+		log(GREEN, "entering vehicle...");
+
+		player->set_vehicle(vehicle_net);
+
+#ifdef JC_CLIENT
+		// todojc
+#else
+		// if the seat type is the driver then we want to set the sync type and
+		// the streamer of this vehicle
+
+		if (seat_type == VehicleSeat_Driver)
+		{
+			vehicle_net->set_sync_type(SyncType_Locked);
+			vehicle_net->set_streamer(player);
+		}
+
+		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, seat_type, command);
+#endif
+
+		break;
+	}
 	case VehicleEnterExit_Exit:
 	{
 		const bool jump_out = p.get_bool();
 
-		//log(GREEN, "VehicleEnterExit_Exit (jump out: {})", jump_out);
+		log(GREEN, "exiting vehicle... (jump out: {})", jump_out);
+
+		player->set_vehicle(nullptr);
 
 #ifdef JC_CLIENT
 		if (seat->is_instant_exit())
 			seat->instant_exit();
 		else seat->exit(jump_out);
 #else
+		// if the seat type is the driver then we want to reset the sync type
+		// and the streamer
+
+		if (seat_type == VehicleSeat_Driver)
+		{
+			vehicle_net->set_sync_type(SyncType_Distance);
+			vehicle_net->set_streamer(nullptr);
+		}
+
 		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, seat_type, command, jump_out);
 #endif
 
@@ -426,7 +430,10 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 	{
 		const auto victim = p.get_net_object<Player>();
 
-		//log(GREEN, "VehicleEnterExit_PassengerToDriver {:x}... ", victim ? victim->get_nid() : INVALID_NID);
+		log(GREEN, "exiting vehicle forced {:x}... ", victim ? victim->get_nid() : INVALID_NID);
+
+		if (victim)
+			victim->set_vehicle(nullptr);
 
 #ifdef JC_CLIENT
 		const auto passenger_seat = vehicle->get_passenger_seat();
@@ -450,13 +457,12 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 	}
 	case VehicleEnterExit_DriverToRoof:
 	{
-		//log(GREEN, "VehicleEnterExit_DriverToRoof...");
+		log(GREEN, "entering vehicle roof...");
 
 #ifdef JC_CLIENT
 		const auto driver_seat = vehicle->get_driver_seat();
 
 		// make the driver move to the roof seat
-		// todojc - the character won't get attached to the roof :(
 
 		(*(void(__thiscall**)(Vehicle*, int))(*(ptr*)vehicle + 0xE8))(vehicle, 1);
 		vehicle->detach_door(VehicleDoor_Left);
@@ -604,34 +610,6 @@ enet::PacketResult nh::player::vehicle_fire(const enet::Packet& p)
 
 #ifdef JC_SERVER
 	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleFire, vehicle_net, weapon_index, weapon_type, fire_info);
-#endif
-
-	return enet::PacketRes_Ok;
-}
-
-enet::PacketResult nh::player::vehicle_mounted_gun_fire(const enet::Packet& p)
-{
-#ifdef JC_CLIENT
-#else
-	const auto pc = p.get_pc();
-	const auto player = pc->get_player();
-#endif
-
-	const auto vehicle_net = p.get_net_object<VehicleNetObject>();
-
-	if (!vehicle_net)
-		return enet::PacketRes_BadArgs;
-
-	const auto fire_info = p.get_raw<VehicleNetObject::FireInfoBase>();
-
-	vehicle_net->set_mounted_gun_fire_info(fire_info);
-
-#ifdef JC_CLIENT
-	vehicle_net->fire_mounted_gun();
-#endif
-
-#ifdef JC_SERVER
-	g_net->send_broadcast_reliable(pc, PlayerPID_VehicleMountedGunFire, vehicle_net, fire_info);
 #endif
 
 	return enet::PacketRes_Ok;

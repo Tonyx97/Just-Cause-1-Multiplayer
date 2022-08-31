@@ -5,7 +5,7 @@
 namespace jc::vehicle_seat
 {
 	static constexpr uint32_t CHARACTER			= 0x48;			// Character*
-	static constexpr uint32_t ATTACHED_OBJECT	= 0x4C;			// ObjectBase* (either Vehicle or MountedGun I think)
+	static constexpr uint32_t VEHICLE			= 0x4C;			// Vehicle*
 	static constexpr uint32_t UNLOCKED			= 0x150;		// bool
 	static constexpr uint32_t INSTANT_LEAVE		= 0x151;		// bool
 	static constexpr uint32_t INTERACTABLE		= 0x160;		// Interactable*
@@ -13,12 +13,10 @@ namespace jc::vehicle_seat
 	static constexpr uint32_t UNK_FLOAT			= 0x196;		// uint16_t
 	static constexpr uint32_t FLAGS2			= 0x19C;		// uint32_t
 	static constexpr uint32_t TIMER				= 0x1A4;		// float
-	static constexpr uint32_t WEAPON			= 0x2F8;		// Weapon*
 
 	namespace fn
 	{
-		static constexpr uint32_t GET_REF			= 0x62F460;
-		static constexpr uint32_t RESET_SEAT		= 0x74DE20;
+		static constexpr uint32_t GET_REF		= 0x62F460;
 	}
 
 	namespace vt
@@ -34,11 +32,8 @@ namespace jc::vehicle_seat
 	}
 }
 
-class ObjectBase;
 class Interactable;
 class Vehicle;
-class MountedGun;
-class Weapon;
 
 class VehicleSeat
 {
@@ -72,11 +67,8 @@ public:
 
 	float get_timer() const;
 
-	ObjectBase* get_attached_object() const;
 	Vehicle* get_vehicle() const;
-	MountedGun* get_mounted_gun() const;
 	Character* get_character() const;
-	Weapon* get_weapon() const;
 
 	Interactable* get_interactable() const;
 

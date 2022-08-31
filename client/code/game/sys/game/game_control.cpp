@@ -33,7 +33,6 @@ namespace jc::game_control
 		"CGarage",
 		"CRaceManager",
 		"CItemPickup",
-		"CMountedGun",
 		"CGuiLiberateSettlement",
 		"CProvinceSettlement",
 		"CSettlementSoundObject",

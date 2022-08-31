@@ -184,9 +184,9 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 
 					if (player->should_use_multiple_rand_seed())
 					{
+						const auto rand_vector = player->generate_bullet_rand_spread();
 						const auto accuracy = 3.f * glm::radians(1.f - weapon_info->get_accuracy(false));
-						const auto rand_vector = player->generate_bullet_rand_spread() * accuracy;
-						const auto rotation_matrix = glm::yawPitchRoll(rand_vector.x, rand_vector.y, rand_vector.z);
+						const auto rotation_matrix = glm::yawPitchRoll(rand_vector.x * accuracy, rand_vector.y * accuracy, rand_vector.z * accuracy);
 
 						direction = vec4(direction, 0.f) * rotation_matrix;
 					}
@@ -198,22 +198,8 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 					// handle vehicle weapons
 
 					if (const auto vehicle_net = player->get_vehicle())
-					{
-						if (const auto seat = owner->get_vehicle_seat(); seat && seat->get_type() == VehicleSeat_Special)
-						{
-							// if the shooter is in the special seat, they must be using a mounted gun
-
-							if (const auto fire_info = vehicle_net->get_mounted_gun_fire_info())
-								*final_muzzle_transform = Transform::look_at(fire_info->muzzle, fire_info->muzzle + fire_info->direction);
-						}
-						else
-						{
-							// actual vehicle weapons
-
-							if (const auto fire_info = vehicle_net->get_fire_info_from_weapon(weapon))
-								*final_muzzle_transform = Transform::look_at(fire_info->muzzle, fire_info->muzzle + fire_info->direction);
-						}
-					}
+						if (const auto fire_info = vehicle_net->get_fire_info_from_weapon(weapon))
+							*final_muzzle_transform = Transform::look_at(fire_info->muzzle, fire_info->muzzle + fire_info->direction);
 				}
 			}
 }

@@ -454,9 +454,6 @@ void Player::set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_
 
 void Player::set_vehicle(VehicleNetObject* v)
 {
-	if (vehicle == v)
-		return;
-
 	log(RED, "{}'s vehicle: {:x}", get_nick(), v ? v->get_nid() : INVALID_NID);
 
 	vehicle = v;

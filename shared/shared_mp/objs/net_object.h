@@ -91,8 +91,6 @@ private:
 
 public:
 
-	static constexpr NetObject* INVALID() { return nullptr; }
-
 	NetObject();
 
 	virtual ~NetObject() = 0;
