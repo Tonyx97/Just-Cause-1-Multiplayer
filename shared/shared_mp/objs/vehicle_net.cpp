@@ -36,6 +36,18 @@ void VehicleNetObject::fire()
 		}
 }
 
+void VehicleNetObject::fire_mounted_gun()
+{
+	if (const auto special_seat = obj->get_special_seat())
+		if (const auto weapon = special_seat->get_weapon())
+		{
+			weapon->set_last_shot_time(jc::nums::MAXF);
+			weapon->force_fire();
+			weapon->set_enabled(true);
+			weapon->update();
+		}
+}
+
 const VehicleNetObject::FireInfo* VehicleNetObject::get_fire_info_from_weapon(Weapon* weapon) const
 {
 	for (const auto& info : fire_info)
@@ -43,6 +55,11 @@ const VehicleNetObject::FireInfo* VehicleNetObject::get_fire_info_from_weapon(We
 			return &info;
 
 	return nullptr;
+}
+
+const VehicleNetObject::FireInfoBase* VehicleNetObject::get_mounted_gun_fire_info() const
+{
+	return &mounted_gun_fire_info;
 }
 #else
 VehicleNetObject::VehicleNetObject(SyncType sync_type, const TransformTR& transform)
@@ -116,6 +133,30 @@ void VehicleNetObject::set_weapon_info(uint32_t index, uint32_t type)
 void VehicleNetObject::set_fire_info(const std::vector<FireInfo>& v)
 {
 	fire_info = v;
+}
+
+void VehicleNetObject::set_mounted_gun_fire_info(const FireInfoBase& v)
+{
+	mounted_gun_fire_info = v;
+}
+
+void VehicleNetObject::set_player(uint8_t seat_type, Player* player)
+{
+	players[seat_type] = player;
+}
+
+void VehicleNetObject::remove_player(Player* player)
+{
+	std::erase_if(players, [&](const auto& p)
+	{
+		return p.second == player;
+	});
+}
+
+Player* VehicleNetObject::get_player_from_seat(uint8_t seat_type) const
+{
+	const auto it = players.find(seat_type);
+	return it != players.end() ? it->second : nullptr;
 }
 
 bool VehicleNetObject::spawn()

@@ -130,6 +130,13 @@ void PlayerClient::startup_sync()
 	
 	player->spawn();
 }
+
+bool PlayerClient::compare_address(const ENetAddress& other)
+{
+	const auto address = get_address();
+
+	return (in6_equal(address->host, other.host) && address->port == other.port);
+}
 #endif
 
 void PlayerClient::set_initialized(bool v)

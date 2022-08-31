@@ -172,7 +172,7 @@ bool Weapon::is_reloading() const
 	return jc::read<bool>(this, jc::weapon::RELOADING);
 }
 
-bool Weapon::is_firing() const
+bool Weapon::can_fire() const
 {
 	return jc::read<bool>(this, jc::weapon::CAN_FIRE);
 }

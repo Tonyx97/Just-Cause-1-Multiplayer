@@ -179,6 +179,12 @@ void NetObject::set_spawned(bool v)
 	on_net_var_change(NetObjectVar_Transform);
 }
 
+void NetObject::set_sync_type_and_streamer(SyncType _sync_type, Player* _streamer)
+{
+	set_sync_type(_sync_type);
+	set_streamer(_streamer);
+}
+
 void NetObject::set_transform(const TransformTR& transform)
 {
 	vars.transform.t = transform.t;

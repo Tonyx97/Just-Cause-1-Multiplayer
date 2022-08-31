@@ -68,7 +68,7 @@ enet::PacketResult nh::world::destroy_object(const enet::Packet& p)
 	if (!net_obj)
 		return enet::PacketRes_BadArgs;
 
-	log(GREEN, "A net object with nid was destroyed, type {}", net_obj->get_nid(), net_obj->get_type());
+	log(GREEN, "A net object with nid {:x} was destroyed, type {}", net_obj->get_nid(), net_obj->get_type());
 
 	g_net->destroy_net_object(net_obj);
 

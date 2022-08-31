@@ -6,11 +6,7 @@
 
 namespace jc::item_pickup::hook
 {
-	void apply()
-	{
-	}
-
-	void undo()
+	void enable(bool apply)
 	{
 	}
 }

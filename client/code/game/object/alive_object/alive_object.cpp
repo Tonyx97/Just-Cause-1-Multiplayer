@@ -63,14 +63,9 @@ namespace jc::alive_object::hook
 		set_health_hook(obj, hp);
 	}
 
-	void apply()
+	void enable(bool apply)
 	{
-		set_health_hook.hook();
-	}
-
-	void undo()
-	{
-		set_health_hook.unhook();
+		set_health_hook.hook(apply);
 	}
 }
 

@@ -157,6 +157,11 @@ Player::Player(PlayerClient* pc) : client(pc)
 
 Player::~Player()
 {
+	// remove this player from the current vehicle if any
+
+	if (vehicle)
+		vehicle->remove_player(this);
+
 	// if this player owns any net object, remove all the ownerships
 	// from the player and the objects
 
@@ -204,7 +209,10 @@ void Player::remove_all_ownerships()
 	g_net->for_each_net_object([&](NID, NetObject* obj)
 	{
 		if (obj->is_owned_by(this))
+		{
+			obj->set_sync_type(SyncType_Distance);
 			obj->set_streamer(nullptr);
+		}
 	});
 }
 #endif
@@ -452,8 +460,21 @@ void Player::set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_
 #endif
 }
 
-void Player::set_vehicle(VehicleNetObject* v)
+void Player::set_vehicle(uint8_t seat_type, VehicleNetObject* v)
 {
+	// remove the player from the current vehicle (if any)
+
+	if (vehicle)
+	{
+		vehicle->remove_player(this);
+		vehicle = nullptr;
+	}
+
+	// if the new vehicle is valid then add the player to it
+
+	if (v)
+		v->set_player(seat_type, this);
+
 	log(RED, "{}'s vehicle: {:x}", get_nick(), v ? v->get_nid() : INVALID_NID);
 
 	vehicle = v;

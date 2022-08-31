@@ -756,7 +756,7 @@ void UI::overlay_debug()
 		}
 
 		if (g_key->is_key_pressed(KEY_X))
-			if (auto veh = local_player_pawn->get_vehicle())
+			if (auto veh = local_player_pawn->get_vehicle(); veh && veh->get_driver_seat()->get_character() == local_player_pawn)
 				veh->set_engine_state(!veh->get_engine_state());
 
 		ptr			   closest_hp_ptr = 0;

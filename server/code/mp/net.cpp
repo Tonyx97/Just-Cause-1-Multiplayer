@@ -101,11 +101,13 @@ void Net::setup_channels()
 		case PlayerPID_DynamicInfo:					return nh::player::dynamic_info(p);
 		case PlayerPID_StanceAndMovement:			return nh::player::stance_and_movement(p);
 		case PlayerPID_SetWeapon:					return nh::player::set_weapon(p);
+		case PlayerPID_SetVehicle:					return nh::player::set_vehicle(p);
 		case PlayerPID_EnterExitVehicle:			return nh::player::enter_exit_vehicle(p);
 		case PlayerPID_VehicleControl:				return nh::player::vehicle_control(p);
 		case PlayerPID_VehicleHonk:					return nh::player::vehicle_honk(p);
 		case PlayerPID_VehicleEngineState:			return nh::player::vehicle_engine_state(p);
 		case PlayerPID_VehicleFire:					return nh::player::vehicle_fire(p);
+		case PlayerPID_VehicleMountedGunFire:		return nh::player::vehicle_mounted_gun_fire(p);
 		}
 
 		return enet::PacketRes_NotFound;
@@ -160,9 +162,7 @@ void Net::tick()
 				if (timed_out_player)
 					return;
 
-				const auto pc_address = *pc->get_address();
-
-				if (in6_equal(e.peer->address, pc_address))
+				if (pc->compare_address(e.peer->address))
 					timed_out_player = pc;
 			});
 
@@ -263,10 +263,12 @@ void Net::refresh_net_object_sync()
 		{
 			if (obj->get_type() != NetObject_Player && obj->get_hp() <= 0.f)
 				entities_to_destroy.push_back(obj);
+			else if (obj->get_type() == NetObject_Vehicle)
+				log(RED, "Players in vehicle {:x}: {}", nid, BITCAST(VehicleNetObject*, obj)->get_players_count());
 		});
 
-		for (auto vehicle : entities_to_destroy)
-			destroy_net_object(vehicle);
+		for (auto object : entities_to_destroy)
+			destroy_net_object(object);
 
 		if (entities_to_destroy.size() > 0u)
 			log(YELLOW, "{} entities destroyed", entities_to_destroy.size());

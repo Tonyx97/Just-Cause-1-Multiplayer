@@ -24,17 +24,24 @@ namespace jc::vehicle
 	{
 		static constexpr uint32_t OPEN_LEFT_DOOR		= 0x62C2C0;
 		static constexpr uint32_t OPEN_RIGHT_DOOR		= 0x62D170;
+		static constexpr uint32_t DETACH_LEFT_DOOR		= 0x62BE80;
+		static constexpr uint32_t IS_LEFT_DOOR_VALID	= 0x62CDF0;
+		static constexpr uint32_t IS_LEFT_DOOR_CLOSING	= 0x62CE30;
+		static constexpr uint32_t SET_DRIVER			= 0x62B570;
 	}
 
 	namespace vt
 	{
 		static constexpr uint32_t GET_TYPE				= 37;
+		static constexpr uint32_t SET_DRIVER			= 44;
 		static constexpr uint32_t GET_VELOCITY			= 48;
 		static constexpr uint32_t SET_VELOCITY			= 50;
 		static constexpr uint32_t GET_ROOF_SEAT			= 52;
 		static constexpr uint32_t GET_DRIVER_SEAT		= 53;
 		static constexpr uint32_t GET_PASSENGER_SEAT	= 54;
 		static constexpr uint32_t GET_SPECIAL_SEAT		= 55;
+		static constexpr uint32_t UNK0					= 57;
+		static constexpr uint32_t UNK1					= 58;
 		static constexpr uint32_t HONK					= 76;
 		static constexpr uint32_t START_ENGINE_SOUND	= 82;
 		static constexpr uint32_t STOP_ENGINE_SOUND		= 83;
@@ -42,8 +49,7 @@ namespace jc::vehicle
 
 	namespace hook
 	{
-		void apply();
-		void undo();
+		void enable(bool apply);
 	}
 
 	bool getting_helicopter_input();
@@ -129,9 +135,14 @@ public:
 	void set_current_weapon_type(uint32_t v);
 	void for_each_weapon(const vehicle_weapon_fn_t& fn);
 	void for_each_current_weapon(const vehicle_weapon_fn_t& fn);
-	void open_door(uint8_t i);
+	void detach_door(uint8_t i);
+	void unk0(bool unk);
+	void unk1(bool unk);
 
+	bool open_door(uint8_t i);
 	bool get_engine_state() const;
+	bool is_left_door_valid() const;
+	bool is_left_door_closing() const;
 
 	ptr get_sound_component() const;
 

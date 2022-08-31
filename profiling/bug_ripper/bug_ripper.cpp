@@ -112,8 +112,8 @@ namespace jc::bug_ripper
 		{
 			static auto kernelbase = BITCAST(uintptr_t, GetModuleHandleW(L"KERNELBASE"));
 
-			if (mod_base == kernelbase)
-				return EXCEPTION_CONTINUE_SEARCH;
+			/*if (mod_base == kernelbase)
+				return EXCEPTION_CONTINUE_SEARCH;*/
 
 #ifdef JC_CLIENT
 			// hide the fucking game

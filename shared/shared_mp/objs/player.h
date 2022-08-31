@@ -179,7 +179,7 @@ public:
 	void fire_current_weapon(int32_t weapon_id = 0, const vec3& muzzle = {}, const vec3& dir = {});
 	void reload();
 	void set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);
-	void set_vehicle(VehicleNetObject* v);
+	void set_vehicle(uint8_t seat_type, VehicleNetObject* v);
 
 	bool is_alive() const { return get_hp() > 0.f; }
 	bool is_hip_aiming() const { return dyn_info.hip_aim; }

@@ -78,11 +78,12 @@ namespace jc::character::hook
 			case 17:
 			case 19:
 			case 24:
-			case 38:	// exit vehicle
+			case 38:	// exit vehicle (left)
 			case 39:	// open vehicle door (left)
 			case 37:	// close vehicle door from inside (left)
 			case 40:	// close vehicle door from inside (right)
 			case 41:	// open vehicle door (right)
+			case 42:	// exit vehicle (right)
 			case 43:	// enter vehicle (left)
 			case 44:	// enter vehicle (right)
 			case 45:	// close vehicle door from outside (left)
@@ -94,8 +95,8 @@ namespace jc::character::hook
 			case 54:	// vehicle seating
 			case 56:	// vehicle looking behind
 			case 58:	// lift motorbike from the ground
-			case 60:	// jump out of vehicle
-			//case 61:	// enter vehicle roof
+			case 60:	// jump out of vehicle (left)
+			case 61:	// enter vehicle roof
 			case 62:	// enter air vehicle roof
 			case 63:	// vehicle roof to driver seat
 			case 66:	// mounted gun
@@ -105,6 +106,7 @@ namespace jc::character::hook
 			case 78:
 			case 79:
 			case 81:
+			case 82:	// jump out of vehicle (right)
 			case 88: return true;
 			}
 
@@ -425,34 +427,59 @@ namespace jc::character::hook
 		character_proxy_add_velocity_hook(proxy, velocity, rotation);
 	}
 
-	void apply()
+	DEFINE_HOOK_THISCALL(set_vehicle_seat, jc::character::fn::SET_VEHICLE_SEAT, void, Character* character, ref<VehicleSeat>* seat_ref)
 	{
-		update_hook.hook();
-		set_body_stance_hook.hook();
-		set_arms_stance_hook.hook();
-		can_be_destroyed_hook.hook();
-		dispatch_movement_hook.hook();
-		setup_punch_hook.hook();
-		update_mid_hook.hook();
-		fire_weapon_hook.hook();
-		reload_current_weapon_hook.hook();
-		force_launch_hook.hook();
-		character_proxy_add_velocity_hook.hook();
+		if (const auto lp = g_net->get_localplayer())
+			if (const auto local_char = lp->get_character(); local_char == character)
+			{
+				const auto curr_seat = local_char->get_vehicle_seat();
+				const auto& new_seat = *seat_ref;
+
+				VehicleSeat* target_seat = nullptr;
+				NetObject* new_vehicle_net = nullptr;
+
+				if (!curr_seat && new_seat)
+				{
+					new_vehicle_net = g_net->get_net_object_by_game_object(new_seat->get_vehicle());
+					target_seat = *new_seat;
+				}
+				else if (curr_seat && !new_seat)
+					target_seat = *curr_seat;
+				else if (curr_seat && new_seat)
+				{
+					new_vehicle_net = lp->get_vehicle();
+					target_seat = *new_seat;
+				}
+				
+				if (target_seat)
+				{
+					// update localplayer's vehicle net
+
+					const auto seat_type = target_seat->get_type();
+
+					lp->set_vehicle(seat_type, new_vehicle_net->cast<VehicleNetObject>());
+
+					g_net->send_reliable(PlayerPID_SetVehicle, new_vehicle_net, seat_type);
+				}
+			}
+
+		set_vehicle_seat_hook(character, seat_ref);
 	}
 
-	void undo()
+	void enable(bool apply)
 	{
-		character_proxy_add_velocity_hook.unhook();
-		force_launch_hook.unhook();
-		reload_current_weapon_hook.unhook();
-		fire_weapon_hook.unhook();
-		update_mid_hook.unhook();
-		setup_punch_hook.unhook();
-		dispatch_movement_hook.unhook();
-		can_be_destroyed_hook.unhook();
-		set_arms_stance_hook.unhook();
-		set_body_stance_hook.unhook();
-		update_hook.unhook();
+		update_hook.hook(apply);
+		set_body_stance_hook.hook(apply);
+		set_arms_stance_hook.hook(apply);
+		can_be_destroyed_hook.hook(apply);
+		dispatch_movement_hook.hook(apply);
+		setup_punch_hook.hook(apply);
+		update_mid_hook.hook(apply);
+		fire_weapon_hook.hook(apply);
+		reload_current_weapon_hook.hook(apply);
+		force_launch_hook.hook(apply);
+		character_proxy_add_velocity_hook.hook(apply);
+		//set_vehicle_seat_hook.hook(apply);
 	}
 }
 

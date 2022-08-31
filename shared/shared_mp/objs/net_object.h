@@ -91,6 +91,8 @@ private:
 
 public:
 
+	static constexpr NetObject* INVALID() { return nullptr; }
+
 	NetObject();
 
 	virtual ~NetObject() = 0;
@@ -129,6 +131,7 @@ public:
 	void set_spawned(bool v);
 	void set_sync_type(SyncType v) { sync_type = v; }
 	void set_object_id(uint16_t v) { object_id = v; }
+	void set_sync_type_and_streamer(SyncType _sync_type, Player* _streamer);
 	void set_transform(const TransformTR& transform);
 	void set_transform(const TransformPackedTR& packed_transform);
 	void set_position(const vec3& v);

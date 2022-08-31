@@ -30,14 +30,9 @@ namespace jc::pfx_collision::hook
 		return process_hook(col, a1, a2);
 	}
 
-	void apply()
+	void enable(bool apply)
 	{
-		process_hook.hook();
-	}
-
-	void undo()
-	{
-		process_hook.unhook();
+		process_hook.hook(apply);
 	}
 }
 

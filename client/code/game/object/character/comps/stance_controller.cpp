@@ -11,7 +11,7 @@ int StanceController::get_movement_id() const
 
 void BodyStanceController::set_stance(uint32_t id)
 {
-	check(false, "todojc");
+	jc::this_call(0x625750, this, id);
 }
 
 Character* BodyStanceController::get_character() const
