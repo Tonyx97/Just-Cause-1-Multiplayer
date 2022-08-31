@@ -55,9 +55,29 @@ void jc::mp::logic::on_tick()
 			const auto& move_info = localplayer->get_movement_info();
 			const auto move_angle = move_info.angle;
 
-			/*const auto vehicle_net = localplayer->get_vehicle();
-			const auto vehicle = vehicle_net ? vehicle_net->get_object() : nullptr;
-			const auto old_vehicle = local_char->get_vehicle();*/
+			// this is some debug we will use when reversing shared and weak ptr
+
+			/*if (const auto seat_ = jc::read<ptr>(local_char, 0x878))
+				if (const auto vehicle = jc::read<Vehicle*>(seat_, 0x4C))
+				{
+					if (g_key->is_key_down(KEY_L))
+					{
+						static ref<VehicleSeat>* seat = (ref<VehicleSeat>*)malloc(sizeof(ref<VehicleSeat>));
+
+						jc::v_call(vehicle, jc::vehicle::vt::GET_DRIVER_SEAT, seat);
+
+						log(WHITE, "----------------");
+						log(GREEN, "1 -> {} {}", seat->counter ? seat->counter->uses : -1, seat->counter ? seat->counter->weaks : -1);
+
+						jc::this_call(0x41F8C0, seat->counter);
+
+						log(GREEN, "2 -> {} {}", seat->counter ? seat->counter->uses : -1, seat->counter ? seat->counter->weaks : -1);
+
+						jc::this_call(0x40E720, &seat->counter->vt);
+
+						log(GREEN, "3 -> {} {}", seat->counter ? seat->counter->uses : -1, seat->counter ? seat->counter->weaks : -1);
+					}
+				}*/
 
 			// health
 

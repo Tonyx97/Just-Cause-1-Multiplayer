@@ -192,9 +192,9 @@ void jc::test_units::test_0()
 		Vehicle* vehicle = nullptr;
 	} static info;
 
-	if (auto veh_seat = local_char->get_vehicle_seat())
+	/*if (auto veh_seat = local_char->get_vehicle_seat())
 		if (auto veh = veh_seat->get_vehicle())
-			info.vehicle = veh;
+			info.vehicle = veh;*/
 
 	if (g_key->is_key_pressed(VK_F8))
 	{
