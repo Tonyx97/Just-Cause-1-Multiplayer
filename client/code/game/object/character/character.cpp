@@ -444,7 +444,7 @@ namespace jc::character::hook
 					target_seat = *new_seat;
 				}
 				else if (curr_seat && !new_seat)
-					target_seat = *curr_seat;
+					target_seat = curr_seat;
 				else if (curr_seat && new_seat)
 				{
 					new_vehicle_net = lp->get_vehicle();
@@ -490,6 +490,12 @@ void Character::SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai)
 	if (ai)
 		jc::write(v, jc::character::g::AI_PUNCH_DAMAGE);
 	else jc::write(v, jc::character::g::PLAYER_PUNCH_DAMAGE);
+}
+
+float Character::GET_GLOBAL_PUNCH_DAMAGE(bool ai)
+{
+	return ai ? jc::read<float>(jc::character::g::AI_PUNCH_DAMAGE) : 
+				jc::read<float>(jc::character::g::PLAYER_PUNCH_DAMAGE);
 }
 
 void Character::SET_FLYING_Y_MODIFIER(float v)
@@ -980,18 +986,9 @@ Vehicle* Character::get_vehicle() const
 	return seat ? seat->get_vehicle() : nullptr;
 }
 
-ref<VehicleSeat> Character::get_vehicle_seat() const
+VehicleSeat* Character::get_vehicle_seat() const
 {
-	if (const auto seat = jc::read<VehicleSeat*>(this, jc::character::VEHICLE_SEAT))
-	{
-		auto ref = seat->get_ref();
-
-		ref.inc();
-
-		return ref;
-	}
-
-	return {};
+	return jc::read<VehicleSeat*>(this, jc::character::VEHICLE_SEAT);
 }
 
 Skeleton* Character::get_skeleton() const

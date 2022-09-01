@@ -1,10 +1,12 @@
 #include <defs/standard.h>
 
-#include "nh_world.h"
-
 #include <mp/net.h>
 
+#include "nh_world.h"
+
 #ifdef JC_CLIENT
+#include <game/object/character/character.h>
+
 #include <game/sys/world/day_cycle.h>
 #include <game/sys/time/time_system.h>
 #endif
@@ -29,6 +31,22 @@ enet::PacketResult nh::world::day_time(const enet::Packet& p)
 #ifdef JC_CLIENT
 	g_day_cycle->set_enabled(p.get_bool());
 	g_day_cycle->set_time(p.get_float());
+#endif
+
+	return enet::PacketRes_Ok;
+}
+
+enet::PacketResult nh::world::punch_force(const enet::Packet& p)
+{
+	const float force = p.get_float();
+
+#ifdef JC_CLIENT
+	Character::SET_GLOBAL_PUNCH_DAMAGE(force);
+	Character::SET_GLOBAL_PUNCH_DAMAGE(force, true);
+#else
+	g_net->get_settings().set_punch_force(force);
+
+	g_net->send_broadcast_joined_reliable<ChannelID_World>(WorldPID_SetPunchForce, force);
 #endif
 
 	return enet::PacketRes_Ok;

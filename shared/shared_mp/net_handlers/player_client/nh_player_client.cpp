@@ -1,8 +1,8 @@
 #include <defs/standard.h>
 
-#include "nh_player_client.h"
-
 #include <mp/net.h>
+
+#include "nh_player_client.h"
 
 #include <shared_mp/player_client/player_client.h>
 

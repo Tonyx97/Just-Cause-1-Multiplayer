@@ -91,7 +91,25 @@ void VehicleNetObject::on_net_var_change(NetObjectVarType var_type)
 	case NetObjectVar_Velocity: obj->get_physical()->set_velocity(get_velocity()); break;
 	case NetObjectVar_Health: obj->set_hp(get_hp()); break;
 	case NetObjectVar_MaxHealth: obj->set_max_hp(get_max_hp()); break;
-}
+	}
+#else
+	switch (var_type)
+	{
+	case NetObjectVar_Transform:
+	case NetObjectVar_Position:
+	case NetObjectVar_Rotation:
+	{
+		// when we receive the transform from the streamer of this vehicle then update position
+		// for all players so at least we have a valid position for all players inside the vehicle
+
+		for_each_player([&](uint8_t, Player* player)
+		{
+			player->set_transform(get_transform());
+		});
+
+		break;
+	}
+	}
 #endif
 }
 

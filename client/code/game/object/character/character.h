@@ -117,6 +117,7 @@ public:
 	IMPL_OBJECT_TYPE_ID("CCharacter");
 
 	static void SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai = false);
+	static float GET_GLOBAL_PUNCH_DAMAGE(bool ai = false);
 	static void SET_FLYING_Y_MODIFIER(float v);
 
 	void respawn();
@@ -175,7 +176,7 @@ public:
 
 	Vehicle* get_vehicle() const;
 
-	ref<VehicleSeat> get_vehicle_seat() const;
+	VehicleSeat* get_vehicle_seat() const;
 
 	Skeleton* get_skeleton() const;
 

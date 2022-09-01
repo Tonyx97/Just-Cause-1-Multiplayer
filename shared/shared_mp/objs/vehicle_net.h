@@ -133,6 +133,13 @@ public:
 	void set_fire_info(const std::vector<FireInfo>& v);
 	void set_mounted_gun_fire_info(const FireInfoBase& v);
 
+	template <typename Fn>
+	void for_each_player(const Fn& fn)
+	{
+		for (const auto& [seat_type, player] : players)
+			fn(seat_type, player);
+	}
+
 	/**
 	* assign a player to a seat, this overrides the current player
 	* in the seat

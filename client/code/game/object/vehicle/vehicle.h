@@ -155,9 +155,9 @@ public:
 
 	Weapon* get_weapon(int i) const;
 
-	ref<VehicleSeat> get_seat_by_type(uint8_t type) const;
-	ref<VehicleSeat> get_roof_seat() const;
-	ref<VehicleSeat> get_driver_seat() const;
-	ref<VehicleSeat> get_passenger_seat() const;
-	ref<VehicleSeat> get_special_seat() const;
+	VehicleSeat* get_seat_by_type(uint8_t type) const;
+	VehicleSeat* get_roof_seat() const;
+	VehicleSeat* get_driver_seat() const;
+	VehicleSeat* get_passenger_seat() const;
+	VehicleSeat* get_special_seat() const;
 };

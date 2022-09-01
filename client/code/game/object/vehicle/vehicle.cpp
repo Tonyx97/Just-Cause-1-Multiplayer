@@ -472,59 +472,35 @@ Weapon* Vehicle::get_weapon(int i) const
 	return veh_weapon ? veh_weapon->get_weapon() : nullptr;
 }
 
-ref<VehicleSeat> Vehicle::get_seat_by_type(uint8_t type) const
+VehicleSeat* Vehicle::get_seat_by_type(uint8_t type) const
 {
 	switch (type)
 	{
-	case VehicleSeat_Roof:			return std::move(get_roof_seat());
-	case VehicleSeat_Driver:		return std::move(get_driver_seat());
-	case VehicleSeat_Special:		return std::move(get_special_seat());
-	case VehicleSeat_Passenger:		return std::move(get_passenger_seat());
+	case VehicleSeat_Roof:			return get_roof_seat();
+	case VehicleSeat_Driver:		return get_driver_seat();
+	case VehicleSeat_Special:		return get_special_seat();
+	case VehicleSeat_Passenger:		return get_passenger_seat();
 	}
 
-	return {};
+	return nullptr;
 }
 
-ref<VehicleSeat> Vehicle::get_roof_seat() const
+VehicleSeat* Vehicle::get_roof_seat() const
 {
-	ref<VehicleSeat> r;
-
-	jc::v_call(this, jc::vehicle::vt::GET_ROOF_SEAT, &r);
-
-	r.inc();
-
-	return r;
+	return jc::read<VehicleSeat*>(this, jc::vehicle::ROOFTOP_SEAT);
 }
 
-ref<VehicleSeat> Vehicle::get_driver_seat() const
+VehicleSeat* Vehicle::get_driver_seat() const
 {
-    ref<VehicleSeat> r;
-
-	jc::v_call(this, jc::vehicle::vt::GET_DRIVER_SEAT, &r);
-
-	r.inc();
-
-	return r;
+	return jc::read<VehicleSeat*>(this, jc::vehicle::DRIVER_SEAT);
 }
 
-ref<VehicleSeat> Vehicle::get_passenger_seat() const
+VehicleSeat* Vehicle::get_passenger_seat() const
 {
-	ref<VehicleSeat> r;
-
-	jc::v_call(this, jc::vehicle::vt::GET_PASSENGER_SEAT, &r);
-
-	r.inc();
-
-	return r;
+	return jc::read<VehicleSeat*>(this, jc::vehicle::PASSENGER_SEAT);
 }
 
-ref<VehicleSeat> Vehicle::get_special_seat() const
+VehicleSeat* Vehicle::get_special_seat() const
 {
-	ref<VehicleSeat> r;
-
-	jc::v_call(this, jc::vehicle::vt::GET_SPECIAL_SEAT, &r);
-
-	r.inc();
-
-	return r;
+	return jc::read<VehicleSeat*>(this, jc::vehicle::SPECIAL_SEAT);
 }

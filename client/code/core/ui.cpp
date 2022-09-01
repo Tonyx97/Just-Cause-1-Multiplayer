@@ -460,6 +460,7 @@ void UI::render_admin_panel()
 	{
 		float day_time = g_day_cycle->get_hour();
 		float timescale = g_time->get_time_scale();
+		float punch_force = Character::GET_GLOBAL_PUNCH_DAMAGE(false);
 
 		if (ImGui::SliderFloat("Day Hour##ap.sv.time", &day_time, 0.f, 24.f))
 			g_net->send_reliable<ChannelID_Debug>(DbgPID_SetTime, day_time);
@@ -467,12 +468,23 @@ void UI::render_admin_panel()
 		if (ImGui::SliderFloat("Time Scale (lol, don't touch sir)##ap.sv.ts", &timescale, 0.01f, 5.f))
 			g_net->send_reliable<ChannelID_World>(WorldPID_SetTimeScale, timescale);
 
+		if (ImGui::SliderFloat("Punch Force (lmao)##ap.sv.pf", &punch_force, 50.f, 10000.f))
+			g_net->send_reliable<ChannelID_World>(WorldPID_SetPunchForce, punch_force);
+
 		ImGui::TreePop();
 	}
 
 	if (ImGui::TreeNode("General"))
 	{
 		ImGui::Checkbox("No clip", &no_clip);
+
+		if (ImGui::Checkbox("God mode", &godmode))
+		{
+			if (godmode)
+				local_char->set_alive_flag(AliveObjectFlag_Invincible);
+			else local_char->remove_alive_flag(AliveObjectFlag_Invincible);
+		}
+
 		ImGui::Checkbox("Show Top Debug", &show_top_dbg);
 
 		if (ImGui::Button("Toggle world lighting"))

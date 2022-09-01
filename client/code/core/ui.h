@@ -34,6 +34,7 @@ private:
 		 show_last_grip		 = false,
 		 infinite_ammo = true,
 		 no_clip			 = true,
+		 godmode			 = false,
 		 show_top_dbg = false;
 
 	int bullets_per_shoot = 1;

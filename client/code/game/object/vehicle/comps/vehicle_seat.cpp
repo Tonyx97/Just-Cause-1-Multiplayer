@@ -405,9 +405,7 @@ Interactable* VehicleSeat::get_interactable() const
 
 ref<VehicleSeat> VehicleSeat::get_ref()
 {
-	ref<VehicleSeat> r;
+	check(false, "{} Not supported", CURR_FN);
 
-	jc::this_call(jc::vehicle_seat::fn::GET_REF, this, &r);
-
-	return r;
+	return {};
 }

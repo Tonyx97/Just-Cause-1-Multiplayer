@@ -332,32 +332,7 @@ void jc::test_units::test_0()
 		if (const auto veh = BITCAST(Vehicle*, g_global_ptr); veh && !entered)
 		{
 			const auto seat = veh->get_driver_seat();
-			const auto seat_ptr = ptr(*seat);
 
-			//seat->open_door(info.character);
-
-			if (seat->get_character() == info.character)
-			{
-				if (!jc::this_call(0x5A1F30, info.character))
-				{
-					log(BLUE, "Part 2");
-
-					*(uint8_t*)(seat_ptr + 0x152) = 0;
-
-					const auto type = seat->get_type();
-
-					if (type != VehicleSeat_Special)
-					{
-						if (type == VehicleSeat_Passenger)
-							info.character->set_stance_enter_vehicle_right(false);
-						else if (type == VehicleSeat_Driver)
-							info.character->set_stance_enter_vehicle_left(false);
-					}
-
-					entered = true;
-				}
-				else log(BLUE, "if needed, code is at 0x88102A");
-			}
 		}
 	}
 

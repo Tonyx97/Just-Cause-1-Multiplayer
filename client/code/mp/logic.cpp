@@ -127,6 +127,15 @@ void jc::mp::logic::on_tick()
 					localplayer->set_transform(transform_tr);
 				}
 			}
+			else
+			{
+				const auto vehicle_position = vehicle->get_position();
+				const auto vehicle_rotation = vehicle->get_rotation();
+
+				TransformTR vehicle_transform(vehicle_position, vehicle_rotation);
+
+				localplayer->set_transform(vehicle_transform);
+			}
 
 			// velocity
 			
