@@ -541,7 +541,7 @@ void UI::render_admin_panel()
 		};
 
 		ImGui::Text("Selected Weapon Name: %s", jc::vars::weapons_id_to_type_name.find(weapon_ids[weapon_to_give])->second.c_str());
-		ImGui::SliderInt("Weapon to give##ap.weap.tgiv", &weapon_to_give, 0, sizeof(weapon_ids));
+		ImGui::SliderInt("Weapon to give##ap.weap.tgiv", &weapon_to_give, 0, sizeof(weapon_ids) - 1);
 
 		if (ImGui::Button("Give weapon##ap.weap.giv"))
 			local_char->set_weapon(weapon_ids[weapon_to_give], false);
