@@ -2,6 +2,8 @@
 
 #include <mp/net.h>
 
+#include <shared_mp/player_client/player_client.h>
+
 #include "player.h"
 
 #ifdef JC_CLIENT

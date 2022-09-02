@@ -303,3 +303,8 @@ void Net::update_objects()
 {
 	jc::mp::logic::on_update_objects();
 }
+
+Player* Net::get_localplayer() const
+{
+	return local ? local->get_player() : nullptr;
+}

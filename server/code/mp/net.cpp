@@ -127,6 +127,24 @@ void Net::setup_channels()
 	});
 }
 
+void Net::send_broadcast(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc)
+{
+	for_each_player_client([&](NID, PlayerClient* pc)
+	{
+		if (pc != ignore_pc)
+			pc->send(channel, p);
+	});
+}
+
+void Net::send_broadcast_joined(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc)
+{
+	for_each_joined_player_client([&](NID, PlayerClient* pc)
+	{
+		if (pc != ignore_pc)
+			pc->send(channel, p);
+	});
+}
+
 void Net::tick()
 {
 	// process settings and server environment

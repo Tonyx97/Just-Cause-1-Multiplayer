@@ -2,9 +2,35 @@
 
 #include "object_lists.h"
 
+#include <shared_mp/player_client/player_client.h>
 #include <shared_mp/objs/all.h>
 
 #include <mp/net.h>
+
+void ObjectLists::for_each_net_object(const nid_net_obj_fn_t& fn)
+{
+	for (const auto& [nid, obj] : net_objects)
+		fn(nid, obj);
+}
+
+void ObjectLists::for_each_player_client(const nid_pc_fn_t& fn)
+{
+	for (const auto& [nid, pc] : player_clients)
+		fn(nid, pc);
+}
+
+void ObjectLists::for_each_joined_player_client(const nid_pc_fn_t& fn)
+{
+	for (const auto& [nid, pc] : player_clients)
+		if (pc->is_joined())
+			fn(nid, pc);
+}
+
+void ObjectLists::for_each_player(const nid_player_fn_t& fn)
+{
+	for (const auto& [nid, player] : player_clients)
+		fn(nid, player->get_player());
+}
 
 #ifdef JC_CLIENT
 PlayerClient* ObjectLists::add_player_client(NID nid)

@@ -7,29 +7,16 @@
 class Net : public ObjectLists
 {
 private:
+
 	Settings settings {};
 
 	ENetHost* sv = nullptr;
 
-	inline void send_broadcast(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc = nullptr)
-	{
-		for_each_player_client([&](NID, PlayerClient* pc)
-		{
-			if (pc != ignore_pc)
-				pc->send(channel, p);
-		});
-	}
-
-	inline void send_broadcast_joined(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc = nullptr)
-	{
-		for_each_joined_player_client([&](NID, PlayerClient* pc)
-		{
-			if (pc != ignore_pc)
-				pc->send(channel, p);
-		});
-	}
+	void send_broadcast(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc = nullptr);
+	void send_broadcast_joined(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc = nullptr);
 
 public:
+
 	bool init();
 	void destroy();
 	void setup_channels();

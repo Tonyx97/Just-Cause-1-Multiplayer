@@ -300,7 +300,7 @@ void UI::render_players()
 	if (!local_char)
 		return;
 
-	g_net->for_each_player([&](Player* player)
+	g_net->for_each_player([&](NID, Player* player)
 	{
 		if (player->is_local() || !player->is_spawned())
 			return;

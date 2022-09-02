@@ -2,9 +2,13 @@
 
 #include <net/interface.h>
 
-#include <shared_mp/player_client/player_client.h>
-
 class DamageableNetObject;
+class PlayerClient;
+class Player;
+
+using nid_net_obj_fn_t = std::function<void(NID, NetObject*)>;
+using nid_pc_fn_t = std::function<void(NID, PlayerClient*)>;
+using nid_player_fn_t = std::function<void(NID, Player*)>;
 
 class ObjectLists
 {
@@ -32,6 +36,11 @@ public:
 	PlayerClient* add_player_client(ENetPeer* peer);
 #endif
 
+	void for_each_net_object(const nid_net_obj_fn_t& fn);
+	void for_each_player_client(const nid_pc_fn_t& fn);
+	void for_each_joined_player_client(const nid_pc_fn_t& fn);
+	void for_each_player(const nid_player_fn_t& fn);
+
 	bool remove_player_client(PlayerClient* pc);
 	bool has_player_client(PlayerClient* pc) const;
 
@@ -43,35 +52,6 @@ public:
 		if constexpr (std::is_same_v<T, NetObject>)
 			return net_obj;
 		else return net_obj->cast<T>();
-	}
-
-	template <typename Fn>
-	void for_each_net_object(const Fn& fn)
-	{
-		for (const auto& [nid, obj] : net_objects)
-			fn(nid, obj);
-	}
-
-	template <typename Fn>
-	void for_each_player_client(const Fn& fn)
-	{
-		for (const auto& [nid, pc] : player_clients)
-			fn(nid, pc);
-	}
-
-	template <typename Fn>
-	void for_each_joined_player_client(const Fn& fn)
-	{
-		for (const auto& [nid, pc] : player_clients)
-			if (pc->is_joined())
-				fn(nid, pc);
-	}
-
-	template <typename Fn>
-	void for_each_player(const Fn& fn)
-	{
-		for (const auto& [nid, player] : player_clients)
-			fn(player->get_player());
 	}
 
 	size_t get_player_clients_count() const { return player_clients.size(); }

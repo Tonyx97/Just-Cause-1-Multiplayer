@@ -95,7 +95,7 @@ public:
 	int get_net_stat() const { return net_stat; }
 
 	PlayerClient* get_local() const { return local; }
-	Player* get_localplayer() const { return local ? local->get_player() : nullptr; }
+	Player* get_localplayer() const;
 
 	ENetHost* get_host() const { return client; }
 	ENetPeer* get_peer() const { return peer; }
