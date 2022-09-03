@@ -50,7 +50,7 @@ void Net::setup_channels()
 {
 	// player client dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const enet::Packet& p)
+	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const Packet& p)
 	{
 		switch (auto id = p.get_id())
 		{
@@ -60,24 +60,24 @@ void Net::setup_channels()
 		case PlayerClientPID_Nick:				return nh::player_client::nick(p);
 		}
 
-		return enet::PacketRes_NotFound;
+		return PacketRes_NotFound;
 	});
 
 	// chat dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_Chat, [&](const enet::Packet& p)
+	enet::add_channel_dispatcher(ChannelID_Chat, [&](const Packet& p)
 	{
 		switch (auto id = p.get_id())
 		{
 		case ChatPID_Msg: return nh::chat::msg(p);
 		}
 
-		return enet::PacketRes_NotFound;
+		return PacketRes_NotFound;
 	});
 
 	// world dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_World, [&](const enet::Packet& p)
+	enet::add_channel_dispatcher(ChannelID_World, [&](const Packet& p)
 	{
 		switch (auto id = p.get_id())
 		{
@@ -88,12 +88,12 @@ void Net::setup_channels()
 		case WorldPID_SyncObject:		return nh::world::sync_object(p);
 		}
 
-		return enet::PacketRes_NotFound;
+		return PacketRes_NotFound;
 	});
 
 	// generic packet dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::Packet& p)
+	enet::add_channel_dispatcher(ChannelID_Generic, [&](const Packet& p)
 	{
 		switch (auto id = p.get_id())
 		{
@@ -111,37 +111,49 @@ void Net::setup_channels()
 		case PlayerPID_VehicleMountedGunFire:		return nh::vehicle::vehicle_mounted_gun_fire(p);
 		}
 
-		return enet::PacketRes_NotFound;
+		return PacketRes_NotFound;
 	});
 
 	// generic packet dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_Debug, [&](const enet::Packet& p)
+	enet::add_channel_dispatcher(ChannelID_Debug, [&](const Packet& p)
 	{
 		switch (auto id = p.get_id())
 		{
 		case DbgPID_SetTime:		return nh::dbg::set_time(p);
 		}
 
-		return enet::PacketRes_NotFound;
+		return PacketRes_NotFound;
 	});
 }
 
-void Net::send_broadcast(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc)
+void Net::send_broadcast_impl(const Packet& p, PlayerClient* ignore_pc)
 {
+	// create enet packet only once
+
+	p.create();
+
+	// for each player client, send the packet
+
 	for_each_player_client([&](NID, PlayerClient* pc)
 	{
 		if (pc != ignore_pc)
-			pc->send(channel, p);
+			pc->send(p);
 	});
 }
 
-void Net::send_broadcast_joined(uint8_t channel, const PacketHolder& p, PlayerClient* ignore_pc)
+void Net::send_broadcast_joined_impl(const Packet& p, PlayerClient* ignore_pc)
 {
+	// create enet packet only once
+
+	p.create();
+
+	// for each player client, send the packet
+
 	for_each_joined_player_client([&](NID, PlayerClient* pc)
 	{
 		if (pc != ignore_pc)
-			pc->send(channel, p);
+			pc->send(p);
 	});
 }
 

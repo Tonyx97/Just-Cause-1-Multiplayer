@@ -13,7 +13,7 @@
 #include <game/sys/time/time_system.h>
 #endif
 
-enet::PacketResult nh::world::time_scale(const enet::Packet& p)
+PacketResult nh::world::time_scale(const Packet& p)
 {
 	const float time_scale = p.get_float();
 
@@ -22,23 +22,23 @@ enet::PacketResult nh::world::time_scale(const enet::Packet& p)
 #else
 	g_net->get_settings().set_time_scale(time_scale);
 
-	g_net->send_broadcast_joined_reliable<ChannelID_World>(WorldPID_SetTimeScale, time_scale);
+	g_net->send_broadcast_joined(p);
 #endif
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::world::day_time(const enet::Packet& p)
+PacketResult nh::world::day_time(const Packet& p)
 {
 #ifdef JC_CLIENT
 	g_day_cycle->set_enabled(p.get_bool());
 	g_day_cycle->set_time(p.get_float());
 #endif
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::world::punch_force(const enet::Packet& p)
+PacketResult nh::world::punch_force(const Packet& p)
 {
 	const float force = p.get_float();
 
@@ -48,13 +48,13 @@ enet::PacketResult nh::world::punch_force(const enet::Packet& p)
 #else
 	g_net->get_settings().set_punch_force(force);
 
-	g_net->send_broadcast_joined_reliable<ChannelID_World>(WorldPID_SetPunchForce, force);
+	g_net->send_broadcast_joined(p);
 #endif
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::world::spawn_object(const enet::Packet& p)
+PacketResult nh::world::spawn_object(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto [nid, net_type] = p.get_nid_and_type();
@@ -62,11 +62,13 @@ enet::PacketResult nh::world::spawn_object(const enet::Packet& p)
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
 
-	const auto net_type = p.get_integral<NetObjectType>();
+	const auto net_type = p.get<NetObjectType>();
 #endif
 
 	const auto object_id = p.get_u16();
-	const auto transform = p.get_raw<TransformTR>();
+	const auto transform = p.get<TransformTR>();
+
+	constexpr bool aa = std::is_trivial_v<TransformTR>;
 
 #ifdef JC_CLIENT
 	const auto obj = g_net->spawn_net_object(nid, net_type, object_id, transform);
@@ -74,10 +76,10 @@ enet::PacketResult nh::world::spawn_object(const enet::Packet& p)
 	const auto obj = g_net->spawn_net_object(SyncType_Distance, net_type, object_id, transform);
 #endif
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::world::destroy_object(const enet::Packet& p)
+PacketResult nh::world::destroy_object(const Packet& p)
 {
 #ifdef JC_CLIENT
 #else
@@ -86,16 +88,16 @@ enet::PacketResult nh::world::destroy_object(const enet::Packet& p)
 	const auto net_obj = p.get_net_object();
 
 	if (!net_obj)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 
 	log(GREEN, "A net object with nid {:x} was destroyed, type {}", net_obj->get_nid(), net_obj->get_type());
 
 	g_net->destroy_net_object(net_obj);
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::world::set_ownership(const enet::Packet& p)
+PacketResult nh::world::set_ownership(const Packet& p)
 {
 #ifdef JC_CLIENT
 	Player* new_streamer = nullptr;
@@ -106,22 +108,22 @@ enet::PacketResult nh::world::set_ownership(const enet::Packet& p)
 	const auto net_obj = p.get_net_object();
 
 	if (!net_obj)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 
 	net_obj->set_streamer(new_streamer);
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 #endif
 
-	return enet::PacketRes_NotSupported;
+	return PacketRes_NotSupported;
 }
 
-enet::PacketResult nh::world::sync_object(const enet::Packet& p)
+PacketResult nh::world::sync_object(const Packet& p)
 {
 	const auto net_obj = p.get_net_object();
 
 	if (!net_obj)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 
 #ifdef JC_SERVER
 	const auto pc = p.get_pc();
@@ -133,35 +135,34 @@ enet::PacketResult nh::world::sync_object(const enet::Packet& p)
 	if (net_obj->get_type() != NetObject_Player)
 	{
 		if (!net_obj->is_owned_by(player))
-			return enet::PacketRes_NotAllowed;
+			return PacketRes_NotAllowed;
 	}
 	else if (net_obj != player)
-		return enet::PacketRes_NotAllowed;
+		return PacketRes_NotAllowed;
 #endif
 
 	switch (const auto var_type = p.get_u8())
 	{
 	case NetObjectVar_Transform:
 	{
-		const auto transform = p.get_raw<TransformPackedTR>();
+		struct test
+		{
+			int t = 1;
+		};
+
+		constexpr bool ta = std::is_trivial_v<test>;
+
+		const auto transform = p.get<TransformPackedTR>();
 
 		net_obj->set_transform(transform);
-
-#ifdef JC_SERVER
-		g_net->send_broadcast_joined_unreliable<ChannelID_World>(pc, WorldPID_SyncObject, net_obj, NetObjectVar_Transform, transform);
-#endif
 
 		break;
 	}
 	case NetObjectVar_Velocity:
 	{
-		const auto velocity = p.get_raw<vec3>();
+		const auto velocity = p.get<vec3>();
 
 		net_obj->set_velocity(velocity);
-
-#ifdef JC_SERVER
-		g_net->send_broadcast_joined_unreliable<ChannelID_World>(pc, WorldPID_SyncObject, net_obj, NetObjectVar_Velocity, velocity);
-#endif
 
 		break;
 	}
@@ -171,10 +172,6 @@ enet::PacketResult nh::world::sync_object(const enet::Packet& p)
 
 		net_obj->set_hp(hp);
 
-#ifdef JC_SERVER
-		g_net->send_broadcast_joined_reliable<ChannelID_World>(pc, WorldPID_SyncObject, net_obj, NetObjectVar_Health, hp);
-#endif
-
 		break;
 	}
 	case NetObjectVar_MaxHealth:
@@ -183,14 +180,14 @@ enet::PacketResult nh::world::sync_object(const enet::Packet& p)
 
 		net_obj->set_max_hp(max_hp);
 
-#ifdef JC_SERVER
-		g_net->send_broadcast_joined_reliable<ChannelID_World>(pc, WorldPID_SyncObject, net_obj, NetObjectVar_MaxHealth, max_hp);
-#endif
-
 		break;
 	}
 	default: log(RED, "Unknown net object var type: {}", var_type);
 	}
 
-	return enet::PacketRes_Ok;
+#ifdef JC_SERVER
+	g_net->send_broadcast_joined(pc, p);
+#endif
+
+	return PacketRes_Ok;
 }

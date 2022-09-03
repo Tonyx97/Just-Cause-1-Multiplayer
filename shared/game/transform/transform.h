@@ -2,17 +2,17 @@
 
 struct TransformPackedTR
 {
-	vec3 t = jc::vec::IDENTITY;
-	i16vec4 r = jc::vec::IDENTITY;
+	vec3 t;
+	i16vec4 r;
 };
 
 struct TransformTR
 {
-	vec3 t = jc::vec::ZERO;
-	quat r = jc::qua::IDENTITY;
+	vec3 t;
+	quat r;
 
-	TransformTR() {}
-	TransformTR(const vec3& position) : t(position) {}
+	TransformTR() : t(jc::vec::ZERO), r(jc::qua::IDENTITY) {}
+	TransformTR(const vec3& position) : t(position), r(jc::qua::IDENTITY) {}
 	TransformTR(const vec3& position, const quat& rotation) : t(position), r(rotation) {}
 	TransformTR(const TransformPackedTR& v)
 	{

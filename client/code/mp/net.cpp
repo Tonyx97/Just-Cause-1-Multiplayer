@@ -169,7 +169,7 @@ void Net::setup_channels()
 {
 	// player client dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const enet::Packet& p)
+	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const Packet& p)
 	{
 		switch (auto id = p.get_id())
 		{
@@ -181,34 +181,34 @@ void Net::setup_channels()
 		case PlayerClientPID_Nick:				return nh::player_client::nick(p);
 		}
 
-		return enet::PacketRes_NotFound;
+		return PacketRes_NotFound;
 	});
 
 	// chat dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_Chat, [&](const enet::Packet& p)
+	enet::add_channel_dispatcher(ChannelID_Chat, [&](const Packet& p)
 	{
 		// if localplayer is not in game then we don't want any of these packets
 
 		if (!g_game_status->is_in_game())
-			return enet::PacketRes_NotUsable;
+			return PacketRes_NotUsable;
 
 		switch (auto id = p.get_id())
 		{
 		case ChatPID_Msg: return nh::chat::msg(p);
 		}
 
-		return enet::PacketRes_NotFound;
+		return PacketRes_NotFound;
 	});
 
 	// world packet dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_World, [&](const enet::Packet& p)
+	enet::add_channel_dispatcher(ChannelID_World, [&](const Packet& p)
 	{
 		// if localplayer is not in game then we don't want any of these packets
 
 		if (!g_game_status->is_in_game())
-			return enet::PacketRes_NotUsable;
+			return PacketRes_NotUsable;
 
 		switch (auto id = p.get_id())
 		{
@@ -221,17 +221,17 @@ void Net::setup_channels()
 		case WorldPID_SyncObject:			return nh::world::sync_object(p);
 		}
 
-		return enet::PacketRes_NotFound;
+		return PacketRes_NotFound;
 	});
 
 	// generic packet dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_Generic, [&](const enet::Packet& p)
+	enet::add_channel_dispatcher(ChannelID_Generic, [&](const Packet& p)
 	{
 		// if localplayer is not in game then we don't want any of these packets
 
 		if (!g_game_status->is_in_game())
-			return enet::PacketRes_NotUsable;
+			return PacketRes_NotUsable;
 
 		switch (auto id = p.get_id())
 		{
@@ -249,19 +249,19 @@ void Net::setup_channels()
 		case PlayerPID_VehicleMountedGunFire:	return nh::vehicle::vehicle_mounted_gun_fire(p);
 		}
 
-		return enet::PacketRes_NotFound;
+		return PacketRes_NotFound;
 	});
 
 	// debug packet dispatcher
 
-	enet::add_channel_dispatcher(ChannelID_Debug, [&](const enet::Packet& p)
+	enet::add_channel_dispatcher(ChannelID_Debug, [&](const Packet& p)
 	{
 		// if localplayer is not in game then we don't want any of these packets
 
 		if (!g_game_status->is_in_game())
-			return enet::PacketRes_NotUsable;
+			return PacketRes_NotUsable;
 
-		return enet::PacketRes_NotFound;
+		return PacketRes_NotFound;
 	});
 }
 

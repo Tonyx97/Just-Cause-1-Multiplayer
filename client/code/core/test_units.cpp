@@ -486,7 +486,7 @@ void jc::test_units::test_0()
 
 	// rbm reversing
 
-	if (g_key->is_key_pressed(VK_NUMPAD2))
+	/*if (g_key->is_key_pressed(VK_NUMPAD2))
 	{
 		using namespace enet;
 
@@ -596,19 +596,19 @@ void jc::test_units::test_0()
 			{
 				auto uv = deserialize_general_data<vec2>(rbm);
 
-				/*vec2 fixed[4] =
-				{
-					{ 1.f, 1.f },
-					{ 1.f, 0.f },
-					{ 0.f, 1.f },
-					{ 0.f, 0.f },
-				};
+				//vec2 fixed[4] =
+				//{
+				//	{ 1.f, 1.f },
+				//	{ 1.f, 0.f },
+				//	{ 0.f, 1.f },
+				//	{ 0.f, 0.f },
+				//};
 
-				static int i = 0;
+				//static int i = 0;
 
-				uv = fixed[i];
+				//uv = fixed[i];
 
-				i = (i + 1) % 4;*/
+				//i = (i + 1) % 4;
 
 				serialize_params(out, uv);
 
@@ -679,5 +679,5 @@ void jc::test_units::test_0()
 		std::ofstream test_file("test.rbm", std::ios::binary);
 
 		test_file.write((char*)out.data(), out.size());
-	}
+	}*/
 }

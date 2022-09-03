@@ -11,7 +11,7 @@
 #include <mp/chat/chat.h>
 #endif
 
-enet::PacketResult nh::chat::msg(const enet::Packet& p)
+PacketResult nh::chat::msg(const Packet& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
@@ -21,10 +21,12 @@ enet::PacketResult nh::chat::msg(const enet::Packet& p)
 	const auto player = pc->get_player();
 	const auto msg = p.get_str();
 
-	g_net->send_broadcast_reliable<ChannelID_Chat>(ChatPID_Msg, player, msg);
+	p.add_beginning(player);
+
+	g_net->send_broadcast(p);
 
 	logt(WHITE, "{}: {}", pc->get_nick(), msg);
 #endif
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }

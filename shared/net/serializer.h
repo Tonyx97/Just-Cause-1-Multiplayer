@@ -4,187 +4,247 @@
 
 #include <enet.h>
 
-#include <net/packets.h>
-
 #include <shared_mp/objs/all.h>
 
-namespace enet
+// declarations
+
+struct serialization_ctx
 {
-	NetObject* deserialize_net_object(std::vector<uint8_t>& data);
+	std::vector<uint8_t> data;
+	
+	uint8_t* initial_begin = nullptr,
+		   * begin = nullptr,
+		   * end = nullptr;
 
-	inline bool deserialize_bool(std::vector<uint8_t>& data)
+	int32_t write_offset = -1;
+
+	inline void add_data(uint8_t* src, size_t size)
 	{
-		const auto value = *BITCAST(bool*, data.data());
+		data.resize(size);
 
-		data.erase(data.begin(), data.begin() + sizeof(value));
+		memcpy(data.data(), src, size);
+	}
+
+	template <typename T>
+	inline T write(const T& value)
+	{
+		const auto value_ptr = std::bit_cast<uint8_t*>(&value);
+
+		data.insert(write_offset == -1 ? data.end() : data.begin() + write_offset, value_ptr, value_ptr + sizeof(T));
+
+		write_offset += sizeof(T);
 
 		return value;
 	}
 
 	template <typename T>
-	inline T deserialize_general_data(std::vector<uint8_t>& data)
+	inline void write(T* ptr, size_t size)
 	{
-		const auto value = *BITCAST(T*, data.data());
+		const auto casted_ptr = std::bit_cast<uint8_t*>(ptr);
 
-		data.erase(data.begin(), data.begin() + sizeof(T));
+		data.insert(write_offset == -1 ? data.end() : data.begin() + write_offset, casted_ptr, casted_ptr + size);
 
-		return value;
-	}
-
-	template <typename T = int>
-	inline T deserialize_int(std::vector<uint8_t>& data)
-	{
-		static_assert(std::is_integral_v<T>, "Not integral type");
-
-		const auto value = *BITCAST(T*, data.data());
-
-		data.erase(data.begin(), data.begin() + sizeof(T));
-
-		return value;
-	}
-
-	template <typename T = float>
-	inline T deserialize_float(std::vector<uint8_t>& data)
-	{
-		static_assert(std::is_floating_point_v<T>, "Not floating type");
-
-		const auto value = *BITCAST(T*, data.data());
-
-		data.erase(data.begin(), data.begin() + sizeof(T));
-
-		return value;
-	}
-
-	inline std::string deserialize_string(std::vector<uint8_t>& data)
-	{
-		size_t size = 0u;
-
-		const auto len = deserialize_int(data);
-
-		std::string out;
-
-		out.resize(len);
-
-		memcpy(out.data(), data.data(), len);
-
-		data.erase(data.begin(), data.begin() + len);
-
-		return out;
+		write_offset += size;
 	}
 
 	template <typename T>
-	inline std::vector<T> deserialize_vector(std::vector<uint8_t>& data)
+	inline T read()
 	{
-		const auto size = deserialize_int<uint32_t>(data);
-
-		std::vector<T> vec;
-
-		for (size_t i = 0u; i < size; ++i)
-		{
-			if constexpr (std::is_same_v<T, std::string>)
-				vec.push_back(deserialize_string(data));
-			else if constexpr (std::is_integral_v<T>)
-				vec.push_back(deserialize_int(data));
-			else if constexpr (std::is_floating_point_v<T>)
-				vec.push_back(deserialize_float(data));
-			else if constexpr (std::derived_from<std::remove_pointer_t<std::remove_reference_t<T>>, NetObject>)
-				vec.push_back(deserialize_net_object(data));
-			else vec.push_back(deserialize_general_data<T>(data));
-		}
-
-		return vec;
+		return *std::bit_cast<T*>(std::exchange(begin, begin + sizeof(T)));
 	}
 
-	// puts data into the buffer
-	//
-	inline void serialize_general_data(std::vector<uint8_t>& buffer, const void* data, size_t size)
+	inline void read(void* out, size_t size)
 	{
-		auto ptr = BITCAST(uint8_t*, data);
-
-		buffer.insert(buffer.end(), ptr, ptr + size);
+		memcpy(out, std::exchange(begin, begin + size), size);
 	}
 
-	// puts string data into the buffer
-	//
-	inline void serialize_string(std::vector<uint8_t>& buffer, const void* data, size_t size)
-	{
-		auto ptr = BITCAST(uint8_t*, data);
-		auto len_ptr = BITCAST(uint8_t*, &size);
+	inline int32_t get_total_read() const { return begin - initial_begin; }
+};
 
-		buffer.insert(buffer.end(), len_ptr, len_ptr + sizeof(size));
-		buffer.insert(buffer.end(), ptr, ptr + size);
-	}
+template <typename, template <typename...> class>
+struct is_specialization : std::false_type {};
 
-	// serialize std::string
-	//
-	inline void serialize_string(std::vector<uint8_t>& buffer, const std::string& v)
-	{
-		serialize_string(buffer, v.data(), v.length());
-	}
+template <template <typename...> class container, typename... A>
+struct is_specialization<container<A...>, container> : std::true_type {};
 
-	// serialize std::wstring
-	//
-	inline void serialize_wstring(std::vector<uint8_t>& buffer, const std::wstring& v)
-	{
-		serialize_string(buffer, v.data(), v.length() * 2u);
-	}
+template <typename T>
+constexpr bool is_plain_copyable_v = std::is_trivial_v<T> && !std::is_pointer_v<T>;
 
-	// serialize floating point types
-	//
-	inline void serialize_float(std::vector<uint8_t>& buffer, float v)
-	{
-		serialize_general_data(buffer, &v, sizeof(v));
-	}
+template <typename T>
+constexpr bool is_vector_v = is_specialization<T, std::vector>::value;
 
-	// serialize integral types
-	//
-	template <typename T>
-	inline void serialize_int(std::vector<uint8_t>& buffer, T v)
-	{
-		serialize_general_data(buffer, &v, sizeof(v));
-	}
+template <typename T>
+constexpr bool is_string_v = std::is_same_v<T, std::string>;
 
-	// puts net object
-	//
-	inline void serialize_net_object(std::vector<uint8_t>& buffer, NetObject* v)
-	{
-		const auto nid = v ? v->get_nid() : INVALID_NID;
+template <typename T>
+constexpr bool is_net_object_v = std::derived_from<std::remove_pointer_t<std::remove_reference_t<T>>, NetObject>;
 
-		if (nid != INVALID_NID)
-		{
-			serialize_int(buffer, nid);
-			serialize_int(buffer, v->get_type());
-		}
-		else serialize_int(buffer, INVALID_NID);
-	}
+template <typename T, typename... A>
+void _serialize(serialization_ctx& ctx, const T& v, A... args);
 
-	// serialize a group of parameters at the same time
-	//
-	inline void serialize_params(std::vector<uint8_t>&) {}
+template <typename T, typename... A>
+void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_plain_copyable_v<T>);
 
-	template <typename T, typename... A>
-	inline void serialize_params(std::vector<uint8_t>& data, const T& value, A... args)
-	{
-		if constexpr (std::is_same_v<T, std::string>)
-			serialize_string(data, value);
-		else if constexpr (std::is_integral_v<T>)
-			serialize_int(data, value);
-		else if constexpr (std::is_floating_point_v<T>)
-			serialize_float(data, value);
-		else if constexpr (util::stl::is_vector<T>::value)
-		{
-			serialize_int(data, value.size());
+template <typename T, typename... A>
+void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_vector_v<T>);
 
-			for (const auto& e : value)
-				serialize_params(data, e);
-		}
-		else if constexpr (std::derived_from<std::remove_pointer_t<std::remove_reference_t<T>>, NetObject>)
-			serialize_net_object(data, value);
-		else serialize_general_data(data, &value, sizeof(value));
+template <typename T, typename... A>
+void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_string_v<T>);
 
-		serialize_params(data, args...);
-	}
+template <typename T, typename... A>
+void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_net_object_v<T>);
+
+NetObject* get_net_object_from_lists(NID nid, NetObjectType type);
+
+template <typename T>
+T _deserialize(serialization_ctx&) requires(is_plain_copyable_v<T>);
+
+template <typename T>
+T _deserialize(serialization_ctx&) requires(is_vector_v<T>);
+
+template <typename T>
+T _deserialize(serialization_ctx&) requires(is_string_v<T>);
+
+template <typename T>
+T _deserialize(serialization_ctx&) requires(is_net_object_v<T>);
+
+// definitions
+
+template <typename T, typename... A>
+void _serialize(serialization_ctx& ctx, const T& v, A... args)
+{
+	ctx.write(v);
+
+	if constexpr (sizeof...(args) > 0)
+		_serialize(ctx, args...);
 }
 
-#define DESERIALIZE_NID_AND_TYPE(p)			const auto nid = enet::deserialize_int(p); \
-											const auto type = enet::deserialize_int<NetObjectType>(p)
+template <typename T, typename... A>
+void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_plain_copyable_v<T>)
+{
+	ctx.write(v);
+
+	if constexpr (sizeof...(args) > 0)
+		_serialize(ctx, args...);
+}
+
+template <typename T, typename... A>
+void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_vector_v<T>)
+{
+	ctx.write(v.size());
+
+	for (const auto& e : v)
+		_serialize(ctx, e);
+
+	if constexpr (sizeof...(args) > 0)
+		_serialize(ctx, args...);
+}
+
+template <typename T, typename... A>
+void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_string_v<T>)
+{
+	const auto size = ctx.write(v.size());
+
+	ctx.write(v.data(), size);
+
+	if constexpr (sizeof...(args) > 0)
+		_serialize(ctx, args...);
+}
+
+template <typename T, typename... A>
+inline void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_net_object_v<T>)
+{
+	const auto nid = v ? v->get_nid() : INVALID_NID;
+
+	if (nid != INVALID_NID)
+	{
+		_serialize(ctx, nid);
+		_serialize(ctx, v->get_type());
+	}
+	else _serialize(ctx, INVALID_NID);
+
+	if constexpr (sizeof...(args) > 0)
+		_serialize(ctx, args...);
+}
+
+template <typename T>
+T _deserialize(serialization_ctx& ctx)
+{
+	return ctx.read<T>();
+}
+
+template <typename T>
+T _deserialize(serialization_ctx& ctx) requires(is_plain_copyable_v<T>)
+{
+	return ctx.read<T>();
+}
+
+template <typename T>
+T _deserialize(serialization_ctx& ctx) requires(is_vector_v<T>)
+{
+	const auto size = ctx.read<size_t>();
+
+	T v;
+
+	for (size_t i = 0u; i < size; ++i)
+		v.push_back(_deserialize<typename T::value_type>(ctx));
+
+	return v;
+}
+
+template <typename T>
+T _deserialize(serialization_ctx& ctx) requires(is_string_v<T>)
+{
+	const auto size = ctx.read<size_t>();
+
+	std::string v;
+
+	v.resize(size);
+
+	ctx.read(v.data(), size);
+
+	return v;
+}
+
+template <typename T>
+T _deserialize(serialization_ctx& ctx) requires(is_net_object_v<T>)
+{
+	const auto nid = _deserialize<NID>(ctx);
+
+	if (nid != INVALID_NID)
+	{
+		const auto type = _deserialize<NetObjectType>(ctx);
+
+		return get_net_object_from_lists(nid, type);
+	}
+
+	return nullptr;
+}
+
+template <typename... A>
+void serialize(serialization_ctx& ctx, A... args)
+{
+	if constexpr (sizeof...(args) > 0)
+		_serialize(ctx, args...);
+}
+
+template <typename T>
+std::pair<T, int> deserialize(serialization_ctx& ctx, int offset)
+{
+	const auto begin = std::bit_cast<uint8_t*>(ctx.data.data() + offset);
+	const auto end = std::bit_cast<uint8_t*>(begin + ctx.data.size());
+
+	if (begin >= end)
+		return { {}, -1 };
+
+	ctx.initial_begin = begin;
+	ctx.begin = begin;
+	ctx.end = end;
+
+	auto v = _deserialize<T>(ctx);
+
+	return { v, ctx.get_total_read() };
+}
+
+/*#define DESERIALIZE_NID_AND_TYPE(p)			const auto nid = deserialize(p); \
+											const auto type = deserialize<NetObjectType>(p)*/

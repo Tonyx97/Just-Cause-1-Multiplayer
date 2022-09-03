@@ -2,10 +2,10 @@
 
 namespace nh::player_client
 {
-	enet::PacketResult init(const enet::Packet& p);
-	enet::PacketResult join(const enet::Packet& p);
-	enet::PacketResult quit(const enet::Packet& p);
-	enet::PacketResult sync_instances(const enet::Packet& p);
-	enet::PacketResult startup_info(const enet::Packet& p);
-	enet::PacketResult nick(const enet::Packet& p);
+	PacketResult init(const Packet& p);
+	PacketResult join(const Packet& p);
+	PacketResult quit(const Packet& p);
+	PacketResult sync_instances(const Packet& p);
+	PacketResult startup_info(const Packet& p);
+	PacketResult nick(const Packet& p);
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-struct PlayerClientSyncInstancesPacket
+/*struct PlayerClientSyncInstancesPacket
 {
 	static constexpr PacketID ID = PlayerClientPID_SyncInstances;
 	static constexpr PacketID CHANNEL = ChannelID_PlayerClient;
@@ -140,4 +140,4 @@ ALIGN_POP()
 
 		return *this;
 	}
-};
+};*/

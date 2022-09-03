@@ -46,7 +46,14 @@ void BlipNetObject::on_net_var_change(NetObjectVarType var_type)
 	{
 	case NetObjectVar_Position:
 	case NetObjectVar_Rotation:
-	case NetObjectVar_Transform: g_net->send_broadcast_joined_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Transform, get_transform()); break;
+	case NetObjectVar_Transform:
+	{
+		Packet p(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Transform, get_transform());
+
+		g_net->send_broadcast_joined(p);
+
+		break;
+	}
 	default:
 		break;
 	}

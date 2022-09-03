@@ -46,47 +46,11 @@ public:
 
 	void set_net_stats(int v) { net_stat = v; }
 
-	inline void send_packet(uint32_t channel, const std::vector<uint8_t>& data, uint32_t flags = ENET_PACKET_FLAG_RELIABLE)
+	void send(const Packet& p)
 	{
-		enet::send_packet(enet::GET_CLIENT_PEER(), data.data(), data.size(), flags, channel);
-	}
+		p.create();
 
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_reliable(PacketID id, const A&... args)
-	{
-		std::vector<uint8_t> data;
-
-		enet::serialize_params(data, id, args...);
-
-		send_packet(channel, data);
-	}
-
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_unreliable(PacketID id, const A&... args)
-	{
-		std::vector<uint8_t> data;
-
-		enet::serialize_params(data, id, args...);
-
-		send_packet(channel, data, ENET_PACKET_FLAG_UNSEQUENCED);
-	}
-
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_unreliable(const std::vector<uint8_t>& data)
-	{
-		send_packet(channel, data, ENET_PACKET_FLAG_UNSEQUENCED);
-	}
-
-	template <typename T>
-	inline void send_reliable(const T& packet)
-	{
-		send_packet(T::CHANNEL, packet.serialize());
-	}
-
-	template <typename T>
-	inline void send_unreliable(const T& packet)
-	{
-		send_packet(T::CHANNEL, packet.serialize(), ENET_PACKET_FLAG_UNSEQUENCED);
+		enet::send_packet(enet::GET_CLIENT_PEER(), p);
 	}
 
 	bool is_initialized() const { return initialized; }

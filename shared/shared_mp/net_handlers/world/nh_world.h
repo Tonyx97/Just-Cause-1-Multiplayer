@@ -2,11 +2,11 @@
 
 namespace nh::world
 {
-	enet::PacketResult time_scale(const enet::Packet& p);
-	enet::PacketResult day_time(const enet::Packet& p);
-	enet::PacketResult punch_force(const enet::Packet& p);
-	enet::PacketResult spawn_object(const enet::Packet& p);
-	enet::PacketResult destroy_object(const enet::Packet& p);
-	enet::PacketResult set_ownership(const enet::Packet& p);
-	enet::PacketResult sync_object(const enet::Packet& p);
+	PacketResult time_scale(const Packet& p);
+	PacketResult day_time(const Packet& p);
+	PacketResult punch_force(const Packet& p);
+	PacketResult spawn_object(const Packet& p);
+	PacketResult destroy_object(const Packet& p);
+	PacketResult set_ownership(const Packet& p);
+	PacketResult sync_object(const Packet& p);
 }

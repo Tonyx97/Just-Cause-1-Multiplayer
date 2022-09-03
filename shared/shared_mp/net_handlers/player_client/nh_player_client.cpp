@@ -6,7 +6,7 @@
 
 #include <shared_mp/player_client/player_client.h>
 
-enet::PacketResult nh::player_client::init(const enet::Packet& p)
+PacketResult nh::player_client::init(const Packet& p)
 {
 #ifdef JC_CLIENT
 	g_net->add_local(p.get_u32());
@@ -21,22 +21,24 @@ enet::PacketResult nh::player_client::init(const enet::Packet& p)
 #elif JC_SERVER
 	const auto pc = p.get_pc();
 
+	p.add_beginning(pc->get_nid());
+
 	pc->set_nick(p.get_str());
-	pc->send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Init, pc->get_nid());
+	pc->send(p);
 
 	logt(YELLOW, "Player {:x} initializing (nick: {})", pc->get_nid(), pc->get_nick());
 #endif
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::player_client::join(const enet::Packet& p)
+PacketResult nh::player_client::join(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto player = p.get_net_object<Player>();
 
 	if (!player)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 
 	const auto pc = player->get_client();
 #elif JC_SERVER
@@ -51,10 +53,10 @@ enet::PacketResult nh::player_client::join(const enet::Packet& p)
 
 	log(GREEN, "Player with NID {:x} ({}) joined", player->get_nid(), player->get_nick());
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::player_client::quit(const enet::Packet& p)
+PacketResult nh::player_client::quit(const Packet& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
@@ -68,14 +70,14 @@ enet::PacketResult nh::player_client::quit(const enet::Packet& p)
 
 		log(YELLOW, "[{}] Destroyed player with NID {:x}", CURR_FN, nid);
 
-		return enet::PacketRes_Ok;
+		return PacketRes_Ok;
 	}
 #endif
 
-	return enet::PacketRes_BadArgs;
+	return PacketRes_BadArgs;
 }
 
-enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
+PacketResult nh::player_client::sync_instances(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto localplayer = g_net->get_localplayer();
@@ -142,10 +144,10 @@ enet::PacketResult nh::player_client::sync_instances(const enet::Packet& p)
 	log(YELLOW, "All net object instances synced (a total of {})", info.net_objects.size());
 #endif
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::player_client::startup_info(const enet::Packet& p)
+PacketResult nh::player_client::startup_info(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto localplayer = g_net->get_localplayer();
@@ -173,10 +175,10 @@ enet::PacketResult nh::player_client::startup_info(const enet::Packet& p)
 #else
 #endif
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::player_client::nick(const enet::Packet& p)
+PacketResult nh::player_client::nick(const Packet& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
@@ -187,7 +189,7 @@ enet::PacketResult nh::player_client::nick(const enet::Packet& p)
 
 		log(YELLOW, "[{}] {} {}", CURR_FN, player->get_nid(), nick);
 
-		return enet::PacketRes_Ok;
+		return PacketRes_Ok;
 	}
 #else
 	const auto nick = p.get_str();
@@ -195,8 +197,8 @@ enet::PacketResult nh::player_client::nick(const enet::Packet& p)
 
 	pc->set_nick(nick);
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 #endif
 
-	return enet::PacketRes_BadArgs;
+	return PacketRes_BadArgs;
 }

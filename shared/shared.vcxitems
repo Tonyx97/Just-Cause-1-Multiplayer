@@ -27,6 +27,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)math\math.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\channels.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\interface.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)net\packet.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\serializer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\all.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\chat\nh_chat.h" />

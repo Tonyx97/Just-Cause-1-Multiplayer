@@ -15,12 +15,6 @@ private:
 	ENetPeer* peer = nullptr;
 
 	bool timed_out = false;
-
-	template <typename... A>
-	inline void send_impl(uint8_t channel, const std::vector<uint8_t>& data, uint32_t flags = ENET_PACKET_FLAG_RELIABLE)
-	{
-		enet::send_packet(peer, data.data(), data.size(), flags, channel);
-	}
 #endif
 
 public:
@@ -52,26 +46,13 @@ public:
 	*/
 	void startup_sync();
 
-	template <typename T>
-	inline void send_reliable(const T& packet)
+	void send(const Packet& packet, bool create = false)
 	{
-		send_impl(T::CHANNEL, packet.serialize());
+		if (create)
+			packet.create();
+
+		enet::send_packet(peer, packet);
 	}
-
-	inline void send(uint8_t channel, const PacketHolder& p)
-	{
-		enet::send_packet(peer, channel, p);
-	}
-
-	template <uint8_t channel = ChannelID_Generic, typename... A>
-	inline void send_reliable(PacketID id, const A&... args)
-	{
-		std::vector<uint8_t> data;
-
-		enet::serialize_params(data, id, args...);
-
-		send_impl(channel, data);
-}
 
 	void set_timed_out() { timed_out = true; }
 

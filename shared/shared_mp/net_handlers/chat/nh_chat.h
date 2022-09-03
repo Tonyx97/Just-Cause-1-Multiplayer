@@ -2,5 +2,5 @@
 
 namespace nh::chat
 {
-	enet::PacketResult msg(const enet::Packet& p);
+	PacketResult msg(const Packet& p);
 }

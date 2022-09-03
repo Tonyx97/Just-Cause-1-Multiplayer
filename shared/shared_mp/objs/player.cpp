@@ -62,7 +62,9 @@ void Player::respawn(float hp, float max_hp, bool sync)
 	{
 		check(is_local(), "Only localplayer respawning can be synced from client");
 
-		g_net->send_reliable(PlayerPID_Respawn, hp, max_hp);
+		Packet p(PlayerPID_Respawn, ChannelID_Generic, hp, max_hp);
+
+		g_net->send(p);
 	}
 	else
 	{
@@ -172,7 +174,9 @@ Player::~Player()
 
 void Player::respawn(float hp, float max_hp)
 {
-	g_net->send_broadcast_reliable(get_client(), PlayerPID_Respawn, this, hp, max_hp);
+	Packet p(PlayerPID_Respawn, ChannelID_Generic, this, hp, max_hp);
+
+	g_net->send_broadcast(get_client(), p);
 }
 
 void Player::transfer_net_object_ownership_to(NetObject* obj, Player* new_streamer)
@@ -186,8 +190,12 @@ void Player::transfer_net_object_ownership_to(NetObject* obj, Player* new_stream
 	log(YELLOW, "{} lost ownerships of a net object type {}", this->get_nick(), this->get_type());
 	log(GREEN, "{} now owns a net object type {}", this->get_nick(), this->get_type());
 
-	old_streamer_pc->send_reliable<ChannelID_World>(WorldPID_SetOwnership, true, new_streamer, obj);
-	new_streamer_pc->send_reliable<ChannelID_World>(WorldPID_SetOwnership, true, new_streamer, obj);
+	Packet p(WorldPID_SetOwnership, ChannelID_World, true, new_streamer, obj);
+
+	p.create();
+
+	old_streamer_pc->send(p);
+	new_streamer_pc->send(p);
 }
 
 void Player::set_net_object_ownership_of(NetObject* obj)
@@ -196,14 +204,18 @@ void Player::set_net_object_ownership_of(NetObject* obj)
 
 	log(GREEN, "{} now owns a net object type {}", this->get_nick(), this->get_type());
 
-	client->send_reliable<ChannelID_World>(WorldPID_SetOwnership, true, this, obj);
+	Packet p(WorldPID_SetOwnership, ChannelID_World, true, this, obj);
+
+	client->send(p);
 }
 
 void Player::remove_net_object_ownership(NetObject* obj)
 {
 	check(obj, "Net object must be valid");
 
-	client->send_reliable<ChannelID_World>(WorldPID_SetOwnership, false, obj);
+	Packet p(WorldPID_SetOwnership, ChannelID_World, false, obj);
+
+	client->send(p);
 }
 
 void Player::remove_all_ownerships()

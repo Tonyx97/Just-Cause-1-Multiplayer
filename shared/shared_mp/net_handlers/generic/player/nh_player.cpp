@@ -18,13 +18,13 @@
 #include <game/object/interactable/interactable.h>
 #endif
 
-enet::PacketResult nh::player::state_sync(const enet::Packet& p)
+PacketResult nh::player::state_sync(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto player = p.get_net_object<Player>();
 
 	if (!player)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
@@ -37,13 +37,15 @@ enet::PacketResult nh::player::state_sync(const enet::Packet& p)
 	//player->set_vehicle(curr_vehicle->cast<VehicleNetObject>());
 
 #ifdef JC_SERVER
-	g_net->send_broadcast_reliable(pc, PlayerPID_StateSync, player, curr_weapon, curr_vehicle);
+	p.add_beginning(player);
+
+	g_net->send_broadcast(pc, p);
 #endif
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::player::respawn(const enet::Packet& p)
+PacketResult nh::player::respawn(const Packet& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
@@ -63,97 +65,79 @@ enet::PacketResult nh::player::respawn(const enet::Packet& p)
 	player->respawn(hp, max_hp);
 #endif
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::player::dynamic_info(const enet::Packet& p)
+PacketResult nh::player::dynamic_info(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto player = p.get_net_object<Player>();
 
 	if (!player)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
+
+	p.add_beginning(player);
+
+	g_net->send_broadcast(pc, p);
 #endif
 
-	// dispatch all dynamic infos sent in this packet
+	const auto type = p.get_u8();
 
-	while (!p.is_empty())
+	switch (type)
 	{
-		const auto type = p.get_u8();
+	case PlayerDynInfo_HeadRotation:
+	{
+		const auto rotation = p.get<vec3>();
+		const auto interpolation = p.get_i8();
 
-		switch (type)
-		{
-		
-		case PlayerDynInfo_HeadRotation:
-		{
-			const auto rotation = p.get_raw<vec3>();
-			const auto interpolation = p.get_i8();
+		player->set_head_rotation(rotation, util::pack::unpack_norm(interpolation));
 
-			player->set_head_rotation(rotation, util::pack::unpack_norm(interpolation));
+		break;
+	}
+	case PlayerDynInfo_Skin:
+	{
+		const auto skin_id = p.get_i32();
 
-#ifdef JC_SERVER
-			g_net->send_broadcast_unreliable(pc, PlayerPID_DynamicInfo, player, type, rotation, interpolation);
-#endif
+		player->set_skin(skin_id);
 
-			break;
-		}
-		case PlayerDynInfo_Skin:
-		{
-			const auto skin_id = p.get_i32();
+		break;
+	}
+	case PlayerDynInfo_WalkingSetAndSkin:
+	{
+		const auto walking_anim_set_id = p.get_i32();
+		const auto skin_id = p.get_i32();
 
-			player->set_skin(skin_id);
+		player->set_walking_set_and_skin(walking_anim_set_id, skin_id);
 
-#ifdef JC_SERVER
-			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, skin_id);
-#endif
+		break;
+	}
+	case PlayerDynInfo_NPCVariant:
+	{
+		const auto cloth_skin = p.get_i32(),
+					head_skin = p.get_i32(),
+					cloth_color = p.get_i32();
 
-			break;
-		}
-		case PlayerDynInfo_WalkingSetAndSkin:
-		{
-			const auto walking_anim_set_id = p.get_i32();
-			const auto skin_id = p.get_i32();
+		auto accessories = p.get<std::vector<VariantPropInfo>>();
 
-			player->set_walking_set_and_skin(walking_anim_set_id, skin_id);
+		player->set_skin_info(cloth_skin, head_skin, cloth_color, accessories);
 
-#ifdef JC_SERVER
-			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, walking_anim_set_id, skin_id);
-#endif
-
-			break;
-		}
-		case PlayerDynInfo_NPCVariant:
-		{
-			const auto cloth_skin = p.get_i32(),
-					   head_skin = p.get_i32(),
-					   cloth_color = p.get_i32();
-
-			auto accessories = p.get_vector<VariantPropInfo>();
-
-			player->set_skin_info(cloth_skin, head_skin, cloth_color, accessories);
-
-#ifdef JC_SERVER
-			g_net->send_broadcast_reliable(pc, PlayerPID_DynamicInfo, player, type, cloth_skin, head_skin, cloth_color, std::move(accessories));
-#endif
-
-			break;
-		}
-		}
+		break;
+	}
 	}
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
+PacketResult nh::player::stance_and_movement(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto player = p.get_net_object<Player>();
 	
 	if (!player)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
@@ -172,10 +156,6 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 
 		player->set_movement_info(util::pack::unpack_pi_angle(angle), util::pack::unpack_norm(right), util::pack::unpack_norm(forward), aiming);
 
-#ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, angle, right, forward, aiming);
-#endif
-
 		break;
 	}
 	case PlayerStanceID_MovementAngle:
@@ -184,29 +164,17 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 
 		player->set_movement_angle(util::pack::unpack_pi_angle(angle), false);
 
-#ifdef JC_SERVER
-		g_net->send_broadcast_unreliable(pc, PlayerPID_StanceAndMovement, player, type, angle);
-#endif
-
 		break;
 	}
 	case PlayerStanceID_Jump:
 	{
 		player->set_body_stance_id(BodyStance_Jump);
 
-#ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type);
-#endif
-
 		break;
 	}
 	case PlayerStanceID_Punch:
 	{
 		player->do_punch();
-
-#ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type);
-#endif
 
 		break;
 	}
@@ -216,10 +184,6 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 
 		player->set_body_stance_id(stance_id);
 
-#ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, stance_id);
-#endif
-
 		break;
 	}
 	case PlayerStanceID_Aiming:
@@ -227,26 +191,20 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 		const auto hip_aiming = p.get_bool(),
 				   full_aiming = p.get_bool();
 
-		const auto target_pos = p.get_raw<vec3>();
+		const auto target_pos = p.get<vec3>();
 
 		player->set_aim_info(hip_aiming, full_aiming, target_pos);
-
-#ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, hip_aiming, full_aiming, target_pos);
-#endif
 
 		break;
 	}
 	case PlayerStanceID_Fire:
 	{
 		const auto weapon_id = p.get_u8();
-		const auto muzzle_pos = p.get_raw<vec3>();
-		const auto packed_direction = p.get_raw<i16vec3>();
+		const auto muzzle_pos = p.get<vec3>();
+		const auto packed_direction = p.get<i16vec3>();
 
 #ifdef JC_CLIENT
 		player->set_multiple_rand_seed(0u);
-#else
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, weapon_id, muzzle_pos, packed_direction);
 #endif
 
 		player->fire_current_weapon(weapon_id, muzzle_pos, jc::math::unpack_vec3(packed_direction, 1.f));
@@ -257,13 +215,11 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	{
 		const auto rand_seed = p.get_u16();
 		const auto weapon_id = p.get_u8();
-		const auto muzzle_pos = p.get_raw<vec3>();
-		const auto packed_direction = p.get_raw<i16vec3>();
+		const auto muzzle_pos = p.get<vec3>();
+		const auto packed_direction = p.get<i16vec3>();
 
 #ifdef JC_CLIENT
 		player->set_multiple_rand_seed(rand_seed);
-#else
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, rand_seed, weapon_id, muzzle_pos, packed_direction);
 #endif
 
 		player->fire_current_weapon(weapon_id, muzzle_pos, jc::math::unpack_vec3(packed_direction, 1.f));
@@ -274,39 +230,37 @@ enet::PacketResult nh::player::stance_and_movement(const enet::Packet& p)
 	{
 		player->reload();
 
-#ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type);
-#endif
-
 		break;
 	}
 	case PlayerStanceID_ForceLaunch:
 	{
-		const auto vel = p.get_raw<vec3>();
-		const auto dir = p.get_raw<vec3>();
+		const auto vel = p.get<vec3>();
+		const auto dir = p.get<vec3>();
 		const auto f1 = p.get_float();
 		const auto f2 = p.get_float();
 
 		player->force_launch(vel, dir, f1, f2);
 
-#ifdef JC_SERVER
-		g_net->send_broadcast_reliable(pc, PlayerPID_StanceAndMovement, player, type, vel, dir, f1, f2);
-#endif
-
 		break;
 	}
 	}
 
-	return enet::PacketRes_Ok;
+#ifdef JC_SERVER
+	p.add_beginning(player);
+
+	g_net->send_broadcast(pc, p);
+#endif
+
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::player::set_weapon(const enet::Packet& p)
+PacketResult nh::player::set_weapon(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto player = p.get_net_object<Player>();
 
 	if (!player)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
@@ -317,19 +271,21 @@ enet::PacketResult nh::player::set_weapon(const enet::Packet& p)
 	player->set_weapon_id(weapon_id);
 
 #ifdef JC_SERVER
-	g_net->send_broadcast_reliable(pc, PlayerPID_SetWeapon, player, weapon_id);
+	p.add_beginning(player);
+
+	g_net->send_broadcast(pc, p);
 #endif
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::player::set_vehicle(const enet::Packet& p)
+PacketResult nh::player::set_vehicle(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto player = p.get_net_object<Player>();
 
 	if (!player)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
@@ -375,21 +331,23 @@ enet::PacketResult nh::player::set_vehicle(const enet::Packet& p)
 		}
 	}
 
-	g_net->send_broadcast_reliable(pc, PlayerPID_SetVehicle, player, vehicle_net, seat_type);
+	p.add_beginning(player);
+
+	g_net->send_broadcast(pc, p);
 #endif
 
 	player->set_vehicle(seat_type, vehicle_net);
 
-	return enet::PacketRes_Ok;
+	return PacketRes_Ok;
 }
 
-enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
+PacketResult nh::player::enter_exit_vehicle(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto player = p.get_net_object<Player>();
 
 	if (!player)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
@@ -401,7 +359,7 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 	const auto command = p.get_u8();
 
 	if (!vehicle_net)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 
 #ifdef JC_CLIENT
 	const auto vehicle = vehicle_net->get_object();
@@ -409,7 +367,7 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 	const auto seat = vehicle->get_seat_by_type(seat_type);
 
 	if (!vehicle || !player_char || !seat)
-		return enet::PacketRes_BadArgs;
+		return PacketRes_BadArgs;
 #endif
 
 	log(GREEN, "vehicle seat type: {}", seat_type);
@@ -424,8 +382,6 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 		const auto interactable = seat->get_interactable();
 
 		interactable->interact_with(player_char);
-#else
-		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, seat_type, command);
 #endif
 
 		break;
@@ -440,8 +396,6 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 		if (seat->is_instant_exit())
 			seat->instant_exit();
 		else seat->exit(jump_out);
-#else
-		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, seat_type, command, jump_out);
 #endif
 
 		break;
@@ -466,8 +420,6 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 			victim_char->set_stance_exit_vehicle_forced();
 			vehicle->open_door(VehicleDoor_Left);
 		}
-#else
-		g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, seat_type, command, victim);
 #endif
 
 		break;
@@ -487,13 +439,17 @@ enet::PacketResult nh::player::enter_exit_vehicle(const enet::Packet& p)
 		driver_seat->add_flag2(VehicleSeatFlag_DriverToRoofSeat);
 		driver_seat->set_timer(1.f);
 		driver_seat->add_flag2(1 << 6);*/
-#else
-		//g_net->send_broadcast_reliable(pc, PlayerPID_EnterExitVehicle, player, vehicle_net, seat_type, command);
 #endif
 
 		break;
 	}
 	}
 
-	return enet::PacketRes_Ok;
+#ifdef JC_SERVER
+	p.add_beginning(player);
+
+	g_net->send_broadcast(pc, p);
+#endif
+
+	return PacketRes_Ok;
 }
