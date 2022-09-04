@@ -6,6 +6,10 @@
 
 #include <shared_mp/player_client/player_client.h>
 
+#ifdef JC_CLIENT
+#include <mp/chat/chat.h>
+#endif
+
 PacketResult nh::player_client::init(const Packet& p)
 {
 #ifdef JC_CLIENT
@@ -21,10 +25,8 @@ PacketResult nh::player_client::init(const Packet& p)
 #elif JC_SERVER
 	const auto pc = p.get_pc();
 
-	p.add_beginning(pc->get_nid());
-
 	pc->set_nick(p.get_str());
-	pc->send(p);
+	pc->send(Packet(PlayerClientPID_Init, ChannelID_PlayerClient, pc->get_nid()), true);
 
 	logt(YELLOW, "Player {:x} initializing (nick: {})", pc->get_nid(), pc->get_nick());
 #endif
@@ -41,6 +43,8 @@ PacketResult nh::player_client::join(const Packet& p)
 		return PacketRes_BadArgs;
 
 	const auto pc = player->get_client();
+
+	g_chat->add_chat_msg(FORMATV("{} has joined the server", player->get_nick()));
 #elif JC_SERVER
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
@@ -59,19 +63,23 @@ PacketResult nh::player_client::join(const Packet& p)
 PacketResult nh::player_client::quit(const Packet& p)
 {
 #ifdef JC_CLIENT
-	if (const auto player = p.get_net_object<Player>())
-	{
-		check(g_net->get_local()->get_nid() != player->get_nid(), "A localplayer cannot receive 'connect' packet with its NID");
-		check(player, "Player must exist before '{}' packet", CURR_FN);
+	const auto player = p.get_net_object<Player>();
 
-		const auto nid = player->get_nid();
+	if (!player)
+		return PacketRes_BadArgs;
+
+	g_chat->add_chat_msg(FORMATV("{} has left the server", player->get_nick()));
+
+	check(g_net->get_local()->get_nid() != player->get_nid(), "A localplayer cannot receive 'connect' packet with its NID");
+	check(player, "Player must exist before '{}' packet", CURR_FN);
+
+	const auto nid = player->get_nid();
 	
-		g_net->remove_player_client(player->get_client());
+	g_net->remove_player_client(player->get_client());
 
-		log(YELLOW, "[{}] Destroyed player with NID {:x}", CURR_FN, nid);
+	log(YELLOW, "[{}] Destroyed player with NID {:x}", CURR_FN, nid);
 
-		return PacketRes_Ok;
-	}
+	return PacketRes_Ok;
 #endif
 
 	return PacketRes_BadArgs;
@@ -80,7 +88,7 @@ PacketResult nh::player_client::quit(const Packet& p)
 PacketResult nh::player_client::sync_instances(const Packet& p)
 {
 #ifdef JC_CLIENT
-	const auto localplayer = g_net->get_localplayer();
+	/*const auto localplayer = g_net->get_localplayer();
 	const auto info = p.get<PlayerClientSyncInstancesPacket>();
 
 	log(YELLOW, "Syncing {} net object instances...", info.net_objects.size());
@@ -141,7 +149,7 @@ PacketResult nh::player_client::sync_instances(const Packet& p)
 		}
 	}
 
-	log(YELLOW, "All net object instances synced (a total of {})", info.net_objects.size());
+	log(YELLOW, "All net object instances synced (a total of {})", info.net_objects.size());*/
 #endif
 
 	return PacketRes_Ok;
@@ -150,7 +158,7 @@ PacketResult nh::player_client::sync_instances(const Packet& p)
 PacketResult nh::player_client::startup_info(const Packet& p)
 {
 #ifdef JC_CLIENT
-	const auto localplayer = g_net->get_localplayer();
+	/*const auto localplayer = g_net->get_localplayer();
 	const auto info = p.get<PlayerClientStartupInfoPacket>();
 
 	log(YELLOW, "Updating {} player startup info...", info.info.size());
@@ -171,7 +179,7 @@ PacketResult nh::player_client::startup_info(const Packet& p)
 		player->set_skin(_info.skin, _info.skin_info.cloth_skin, _info.skin_info.head_skin, _info.skin_info.cloth_color, _info.skin_info.props);
 
 		log(PURPLE, "Updated startup info for player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
-	}
+	}*/
 #else
 #endif
 

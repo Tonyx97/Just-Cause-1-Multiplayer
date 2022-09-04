@@ -19,7 +19,6 @@ public:
 
 	bool init();
 	void destroy();
-	void setup_channels();
 	void tick();
 	void refresh_net_object_sync();
 	void sync_net_objects();

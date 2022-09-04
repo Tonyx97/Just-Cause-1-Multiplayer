@@ -14,7 +14,7 @@ class Packet
 {
 private:
 
-	mutable serialization_ctx ctx;
+	mutable serialization_ctx ctx {};
 
 #ifdef JC_SERVER
 	PlayerClient*	pc = nullptr;
@@ -24,10 +24,8 @@ private:
 	ENetPeer*		peer = nullptr;
 	float			time = 0.f;
 	uint32_t		flags = 0;
-	mutable int32_t	offset = 0;
 	uint8_t			id = 0u;
 	uint8_t			channel = 0u;
-	bool			destroyed = false;
 
 public:
 
@@ -52,29 +50,49 @@ public:
 	}
 
 	template <typename... A>
-	Packet(PacketID	pid, ChannelID channel, A... args)
+	Packet(const Packet& other, const A&... args)
+		: id(other.id)
+		, channel(other.channel)
+		, time(util::time::get_time())
+	{
+		flags = other.flags;
+		peer = other.peer;
+
+#ifdef JC_SERVER
+		pc = other.pc;
+#endif
+
+		// always add the packet id when creating a new packet
+
+		add(id, args...);
+	}
+
+	template <typename... A>
+	Packet(PacketID	pid, ChannelID channel, const A&... args)
 		: id(pid)
 		, channel(channel)
 		, time(util::time::get_time())
 	{
 		set_reliable();
-		add(args...);
+
+		// always add the packet id when creating a new packet
+
+		add(id, args...);
 	}
 
 	~Packet()
 	{
-		if (destroyed)
-			return;
-
 		check(packet, "Packet was already destroyed or it's invalid");
+
+		if (packet->referenceCount > 0)
+			return;
 
 		enet_packet_destroy(packet);
 
-		destroyed = true;
 		packet = nullptr;
 	}
 
-	Packet(const Packet&) = delete;
+	Packet(const Packet& other) = delete;
 	Packet(Packet&& other) = delete;
 	Packet& operator=(Packet&& other) = delete;
 
@@ -84,9 +102,9 @@ public:
 			packet = enet_packet_create(ctx.data.data(), ctx.data.size(), flags);
 	}
 
-	void set_reliable() { flags = ENET_PACKET_FLAG_RELIABLE; }
-	void set_unreliable() { flags = 0; }
-	void set_unsequenced() { flags = ENET_PACKET_FLAG_UNSEQUENCED; }
+	Packet& set_reliable() { flags = ENET_PACKET_FLAG_RELIABLE; return *this; }
+	Packet& set_unreliable() { flags = 0; return *this; }
+	Packet& set_unsequenced() { flags = ENET_PACKET_FLAG_UNSEQUENCED; return *this; }
 
 	ENetPeer* get_peer() const { return peer; }
 
@@ -103,29 +121,22 @@ public:
 
 	ENetPacket* get_packet() const { return packet; }
 
-	template <typename T, typename... A>
-	void add(const T& value, A... args) const
+	template <typename... A>
+	void add(const A&... args) const
 	{
 		serialize(ctx, args...);
 	}
 
-	template <typename T, typename... A>
-	void add_beginning(const T& value, A... args) const
+	template <typename... A>
+	void add_beginning(const A&... args) const
 	{
 		ctx.write_offset = sizeof(PacketID);
-		serialize(ctx, args...);
+		add(args...);
 		ctx.write_offset = -1;
 	}
 
 	template <typename T>
-	T get() const
-	{
-		T value;
-
-		std::tie(value, offset) = deserialize<T>(ctx, offset);
-
-		return value;
-	}
+	T get() const { return deserialize<T>(ctx); }
 
 	bool get_bool() const { return get<bool>(); }
 

@@ -90,7 +90,7 @@ void jc::mp::logic::on_tick()
 			// resync state
 
 			if (state_sync_timer.ready())
-				g_net->send_reliable(PlayerPID_StateSync, current_weapon_id, g_net->get_net_object_by_game_object(vehicle));
+				g_net->send(Packet(PlayerPID_StateSync, ChannelID_Generic, current_weapon_id, g_net->get_net_object_by_game_object(vehicle)));
 
 			// we need to check if we are in a vehicle or not, if so, we won't send stuff such as our transform,
 			// the movement info etc we will save a lot of bandwidth and performance with this optimization
@@ -105,10 +105,10 @@ void jc::mp::logic::on_tick()
 					const auto packed_right = util::pack::pack_norm(move_info.right);
 					const auto packed_forward = util::pack::pack_norm(move_info.forward);
 
-					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Movement, packed_angle, packed_right, packed_forward, move_info.aiming);
+					g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_Movement, packed_angle, packed_right, packed_forward, move_info.aiming));
 				}
 				else if (localplayer->should_sync_angle_only() && angle_timer.ready())
-					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_MovementAngle, util::pack::pack_pi_angle(move_angle));
+					g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_MovementAngle, util::pack::pack_pi_angle(move_angle)));
 
 
 				localplayer->set_movement_angle(move_angle, false);
@@ -122,7 +122,7 @@ void jc::mp::logic::on_tick()
 				{
 					TransformTR transform_tr(position, rotation);
 
-					g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, localplayer, NetObjectVar_Transform, transform_tr.pack());
+					g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, localplayer, NetObjectVar_Transform, transform_tr.pack()).set_unreliable());
 
 					localplayer->set_transform(transform_tr);
 				}
@@ -157,7 +157,7 @@ void jc::mp::logic::on_tick()
 				head_interpolation != localplayer->get_head_interpolation()) &&
 				head_rotation_timer.ready())
 			{
-				g_net->send_unreliable(PlayerPID_DynamicInfo, PlayerDynInfo_HeadRotation, head_rotation, util::pack::pack_norm(head_interpolation));
+				g_net->send(Packet(PlayerPID_DynamicInfo, ChannelID_Generic, PlayerDynInfo_HeadRotation, head_rotation, util::pack::pack_norm(head_interpolation)).set_unreliable());
 
 				localplayer->set_head_rotation(head_rotation, head_interpolation);
 			}
@@ -166,7 +166,7 @@ void jc::mp::logic::on_tick()
 
 			if (current_weapon_id != localplayer->get_weapon_id())
 			{
-				g_net->send_reliable(PlayerPID_SetWeapon, current_weapon_id);
+				g_net->send(Packet(PlayerPID_SetWeapon, ChannelID_Generic, current_weapon_id));
 
 				localplayer->set_weapon_id(current_weapon_id);
 			}
@@ -174,7 +174,7 @@ void jc::mp::logic::on_tick()
 			// aiming
 
 			if ((hip_aiming || full_aiming) && aiming_timer.ready())
-				g_net->send_unreliable(PlayerPID_StanceAndMovement, PlayerStanceID_Aiming, hip_aiming, full_aiming, aim_target);
+				g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_Aiming, hip_aiming, full_aiming, aim_target).set_unreliable());
 
 			// debug
 
@@ -189,7 +189,7 @@ void jc::mp::logic::on_tick()
 			{
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
-				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Vehicle, 51ui16, transform);
+				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, 51ui16, transform));
 			}
 		}
 }

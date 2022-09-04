@@ -68,8 +68,6 @@ PacketResult nh::world::spawn_object(const Packet& p)
 	const auto object_id = p.get_u16();
 	const auto transform = p.get<TransformTR>();
 
-	constexpr bool aa = std::is_trivial_v<TransformTR>;
-
 #ifdef JC_CLIENT
 	const auto obj = g_net->spawn_net_object(nid, net_type, object_id, transform);
 #else
@@ -145,13 +143,6 @@ PacketResult nh::world::sync_object(const Packet& p)
 	{
 	case NetObjectVar_Transform:
 	{
-		struct test
-		{
-			int t = 1;
-		};
-
-		constexpr bool ta = std::is_trivial_v<test>;
-
 		const auto transform = p.get<TransformPackedTR>();
 
 		net_obj->set_transform(transform);

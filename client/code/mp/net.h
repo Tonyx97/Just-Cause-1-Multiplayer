@@ -35,7 +35,6 @@ public:
 	void add_local(NID nid);
 	void set_initialized(bool v);
 	void set_joined(bool v);
-	void setup_channels();
 	void tick();
 
 	/*
@@ -50,7 +49,7 @@ public:
 	{
 		p.create();
 
-		enet::send_packet(enet::GET_CLIENT_PEER(), p);
+		enet::send_packet(peer, p);
 	}
 
 	bool is_initialized() const { return initialized; }

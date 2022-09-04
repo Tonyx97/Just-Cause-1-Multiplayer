@@ -28,6 +28,7 @@ namespace enet
 	using channel_dispatch_t = std::function<PacketResult(const Packet&)>;
 
 	void init();
+	void setup_channels();
 	void add_channel_dispatcher(uint8_t id, const channel_dispatch_t& fn);
 	void call_channel_dispatcher(const ENetEvent& id);
 	void set_fake_lag(int value);

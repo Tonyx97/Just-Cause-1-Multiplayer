@@ -211,7 +211,7 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 							// actual vehicle weapons
 
 							if (const auto fire_info = vehicle_net->get_fire_info_from_weapon(weapon))
-								*final_muzzle_transform = Transform::look_at(fire_info->muzzle, fire_info->muzzle + fire_info->direction);
+								*final_muzzle_transform = Transform::look_at(fire_info->base.muzzle, fire_info->base.muzzle + fire_info->base.direction);
 						}
 					}
 				}

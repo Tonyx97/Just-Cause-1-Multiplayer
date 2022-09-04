@@ -16,7 +16,7 @@ namespace jc::interactable::hook
 				if (const auto target = interactable->get_target())
 					if (const auto vehicle_net = g_net->get_net_object_by_game_object(target))
 						if (const auto seat = BITCAST(VehicleSeat*, interactable->get_owner()))
-							g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_RequestEnter);
+							g_net->send(Packet(PlayerPID_EnterExitVehicle, ChannelID_Generic, vehicle_net, seat->get_type(), VehicleEnterExit_RequestEnter));
 
 		return interact_with_hook(interactable, character);
 	}

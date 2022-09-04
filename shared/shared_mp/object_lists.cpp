@@ -212,9 +212,7 @@ bool ObjectLists::destroy_net_object(NetObject* obj)
 	check(!obj->cast<Player>(), "Cannot destroy a Player using this function, use ::remove_player_client");
 
 #ifdef JC_SERVER
-	Packet p(WorldPID_DestroyObject, ChannelID_World, obj);
-
-	g_net->send_broadcast_joined(p);
+	g_net->send_broadcast_joined(Packet(WorldPID_DestroyObject, ChannelID_World, obj));
 #endif
 
 	if (!remove_net_object(obj))
@@ -261,9 +259,7 @@ NetObject* ObjectLists::spawn_net_object(
 		object->spawn();
 
 #ifdef JC_SERVER
-		Packet p(WorldPID_SpawnObject, ChannelID_World, object, object_id, transform);
-
-		g_net->send_broadcast_joined(p);
+		g_net->send_broadcast_joined(Packet(WorldPID_SpawnObject, ChannelID_World, object, object_id, transform));
 #endif
 	}
 

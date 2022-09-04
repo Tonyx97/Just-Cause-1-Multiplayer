@@ -26,6 +26,8 @@ ObjectBase* VehicleNetObject::get_object_base()
 
 void VehicleNetObject::fire()
 {
+	constexpr auto MEMBERS_COUNT = member_counter<FireInfo>::value;
+
 	for (const auto& info : fire_info)
 		if (const auto weapon = obj->get_weapon(info.index))
 		{

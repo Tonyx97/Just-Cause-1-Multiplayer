@@ -25,9 +25,7 @@ PlayerClient::PlayerClient(ENetPeer* peer) : peer(peer)
 PlayerClient::~PlayerClient()
 {
 #ifdef JC_SERVER
-	Packet p(PlayerClientPID_Quit, ChannelID_PlayerClient, player);
-
-	g_net->send_broadcast(p);
+	g_net->send_broadcast_joined(this, Packet(PlayerClientPID_Quit, ChannelID_PlayerClient, player));
 
 	if (timed_out)
 		logt(RED, "'{}' disconnected due to timeout (NID {:x})", player->get_nick(), get_nid());
@@ -122,11 +120,11 @@ void PlayerClient::startup_sync()
 		// send the basic info of each player to all players
 
 		g_net->send_broadcast_joined(p);
-	}
+	}*/
 
 	// let the other players know this player joined
 		
-	g_net->send_broadcast_joined_reliable<ChannelID_PlayerClient>(this, PlayerClientPID_Join, player);*/
+	g_net->send_broadcast_joined(this, Packet(PlayerClientPID_Join, ChannelID_PlayerClient, player));
 
 	// set the player as spawned
 	

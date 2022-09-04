@@ -25,8 +25,6 @@ void Settings::process()
 	{
 		day_time += 0.01f;
 
-		Packet p(WorldPID_SetTime, ChannelID_World, day_time_enabled, day_time);
-
-		g_net->send_broadcast(p);
+		g_net->send_broadcast(Packet(WorldPID_SetTime, ChannelID_World, day_time_enabled, day_time));
 	}
 }

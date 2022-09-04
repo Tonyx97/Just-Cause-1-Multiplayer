@@ -60,7 +60,7 @@ namespace jc::vehicle::hook
 				{
 					vehicle_net->set_control_info(*c0, *c1, 0.f, 0.f, *braking);
 
-					g_net->send_reliable(PlayerPID_VehicleControl, vehicle_net, info.pack());
+					g_net->send(Packet(PlayerPID_VehicleControl, ChannelID_Generic, vehicle_net, info.pack()));
 				}
 			}
 			else
@@ -105,7 +105,7 @@ namespace jc::vehicle::hook
 				{
 					vehicle_net->set_control_info(*c0, *c1, *c2, *c3);
 
-					g_net->send_reliable(PlayerPID_VehicleControl, vehicle_net, info.pack());
+					g_net->send(Packet(PlayerPID_VehicleControl, ChannelID_Generic, vehicle_net, info.pack()));
 				}
 			}
 			else
@@ -153,7 +153,7 @@ namespace jc::vehicle::hook
 			{
 				const auto& info = vehicle_net->get_control_info();
 
-				g_net->send_reliable(PlayerPID_VehicleControl, vehicle_net, info.pack());
+				g_net->send(Packet(PlayerPID_VehicleControl, ChannelID_Generic, vehicle_net, info.pack()));
 
 				vehicle_net->reset_sync();
 			}
@@ -178,7 +178,7 @@ namespace jc::vehicle::hook
 			return;
 
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(land_vehicle)->cast<VehicleNetObject>())
-			g_net->send_reliable(PlayerPID_VehicleHonk, vehicle_net);
+			g_net->send(Packet(PlayerPID_VehicleHonk, ChannelID_Generic, vehicle_net));
 
 		land_vehicle_honk_hook(land_vehicle);
 	}
@@ -196,7 +196,15 @@ namespace jc::vehicle::hook
 			const auto aim_target = weapon->get_aim_target();
 			const auto direction = glm::normalize(aim_target - muzzle);
 
-			fire_info.emplace_back(i, muzzle, direction);
+			fire_info.push_back(
+			{
+				.base = 
+				{
+					muzzle,
+					direction
+				},
+				.index = i
+			});
 		});
 
 		const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle)->cast<VehicleNetObject>();
@@ -210,7 +218,7 @@ namespace jc::vehicle::hook
 		const auto ok = vehicle_fire_hook(vehicle);
 
 		if (ok)
-			g_net->send_reliable<ChannelID_Generic>(PlayerPID_VehicleFire, vehicle_net, weapon_index, weapon_type, fire_info);
+			g_net->send(Packet(PlayerPID_VehicleFire, ChannelID_Generic, vehicle_net, weapon_index, weapon_type, fire_info));
 
 		return ok;
 	}
@@ -357,7 +365,7 @@ void Vehicle::set_engine_state(bool v, bool sync)
 
 	if (sync)
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(this)->cast<VehicleNetObject>())
-			g_net->send_reliable(PlayerPID_VehicleEngineState, vehicle_net, v);
+			g_net->send(Packet(PlayerPID_VehicleEngineState, ChannelID_Generic, vehicle_net, v));
 }
 
 void Vehicle::set_current_weapon_index(uint32_t v)

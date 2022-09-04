@@ -30,7 +30,7 @@ namespace jc::alive_object::hook
 
 					if (const auto character = BITCAST(Character*, obj); character == local_char)
 					{
-						g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, localplayer, NetObjectVar_Health, hp);
+						g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, localplayer, NetObjectVar_Health, hp));
 
 						localplayer->set_hp(hp);
 					}

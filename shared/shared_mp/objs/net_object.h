@@ -6,13 +6,12 @@
 
 // network id of an object
 //
-using NID = uint32_t;
-
+using NID = uint16_t;
 using NetObjectType = uint8_t;
 using SyncType = uint8_t;
 using NetObjectVarType = uint8_t;
 
-static constexpr NID INVALID_NID = 0u;
+static constexpr NID INVALID_NID = 0ui16;
 
 #ifdef JC_SERVER
 namespace enet

@@ -3,14 +3,7 @@
 #include "net.h"
 #include "logic.h"
 
-#include <game/sys/all.h>
-
-#include <shared_mp/net_handlers/all.h>
 #include <shared_mp/player_client/player_client.h>
-#include <shared_mp/objs/player.h>
-
-#include <game/sys/world/world.h>
-#include <game/object/character/character.h>
 
 bool Net::init(const std::string& ip, const std::string& nick)
 {
@@ -28,7 +21,7 @@ bool Net::init(const std::string& ip, const std::string& nick)
 
 	// setup channels
 
-	setup_channels();
+	enet::setup_channels();
 
 	// establish connection
 
@@ -57,8 +50,8 @@ bool Net::init(const std::string& ip, const std::string& nick)
 	log(GREEN, "Connected");
 
 	// packet to initialize the client in the server
-	
-	send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Init, nick);
+
+	send(Packet(PlayerClientPID_Init, ChannelID_PlayerClient, nick));
 
 	// make sure the net system is initialized before continuing
 
@@ -161,108 +154,8 @@ void Net::set_joined(bool v)
 
 		// let everyone know that we entered the world and spawned
 
-		send_reliable<ChannelID_PlayerClient>(PlayerClientPID_Join);
+		send(Packet(PlayerClientPID_Join, ChannelID_PlayerClient));
 	}
-}
-
-void Net::setup_channels()
-{
-	// player client dispatcher
-
-	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const Packet& p)
-	{
-		switch (auto id = p.get_id())
-		{
-		case PlayerClientPID_Init:				return nh::player_client::init(p);
-		case PlayerClientPID_Join:				return nh::player_client::join(p);
-		case PlayerClientPID_Quit:				return nh::player_client::quit(p);
-		case PlayerClientPID_SyncInstances:		return nh::player_client::sync_instances(p);
-		case PlayerClientPID_StartupInfo:		return nh::player_client::startup_info(p);
-		case PlayerClientPID_Nick:				return nh::player_client::nick(p);
-		}
-
-		return PacketRes_NotFound;
-	});
-
-	// chat dispatcher
-
-	enet::add_channel_dispatcher(ChannelID_Chat, [&](const Packet& p)
-	{
-		// if localplayer is not in game then we don't want any of these packets
-
-		if (!g_game_status->is_in_game())
-			return PacketRes_NotUsable;
-
-		switch (auto id = p.get_id())
-		{
-		case ChatPID_Msg: return nh::chat::msg(p);
-		}
-
-		return PacketRes_NotFound;
-	});
-
-	// world packet dispatcher
-
-	enet::add_channel_dispatcher(ChannelID_World, [&](const Packet& p)
-	{
-		// if localplayer is not in game then we don't want any of these packets
-
-		if (!g_game_status->is_in_game())
-			return PacketRes_NotUsable;
-
-		switch (auto id = p.get_id())
-		{
-		case WorldPID_SetTimeScale:			return nh::world::time_scale(p);
-		case WorldPID_SetTime:				return nh::world::day_time(p);
-		case WorldPID_SetPunchForce:		return nh::world::punch_force(p);
-		case WorldPID_SpawnObject:			return nh::world::spawn_object(p);
-		case WorldPID_DestroyObject:		return nh::world::destroy_object(p);
-		case WorldPID_SetOwnership:			return nh::world::set_ownership(p);
-		case WorldPID_SyncObject:			return nh::world::sync_object(p);
-		}
-
-		return PacketRes_NotFound;
-	});
-
-	// generic packet dispatcher
-
-	enet::add_channel_dispatcher(ChannelID_Generic, [&](const Packet& p)
-	{
-		// if localplayer is not in game then we don't want any of these packets
-
-		if (!g_game_status->is_in_game())
-			return PacketRes_NotUsable;
-
-		switch (auto id = p.get_id())
-		{
-		case PlayerPID_StateSync:				return nh::player::state_sync(p);
-		case PlayerPID_Respawn:					return nh::player::respawn(p);
-		case PlayerPID_DynamicInfo:				return nh::player::dynamic_info(p);
-		case PlayerPID_StanceAndMovement:		return nh::player::stance_and_movement(p);
-		case PlayerPID_SetWeapon:				return nh::player::set_weapon(p);
-		case PlayerPID_SetVehicle:				return nh::player::set_vehicle(p);
-		case PlayerPID_EnterExitVehicle:		return nh::player::enter_exit_vehicle(p);
-		case PlayerPID_VehicleControl:			return nh::vehicle::vehicle_control(p);
-		case PlayerPID_VehicleHonk:				return nh::vehicle::vehicle_honk(p);
-		case PlayerPID_VehicleEngineState:		return nh::vehicle::vehicle_engine_state(p);
-		case PlayerPID_VehicleFire:				return nh::vehicle::vehicle_fire(p);
-		case PlayerPID_VehicleMountedGunFire:	return nh::vehicle::vehicle_mounted_gun_fire(p);
-		}
-
-		return PacketRes_NotFound;
-	});
-
-	// debug packet dispatcher
-
-	enet::add_channel_dispatcher(ChannelID_Debug, [&](const Packet& p)
-	{
-		// if localplayer is not in game then we don't want any of these packets
-
-		if (!g_game_status->is_in_game())
-			return PacketRes_NotUsable;
-
-		return PacketRes_NotFound;
-	});
 }
 
 void Net::tick()

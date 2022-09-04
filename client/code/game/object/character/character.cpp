@@ -139,7 +139,7 @@ namespace jc::character::hook
 				{
 				case 0x59F44C: // check jump
 				{
-					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Jump);
+					g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_Jump));
 					break;
 				}
 				default:
@@ -150,7 +150,7 @@ namespace jc::character::hook
 					if (!can_be_ignored())
 					{
 						if (can_be_synced())
-							g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_BodyStance, id);
+							g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_BodyStance, id));
 						else log(GREEN, "[DBG] Localplayer body stance set to: {} from {:x}", id, RET_ADDRESS);
 					}
 				}
@@ -270,7 +270,7 @@ namespace jc::character::hook
 
 		if (const auto local_char = g_world->get_localplayer_character())
 			if (character == local_char && res == character)
-				g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Punch);
+				g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_Punch));
 
 		return res;
 	}
@@ -288,7 +288,7 @@ namespace jc::character::hook
 				const auto aim_target = local_char->get_aim_target();
 
 				if (was_hip_aim != is_hip_aim || was_full_aim != is_full_aim)
-					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Aiming, is_hip_aim, is_full_aim, aim_target);
+					g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_Aiming, is_hip_aim, is_full_aim, aim_target));
 
 				localplayer->set_aim_info(is_hip_aim, is_full_aim, aim_target);
 			}
@@ -330,12 +330,13 @@ namespace jc::character::hook
 								localplayer->set_multiple_rand_seed(0u);
 								localplayer->set_bullet_direction(muzzle, unpacked_direction);
 
-								g_net->send_reliable(
+								g_net->send(Packet(
 									PlayerPID_StanceAndMovement,
+									ChannelID_Generic,
 									PlayerStanceID_Fire,
 									weapon->get_id(),
 									muzzle,
-									packed_direction);
+									packed_direction));
 							}
 							else if (bullets > 1)
 							{
@@ -349,13 +350,14 @@ namespace jc::character::hook
 								localplayer->set_multiple_rand_seed(rand_seed);
 								localplayer->set_bullet_direction(muzzle, unpacked_direction);
 
-								g_net->send_reliable(
+								g_net->send(Packet(
 									PlayerPID_StanceAndMovement,
+									ChannelID_Generic,
 									PlayerStanceID_FireMultiple,
 									rand_seed,
 									weapon->get_id(),
 									muzzle,
-									packed_direction);
+									packed_direction));
 							}
 						}
 		
@@ -379,7 +381,7 @@ namespace jc::character::hook
 						const auto is_reloading = current_weapon->is_reloading();
 
 						if (is_reloading && was_reloading != is_reloading)
-							g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_Reload);
+							g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_Reload));
 
 						return;
 					}
@@ -395,7 +397,7 @@ namespace jc::character::hook
 				//log(RED, "damn, {} {} {} {} {}", dir->x, dir->y, dir->z, f1, f2);
 
 				if (local_char == character)
-					g_net->send_reliable(PlayerPID_StanceAndMovement, PlayerStanceID_ForceLaunch, character->get_added_velocity(), *dir, f1, f2);
+					g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_ForceLaunch, character->get_added_velocity(), *dir, f1, f2));
 				else if (g_net->get_player_by_character(character))
 					return;
 			}
@@ -459,7 +461,7 @@ namespace jc::character::hook
 
 					lp->set_vehicle(seat_type, new_vehicle_net->cast<VehicleNetObject>());
 
-					g_net->send_reliable(PlayerPID_SetVehicle, new_vehicle_net, seat_type);
+					g_net->send(Packet(PlayerPID_SetVehicle, ChannelID_Generic, new_vehicle_net, seat_type));
 				}
 			}
 
@@ -581,7 +583,7 @@ void Character::set_walking_anim_set(int32_t walking_anim_id, int32_t skin_id, b
 	{
 		// sync the skin id with other players
 
-		g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_WalkingSetAndSkin, walking_anim_id, skin_id);
+		g_net->send(Packet(PlayerPID_DynamicInfo, ChannelID_Generic, PlayerDynInfo_WalkingSetAndSkin, walking_anim_id, skin_id));
 	}
 }
 
@@ -652,7 +654,7 @@ void Character::set_skin(int32_t id, int32_t cloth_skin, int32_t head_skin, int3
 			{
 				// sync the skin id with other players
 
-				g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_Skin, id);
+				g_net->send(Packet(PlayerPID_DynamicInfo, ChannelID_Generic, PlayerDynInfo_Skin, id));
 			}
 		}
 	});
@@ -714,7 +716,7 @@ void Character::set_npc_variant(int32_t cloth_skin, int32_t head_skin, int32_t c
 	{
 		// sync the variant info with other players
 
-		g_net->send_reliable(PlayerPID_DynamicInfo, PlayerDynInfo_NPCVariant, cloth_skin, head_skin, cloth_color, props);
+		g_net->send(Packet(PlayerPID_DynamicInfo, ChannelID_Generic, PlayerDynInfo_NPCVariant, cloth_skin, head_skin, cloth_color, props));
 	}
 }
 

@@ -46,12 +46,12 @@ public:
 	*/
 	void startup_sync();
 
-	void send(const Packet& packet, bool create = false)
+	void send(const Packet& p, bool create = false)
 	{
 		if (create)
-			packet.create();
+			p.create();
 
-		enet::send_packet(peer, packet);
+		enet::send_packet(peer, p);
 	}
 
 	void set_timed_out() { timed_out = true; }

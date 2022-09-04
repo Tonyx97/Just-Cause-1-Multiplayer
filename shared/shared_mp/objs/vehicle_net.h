@@ -35,15 +35,11 @@ public:
 			 direction;
 	};
 
-	struct FireInfo : public FireInfoBase
+	struct FireInfo
 	{
-		int index;
+		FireInfoBase base;
 
-		FireInfo(int index, const vec3& muzzle, const vec3& direction) : index(index)
-		{
-			this->muzzle = muzzle;
-			this->direction = direction;
-		}
+		int index;
 	};
 
 	// joystick / keyword variables

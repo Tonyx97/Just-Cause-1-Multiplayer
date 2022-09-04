@@ -206,7 +206,7 @@ void Player::set_net_object_ownership_of(NetObject* obj)
 
 	Packet p(WorldPID_SetOwnership, ChannelID_World, true, this, obj);
 
-	client->send(p);
+	client->send(p, true);
 }
 
 void Player::remove_net_object_ownership(NetObject* obj)
@@ -215,7 +215,7 @@ void Player::remove_net_object_ownership(NetObject* obj)
 
 	Packet p(WorldPID_SetOwnership, ChannelID_World, false, obj);
 
-	client->send(p);
+	client->send(p, true);
 }
 
 void Player::remove_all_ownerships()

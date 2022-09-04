@@ -22,7 +22,7 @@ bool Net::init()
 
 	// setup channels
 
-	setup_channels();
+	enet::setup_channels();
 
 	// create server host
 
@@ -44,87 +44,6 @@ void Net::destroy()
 
 	enet_host_destroy(sv);
 	enet_deinitialize();
-}
-
-void Net::setup_channels()
-{
-	// player client dispatcher
-
-	enet::add_channel_dispatcher(ChannelID_PlayerClient, [&](const Packet& p)
-	{
-		switch (auto id = p.get_id())
-		{
-		case PlayerClientPID_Init:				return nh::player_client::init(p);
-		case PlayerClientPID_Join:				return nh::player_client::join(p);
-		case PlayerClientPID_SyncInstances:		return nh::player_client::sync_instances(p);
-		case PlayerClientPID_Nick:				return nh::player_client::nick(p);
-		}
-
-		return PacketRes_NotFound;
-	});
-
-	// chat dispatcher
-
-	enet::add_channel_dispatcher(ChannelID_Chat, [&](const Packet& p)
-	{
-		switch (auto id = p.get_id())
-		{
-		case ChatPID_Msg: return nh::chat::msg(p);
-		}
-
-		return PacketRes_NotFound;
-	});
-
-	// world dispatcher
-
-	enet::add_channel_dispatcher(ChannelID_World, [&](const Packet& p)
-	{
-		switch (auto id = p.get_id())
-		{
-		case WorldPID_SetTimeScale:		return nh::world::time_scale(p);
-		case WorldPID_SetPunchForce:	return nh::world::punch_force(p);
-		case WorldPID_SpawnObject:		return nh::world::spawn_object(p);
-		case WorldPID_DestroyObject:	return nh::world::destroy_object(p);
-		case WorldPID_SyncObject:		return nh::world::sync_object(p);
-		}
-
-		return PacketRes_NotFound;
-	});
-
-	// generic packet dispatcher
-
-	enet::add_channel_dispatcher(ChannelID_Generic, [&](const Packet& p)
-	{
-		switch (auto id = p.get_id())
-		{
-		case PlayerPID_StateSync:					return nh::player::state_sync(p);
-		case PlayerPID_Respawn:						return nh::player::respawn(p);
-		case PlayerPID_DynamicInfo:					return nh::player::dynamic_info(p);
-		case PlayerPID_StanceAndMovement:			return nh::player::stance_and_movement(p);
-		case PlayerPID_SetWeapon:					return nh::player::set_weapon(p);
-		case PlayerPID_SetVehicle:					return nh::player::set_vehicle(p);
-		case PlayerPID_EnterExitVehicle:			return nh::player::enter_exit_vehicle(p);
-		case PlayerPID_VehicleControl:				return nh::vehicle::vehicle_control(p);
-		case PlayerPID_VehicleHonk:					return nh::vehicle::vehicle_honk(p);
-		case PlayerPID_VehicleEngineState:			return nh::vehicle::vehicle_engine_state(p);
-		case PlayerPID_VehicleFire:					return nh::vehicle::vehicle_fire(p);
-		case PlayerPID_VehicleMountedGunFire:		return nh::vehicle::vehicle_mounted_gun_fire(p);
-		}
-
-		return PacketRes_NotFound;
-	});
-
-	// generic packet dispatcher
-
-	enet::add_channel_dispatcher(ChannelID_Debug, [&](const Packet& p)
-	{
-		switch (auto id = p.get_id())
-		{
-		case DbgPID_SetTime:		return nh::dbg::set_time(p);
-		}
-
-		return PacketRes_NotFound;
-	});
 }
 
 void Net::send_broadcast_impl(const Packet& p, PlayerClient* ignore_pc)

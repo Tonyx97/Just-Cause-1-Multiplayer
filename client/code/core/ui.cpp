@@ -463,13 +463,13 @@ void UI::render_admin_panel()
 		float punch_force = Character::GET_GLOBAL_PUNCH_DAMAGE(false);
 
 		if (ImGui::SliderFloat("Day Hour##ap.sv.time", &day_time, 0.f, 24.f))
-			g_net->send_reliable<ChannelID_Debug>(DbgPID_SetTime, day_time);
+			g_net->send(Packet(DbgPID_SetTime, ChannelID_Debug, day_time));
 
 		if (ImGui::SliderFloat("Time Scale (lol, don't touch sir)##ap.sv.ts", &timescale, 0.01f, 5.f))
-			g_net->send_reliable<ChannelID_World>(WorldPID_SetTimeScale, timescale);
+			g_net->send(Packet(WorldPID_SetTimeScale, ChannelID_World, timescale));
 
 		if (ImGui::SliderFloat("Punch Force (lmao)##ap.sv.pf", &punch_force, 50.f, 10000.f))
-			g_net->send_reliable<ChannelID_World>(WorldPID_SetPunchForce, punch_force);
+			g_net->send(Packet(WorldPID_SetPunchForce, ChannelID_World, punch_force));
 
 		ImGui::TreePop();
 	}
@@ -650,7 +650,7 @@ void UI::render_admin_panel()
 		{
 			TransformTR transform(g_world->get_localplayer_character()->get_position() + vec3(2.f, 1.f, 0.f));
 
-			g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Vehicle, static_cast<uint16_t>(veh_to_spawn), transform);
+			g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, static_cast<uint16_t>(veh_to_spawn), transform));
 
 			log(RED, "wants to spawn {}", veh_to_spawn);
 		}

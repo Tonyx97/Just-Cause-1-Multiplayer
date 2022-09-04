@@ -63,7 +63,7 @@ namespace jc::vehicle_seat::hook
 		if (const auto lp = g_net->get_localplayer())
 			if (const auto driver_char = driver_seat->get_character(); driver_char == lp->get_character())
 				if (const auto vehicle_net = lp->get_vehicle())
-					g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, driver_seat->get_type(), VehicleEnterExit_DriverToRoof);
+					g_net->send(Packet(PlayerPID_EnterExitVehicle, ChannelID_Generic, vehicle_net, driver_seat->get_type(), VehicleEnterExit_DriverToRoof));
 	}
 
 	DEFINE_INLINE_HOOK_IMPL(passenger_to_driver_seat, 0x78680B)
@@ -84,7 +84,7 @@ namespace jc::vehicle_seat::hook
 					const auto driver_player = g_net->get_player_by_character(driver_char);
 
 					if (passenger_seat->is_occupied())
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, passenger_seat->get_type(), VehicleEnterExit_PassengerToDriver, driver_player);
+						g_net->send(Packet(PlayerPID_EnterExitVehicle, ChannelID_Generic, vehicle_net, passenger_seat->get_type(), VehicleEnterExit_PassengerToDriver, driver_player));
 				}
 	}
 
@@ -94,7 +94,7 @@ namespace jc::vehicle_seat::hook
 			if (const auto local_char = localplayer->get_character(); character == local_char)
 				if (const auto seat = local_char->get_vehicle_seat())
 					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, seat->get_type(), VehicleEnterExit_Exit, false);
+						g_net->send(Packet(PlayerPID_EnterExitVehicle, ChannelID_Generic, vehicle_net, seat->get_type(), VehicleEnterExit_Exit, false));
 
 		return instant_exit_hook(vehicle, character, is_local);
 	}
@@ -110,7 +110,7 @@ namespace jc::vehicle_seat::hook
 					{
 						const auto jump_out = ihp->read_ebp<bool>(0xE);
 
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, driver_seat->get_type(), VehicleEnterExit_Exit, jump_out);
+						g_net->send(Packet(PlayerPID_EnterExitVehicle, ChannelID_Generic, vehicle_net, driver_seat->get_type(), VehicleEnterExit_Exit, jump_out));
 					}
 	}
 
@@ -122,7 +122,7 @@ namespace jc::vehicle_seat::hook
 			if (const auto local_char = localplayer->get_character(); passenger_seat->get_character() == local_char)
 				if (const auto vehicle = passenger_seat->get_vehicle())
 					if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle))
-						g_net->send_reliable(PlayerPID_EnterExitVehicle, vehicle_net, passenger_seat->get_type(), VehicleEnterExit_Exit, false);
+						g_net->send(Packet(PlayerPID_EnterExitVehicle, ChannelID_Generic, vehicle_net, passenger_seat->get_type(), VehicleEnterExit_Exit, false));
 	}
 
 	// sync mounted guns fire
@@ -148,7 +148,7 @@ namespace jc::vehicle_seat::hook
 
 								vehicle_net->set_mounted_gun_fire_info(fire_info);
 
-								g_net->send_reliable<ChannelID_Generic>(PlayerPID_VehicleMountedGunFire, vehicle_net, fire_info);
+								g_net->send(Packet(PlayerPID_VehicleMountedGunFire, ChannelID_Generic, vehicle_net, fire_info));
 							}
 						}
 	}

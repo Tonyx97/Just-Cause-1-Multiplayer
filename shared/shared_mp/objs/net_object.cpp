@@ -53,7 +53,7 @@ bool NetObject::sync()
 				real_max_hp = object_base->get_max_hp();
 
 	if ((real_transform.t != get_position() || real_transform.r != get_rotation()) && vars.transform_timer.ready())
-		g_net->send_unreliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Transform, (vars.transform = real_transform).pack());
+		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Transform, (vars.transform = real_transform).pack()).set_unreliable());
 
 	switch (get_type())
 	{
@@ -61,7 +61,7 @@ bool NetObject::sync()
 	default:
 	{
 		if (vars.velocity_timer.get_interval() > 0 && vars.velocity_timer.ready())
-			g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Velocity, vars.velocity = physical->get_velocity());
+			g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Velocity, vars.velocity = physical->get_velocity()));
 	}
 	}
 
@@ -69,10 +69,10 @@ bool NetObject::sync()
 			   max_hp = get_max_hp();
 
 	if (real_hp != get_hp() || hp == jc::nums::MAXF)
-		g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_Health, vars.hp = real_hp);
+		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Health, vars.hp = real_hp));
 
 	if (real_max_hp != get_max_hp() || max_hp == jc::nums::MAXF)
-		g_net->send_reliable<ChannelID_World>(WorldPID_SyncObject, this, NetObjectVar_MaxHealth, vars.max_hp = real_max_hp);
+		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_MaxHealth, vars.max_hp = real_max_hp));
 
 	// parent object sync
 
@@ -105,9 +105,9 @@ namespace enet
 
 	void INIT_NIDS_POOL()
 	{
-		// create a total of 2048 possible nids (1-2048)
+		// create a total of 65534 possible nids (1-65534)
 
-		for (NID i = 1u; i < 2048u + 1u; ++i)
+		for (NID i = 1ui16; i < 65535ui16; ++i)
 			free_nids.insert(free_nids.end(), i);
 	}
 
