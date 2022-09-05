@@ -50,7 +50,7 @@ public:
 	}
 
 	template <typename... A>
-	Packet(const Packet& other, const A&... args)
+	Packet(const Packet& other, A&&... args)
 		: id(other.id)
 		, channel(other.channel)
 		, time(util::time::get_time())
@@ -68,7 +68,7 @@ public:
 	}
 
 	template <typename... A>
-	Packet(PacketID	pid, ChannelID channel, const A&... args)
+	Packet(PacketID	pid, ChannelID channel, A&&... args)
 		: id(pid)
 		, channel(channel)
 		, time(util::time::get_time())
@@ -122,13 +122,13 @@ public:
 	ENetPacket* get_packet() const { return packet; }
 
 	template <typename... A>
-	void add(const A&... args) const
+	void add(A&&... args) const
 	{
 		serialize(ctx, args...);
 	}
 
 	template <typename... A>
-	void add_beginning(const A&... args) const
+	void add_beginning(A&&... args) const
 	{
 		ctx.write_offset = sizeof(PacketID);
 		add(args...);
@@ -169,8 +169,8 @@ public:
 
 	std::pair<NID, NetObjectType> get_nid_and_type() const
 	{
-		const auto _nid = get_u32();
-		const auto _type = get_u8();
+		const auto _nid = get<NID>();
+		const auto _type = get<NetObjectType>();
 
 		return { _nid, _type };
 	}

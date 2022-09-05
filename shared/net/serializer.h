@@ -65,7 +65,7 @@ struct serialization_ctx
 	}
 };
 
-template <typename T, typename... Args>
+template <typename T, typename... A>
 struct member_counter;
 
 struct any_type
@@ -74,18 +74,18 @@ struct any_type
 	operator T() {}
 };
 
-template <typename T, typename... Args>
+template <typename T, typename... A>
 struct member_counter
 {
 	constexpr static size_t f(int32_t*)
 	{
-		return sizeof...(Args) - 1;
+		return sizeof...(A) - 1;
 	}
 
-	template <typename U = T, typename enabld = decltype(U{ Args {}... }) >
+	template <typename U = T, typename enabld = decltype(U { A {}... }) >
 	constexpr static size_t f(std::nullptr_t)
 	{
-		return member_counter<T, Args..., any_type>::value;
+		return member_counter<T, A..., any_type>::value;
 	}
 
 	constexpr static auto value = f(nullptr);
@@ -115,19 +115,19 @@ constexpr bool is_net_object_v = std::derived_from<std::remove_pointer_t<std::re
 NetObject* get_net_object_from_lists(NID nid, NetObjectType type);
 
 template <typename T, typename... A>
-void _serialize(serialization_ctx&, const T&, A...) requires(is_plain_copyable_v<T>);
+void _serialize(serialization_ctx&, const T&, A&&...) requires(is_plain_copyable_v<T>);
 
 template <typename T, typename... A>
-void _serialize(serialization_ctx&, const T&, A...) requires(is_vector_v<T>);
+void _serialize(serialization_ctx&, const T&, A&&...) requires(is_vector_v<T>);
 
 template <typename T, typename... A>
-void _serialize(serialization_ctx&, const T&, A...) requires(is_string_v<T>);
+void _serialize(serialization_ctx&, const T&, A&&...) requires(is_string_v<T>);
 
 template <typename T, typename... A>
-void _serialize(serialization_ctx&, const T&, A...) requires(is_complex_v<T>);
+void _serialize(serialization_ctx&, const T&, A&&...) requires(is_complex_v<T>);
 
 template <typename T, typename... A>
-void _serialize(serialization_ctx&, const T&, A...) requires(is_net_object_v<T>);
+void _serialize(serialization_ctx&, const T&, A&&...) requires(is_net_object_v<T>);
 
 template <typename T>
 T _deserialize(serialization_ctx&) requires(is_plain_copyable_v<T>);
@@ -161,7 +161,7 @@ struct deserialize_fn
 template <typename T, typename Fn, bool is_const>
 void iterate_members(serialization_ctx& ctx, std::conditional_t<is_const, const T&, T&> v)
 {
-	auto iterate_member = [&]<typename VT, typename... A>(const auto & iterate_member, VT & value, A&&... args) constexpr
+	auto iterate_member = [&]<typename VT, typename... A>(const auto& iterate_member, VT& value, A&&... args) constexpr
 	{
 		if constexpr (std::is_class_v<VT> && std::is_aggregate_v<VT>)
 			iterate_members<VT, Fn, is_const>(ctx, value);
@@ -198,7 +198,7 @@ void iterate_members(serialization_ctx& ctx, std::conditional_t<is_const, const 
 };
 
 template <typename T, typename... A>
-void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_plain_copyable_v<T>)
+void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_plain_copyable_v<T>)
 {
 	ctx.write(v);
 
@@ -207,7 +207,7 @@ void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_plain
 }
 
 template <typename T, typename... A>
-void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_vector_v<T>)
+void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_vector_v<T>)
 {
 	ctx.write(v.size());
 
@@ -219,7 +219,7 @@ void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_vecto
 }
 
 template <typename T, typename... A>
-void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_string_v<T>)
+void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_string_v<T>)
 {
 	const auto size = ctx.write(v.size());
 
@@ -230,7 +230,7 @@ void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_strin
 }
 
 template <typename T, typename... A>
-void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_complex_v<T>)
+void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_complex_v<T>)
 {
 	iterate_members<T, serialize_fn, true>(ctx, v);
 
@@ -239,7 +239,7 @@ void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_compl
 }
 
 template <typename T, typename... A>
-void _serialize(serialization_ctx& ctx, const T& v, A... args) requires(is_net_object_v<T>)
+void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_net_object_v<T>)
 {
 	const auto nid = v ? v->get_nid() : INVALID_NID;
 
@@ -291,7 +291,8 @@ template <typename T>
 T _deserialize(serialization_ctx& ctx) requires(is_complex_v<T>)
 {
 	T v;
-	log(RED, "ay");
+
+	log(RED, "complex _deserialize called");
 
 	iterate_members<T, deserialize_fn, false>(ctx, v);
 
@@ -314,7 +315,7 @@ T _deserialize(serialization_ctx& ctx) requires(is_net_object_v<T>)
 }
 
 template <typename... A>
-void serialize(serialization_ctx& ctx, A... args)
+void serialize(serialization_ctx& ctx, A&&... args)
 {
 	if constexpr (sizeof...(args) > 0)
 		_serialize(ctx, args...);
@@ -325,6 +326,3 @@ T deserialize(serialization_ctx& ctx)
 {
 	return _deserialize<T>(ctx);
 }
-
-/*#define DESERIALIZE_NID_AND_TYPE(p)			const auto nid = deserialize(p); \
-											const auto type = deserialize<NetObjectType>(p)*/

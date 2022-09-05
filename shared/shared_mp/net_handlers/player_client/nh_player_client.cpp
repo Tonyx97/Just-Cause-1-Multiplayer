@@ -13,7 +13,7 @@
 PacketResult nh::player_client::init(const Packet& p)
 {
 #ifdef JC_CLIENT
-	g_net->add_local(p.get_u32());
+	g_net->add_local(p.get<NID>());
 	g_net->set_initialized(true);
 
 	const auto local = g_net->get_local();
