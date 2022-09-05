@@ -316,8 +316,6 @@ T _deserialize(serialization_ctx& ctx) requires(is_complex_v<T>)
 {
 	T v;
 
-	log(RED, "complex _deserialize called");
-
 	iterate_members<T, deserialize_fn, false>(ctx, v);
 
 	return v;
