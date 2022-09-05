@@ -33,6 +33,7 @@ private:
 	mat4 m = mat4(1.f);
 
 public:
+
 	Transform() {}
 	Transform(const vec3& position);
 	Transform(const vec3& position, const quat& rotation);

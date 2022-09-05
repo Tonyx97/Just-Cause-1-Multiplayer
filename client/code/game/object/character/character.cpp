@@ -89,7 +89,8 @@ namespace jc::character::hook
 			case 45:	// close vehicle door from outside (left)
 			case 46:	// close vehicle door from outside (right)
 			case 47:	// passenger to driver seat
-			case 48:	// inside airplane
+			case 48:	// airplane accelerate
+			case 49:	// airplane decelerate
 			case 51:
 			case 52:
 			case 54:	// vehicle seating

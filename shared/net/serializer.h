@@ -65,6 +65,20 @@ struct serialization_ctx
 	}
 };
 
+#ifdef JC_DBG
+inline std::set<std::string> serialized_objects;
+
+#define ADD_SERIALIZED_OBJECT(T, t)	const auto type_name = typeid(T).name(); \
+									if (!serialized_objects.contains(type_name)) \
+									{ \
+										log(CYAN, "Serialized Object ({}): {}", t, type_name); \
+										serialized_objects.insert(type_name); \
+									}
+								 
+#else
+#define ADD_SERIALIZED_OBJECT(T, t)
+#endif
+
 template <typename T, typename... A>
 struct member_counter;
 
@@ -200,6 +214,8 @@ void iterate_members(serialization_ctx& ctx, std::conditional_t<is_const, const 
 template <typename T, typename... A>
 void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_plain_copyable_v<T>)
 {
+	ADD_SERIALIZED_OBJECT(v, 0);
+
 	ctx.write(v);
 
 	if constexpr (sizeof...(args) > 0)
@@ -209,6 +225,8 @@ void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_pla
 template <typename T, typename... A>
 void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_vector_v<T>)
 {
+	ADD_SERIALIZED_OBJECT(v, 1);
+
 	ctx.write(v.size());
 
 	for (const auto& e : v)
@@ -221,6 +239,8 @@ void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_vec
 template <typename T, typename... A>
 void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_string_v<T>)
 {
+	ADD_SERIALIZED_OBJECT(v, 2);
+
 	const auto size = ctx.write(v.size());
 
 	ctx.write(v.data(), size);
@@ -232,6 +252,8 @@ void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_str
 template <typename T, typename... A>
 void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_complex_v<T>)
 {
+	ADD_SERIALIZED_OBJECT(v, 3);
+
 	iterate_members<T, serialize_fn, true>(ctx, v);
 
 	if constexpr (sizeof...(args) > 0)
@@ -241,6 +263,8 @@ void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_com
 template <typename T, typename... A>
 void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_net_object_v<T>)
 {
+	ADD_SERIALIZED_OBJECT(v, 4);
+
 	const auto nid = v ? v->get_nid() : INVALID_NID;
 
 	if (nid != INVALID_NID)
