@@ -6,7 +6,8 @@
 #elif defined(JC_ASSET_CONV)
 #ifdef JC_DBG
 #pragma comment(lib, "assimp_debug.lib")
+#pragma comment(lib, "librg_static_dbg.lib")
 #else
-#pragma comment(lib, "assimp.lib")
+#pragma comment(lib, "librg_static.lib")
 #endif
 #endif
