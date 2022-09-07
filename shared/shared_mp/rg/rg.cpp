@@ -1,7 +1,9 @@
 #include <defs/standard.h>
 #include <defs/glm.h>
 
-#include "world_rg.h"
+#include <mp/net.h>
+
+#include "rg.h"
 
 namespace world_rg
 {
@@ -122,4 +124,28 @@ librg_chunk WorldRg::get_chunk_from_position(const vec3& position)
 librg_chunk WorldRg::get_chunk_from_chunk_position(const i16vec3& position)
 {
 	return librg_chunk_from_chunkpos(world, position.x, position.y, position.z);
+}
+
+EntityRg::EntityRg(WorldRg* world, NID nid) : world(world), nid(nid)
+{
+	const auto world_rg = world->get_world();
+	const auto id = static_cast<int64_t>(nid);
+	const auto chunk = world->get_chunk_from_position({ 0.f, 0.f, 0.f }); // todojc
+
+	printf_s("Chunk for new entity: %i\n", int(chunk));
+
+	librg_entity_track(world_rg, id);
+	librg_entity_owner_set(world_rg, id, id);
+	librg_entity_chunk_set(world_rg, id, chunk != LIBRG_CHUNK_INVALID ? chunk : 0);
+	librg_entity_userdata_set(world_rg, id, this);
+}
+
+void EntityRg::set_chunk(librg_chunk chunk)
+{
+	librg_entity_chunk_set(world->get_world(), get_id(), chunk);
+}
+
+librg_chunk EntityRg::get_chunk() const
+{
+	return librg_entity_chunk_get(world->get_world(), get_id());
 }

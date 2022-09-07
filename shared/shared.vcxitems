@@ -47,7 +47,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\objs\player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\objs\vehicle_net.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\player_client\player_client.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\rg\world_rg.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\rg\rg.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)timer\timer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -67,7 +67,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\objs\player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\objs\vehicle_net.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\player_client\player_client.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\rg\world_rg.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\rg\rg.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)timer\timer.cpp" />
   </ItemGroup>
 </Project>

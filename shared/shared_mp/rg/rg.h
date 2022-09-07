@@ -49,3 +49,22 @@ public:
 
 	librg_chunk get_chunk_from_chunk_position(const i16vec3& position);
 };
+
+class EntityRg
+{
+private:
+
+	WorldRg* world = nullptr;
+
+	NID nid = 0; // = INVALID_NID;
+
+public:
+
+	EntityRg(WorldRg* world, NID nid);
+
+	void set_chunk(librg_chunk chunk);
+
+	int64_t get_id() const { return static_cast<int64_t>(nid); }
+
+	librg_chunk get_chunk() const;
+};
