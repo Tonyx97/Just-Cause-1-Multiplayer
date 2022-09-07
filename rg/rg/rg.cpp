@@ -80,10 +80,14 @@ WorldRg::WorldRg(
 	librg_config_chunkoffset_set(world, LIBRG_OFFSET_MID, LIBRG_OFFSET_MID, LIBRG_OFFSET_MID);
 	librg_config_chunkamount_set(world, chunks.x, chunks.y, chunks.z);
 	librg_config_chunksize_set(world, size.x, size.y, size.z);
+
+	worlds.insert({ world, this });
 }
 
 WorldRg::~WorldRg()
 {
+	worlds.erase(world);
+
 	librg_world_destroy(world);
 }
 
