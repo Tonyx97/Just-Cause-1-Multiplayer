@@ -15,7 +15,7 @@ namespace world_rg
 
 		check(it == worlds.end(), "WorldRg not found in {}", from);
 
-		const auto world = it->second;
+		return it->second;
 	}
 }
 
@@ -41,6 +41,8 @@ int32_t WorldRg::on_update(librg_world* w, librg_event* e)
 	const auto world = get_world_rg(w, CURR_FN);
 
 	world->call_on_update(e);
+
+	return 0;
 }
 
 int32_t WorldRg::on_remove(librg_world* w, librg_event* e)
@@ -87,7 +89,7 @@ WorldRg::~WorldRg()
 
 EntityRg* WorldRg::add_entity(NID nid)
 {
-	const auto entity = JC_ALLOC(EntityRg, nid);
+	const auto entity = JC_ALLOC(EntityRg, this, nid);
 
 	if (!entity)
 		return nullptr;

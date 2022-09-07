@@ -20,6 +20,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asset_converter", "asset_co
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hde", "hde\hde.vcxitems", "{F4FFAD47-5958-4180-A64C-8E64D8B46368}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rg", "rg\rg.vcxitems", "{FECC2CD2-9D4B-43D2-81E2-C135D7B71727}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -69,6 +71,7 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		profiling\profiling.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
+		rg\rg.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
 		shared\shared.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
 		hde\hde.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		profiling\profiling.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
@@ -78,5 +81,6 @@ Global
 		shared\shared.vcxitems*{dffbc708-890d-491b-980f-e8613869783b}*SharedItemsImports = 9
 		profiling\profiling.vcxitems*{f3a1c58e-2ea8-414b-a0a0-abce1d08a247}*SharedItemsImports = 4
 		hde\hde.vcxitems*{f4ffad47-5958-4180-a64c-8e64d8b46368}*SharedItemsImports = 9
+		rg\rg.vcxitems*{fecc2cd2-9d4b-43d2-81e2-c135d7b71727}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal
