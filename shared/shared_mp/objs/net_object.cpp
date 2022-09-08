@@ -22,7 +22,7 @@ NetObject::NetObject()
 	vars.velocity_timer(0);
 #else
 	nid = enet::GET_FREE_NID();
-	rg = g_net->get_rg()->add_entity(static_cast<int64_t>(nid));
+	rg = g_net->get_rg()->add_entity(this, static_cast<int64_t>(nid));
 #endif
 }
 

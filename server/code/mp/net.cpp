@@ -9,11 +9,31 @@
 #include <shared_mp/net_handlers/all.h>
 #include <shared_mp/player_client/player_client.h>
 
+namespace world_rg
+{
+	void on_create(WorldRg* w, librg_event* e)
+	{
+		const auto new_entity = w->get_event_owner(e);
+		const auto visible_from = w->get_event_entity(e);
+
+		log(WHITE, "entity {:x} is visible now from entity {:x} (owner: {:x})", new_entity->get_nid(), visible_from->get_nid(), 0);
+	}
+
+	void on_update(WorldRg* w, librg_event* e)
+	{
+	}
+
+	void on_remove(WorldRg* w, librg_event* e)
+	{
+		const auto new_entity = w->get_event_owner(e);
+		const auto visible_from = w->get_event_entity(e);
+
+		log(WHITE, "entity {:x} is no longer visible from entity {:x} (owner: {:x})", new_entity->get_nid(), visible_from->get_nid(), 0);
+	}
+}
+
 bool Net::init()
 {
-	if (enet_initialize() != 0)
-		return logbwt(RED, "Error occurred while initializing server");
-
 	enet::init();
 
 	const auto address = ENetAddress
@@ -31,16 +51,12 @@ bool Net::init()
 	if (!(sv = enet_host_create(&address, enet::MAX_PLAYERS, ChannelID_Max, 0, 0)))
 		return logbwt(RED, "Could not create server host");
 
-	world_rg = JC_ALLOC(WorldRg, i16vec3 { 32, 32, 1 }, u16vec3 { 500u, 500u, UINT16_MAX },
-		[](WorldRg*, librg_event*)
-		{
-			log(GREEN, "create");
-		},
-		[](WorldRg*, librg_event*) {},
-		[](WorldRg*, librg_event*)
-		{
-			log(GREEN, "remove");
-		});
+	world_rg = JC_ALLOC(WorldRg,
+		i16vec3 { 1024, 1024, 1 },
+		u16vec3 { 10u, 10u, UINT16_MAX },
+		world_rg::on_create,
+		world_rg::on_update,
+		world_rg::on_remove);
 
 	logt(GREEN, "Server initialized");
 

@@ -21,37 +21,19 @@ namespace world_rg
 
 using namespace world_rg;
 
-int32_t on_create(librg_world* w, librg_event* e)
+int32_t WorldRg::on_create(librg_world* w, librg_event* e)
 {
-	const auto world = get_world_rg(w, CURR_FN);
-
-	/*int64_t owner_id = librg_event_owner_get(w, e);
-	int64_t entity_id = librg_event_entity_get(w, e);
-
-	if (owner_id != entity_id)
-		log(WHITE, "entity: {} was created for player: {} | owner: {}\n", (int)entity_id, (int)owner_id, (int)librg_entity_owner_get(w, entity_id));*/
-
-	return world->call_on_create(e);
+	return get_world_rg(w, CURR_FN)->call_on_create(e);
 }
 
-int32_t on_update(librg_world* w, librg_event* e)
+int32_t WorldRg::on_update(librg_world* w, librg_event* e)
 {
-	const auto world = get_world_rg(w, CURR_FN);
-
-	return world->call_on_update(e);
+	return get_world_rg(w, CURR_FN)->call_on_update(e);
 }
 
-int32_t on_remove(librg_world* w, librg_event* e)
+int32_t WorldRg::on_remove(librg_world* w, librg_event* e)
 {
-	const auto world = get_world_rg(w, CURR_FN);
-
-	/*int64_t owner_id = librg_event_owner_get(w, e);
-	int64_t entity_id = librg_event_entity_get(w, e);
-
-	if (owner_id != entity_id)
-		printf_s("entity: %d was removed for player: %d\n", (int)entity_id, (int)owner_id);*/
-
-	return world->call_on_remove(e);
+	return get_world_rg(w, CURR_FN)->call_on_remove(e);
 }
 
 WorldRg::WorldRg(
@@ -75,7 +57,9 @@ WorldRg::WorldRg(
 	librg_config_chunkamount_set(world, chunks.x, chunks.y, chunks.z);
 	librg_config_chunksize_set(world, size.x, size.y, size.z);
 
-	write_buffer = BITCAST(char*, malloc(write_buffer_size = DEFAULT_WRITE_BUFFER_SIZE()));
+	write_buffer_size = DEFAULT_WRITE_BUFFER_SIZE();
+
+	write_buffer = BITCAST(char*, malloc(write_buffer_size));
 
 	worlds.insert({ world, this });
 }
@@ -93,6 +77,8 @@ WorldRg::~WorldRg()
 
 void WorldRg::update()
 {
+	log(RED, "---------------------");
+
 	for (const auto entity : entities)
 	{
 		int32_t result = 0;
@@ -113,12 +99,52 @@ void WorldRg::update()
 			}
 
 		} while (result != LIBRG_OK);
+
+		if (const auto net_obj = entity->get_net_obj())
+		{
+			const auto& position = net_obj->get_position();
+
+			const auto old_chunk = entity->get_chunk();
+
+			if (const auto new_chunk = get_chunk_from_position(position); new_chunk != LIBRG_CHUNK_INVALID && old_chunk != new_chunk)
+			{
+				log(RED, "Entity {:x} changed from chunk {} to {}", entity->get_id(), old_chunk, new_chunk);
+
+				entity->set_chunk(new_chunk);
+			}
+		}
+
+		log(GREEN, "Entity {:x} chunk: {}", entity->get_net_obj()->get_nid(), entity->get_chunk());
 	}
 }
 
-EntityRg* WorldRg::add_entity(int64_t id)
+NetObject* WorldRg::get_event_owner(librg_event* e) const
 {
-	const auto entity = JC_ALLOC(EntityRg, this, id);
+	const auto id = librg_event_owner_get(world, e);
+
+	if (id == LIBRG_EVENT_INVALID)
+		return nullptr;
+
+	const auto entity = BITCAST(EntityRg*, librg_entity_userdata_get(world, id));
+
+	return entity ? entity->get_net_obj() : nullptr;
+}
+
+NetObject* WorldRg::get_event_entity(librg_event* e) const
+{
+	const auto id = librg_event_entity_get(world, e);
+
+	if (id == LIBRG_EVENT_INVALID)
+		return nullptr;
+
+	const auto entity = BITCAST(EntityRg*, librg_entity_userdata_get(world, id));
+
+	return entity ? entity->get_net_obj() : nullptr;
+}
+
+EntityRg* WorldRg::add_entity(NetObject* net_obj, int64_t id)
+{
+	const auto entity = JC_ALLOC(EntityRg, this, net_obj, id);
 
 	if (!entity)
 		return nullptr;
@@ -157,16 +183,13 @@ librg_chunk WorldRg::get_chunk_from_chunk_position(const i16vec3& position)
 	return librg_chunk_from_chunkpos(world, position.x, position.y, position.z);
 }
 
-EntityRg::EntityRg(WorldRg* world, int64_t id) : world(world), id(id)
+EntityRg::EntityRg(WorldRg* world, NetObject* net_obj, int64_t id) : world(world), net_object(net_obj), id(id)
 {
 	const auto world_rg = world->get_world();
-	const auto chunk = world->get_chunk_from_position({ 0.f, 0.f, 0.f }); // todojc
-
-	printf_s("Chunk for new entity: %i\n", int(chunk));
 
 	librg_entity_track(world_rg, id);
 	librg_entity_owner_set(world_rg, id, id);
-	librg_entity_chunk_set(world_rg, id, chunk != LIBRG_CHUNK_INVALID ? chunk : 0);
+	librg_entity_chunk_set(world_rg, id, 0);
 	librg_entity_userdata_set(world_rg, id, this);
 }
 

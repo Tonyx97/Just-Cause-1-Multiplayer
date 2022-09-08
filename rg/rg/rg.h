@@ -4,6 +4,7 @@
 
 class WorldRg;
 class EntityRg;
+class NetObject;
 
 using world_rg_fn = std::function<void(WorldRg*, librg_event*)>;
 
@@ -27,6 +28,10 @@ public:
 
 	static constexpr auto DEFAULT_WRITE_BUFFER_SIZE() { return 0x10000; }
 
+	static int32_t on_create(librg_world*, librg_event*);
+	static int32_t on_update(librg_world*, librg_event*);
+	static int32_t on_remove(librg_world*, librg_event*);
+
 	WorldRg(
 		const i16vec3& chunks,
 		const u16vec3& size,
@@ -44,7 +49,10 @@ public:
 
 	librg_world* get_world() const { return world; }
 
-	EntityRg* add_entity(int64_t nid);
+	NetObject* get_event_owner(librg_event* e) const;
+	NetObject* get_event_entity(librg_event* e) const;
+
+	EntityRg* add_entity(NetObject* net_obj, int64_t nid);
 
 	bool remove_entity(EntityRg* entity);
 
@@ -59,13 +67,17 @@ private:
 
 	WorldRg* world = nullptr;
 
+	NetObject* net_object = nullptr;
+
 	int64_t id = 0ll;
 
 public:
 
-	EntityRg(WorldRg* world, int64_t id);
+	EntityRg(WorldRg* world, NetObject* net_obj, int64_t id);
 
 	void set_chunk(librg_chunk chunk);
+
+	NetObject* get_net_obj() const { return net_object; }
 
 	int64_t get_id() const { return id; }
 
