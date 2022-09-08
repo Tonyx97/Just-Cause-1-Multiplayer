@@ -4,9 +4,13 @@
 
 #include "settings.h"
 
+class WorldRg;
+
 class Net : public ObjectLists
 {
 private:
+
+	WorldRg* world_rg = nullptr;
 
 	Settings settings {};
 
@@ -27,6 +31,8 @@ public:
 	void send_broadcast(PlayerClient* ignore_pc, const Packet& p) { send_broadcast_impl(p, ignore_pc); }
 	void send_broadcast_joined(const Packet& p) { send_broadcast_joined(nullptr, p); }
 	void send_broadcast_joined(PlayerClient* ignore_pc, const Packet& p) { send_broadcast_impl(p, ignore_pc); }
+
+	WorldRg* get_rg() const { return world_rg; }
 
 	ENetHost* get_host() const { return sv; }
 

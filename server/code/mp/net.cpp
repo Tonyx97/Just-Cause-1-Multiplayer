@@ -4,6 +4,8 @@
 
 #include "net.h"
 
+#include <rg/rg.h>
+
 #include <shared_mp/net_handlers/all.h>
 #include <shared_mp/player_client/player_client.h>
 
@@ -29,6 +31,17 @@ bool Net::init()
 	if (!(sv = enet_host_create(&address, enet::MAX_PLAYERS, ChannelID_Max, 0, 0)))
 		return logbwt(RED, "Could not create server host");
 
+	world_rg = JC_ALLOC(WorldRg, i16vec3 { 32, 32, 1 }, u16vec3 { 500u, 500u, UINT16_MAX },
+		[](WorldRg*, librg_event*)
+		{
+			log(GREEN, "create");
+		},
+		[](WorldRg*, librg_event*) {},
+		[](WorldRg*, librg_event*)
+		{
+			log(GREEN, "remove");
+		});
+
 	logt(GREEN, "Server initialized");
 
 	return true;
@@ -39,6 +52,10 @@ void Net::destroy()
 	// destroy and clear object list
 
 	clear_object_list();
+	
+	// free the world rg
+
+	JC_FREE(world_rg);
 
 	// destroy enet
 
@@ -227,9 +244,8 @@ void Net::refresh_net_object_sync()
 
 void Net::sync_net_objects()
 {
-	static TimerRaw refresh_timer(enet::TICKS_MS);
+	static TimerRaw refresh_timer(1000);
 
 	if (refresh_timer.ready())
-	{
-	}
+		world_rg->update();
 }

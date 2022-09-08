@@ -9,9 +9,11 @@
 #include <game/object/damageable_object/damageable_object.h>
 #include <game/object/ui/map_icon.h>
 #include <game/sys/core/factory_system.h>
+#else
+#include <rg/rg.h>
+#endif
 
 #include <mp/net.h>
-#endif
 
 NetObject::NetObject()
 {
@@ -20,6 +22,7 @@ NetObject::NetObject()
 	vars.velocity_timer(0);
 #else
 	nid = enet::GET_FREE_NID();
+	rg = g_net->get_rg()->add_entity(static_cast<int64_t>(nid));
 #endif
 }
 
@@ -27,6 +30,8 @@ NetObject::~NetObject()
 {
 #ifdef JC_CLIENT
 #else
+	g_net->get_rg()->remove_entity(rg);
+
 	enet::FREE_NID(nid);
 #endif
 }

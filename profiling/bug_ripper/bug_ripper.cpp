@@ -8,6 +8,7 @@
 #endif
 
 #define FORCE_ENABLE_BUG_RIPPER 0
+#define ENABLE_EXCEPTION_REROUTING 0
 
 #define IDD_CRASH_DIALOG            114
 #define IDC_SEND_DESC				9701
@@ -279,7 +280,7 @@ namespace jc::bug_ripper
 
 	bool reroute_exception_handler(bool place)
 	{
-#ifdef JC_CLIENT
+#if defined(JC_CLIENT) && ENABLE_EXCEPTION_REROUTING
 		if (place)
 			game_unhandled_exception_filter_hook.hook();
 		else  game_unhandled_exception_filter_hook.unhook();

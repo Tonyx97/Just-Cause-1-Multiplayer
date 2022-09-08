@@ -22,6 +22,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hde", "hde\hde.vcxitems", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rg", "rg\rg.vcxitems", "{FECC2CD2-9D4B-43D2-81E2-C135D7B71727}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared_projects", "shared_projects", "{850C26C5-A573-4C24-8607-F01C35716989}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -65,6 +67,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DFFBC708-890D-491B-980F-E8613869783B} = {850C26C5-A573-4C24-8607-F01C35716989}
+		{C71A13A3-8825-4C05-8925-E11ECBE42EEB} = {850C26C5-A573-4C24-8607-F01C35716989}
+		{F4FFAD47-5958-4180-A64C-8E64D8B46368} = {850C26C5-A573-4C24-8607-F01C35716989}
+		{FECC2CD2-9D4B-43D2-81E2-C135D7B71727} = {850C26C5-A573-4C24-8607-F01C35716989}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5F58BCCD-4443-445F-B734-F6FFC6054D74}

@@ -55,6 +55,7 @@ enum _NetObjectVarType : NetObjectVarType
 };
 
 class Player;
+class EntityRg;
 
 struct NetObjectVars
 {
@@ -77,6 +78,8 @@ private:
 	NetObjectVars vars {};
 
 	Player* streamer = nullptr;
+
+	EntityRg* rg = nullptr;
 
 	void* userdata = nullptr;
 

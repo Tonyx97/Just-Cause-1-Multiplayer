@@ -13,7 +13,7 @@ namespace world_rg
 	{
 		const auto it = worlds.find(w);
 
-		check(it == worlds.end(), "WorldRg not found in {}", from);
+		check(it != worlds.end(), "WorldRg not found in {}", from);
 
 		return it->second;
 	}
@@ -21,35 +21,29 @@ namespace world_rg
 
 using namespace world_rg;
 
-int32_t WorldRg::on_create(librg_world* w, librg_event* e)
+int32_t on_create(librg_world* w, librg_event* e)
 {
 	const auto world = get_world_rg(w, CURR_FN);
-
-	world->call_on_create(e);
 
 	/*int64_t owner_id = librg_event_owner_get(w, e);
 	int64_t entity_id = librg_event_entity_get(w, e);
 
 	if (owner_id != entity_id)
-		printf_s("entity: %d was created for player: %d | owner: %d\n", (int)entity_id, (int)owner_id, (int)librg_entity_owner_get(w, entity_id));*/
+		log(WHITE, "entity: {} was created for player: {} | owner: {}\n", (int)entity_id, (int)owner_id, (int)librg_entity_owner_get(w, entity_id));*/
 
-	return 0;
+	return world->call_on_create(e);
 }
 
-int32_t WorldRg::on_update(librg_world* w, librg_event* e)
+int32_t on_update(librg_world* w, librg_event* e)
 {
 	const auto world = get_world_rg(w, CURR_FN);
 
-	world->call_on_update(e);
-
-	return 0;
+	return world->call_on_update(e);
 }
 
-int32_t WorldRg::on_remove(librg_world* w, librg_event* e)
+int32_t on_remove(librg_world* w, librg_event* e)
 {
 	const auto world = get_world_rg(w, CURR_FN);
-
-	world->call_on_remove(e);
 
 	/*int64_t owner_id = librg_event_owner_get(w, e);
 	int64_t entity_id = librg_event_entity_get(w, e);
@@ -57,7 +51,7 @@ int32_t WorldRg::on_remove(librg_world* w, librg_event* e)
 	if (owner_id != entity_id)
 		printf_s("entity: %d was removed for player: %d\n", (int)entity_id, (int)owner_id);*/
 
-	return 0;
+	return world->call_on_remove(e);
 }
 
 WorldRg::WorldRg(
@@ -81,19 +75,50 @@ WorldRg::WorldRg(
 	librg_config_chunkamount_set(world, chunks.x, chunks.y, chunks.z);
 	librg_config_chunksize_set(world, size.x, size.y, size.z);
 
+	write_buffer = BITCAST(char*, malloc(write_buffer_size = DEFAULT_WRITE_BUFFER_SIZE()));
+
 	worlds.insert({ world, this });
 }
 
 WorldRg::~WorldRg()
 {
+	check(entities.empty(), "Entities in WorldRg must be empty when destroying a WorldRg");
+
 	worlds.erase(world);
+
+	free(write_buffer);
 
 	librg_world_destroy(world);
 }
 
-EntityRg* WorldRg::add_entity(NID nid)
+void WorldRg::update()
 {
-	const auto entity = JC_ALLOC(EntityRg, this, nid);
+	for (const auto entity : entities)
+	{
+		int32_t result = 0;
+
+		do {
+			size_t size = write_buffer_size;
+
+			result = librg_world_write(world, entity->get_id(), 0, write_buffer, &size, nullptr);
+
+			check(result != LIBRG_WORLD_INVALID, "Invalid world");
+			check(result != LIBRG_OWNER_INVALID, "Invalid owner");
+
+			if (result > write_buffer_size)
+			{
+				write_buffer_size += result;
+
+				write_buffer = BITCAST(char*, realloc(write_buffer, write_buffer_size));
+			}
+
+		} while (result != LIBRG_OK);
+	}
+}
+
+EntityRg* WorldRg::add_entity(int64_t id)
+{
+	const auto entity = JC_ALLOC(EntityRg, this, id);
 
 	if (!entity)
 		return nullptr;
@@ -132,10 +157,9 @@ librg_chunk WorldRg::get_chunk_from_chunk_position(const i16vec3& position)
 	return librg_chunk_from_chunkpos(world, position.x, position.y, position.z);
 }
 
-EntityRg::EntityRg(WorldRg* world, NID nid) : world(world), nid(nid)
+EntityRg::EntityRg(WorldRg* world, int64_t id) : world(world), id(id)
 {
 	const auto world_rg = world->get_world();
-	const auto id = static_cast<int64_t>(nid);
 	const auto chunk = world->get_chunk_from_position({ 0.f, 0.f, 0.f }); // todojc
 
 	printf_s("Chunk for new entity: %i\n", int(chunk));
@@ -148,10 +172,10 @@ EntityRg::EntityRg(WorldRg* world, NID nid) : world(world), nid(nid)
 
 void EntityRg::set_chunk(librg_chunk chunk)
 {
-	librg_entity_chunk_set(world->get_world(), get_id(), chunk);
+	librg_entity_chunk_set(world->get_world(), id, chunk);
 }
 
 librg_chunk EntityRg::get_chunk() const
 {
-	return librg_entity_chunk_get(world->get_world(), get_id());
+	return librg_entity_chunk_get(world->get_world(), id);
 }

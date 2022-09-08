@@ -11,9 +11,13 @@ class WorldRg
 {
 private:
 
+	std::unordered_set<EntityRg*> entities;
+
 	librg_world* world = nullptr;
 
-	std::unordered_set<EntityRg*> entities;
+	char* write_buffer = nullptr;
+
+	int32_t write_buffer_size = 0;
 
 	world_rg_fn create_fn = nullptr,
 				update_fn = nullptr,
@@ -21,9 +25,7 @@ private:
 
 public:
 
-	static int32_t on_create(librg_world*, librg_event*);
-	static int32_t on_update(librg_world*, librg_event*);
-	static int32_t on_remove(librg_world*, librg_event*);
+	static constexpr auto DEFAULT_WRITE_BUFFER_SIZE() { return 0x10000; }
 
 	WorldRg(
 		const i16vec3& chunks,
@@ -35,13 +37,14 @@ public:
 	~WorldRg();
 
 	void update();
-	void call_on_create(librg_event* e) { create_fn(this, e); }
-	void call_on_update(librg_event* e) { update_fn(this, e); }
-	void call_on_remove(librg_event* e) { remove_fn(this, e); }
+
+	int32_t call_on_create(librg_event* e) { create_fn(this, e); return 0; }
+	int32_t call_on_update(librg_event* e) { update_fn(this, e); return 0; }
+	int32_t call_on_remove(librg_event* e) { remove_fn(this, e); return 0; }
 
 	librg_world* get_world() const { return world; }
 
-	EntityRg* add_entity(NID nid);
+	EntityRg* add_entity(int64_t nid);
 
 	bool remove_entity(EntityRg* entity);
 
@@ -56,15 +59,15 @@ private:
 
 	WorldRg* world = nullptr;
 
-	NID nid = 0; // = INVALID_NID;
+	int64_t id = 0ll;
 
 public:
 
-	EntityRg(WorldRg* world, NID nid);
+	EntityRg(WorldRg* world, int64_t id);
 
 	void set_chunk(librg_chunk chunk);
 
-	int64_t get_id() const { return static_cast<int64_t>(nid); }
+	int64_t get_id() const { return id; }
 
 	librg_chunk get_chunk() const;
 };
