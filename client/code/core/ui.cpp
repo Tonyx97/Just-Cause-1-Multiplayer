@@ -946,6 +946,10 @@ void UI::net_debug()
 	if (stat_level == 0)
 		return;
 
+	const auto localplayer = g_net->get_localplayer();
+	if (!localplayer)
+		return;
+
 	static TimerRaw kbs_timer(1000);
 
 	if (const auto peer = g_net->get_peer())
@@ -968,7 +972,7 @@ void UI::net_debug()
 
 		if (stat_level > 2)
 		{
-			ImGui::Text(FORMATV("Network ID: {:x}", g_net->get_localplayer()->get_nid()).c_str());
+			ImGui::Text(FORMATV("Network ID: {:x}", localplayer->get_nid()).c_str());
 			ImGui::Text(FORMATV("Packet Loss: {:.2f} %%", (float(peer->packetLoss) / 65535.f) * 100.f).c_str());
 			ImGui::Text(FORMATV("Packets Lost: {}", peer->packetsLost).c_str());
 

@@ -36,16 +36,13 @@ bool Net::init(const std::string& ip, const std::string& nick)
 
 	enet_peer_timeout(peer, 0, 0, enet::PEER_TIMEOUT);
 
-	if (enet_host_service(client, &e, 500) <= 0 || e.type != ENET_EVENT_TYPE_CONNECT)
-	{
-		enet_peer_reset(peer);
+	while (!connected && enet_host_service(client, &e, 1000) >= 0)
+		if (e.type == ENET_EVENT_TYPE_CONNECT)
+			connected = true;
 
-		return logb(RED, "Connection failed");
-	}
+	check(connected, "Error while connecting to the server");
 
 	enet_peer_ping_interval(peer, 2000);
-
-	connected = true;
 
 	log(GREEN, "Connected");
 
