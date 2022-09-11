@@ -11,10 +11,6 @@ ref<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::
 	{
 		object_base_map map {};
 
-		// todojc - make some id generator for this shit
-
-		auto temp_trash = "{00000000-0000-0000-0000-00000000000" + std::to_string(rand() % 10) + "}::hide_barrel";
-
 		auto dummy_mat = mat4(1.f);
 
 		map.insert<object_base_map::Int>(0x5156b18b, 1);
@@ -40,9 +36,7 @@ ref<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::
 		map.insert<object_base_map::String>(ObjectBase::Hash_LOD_Model, R"(building_blocks\general\oil_barrel_red.lod)");
 		map.insert<object_base_map::String>(ObjectBase::Hash_PFX, R"(models\building_blocks\general\oil_barrel.pfx)");
 		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(Damageable_Barrel)");
-		map.insert<object_base_map::String>(0x96190716, temp_trash);
-		map.insert<object_base_map::String>(0xde66400, temp_trash);
-		map.insert<object_base_map::String>(0xf0503757, R"(360_exp_3_1.xml)");
+		map.insert<object_base_map::String>(0xf0503757, R"(360_exp_4_1.xml)");
 		map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, transform);
 		map.insert<object_base_map::Mat4>(0xcab9f941, &dummy_mat);
 

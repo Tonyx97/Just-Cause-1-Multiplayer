@@ -178,12 +178,12 @@ void jc::mp::logic::on_tick()
 
 			// debug
 
-			/*if (g_key->is_key_pressed(VK_F3))
+			if (g_key->is_key_pressed(VK_F3))
 			{
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
-				g_net->send_reliable<ChannelID_World>(WorldPID_SpawnObject, NetObject_Damageable, 0ui16, transform);
-			}*/
+				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Damageable, 0ui16, transform));
+			}
 
 			if (g_key->is_key_pressed(VK_F4))
 			{
