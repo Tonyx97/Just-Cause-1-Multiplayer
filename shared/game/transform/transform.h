@@ -20,7 +20,7 @@ struct TransformTR
 		r = jc::math::unpack_quat(v.r);
 	}
 
-	TransformPackedTR pack()
+	TransformPackedTR pack() const
 	{
 		return { .t = t, .r = jc::math::pack_quat(r) };
 	}

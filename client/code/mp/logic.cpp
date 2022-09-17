@@ -198,6 +198,9 @@ void jc::mp::logic::on_update_objects()
 {
 	g_net->for_each_net_object([](NID, NetObject* obj)
 	{
+		// it's possible that this object is far away from the localplayer
+		// so it won't be updated since the game object itself does not exist
+
 		if (!obj->is_spawned())
 			return;
 

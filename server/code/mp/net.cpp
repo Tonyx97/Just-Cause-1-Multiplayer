@@ -16,6 +16,11 @@ namespace world_rg
 		const auto visible_entity = w->get_event_owner(e);
 		const auto observer_entity = w->get_event_entity(e);
 
+		log(RED, "{:x} - {:x}", visible_entity->get_nid(), observer_entity->get_nid());
+
+		if (visible_entity == observer_entity)
+			return;
+
 		// observer entity must always be a player
 
 		if (const auto observer_player = observer_entity->cast<Player>())
@@ -27,33 +32,13 @@ namespace world_rg
 			// handle player-player visibility by updating each other from their game
 
 			if (const auto visible_player = visible_entity->cast<Player>())
-			{
-				const auto visible_player_pc = visible_player->get_client();
-
-				check(visible_player_pc, "Player has no PlayerClient instance (new)");
-
-				if (create)
-				{
-					log(WHITE, "PLAYER {:x} is visible now from PLAYER {:x}", visible_entity->get_nid(), observer_entity->get_nid());
-				}
-				else
-				{
-					log(WHITE, "PLAYER {:x} is no longer visible from PLAYER {:x}", visible_entity->get_nid(), observer_entity->get_nid());
-				}
-			}
+				observer_pc->sync_player(visible_player, create);
 			else
 			{
 				// handle player-object visibility by updating the object for
 				// the player (observer)
 
-				if (create)
-				{
-					log(WHITE, "ENTITY {:x} is visible now from PLAYER {:x}", visible_entity->get_nid(), observer_entity->get_nid());
-				}
-				else
-				{
-					log(WHITE, "ENTITY {:x} is no longer visible from PLAYER {:x}", visible_entity->get_nid(), observer_entity->get_nid());
-				}
+				observer_pc->sync_entity(visible_entity, create);
 			}
 		}
 	}
@@ -91,6 +76,8 @@ bool Net::init()
 		return logbwt(RED, "Could not create server host");
 
 	world_rg = JC_ALLOC(WorldRg,
+		//i16vec3 { 32, 32, 1 },
+		//u16vec3 { 1024u, 1024u, UINT16_MAX },
 		i16vec3 { 1024, 1024, 1 },
 		u16vec3 { 10u, 10u, UINT16_MAX },
 		world_rg::on_create,
@@ -261,15 +248,14 @@ void Net::refresh_net_object_sync()
 			{
 				const auto player = pc->get_player();
 
-				if (const auto dist = glm::distance2(player->get_position(), net_obj->get_position()); dist < lowest_dist)
+				if (const auto dist = glm::distance(player->get_position(), net_obj->get_position()); dist < lowest_dist)
 				{
 					new_streamer = player;
 					lowest_dist = dist;
 				}
 			});
 
-			if (net_obj->get_streamer() != new_streamer)
-				net_obj->set_streamer(new_streamer);
+			net_obj->set_owner(new_streamer);
 		}
 	}
 
@@ -299,7 +285,7 @@ void Net::refresh_net_object_sync()
 
 void Net::sync_net_objects()
 {
-	static TimerRaw refresh_timer(1000);
+	static TimerRaw refresh_timer(250);
 
 	if (refresh_timer.ready())
 		world_rg->update();

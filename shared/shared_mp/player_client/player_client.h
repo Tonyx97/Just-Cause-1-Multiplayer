@@ -40,11 +40,14 @@ public:
 	const std::string& get_nick() const;
 
 #ifdef JC_SERVER
-	/**
-	* syncs everything we need for this player, we also sync stuff from this
-	* player to other players so they know about the existence and data of the player
-	*/
 	void startup_sync();
+
+	/**
+	* syncs this player with the rest of the server
+	*/
+	void sync_broadcast();
+	void sync_player(Player* target_player, bool create);
+	void sync_entity(NetObject* target_entity, bool create);
 
 	void send(const Packet& p, bool create = false)
 	{

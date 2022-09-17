@@ -24,7 +24,7 @@ private:
 	ENetPeer*		peer = nullptr;
 	float			time = 0.f;
 	uint32_t		flags = 0;
-	uint8_t			id = 0u;
+	PacketID		id = 0u;
 	uint8_t			channel = 0u;
 
 public:
@@ -41,7 +41,7 @@ public:
 
 		// always get the packet id first
 
-		id = get<uint8_t>();
+		id = get<PacketID>();
 		flags = packet->flags;
 
 #ifdef JC_SERVER
@@ -100,6 +100,16 @@ public:
 	{
 		if (!packet)
 			packet = enet_packet_create(ctx.data.data(), ctx.data.size(), flags);
+		else
+		{
+			check(packet->referenceCount == 0, "Packet could not be rebuild");
+
+			enet_packet_destroy(packet);
+
+			packet = nullptr;
+
+			create();
+		}
 	}
 
 	Packet& set_reliable() { flags = ENET_PACKET_FLAG_RELIABLE; return *this; }

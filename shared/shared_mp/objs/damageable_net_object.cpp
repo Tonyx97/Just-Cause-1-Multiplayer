@@ -30,9 +30,32 @@ DamageableNetObject::DamageableNetObject(SyncType sync_type, const TransformTR& 
 
 DamageableNetObject::~DamageableNetObject()
 {
+	destroy_object();
+}
+
+void DamageableNetObject::destroy_object()
+{
 #ifdef JC_CLIENT
+	log(PURPLE, "{} {:x} despawned now {:x}", typeid(*obj).name(), get_nid(), ptr(obj));
+	
 	g_factory->destroy_damageable_object(obj);
 #endif
+}
+
+void DamageableNetObject::on_spawn()
+{
+#ifdef JC_CLIENT
+	obj = g_factory->spawn_damageable_object(get_position(), "building_blocks\\general\\oil_barrel_red.lod", "models\\building_blocks\\general\\oil_barrel.pfx");
+
+	check(obj, "Could not create damageable object");
+
+	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
+#endif
+}
+
+void DamageableNetObject::on_despawn()
+{
+	destroy_object();
 }
 
 void DamageableNetObject::on_sync()
@@ -52,28 +75,4 @@ void DamageableNetObject::on_net_var_change(NetObjectVarType var_type)
 	case NetObjectVar_MaxHealth: obj->set_max_hp(get_max_hp()); break;
 	}
 #endif
-}
-
-bool DamageableNetObject::spawn()
-{
-	// if it's already spawned then do nothing
-
-	if (is_spawned())
-	{
-		log(RED, "DamageableObject {:x} was already spawned, where are you calling this from?", get_nid());
-
-		return false;
-	}
-
-#ifdef JC_CLIENT
-	obj = g_factory->spawn_damageable_object(get_position(), "building_blocks\\general\\oil_barrel_red.lod", "models\\building_blocks\\general\\oil_barrel.pfx");
-
-	check(obj, "Could not create damageable object");
-	
-	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
-#endif
-
-	set_spawned(true);
-
-	return true;
 }

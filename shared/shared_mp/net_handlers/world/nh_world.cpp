@@ -108,7 +108,7 @@ PacketResult nh::world::set_ownership(const Packet& p)
 	if (!net_obj)
 		return PacketRes_BadArgs;
 
-	net_obj->set_streamer(new_streamer);
+	net_obj->set_owner(new_streamer);
 
 	return PacketRes_Ok;
 #endif

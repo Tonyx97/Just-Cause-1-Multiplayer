@@ -10,6 +10,7 @@ using NID = uint16_t;
 using NetObjectType = uint8_t;
 using SyncType = uint8_t;
 using NetObjectVarType = uint8_t;
+using NetObjectActionSyncType = uint8_t;
 
 static constexpr NID INVALID_NID = 0ui16;
 
@@ -54,6 +55,13 @@ enum _NetObjectVarType : NetObjectVarType
 	NetObjectVar_End,
 };
 
+enum _NetObjectActionSyncType : NetObjectActionSyncType
+{
+	NetObjectActionSyncType_Create,
+	NetObjectActionSyncType_Hide,
+	NetObjectActionSyncType_Destroy,
+};
+
 class Player;
 class EntityRg;
 
@@ -77,8 +85,6 @@ private:
 
 	NetObjectVars vars {};
 
-	Player* streamer = nullptr;
-
 	EntityRg* rg = nullptr;
 
 	void* userdata = nullptr;
@@ -91,16 +97,21 @@ private:
 
 	bool spawned = false;
 
+#ifdef JC_CLIENT
+	bool owned = false;
+#endif
+
 public:
 
 	static constexpr NetObject* INVALID() { return nullptr; }
 
 	NetObject();
 
-	virtual ~NetObject() = 0;
-
 	bool sync();
 
+	virtual ~NetObject() = 0;
+	virtual void on_spawn() = 0;
+	virtual void on_despawn() = 0;
 	virtual void on_sync() = 0;
 
 #ifdef JC_CLIENT
@@ -109,7 +120,8 @@ public:
 
 	virtual void on_net_var_change(NetObjectVarType var_type) = 0;
 
-	virtual bool spawn() = 0;
+	bool spawn();
+	bool despawn();
 
 	virtual NetObjectType get_type() const = 0;
 
@@ -129,11 +141,11 @@ public:
 		else userdata = &v;
 	}
 
-	void set_streamer(Player* v);
+	void set_owner(Player* new_owner);
 	void set_spawned(bool v);
 	void set_sync_type(SyncType v) { sync_type = v; }
 	void set_object_id(uint16_t v) { object_id = v; }
-	void set_sync_type_and_streamer(SyncType _sync_type, Player* _streamer);
+	void set_sync_type_and_owner(SyncType _sync_type, Player* _owner);
 	void set_transform(const TransformTR& transform);
 	void set_transform(const TransformPackedTR& packed_transform);
 	void set_position(const vec3& v);
@@ -144,7 +156,7 @@ public:
 	void set_pending_velocity(const vec3& v);
 
 	bool is_valid_type() const;
-	bool is_owned_by(Player* player) const { return streamer == player; }
+	bool is_owned_by(Player* player) const;
 	bool is_spawned() const { return spawned; }
 	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
 	bool equal(NID _nid) const { return nid == _nid; }
@@ -155,7 +167,7 @@ public:
 
 	SyncType get_sync_type() const { return sync_type; }
 
-	Player* get_streamer() const { return streamer; }
+	EntityRg* get_rg() const { return rg; }
 
 	template <typename T>
 	T* get_userdata() const { return BITCAST(T*, userdata); }

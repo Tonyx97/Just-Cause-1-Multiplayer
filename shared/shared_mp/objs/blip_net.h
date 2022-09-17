@@ -10,6 +10,8 @@ private:
 	class UIMapIcon* obj = nullptr;
 #endif
 
+	void destroy_object();
+
 public:
 
 	static constexpr NetObjectType TYPE() { return NetObject_Blip; }
@@ -25,10 +27,10 @@ public:
 #endif
 	~BlipNetObject();
 
+	void on_spawn() override;
+	void on_despawn() override;
 	void on_sync() override;
 	void on_net_var_change(NetObjectVarType var_type) override;
-
-	bool spawn() override;
 };
 
 #define CREATE_BLIP_NET_OBJECT(...)	JC_ALLOC(BlipNetObject, __VA_ARGS__)

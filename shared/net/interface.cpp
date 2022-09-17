@@ -73,13 +73,12 @@ void enet::setup_channels()
 		switch (auto id = p.get_id())
 		{
 #ifdef JC_CLIENT
-		case PlayerClientPID_Quit:				return nh::player_client::quit(p);
-		case PlayerClientPID_StartupInfo:		return nh::player_client::startup_info(p);
+		case PlayerClientPID_ObjectInstanceSync:	return nh::player_client::object_instance_sync(p);
+#else
+		case PlayerClientPID_Join:					return nh::player_client::join(p);
 #endif
-		case PlayerClientPID_Init:				return nh::player_client::init(p);
-		case PlayerClientPID_Join:				return nh::player_client::join(p);
-		case PlayerClientPID_SyncInstances:		return nh::player_client::sync_instances(p);
-		case PlayerClientPID_Nick:				return nh::player_client::nick(p);
+		case PlayerClientPID_Init:					return nh::player_client::init(p);
+		case PlayerClientPID_Nick:					return nh::player_client::nick(p);
 		}
 
 		return PacketRes_NotFound;

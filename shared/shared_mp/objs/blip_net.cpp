@@ -29,6 +29,11 @@ BlipNetObject::BlipNetObject(SyncType sync_type, const TransformTR& transform)
 
 BlipNetObject::~BlipNetObject()
 {
+	destroy_object();
+}
+
+void BlipNetObject::destroy_object()
+{
 #ifdef JC_CLIENT
 	g_factory->destroy_map_icon(obj);
 #endif
@@ -36,6 +41,22 @@ BlipNetObject::~BlipNetObject()
 
 void BlipNetObject::on_sync()
 {
+}
+
+void BlipNetObject::on_spawn()
+{
+#ifdef JC_CLIENT
+	obj = g_factory->create_map_icon("icon_interestpoint_collect", get_position());
+
+	check(obj, "Could not create blip object");
+
+	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
+#endif
+}
+
+void BlipNetObject::on_despawn()
+{
+	destroy_object();
 }
 
 void BlipNetObject::on_net_var_change(NetObjectVarType var_type)
@@ -58,28 +79,4 @@ void BlipNetObject::on_net_var_change(NetObjectVarType var_type)
 		break;
 	}
 #endif
-}
-
-bool BlipNetObject::spawn()
-{
-	// if it's already spawned then do nothing
-
-	if (is_spawned())
-	{
-		log(RED, "BlipNetObject {:x} was already spawned, where are you calling this from?", get_nid());
-
-		return false;
-	}
-
-#ifdef JC_CLIENT
-	obj = g_factory->create_map_icon("icon_interestpoint_collect", get_position());
-
-	check(obj, "Could not create blip object");
-
-	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
-#endif
-
-	set_spawned(true);
-
-	return true;
 }

@@ -12,7 +12,7 @@ class WorldRg
 {
 private:
 
-	std::unordered_set<EntityRg*> entities;
+	std::unordered_map<int64_t, EntityRg*> entities;
 
 	librg_world* world = nullptr;
 
@@ -52,7 +52,8 @@ public:
 	NetObject* get_event_owner(librg_event* e) const;
 	NetObject* get_event_entity(librg_event* e) const;
 
-	EntityRg* add_entity(NetObject* net_obj, int64_t nid);
+	EntityRg* add_entity(NetObject* net_obj, int64_t id);
+	EntityRg* get_entity_by_id(int64_t id);
 
 	bool remove_entity(EntityRg* entity);
 
@@ -74,11 +75,16 @@ private:
 public:
 
 	EntityRg(WorldRg* world, NetObject* net_obj, int64_t id);
+	~EntityRg();
 
 	void set_chunk(librg_chunk chunk);
+	void set_owner(EntityRg* entity);
 
 	NetObject* get_net_obj() const { return net_object; }
 
+	const EntityRg* get_owner() const;
+
+	int64_t get_owner_id() const;
 	int64_t get_id() const { return id; }
 
 	librg_chunk get_chunk() const;

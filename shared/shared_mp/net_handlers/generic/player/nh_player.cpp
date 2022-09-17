@@ -135,7 +135,7 @@ PacketResult nh::player::stance_and_movement(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto player = p.get_net_object<Player>();
-	
+
 	if (!player)
 		return PacketRes_BadArgs;
 #else
@@ -310,7 +310,7 @@ PacketResult nh::player::set_vehicle(const Packet& p)
 
 			log(BLUE, "LOCKED DRIVER {:x}", player->get_nid());
 
-			vehicle_net->set_sync_type_and_streamer(SyncType_Locked, player);
+			vehicle_net->set_sync_type_and_owner(SyncType_Locked, player);
 		}
 		else if (curr_vehicle)
 		{
@@ -326,7 +326,7 @@ PacketResult nh::player::set_vehicle(const Packet& p)
 
 				log(BLUE, "DISTANCED {:x}", player->get_nid());
 
-				curr_vehicle->set_sync_type_and_streamer(SyncType_Distance, nullptr);
+				curr_vehicle->set_sync_type_and_owner(SyncType_Distance, nullptr);
 			}
 		}
 	}

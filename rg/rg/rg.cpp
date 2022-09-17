@@ -5,6 +5,9 @@
 
 #include "rg.h"
 
+#define DEBUG_RG 1
+#define DEBUG_RG_OWNERSHIP 0
+
 namespace world_rg
 {
 	std::unordered_map<librg_world*, WorldRg*> worlds;
@@ -77,16 +80,23 @@ WorldRg::~WorldRg()
 
 void WorldRg::update()
 {
+#if DEBUG_RG
 	log(RED, "---------------------");
+#endif
 
-	for (const auto entity : entities)
+	for (const auto& [id, entity] : entities)
 	{
 		int32_t result = 0;
 
 		do {
 			size_t size = write_buffer_size;
 
-			result = librg_world_write(world, entity->get_id(), 0, write_buffer, &size, nullptr);
+			// use radius 1 because it's very common to stay in the border of a chunk and, if
+			// an entity goes to the closest chunk, the distance between observer and entity will
+			// be very small yet causing the entity to disappear in the observer's view, so using 1-2 as
+			// chunk radius should fix this
+
+			result = librg_world_write(world, id, 1, write_buffer, &size, nullptr);
 
 			check(result != LIBRG_WORLD_INVALID, "Invalid world");
 			check(result != LIBRG_OWNER_INVALID, "Invalid owner");
@@ -108,9 +118,11 @@ void WorldRg::update()
 
 			if (const auto new_chunk = get_chunk_from_position(position); new_chunk != LIBRG_CHUNK_INVALID && old_chunk != new_chunk)
 				entity->set_chunk(new_chunk);
-		}
 
-		log(GREEN, "Entity {:x} chunk: {}", entity->get_net_obj()->get_nid(), entity->get_chunk());
+#if DEBUG_RG
+			log(GREEN, "Entity {:x} chunk: {}", net_obj->get_nid(), entity->get_chunk());
+#endif
+		}
 	}
 }
 
@@ -145,20 +157,26 @@ EntityRg* WorldRg::add_entity(NetObject* net_obj, int64_t id)
 	if (!entity)
 		return nullptr;
 
-	entities.insert(entity);
+	entities.insert({ id, entity });
 
 	return entity;
 }
 
+EntityRg* WorldRg::get_entity_by_id(int64_t id)
+{
+	auto it = entities.find(id);
+	return it != entities.end() ? it->second : nullptr;
+}
+
 bool WorldRg::remove_entity(EntityRg* entity)
 {
-	const auto it = entities.find(entity);
+	const auto id = entity->get_id();
+
+	const auto it = entities.find(id);
 	if (it == entities.end())
 		return false;
 
 	entities.erase(it);
-
-	librg_entity_untrack(world, entity->get_id());
 
 	JC_FREE(entity);
 
@@ -189,9 +207,51 @@ EntityRg::EntityRg(WorldRg* world, NetObject* net_obj, int64_t id) : world(world
 	librg_entity_userdata_set(world_rg, id, this);
 }
 
+EntityRg::~EntityRg()
+{
+	librg_entity_untrack(world->get_world(), id);
+}
+
 void EntityRg::set_chunk(librg_chunk chunk)
 {
 	librg_entity_chunk_set(world->get_world(), id, chunk);
+}
+
+void EntityRg::set_owner(EntityRg* entity)
+{
+	if (!entity)
+	{
+		librg_entity_owner_set(world->get_world(), get_id(), get_id());
+
+#if DEBUG_RG_OWNERSHIP
+		log(RED, "reset owner");
+#endif
+	}
+	else if (get_owner_id() != entity->id)
+	{
+		librg_entity_owner_set(world->get_world(), get_id(), entity->id);
+
+#if DEBUG_RG_OWNERSHIP
+		log(RED, "new owner");
+#endif
+	}
+}
+
+const EntityRg* EntityRg::get_owner() const
+{
+	const auto owner_id = get_owner_id();
+
+	if (owner_id == LIBRG_WORLD_INVALID ||
+		owner_id == LIBRG_ENTITY_UNTRACKED ||
+		owner_id == id)
+		return nullptr;
+
+	return world->get_entity_by_id(owner_id);
+}
+
+int64_t EntityRg::get_owner_id() const
+{
+	return librg_entity_owner_get(world->get_world(), id);
 }
 
 librg_chunk EntityRg::get_chunk() const

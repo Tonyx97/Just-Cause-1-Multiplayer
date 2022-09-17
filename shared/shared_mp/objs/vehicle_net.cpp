@@ -73,9 +73,30 @@ VehicleNetObject::VehicleNetObject(SyncType sync_type, const TransformTR& transf
 
 VehicleNetObject::~VehicleNetObject()
 {
+	destroy_object();
+}
+
+void VehicleNetObject::destroy_object()
+{
 #ifdef JC_CLIENT
 	g_factory->destroy_vehicle(obj);
 #endif
+}
+
+void VehicleNetObject::on_spawn()
+{
+#ifdef JC_CLIENT
+	obj = g_factory->spawn_vehicle(get_object_id(), get_position());
+
+	check(obj, "Could not create vehicle");
+
+	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
+#endif
+}
+
+void VehicleNetObject::on_despawn()
+{
+	destroy_object();
 }
 
 void VehicleNetObject::on_sync()
@@ -177,28 +198,4 @@ Player* VehicleNetObject::get_player_from_seat(uint8_t seat_type) const
 {
 	const auto it = players.find(seat_type);
 	return it != players.end() ? it->second : nullptr;
-}
-
-bool VehicleNetObject::spawn()
-{
-	// if it's already spawned then do nothing
-
-	if (is_spawned())
-	{
-		log(RED, "VehicleNetObject {:x} was already spawned, where are you calling this from?", get_nid());
-
-		return false;
-	}
-
-#ifdef JC_CLIENT
-	obj = g_factory->spawn_vehicle(get_object_id(), get_position());
-
-	check(obj, "Could not create vehicle");
-
-	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
-#endif
-
-	set_spawned(true);
-
-	return true;
 }

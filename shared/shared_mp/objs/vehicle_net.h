@@ -76,6 +76,8 @@ public:
 		}
 	};
 
+	void destroy_object();
+
 private:
 
 #ifdef JC_CLIENT
@@ -121,6 +123,8 @@ public:
 #endif
 	~VehicleNetObject();
 
+	void on_spawn() override;
+	void on_despawn() override;
 	void on_sync() override;
 	void on_net_var_change(NetObjectVarType var_type) override;
 	void set_control_info(float c0, float c1, float c2, float c3, bool braking = false);
@@ -160,7 +164,6 @@ public:
 
 	const ControlInfo& get_control_info() const { return control_info; }
 
-	bool spawn() override;
 	bool has_players() const { return !players.empty(); }
 };
 

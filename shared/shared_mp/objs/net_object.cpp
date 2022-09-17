@@ -98,9 +98,7 @@ void NetObject::set_velocity_timer(int64_t v)
 
 bool NetObject::is_owned() const
 {
-	if (const auto player = cast<Player>())
-		return player->is_local();
-	else return streamer && streamer->is_local();
+	return owned;
 }
 #else
 namespace enet
@@ -148,30 +146,41 @@ bool NetObject::sync()
 	
 	return true;
 }
+
+bool NetObject::is_owned_by(Player* player) const
+{
+	return rg->get_owner() == player->get_rg();
+}
 #endif
 
-void NetObject::set_streamer(Player* v)
+void NetObject::set_owner(Player* new_owner)
 {
-#ifdef JC_SERVER
-	if (streamer && v != streamer)
+#ifdef JC_CLIENT
+	owned = g_net->get_localplayer() == new_owner;
+#else
+	const auto curr_owner_rg = rg->get_owner();
+	const auto curr_owner_player = curr_owner_rg ? curr_owner_rg->get_net_obj()->cast_safe<Player>() : nullptr;
+	const auto new_owner_rg = new_owner ? new_owner->get_rg() : nullptr;
+
+	if (curr_owner_rg && new_owner_rg != curr_owner_rg)
 	{
 		// if the object has a streamer, then we want to know if we have to transfer it to another
 		// player or simply remove any ownership
-		
-		if (v)
-			streamer->transfer_net_object_ownership_to(this, v);
-		else streamer->remove_net_object_ownership(this);
+
+		if (new_owner)
+			curr_owner_player->transfer_net_object_ownership_to(this, new_owner);
+		else curr_owner_player->remove_net_object_ownership(this);
 	}
-	else if (!streamer && v)
+	else if (!curr_owner_rg && new_owner_rg)
 	{
 		// if the object had no streamer but we want to set one then simply
 		// set the object's ownership to the player
-		
-		v->set_net_object_ownership_of(this);
-	}
-#endif
 
-	streamer = v;
+		new_owner->set_net_object_ownership_of(this);
+	}
+
+	rg->set_owner(new_owner_rg);
+#endif
 }
 
 void NetObject::set_spawned(bool v)
@@ -181,13 +190,14 @@ void NetObject::set_spawned(bool v)
 	// if we just spawned the object then let the parent
 	// class know so they can set the basic vars
 
-	on_net_var_change(NetObjectVar_Transform);
+	if (spawned)
+		on_net_var_change(NetObjectVar_Transform);
 }
 
-void NetObject::set_sync_type_and_streamer(SyncType _sync_type, Player* _streamer)
+void NetObject::set_sync_type_and_owner(SyncType _sync_type, Player* _owner)
 {
 	set_sync_type(_sync_type);
-	set_streamer(_streamer);
+	set_owner(_owner);
 }
 
 void NetObject::set_transform(const TransformTR& transform)
@@ -247,6 +257,38 @@ void NetObject::set_velocity(const vec3& v)
 void NetObject::set_pending_velocity(const vec3& v)
 {
 	vars.pending_velocity = v;
+}
+
+bool NetObject::spawn()
+{
+	// if it's already spawned then do nothing
+
+	if (is_spawned())
+	{
+		log(RED, "NetObject type {} (NID: {:x}) was already spawned, where are you calling this from?", get_type(), get_nid());
+
+		return false;
+	}
+
+	on_spawn();
+	set_spawned(true);
+
+	return true;
+}
+
+bool NetObject::despawn()
+{
+	if (!is_spawned())
+	{
+		log(RED, "NetObject type {} (NID: {:x}) wasn't spawned, where are you calling this from?", get_type(), get_nid());
+
+		return false;
+	}
+
+	on_despawn();
+	set_spawned(false);
+
+	return true;
 }
 
 bool NetObject::is_valid_type() const

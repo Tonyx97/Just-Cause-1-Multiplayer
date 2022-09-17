@@ -37,6 +37,7 @@ PlayerClient* ObjectLists::add_player_client(NID nid)
 {
 	const auto pc = CREATE_PLAYER_CLIENT(nid);
 
+	check(pc, "Could not create PlayerClient");
 	check(add_net_object(pc->get_player()), "Could not add a player client");
 
 	return pc;

@@ -25,19 +25,10 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 
 Player::~Player()
 {
-	if (!is_local() && handle)
-	{
-		check(handle, "Invalid handle when destroying a remote player");
+	if (is_local())
+		return;
 
-		set_spawned(false);
-
-		g_factory->destroy_character_handle(handle);
-		g_factory->destroy_map_icon(blip);
-
-		handle = nullptr;
-
-		log(RED, "Player {} character despawned", get_nid());
-	}
+	destroy_object();
 }
 
 ObjectBase* Player::get_object_base()
@@ -56,15 +47,14 @@ void Player::verify_exec(const std::function<void(Character*)>& fn)
 
 void Player::respawn(float hp, float max_hp, bool sync)
 {
-	check(is_spawned(), "Cannot respawn a player that wasn't spawned before");
+	if (!is_spawned())
+		return;
 
 	if (sync)
 	{
 		check(is_local(), "Only localplayer respawning can be synced from client");
 
-		Packet p(PlayerPID_Respawn, ChannelID_Generic, hp, max_hp);
-
-		g_net->send(p);
+		g_net->send(Packet(PlayerPID_Respawn, ChannelID_Generic, hp, max_hp));
 	}
 	else
 	{
@@ -156,7 +146,6 @@ vec3 Player::generate_bullet_rand_spread()
 Player::Player(PlayerClient* pc) : client(pc)
 {
 	set_sync_type(SyncType_Locked);
-	set_streamer(this);
 }
 
 Player::~Player()
@@ -187,8 +176,8 @@ void Player::transfer_net_object_ownership_to(NetObject* obj, Player* new_stream
 	const auto old_streamer_pc = client;
 	const auto new_streamer_pc = new_streamer->get_client();
 
-	log(YELLOW, "{} lost ownerships of a net object type {}", this->get_nick(), this->get_type());
-	log(GREEN, "{} now owns a net object type {}", this->get_nick(), this->get_type());
+	log(YELLOW, "{} lost ownerships of a net object type {}", get_nick(), get_type());
+	log(GREEN, "{} now owns a net object type {}", get_nick(), get_type());
 
 	Packet p(WorldPID_SetOwnership, ChannelID_World, true, new_streamer, obj);
 
@@ -225,11 +214,54 @@ void Player::remove_all_ownerships()
 		if (obj->is_owned_by(this))
 		{
 			obj->set_sync_type(SyncType_Distance);
-			obj->set_streamer(nullptr);
+			obj->set_owner(nullptr);
 		}
 	});
 }
 #endif
+
+void Player::destroy_object()
+{
+#ifdef JC_CLIENT
+	if (handle) g_factory->destroy_character_handle(std::exchange(handle, nullptr));
+	if (blip)	g_factory->destroy_map_icon(std::exchange(blip, nullptr));
+#endif
+}
+
+void Player::on_spawn()
+{
+#ifdef JC_CLIENT
+	// create and spawn the character if it's not the localplayer
+
+	if (!is_local())
+	{
+		handle = g_factory->spawn_character("female1");
+
+		check(handle, "Could not create the player's character");
+
+		log(PURPLE, "Player {:x} spawned now {:x} - handle {:x}", get_nid(), ptr(get_character()), ptr(handle));
+
+		blip = g_factory->create_map_icon("player_blip", get_position());
+
+		check(blip, "Could not create the player's blip");
+	}
+	else
+	{
+		// setup our localplayer when spawning for the first time
+
+		const auto character = get_character();
+
+		character->set_skin(0, false);
+		character->set_hp(500.f);
+		character->set_max_hp(500.f);
+	}
+#endif
+}
+
+void Player::on_despawn()
+{
+	destroy_object();
+}
 
 void Player::on_net_var_change(NetObjectVarType var_type)
 {
@@ -258,50 +290,6 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 	case NetObjectVar_MaxHealth: verify_exec([&](Character* c) { c->set_max_hp(get_max_hp()); }); break;
 	}
 #endif
-}
-
-bool Player::spawn()
-{
-	// if it's already spawned then do nothing
-
-	if (is_spawned())
-	{
-		log(RED, "Player {:x} was already spawned, where are you calling this from?", get_nid());
-
-		return false;
-	}
-
-#ifdef JC_CLIENT
-	// create and spawn the character if it's not the localplayer
-
-	if (!is_local())
-	{
-		handle = g_factory->spawn_character("female1");
-
-		check(handle, "Could not create the player's character");
-
-		log(PURPLE, "Player {:x} spawned now {:x}", get_nid(), ptr(get_character()));
-		log(PURPLE, "Handle {:x}", ptr(handle));
-
-		blip = g_factory->create_map_icon("player_blip", get_position());
-
-		check(blip, "Could not create the player's blip");
-	}
-	else
-	{
-		// setup our localplayer when spawning for the first time
-
-		const auto character = get_character();
-
-		character->set_skin(0, false);
-		character->set_hp(500.f);
-		character->set_max_hp(500.f);
-	}
-#endif
-
-	set_spawned(true);
-
-	return true;
 }
 
 // info getters/setters

@@ -36,151 +36,19 @@ PacketResult nh::player_client::init(const Packet& p)
 
 PacketResult nh::player_client::join(const Packet& p)
 {
-#ifdef JC_CLIENT
-	const auto player = p.get_net_object<Player>();
-
-	if (!player)
-		return PacketRes_BadArgs;
-
-	const auto pc = player->get_client();
-
-	g_chat->add_chat_msg(FORMATV("{} has joined the server", player->get_nick()));
-#elif JC_SERVER
+#ifdef JC_SERVER
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
 
-	// sync net objects instances when this player loads
-	// and also sync all players startup info and spawning
-#endif
+	const auto [nid, type] = p.get_nid_and_type();
+	const auto player_net_obj = g_net->get_net_object_by_nid(nid);
+
+	if (player_net_obj)
+		return PacketRes_BadArgs;
 
 	pc->set_joined(true);
 
 	log(GREEN, "Player with NID {:x} ({}) joined", player->get_nid(), player->get_nick());
-
-	return PacketRes_Ok;
-}
-
-PacketResult nh::player_client::quit(const Packet& p)
-{
-#ifdef JC_CLIENT
-	const auto player = p.get_net_object<Player>();
-
-	if (!player)
-		return PacketRes_BadArgs;
-
-	g_chat->add_chat_msg(FORMATV("{} has left the server", player->get_nick()));
-
-	check(g_net->get_local()->get_nid() != player->get_nid(), "A localplayer cannot receive 'connect' packet with its NID");
-	check(player, "Player must exist before '{}' packet", CURR_FN);
-
-	const auto nid = player->get_nid();
-	
-	g_net->remove_player_client(player->get_client());
-
-	log(YELLOW, "[{}] Destroyed player with NID {:x}", CURR_FN, nid);
-
-	return PacketRes_Ok;
-#endif
-
-	return PacketRes_BadArgs;
-}
-
-PacketResult nh::player_client::sync_instances(const Packet& p)
-{
-#ifdef JC_CLIENT
-	/*const auto localplayer = g_net->get_localplayer();
-	const auto info = p.get<PlayerClientSyncInstancesPacket>();
-
-	log(YELLOW, "Syncing {} net object instances...", info.net_objects.size());
-
-	for (const auto& _info : info.net_objects)
-	{
-		if (g_net->get_net_object_by_nid(_info.nid))
-			continue;
-
-		switch (_info.type)
-		{
-		case NetObject_Player:
-		{
-			// we skip the sync of this net object if we received our own
-			// local player then we skip it, we don't want to do anything
-			// to our local player from here
-
-			if (localplayer->equal(_info.nid))
-				break;
-
-			const auto new_pc = g_net->add_player_client(_info.nid);
-
-			::check(new_pc, "Could not create new player");
-
-			const auto player = new_pc->get_player();
-
-			player->set_position(_info.position);
-			player->set_rotation(_info.rotation);
-			player->set_hp(_info.hp);
-			player->set_max_hp(_info.max_hp);
-			player->spawn();
-
-			log(PURPLE, "Created player with NID {:x}", player->get_nid());
-
-			break;
-		}
-		case NetObject_Damageable:
-		case NetObject_Vehicle:
-		{
-			const auto object = g_net->spawn_net_object(_info.nid, _info.type, _info.object_id, TransformTR(_info.position, _info.rotation));
-
-			object->set_hp(_info.hp);
-			object->set_max_hp(_info.max_hp);
-
-			log(PURPLE, "Created net object with NID {:x} and type {}", object->get_nid(), object->get_type());
-
-			break;
-		}
-		case NetObject_Blip:
-		{
-			const auto object = g_net->spawn_net_object(_info.nid, _info.type, _info.object_id, TransformTR(_info.position, _info.rotation));
-
-			log(PURPLE, "Created net object with NID {:x} and type {}", object->get_nid(), object->get_type());
-
-			break;
-		}
-		default: log(RED, "Invalid net object type received when syncing net instances: {}", _info.type);
-		}
-	}
-
-	log(YELLOW, "All net object instances synced (a total of {})", info.net_objects.size());*/
-#endif
-
-	return PacketRes_Ok;
-}
-
-PacketResult nh::player_client::startup_info(const Packet& p)
-{
-#ifdef JC_CLIENT
-	/*const auto localplayer = g_net->get_localplayer();
-	const auto info = p.get<PlayerClientStartupInfoPacket>();
-
-	log(YELLOW, "Updating {} player startup info...", info.info.size());
-
-	for (const auto& [player, _info] : info.info)
-	{
-		// if this is the localplayer then we skip,
-		// we already know our local info
-
-		if (localplayer->equal(player->get_nid()))
-			continue;
-
-		check(player->is_spawned(), "A player must be spawned when receiving startup info");
-
-		player->set_nick(_info.nick);
-		player->set_hp(_info.hp);
-		player->set_max_hp(_info.max_hp);
-		player->set_skin(_info.skin, _info.skin_info.cloth_skin, _info.skin_info.head_skin, _info.skin_info.cloth_color, _info.skin_info.props);
-
-		log(PURPLE, "Updated startup info for player with NID {:x} ({} - {})", player->get_nid(), player->get_nick(), player->get_skin());
-	}*/
-#else
 #endif
 
 	return PacketRes_Ok;
@@ -193,7 +61,7 @@ PacketResult nh::player_client::nick(const Packet& p)
 	{
 		const auto nick = p.get_str();
 
-		player->get_client()->set_nick(nick);
+		player->set_nick(nick);
 
 		log(YELLOW, "[{}] {} {}", CURR_FN, player->get_nid(), nick);
 
@@ -209,4 +77,108 @@ PacketResult nh::player_client::nick(const Packet& p)
 #endif
 
 	return PacketRes_BadArgs;
+}
+
+PacketResult nh::player_client::object_instance_sync(const Packet& p)
+{
+#ifdef JC_CLIENT
+	const auto [nid, type] = p.get_nid_and_type();
+	const auto action_type = p.get<NetObjectActionSyncType>();
+	const auto localplayer = g_net->get_localplayer();
+	const auto net_obj = g_net->get_net_object_by_nid(nid);
+
+	switch (action_type)
+	{
+	case NetObjectActionSyncType_Create:
+	{
+		switch (type)
+		{
+		case NetObject_Player:
+		{
+			auto player = net_obj->cast<Player>();
+
+			if (!player)
+			{
+				const auto pc = g_net->add_player_client(nid);
+
+				player = pc->get_player();
+			}
+
+			const bool joined = p.get_bool();
+			const auto hp = p.get_float();
+			const auto max_hp = p.get_float();
+			const auto skin_info = p.get<Player::SkinInfo>();
+			const auto skin = p.get_i32();
+			const auto nick = p.get_str();
+
+			if (!player->is_spawned())
+				player->spawn();
+
+			player->set_hp(hp);
+			player->set_max_hp(max_hp);
+			player->set_skin(skin, skin_info.cloth_skin, skin_info.head_skin, skin_info.cloth_color, skin_info.props);
+			player->set_nick(nick);
+
+			if (joined)
+				g_chat->add_chat_msg(FORMATV("{} has joined the server (NID: {:x})", nick, player->get_nid()));
+
+			break;
+		}
+		case NetObject_Damageable:
+		case NetObject_Vehicle:
+		case NetObject_Blip:
+		{
+			const auto object_id = p.get_u16();
+			const auto transform = p.get<TransformPackedTR>();
+			const auto hp = p.get_float();
+			const auto max_hp = p.get_float();
+
+			auto object = net_obj;
+
+			if (!object)
+				object = g_net->spawn_net_object(nid, type, object_id, TransformTR(transform));
+
+			if (!object->is_spawned())
+				object->spawn();
+
+			object->set_hp(hp);
+			object->set_max_hp(max_hp);
+
+			break;
+		}
+		}
+
+		break;
+	}
+	case NetObjectActionSyncType_Hide:
+	{
+		check(net_obj, "Trying to hide an non-existent object");
+
+		net_obj->despawn();
+
+		break;
+	}
+	case NetObjectActionSyncType_Destroy:
+	{
+		if (type == NetObject_Player)
+		{
+			const auto player = net_obj->cast<Player>();
+
+			check(player, "Trying to destroy a player does not exists");
+			check(localplayer != player, "A localplayer cannot receive its own NID");
+
+			g_chat->add_chat_msg(FORMATV("{} has left the server", player->get_nick()));
+			g_net->remove_player_client(player->get_client());
+
+			log(YELLOW, "[{}] Destroyed player with NID {:x}", CURR_FN, player->get_nid());
+		}
+		else check(false, "non-player net objects cannot be destroyed here");
+
+		break;
+	}
+	}
+#else
+#endif
+
+	return PacketRes_Ok;
 }
