@@ -11,24 +11,63 @@
 
 namespace world_rg
 {
+	void on_create_remove(WorldRg* w, librg_event* e, bool create)
+	{
+		const auto visible_entity = w->get_event_owner(e);
+		const auto observer_entity = w->get_event_entity(e);
+
+		// observer entity must always be a player
+
+		if (const auto observer_player = observer_entity->cast<Player>())
+		{
+			const auto observer_pc = observer_player->get_client();
+
+			check(observer_pc, "Player has no PlayerClient instance (observer)");
+
+			// handle player-player visibility by updating each other from their game
+
+			if (const auto visible_player = visible_entity->cast<Player>())
+			{
+				const auto visible_player_pc = visible_player->get_client();
+
+				check(visible_player_pc, "Player has no PlayerClient instance (new)");
+
+				if (create)
+				{
+					log(WHITE, "PLAYER {:x} is visible now from PLAYER {:x}", visible_entity->get_nid(), observer_entity->get_nid());
+				}
+				else
+				{
+					log(WHITE, "PLAYER {:x} is no longer visible from PLAYER {:x}", visible_entity->get_nid(), observer_entity->get_nid());
+				}
+			}
+			else
+			{
+				// handle player-object visibility by updating the object for
+				// the player (observer)
+
+				if (create)
+				{
+					log(WHITE, "ENTITY {:x} is visible now from PLAYER {:x}", visible_entity->get_nid(), observer_entity->get_nid());
+				}
+				else
+				{
+					log(WHITE, "ENTITY {:x} is no longer visible from PLAYER {:x}", visible_entity->get_nid(), observer_entity->get_nid());
+				}
+			}
+		}
+	}
+
 	void on_create(WorldRg* w, librg_event* e)
 	{
-		const auto new_entity = w->get_event_owner(e);
-		const auto visible_from = w->get_event_entity(e);
-
-		log(WHITE, "entity {:x} is visible now from entity {:x} (owner: {:x})", new_entity->get_nid(), visible_from->get_nid(), 0);
+		on_create_remove(w, e, true);
 	}
 
-	void on_update(WorldRg* w, librg_event* e)
-	{
-	}
+	void on_update(WorldRg* w, librg_event* e) {}
 
 	void on_remove(WorldRg* w, librg_event* e)
 	{
-		const auto new_entity = w->get_event_owner(e);
-		const auto visible_from = w->get_event_entity(e);
-
-		log(WHITE, "entity {:x} is no longer visible from entity {:x} (owner: {:x})", new_entity->get_nid(), visible_from->get_nid(), 0);
+		on_create_remove(w, e, false);
 	}
 }
 

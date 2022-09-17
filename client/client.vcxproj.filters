@@ -306,9 +306,6 @@
     <ClCompile Include="code\game\object\physics\pfx_collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\object\savegame\savegame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\game\sys\game\game_ctx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
