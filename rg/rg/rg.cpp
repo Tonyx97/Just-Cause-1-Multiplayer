@@ -107,11 +107,7 @@ void WorldRg::update()
 			const auto old_chunk = entity->get_chunk();
 
 			if (const auto new_chunk = get_chunk_from_position(position); new_chunk != LIBRG_CHUNK_INVALID && old_chunk != new_chunk)
-			{
-				log(RED, "Entity {:x} changed from chunk {} to {}", entity->get_id(), old_chunk, new_chunk);
-
 				entity->set_chunk(new_chunk);
-			}
 		}
 
 		log(GREEN, "Entity {:x} chunk: {}", entity->get_net_obj()->get_nid(), entity->get_chunk());

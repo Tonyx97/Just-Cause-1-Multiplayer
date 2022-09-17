@@ -126,7 +126,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		log(GREEN, "Initializing NET...");
 
 #ifdef _DEBUG
-		g_net->init("192.168.1.149", nick);
+		g_net->init("192.168.0.23", nick);
 #else
 		g_net->init(g_registry.get_string("ip"), nick);
 #endif
