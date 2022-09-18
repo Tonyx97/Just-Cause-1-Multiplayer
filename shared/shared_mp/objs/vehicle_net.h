@@ -114,6 +114,8 @@ public:
 	void fire_mounted_gun();
 	void reset_sync() { sync_this_tick = false; }
 
+	bool warp_to_seat(Player* player, uint8_t seat_type);
+	bool kick_player(uint8_t seat_type);
 	bool should_sync_this_tick() const { return sync_this_tick; }
 
 	const FireInfo* get_fire_info_from_weapon(Weapon* weapon) const;

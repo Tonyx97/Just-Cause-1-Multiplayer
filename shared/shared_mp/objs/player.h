@@ -5,6 +5,7 @@
 #include <game/shared/stances.h>
 #include <game/shared/character.h>
 #include <game/shared/npc_variant.h>
+#include <game/shared/vehicle_seat.h>
 
 class PlayerClient;
 class VehicleNetObject;
@@ -95,6 +96,8 @@ private:
 	SkinInfo skin_info {};
 
 	VehicleNetObject* vehicle = nullptr;
+
+	uint8_t vehicle_seat = VehicleSeat_None;
 
 	PlayerClient* client = nullptr;
 
@@ -188,6 +191,8 @@ public:
 	bool is_full_aiming() const { return dyn_info.full_aim; }
 	bool should_sync_angle_only() const { return move_info.sync_angle_next_tick; }
 	bool should_force_sync_movement_info() const { return move_info.force_sync; }
+
+	uint8_t get_vehicle_seat() const { return vehicle_seat; }
 
 	int32_t get_firing_weapon_id() const { return dyn_info.firing_weapon_id; }
 	int32_t get_weapon_id() const { return dyn_info.weapon_id; }

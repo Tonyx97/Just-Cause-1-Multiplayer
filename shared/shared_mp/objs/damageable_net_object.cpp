@@ -36,8 +36,6 @@ DamageableNetObject::~DamageableNetObject()
 void DamageableNetObject::destroy_object()
 {
 #ifdef JC_CLIENT
-	log(PURPLE, "{} {:x} despawned now {:x}", typeid(*obj).name(), get_nid(), ptr(obj));
-	
 	if (obj)
 		g_factory->destroy_damageable_object(std::exchange(obj, nullptr));
 #endif

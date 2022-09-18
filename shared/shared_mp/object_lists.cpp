@@ -45,6 +45,9 @@ PlayerClient* ObjectLists::add_player_client(NID nid)
 
 Player* ObjectLists::get_player_by_character(Character* character)
 {
+	if (!character)
+		return nullptr;
+
 	for (const auto& [nid, pc] : player_clients)
 		if (const auto player = pc->get_player(); player->get_character() == character)
 			return player;
@@ -54,6 +57,9 @@ Player* ObjectLists::get_player_by_character(Character* character)
 
 NetObject* ObjectLists::get_net_object_by_game_object(ObjectBase* obj_base)
 {
+	if (!obj_base)
+		return nullptr;
+
 	for (const auto& [nid, net_object] : net_objects)
 		if (net_object->get_object_base() == obj_base)
 			return net_object;

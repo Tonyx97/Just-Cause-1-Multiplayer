@@ -31,16 +31,17 @@ PacketResult nh::player::state_sync(const Packet& p)
 #endif
 
 	const auto curr_weapon = p.get_u8();
-	const auto curr_vehicle = p.get_net_object();
-
-	player->set_weapon_id(curr_weapon);
-	//player->set_vehicle(curr_vehicle->cast<VehicleNetObject>());
+	const auto curr_vehicle = p.get_net_object()->cast<VehicleNetObject>();
+	const auto seat_type = curr_vehicle ? p.get_u8() : VehicleSeat_None;
 
 #ifdef JC_SERVER
 	p.add_beginning(player);
 
 	g_net->send_broadcast(pc, p);
 #endif
+
+	player->set_weapon_id(curr_weapon);
+	player->set_vehicle(seat_type, curr_vehicle);
 
 	return PacketRes_Ok;
 }

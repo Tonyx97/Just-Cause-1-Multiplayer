@@ -26,9 +26,9 @@ namespace world_rg
 
 		if (const auto observer_player = observer_entity->cast<Player>())
 		{
-			if (create)
+			/*if (create)
 				log(RED, "Player {:x} sees entity {:x}", observer_entity->get_nid(), visible_entity->get_nid());
-			else log(YELLOW, "Player {:x} no longer sees entity {:x}", observer_entity->get_nid(), visible_entity->get_nid());
+			else log(YELLOW, "Player {:x} no longer sees entity {:x}", observer_entity->get_nid(), visible_entity->get_nid());*/
 
 			const auto observer_pc = observer_player->get_client();
 
@@ -73,10 +73,10 @@ bool Net::init()
 		return logbwt(RED, "Could not create server host");
 
 	world_rg = JC_ALLOC(WorldRg,
-		//i16vec3 { 32, 1, 32 },
-		//u16vec3 { 1024u, UINT16_MAX, 1024u },
-		i16vec3 { 1024, 1, 1024 },
-		u16vec3 { 10u, UINT16_MAX, 10u },
+		i16vec3 { 64, 1, 64 },
+		u16vec3 { 512u, UINT16_MAX, 512u },
+		//i16vec3 { 1024, 1, 1024 },
+		//u16vec3 { 10u, UINT16_MAX, 10u },
 		world_rg::on_create,
 		world_rg::on_update,
 		world_rg::on_remove);

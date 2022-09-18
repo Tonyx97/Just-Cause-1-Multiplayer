@@ -9,6 +9,7 @@
 
 #include <game/object/base/comps/physical.h>
 #include <game/object/vehicle/vehicle.h>
+#include <game/object/vehicle/comps/vehicle_seat.h>
 #include <game/object/weapon/weapon.h>
 
 VehicleNetObject::VehicleNetObject(NID nid, const TransformTR& transform)
@@ -26,6 +27,9 @@ ObjectBase* VehicleNetObject::get_object_base() const
 
 void VehicleNetObject::fire()
 {
+	if (!obj)
+		return;
+
 	constexpr auto MEMBERS_COUNT = member_counter<FireInfo>::value;
 
 	for (const auto& info : fire_info)
@@ -40,6 +44,9 @@ void VehicleNetObject::fire()
 
 void VehicleNetObject::fire_mounted_gun()
 {
+	if (!obj)
+		return;
+
 	if (const auto special_seat = obj->get_special_seat())
 		if (const auto weapon = special_seat->get_weapon())
 		{
@@ -50,8 +57,35 @@ void VehicleNetObject::fire_mounted_gun()
 		}
 }
 
+bool VehicleNetObject::warp_to_seat(Player* player, uint8_t seat_type)
+{
+	if (!obj)
+		return false;
+
+	const auto seat = obj->get_seat_by_type(seat_type);
+
+	seat->warp_character(player->get_character(), true);
+
+	return true;
+}
+
+bool VehicleNetObject::kick_player(uint8_t seat_type)
+{
+	if (!obj)
+		return false;
+
+	const auto seat = obj->get_seat_by_type(seat_type);
+
+	seat->instant_exit();
+
+	return true;
+}
+
 const VehicleNetObject::FireInfo* VehicleNetObject::get_fire_info_from_weapon(Weapon* weapon) const
 {
+	if (!obj)
+		return nullptr;
+
 	for (const auto& info : fire_info)
 		if (obj->get_weapon(info.index) == weapon)
 			return &info;
@@ -107,6 +141,9 @@ void VehicleNetObject::on_sync()
 void VehicleNetObject::on_net_var_change(NetObjectVarType var_type)
 {
 #ifdef JC_CLIENT
+	if (!obj)
+		return;
+
 	switch (var_type)
 	{
 	case NetObjectVar_Transform:
@@ -167,6 +204,9 @@ void VehicleNetObject::set_weapon_info(uint32_t index, uint32_t type)
 	weapon_type = type;
 
 #ifdef JC_CLIENT
+	if (!obj)
+		return;
+
 	obj->set_current_weapon_index(index);
 	obj->set_current_weapon_type(type);
 #endif

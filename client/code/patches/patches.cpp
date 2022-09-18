@@ -300,7 +300,7 @@ void jc::patches::apply()
 
 	// increase max bone full update distance (by default it's 225 aka 15 meters away from camera)
 
-	jc::write(std::pow(250.f, 2.f), 0xA56990);
+	jc::write(std::pow(1024.f, 2.f), 0xA56990);
 
 	// patches vehicles get input conditional so it will try to get the input from all vehicles
 	// no matter what, this helps us syncing the movement of vehicles easily without too much overkill

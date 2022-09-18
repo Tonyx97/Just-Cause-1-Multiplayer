@@ -476,6 +476,7 @@ void Player::set_vehicle(uint8_t seat_type, VehicleNetObject* v)
 	{
 		vehicle->remove_player(this);
 		vehicle = nullptr;
+		vehicle_seat = VehicleSeat_None;
 	}
 
 	// if the new vehicle is valid then add the player to it
@@ -486,4 +487,5 @@ void Player::set_vehicle(uint8_t seat_type, VehicleNetObject* v)
 	log(RED, "{}'s vehicle: {:x}", get_nick(), v ? v->get_nid() : INVALID_NID);
 
 	vehicle = v;
+	vehicle_seat = seat_type;
 }

@@ -51,7 +51,7 @@ void jc::mp::logic::on_tick()
 			const bool hip_aiming = localplayer->is_hip_aiming();
 			const bool full_aiming = localplayer->is_full_aiming();
 			const auto aim_target = local_char->get_aim_target();
-			const auto vehicle = local_char->get_vehicle();
+			const auto vehicle_seat = local_char->get_vehicle_seat();
 			const auto& move_info = localplayer->get_movement_info();
 			const auto move_angle = move_info.angle;
 
@@ -90,12 +90,22 @@ void jc::mp::logic::on_tick()
 			// resync state
 
 			if (state_sync_timer.ready())
-				g_net->send(Packet(PlayerPID_StateSync, ChannelID_Generic, current_weapon_id, g_net->get_net_object_by_game_object(vehicle)));
+			{
+				const auto vehicle = vehicle_seat ? vehicle_seat->get_vehicle() : nullptr;
+				const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle);
+
+				Packet p(PlayerPID_StateSync, ChannelID_Generic, current_weapon_id, vehicle_net);
+
+				if (vehicle_net)
+					p.add(vehicle_seat->get_type());
+
+				g_net->send(p);
+			}
 
 			// we need to check if we are in a vehicle or not, if so, we won't send stuff such as our transform,
 			// the movement info etc we will save a lot of bandwidth and performance with this optimization
 
-			if (!vehicle)
+			if (!vehicle_seat)
 			{
 				// movement info & movement angle too
 
@@ -127,7 +137,7 @@ void jc::mp::logic::on_tick()
 					localplayer->set_transform(transform_tr);
 				}
 			}
-			else
+			else if (const auto vehicle = vehicle_seat->get_vehicle())
 			{
 				const auto vehicle_position = vehicle->get_position();
 				const auto vehicle_rotation = vehicle->get_rotation();
@@ -218,7 +228,8 @@ void jc::mp::logic::on_update_objects()
 			const auto player_char = player->get_character();
 			const auto vehicle_net = player->get_vehicle();
 			const auto vehicle = vehicle_net ? vehicle_net->get_object() : nullptr;
-			const auto old_vehicle = player_char->get_vehicle();
+			const auto seat_type = player->get_vehicle_seat();
+			const auto char_vehicle = player_char->get_vehicle();
 
 			// update player's blip
 
@@ -231,6 +242,22 @@ void jc::mp::logic::on_update_objects()
 			// update the player movement
 
 			player->dispatch_movement();
+
+			// make sure we put the player inside or outside the vehicle
+
+			if (vehicle && char_vehicle != vehicle)
+			{
+				log(GREEN, "warped player into vehicle");
+
+				vehicle_net->warp_to_seat(player, seat_type);
+			}
+			else if (!vehicle && char_vehicle)
+			{
+				log(GREEN, "kicked player from vehicle");
+
+				if (const auto seat = char_vehicle->get_seat_by_type(seat_type))
+					seat->instant_exit();
+			}
 
 			// aiming weapon
 
