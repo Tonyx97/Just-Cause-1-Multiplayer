@@ -13,18 +13,23 @@ namespace world_rg
 {
 	void on_create_remove(WorldRg* w, librg_event* e, bool create)
 	{
-		const auto visible_entity = w->get_event_owner(e);
-		const auto observer_entity = w->get_event_entity(e);
+		const auto owner_id = librg_event_owner_get(w->get_world(), e);
+		const auto entity_id = librg_event_entity_get(w->get_world(), e);
 
-		log(RED, "{:x} - {:x}", visible_entity->get_nid(), observer_entity->get_nid());
+		const auto observer_entity = w->get_event_owner(e);
+		const auto visible_entity = w->get_event_entity(e);
 
-		if (visible_entity == observer_entity)
+		if (!visible_entity || !observer_entity || visible_entity == observer_entity)
 			return;
 
 		// observer entity must always be a player
 
 		if (const auto observer_player = observer_entity->cast<Player>())
 		{
+			if (create)
+				log(RED, "Player {:x} sees entity {:x}", observer_entity->get_nid(), visible_entity->get_nid());
+			else log(YELLOW, "Player {:x} no longer sees entity {:x}", observer_entity->get_nid(), visible_entity->get_nid());
+
 			const auto observer_pc = observer_player->get_client();
 
 			check(observer_pc, "Player has no PlayerClient instance (observer)");
@@ -43,17 +48,9 @@ namespace world_rg
 		}
 	}
 
-	void on_create(WorldRg* w, librg_event* e)
-	{
-		on_create_remove(w, e, true);
-	}
-
+	void on_create(WorldRg* w, librg_event* e) { on_create_remove(w, e, true); }
+	void on_remove(WorldRg* w, librg_event* e) { on_create_remove(w, e, false); }
 	void on_update(WorldRg* w, librg_event* e) {}
-
-	void on_remove(WorldRg* w, librg_event* e)
-	{
-		on_create_remove(w, e, false);
-	}
 }
 
 bool Net::init()
@@ -76,10 +73,10 @@ bool Net::init()
 		return logbwt(RED, "Could not create server host");
 
 	world_rg = JC_ALLOC(WorldRg,
-		//i16vec3 { 32, 32, 1 },
-		//u16vec3 { 1024u, 1024u, UINT16_MAX },
-		i16vec3 { 1024, 1024, 1 },
-		u16vec3 { 10u, 10u, UINT16_MAX },
+		//i16vec3 { 32, 1, 32 },
+		//u16vec3 { 1024u, UINT16_MAX, 1024u },
+		i16vec3 { 1024, 1, 1024 },
+		u16vec3 { 10u, UINT16_MAX, 10u },
 		world_rg::on_create,
 		world_rg::on_update,
 		world_rg::on_remove);
@@ -238,24 +235,29 @@ void Net::refresh_net_object_sync()
 			}
 		});
 
+		const float chunks_size = static_cast<float>(world_rg->get_chunk_size().x),
+					chunk_size = chunks_size * chunks_size;
+
 		for (auto net_obj : distance_objs)
 		{
-			Player* new_streamer = nullptr;
+			const auto& obj_position = net_obj->get_position();
 
-			float lowest_dist = jc::nums::MAXF;
+			Player* new_owner = nullptr;
+
+			float lowest_dist = chunk_size;
 
 			for_each_joined_player_client([&](NID nid, PlayerClient* pc)
 			{
 				const auto player = pc->get_player();
 
-				if (const auto dist = glm::distance(player->get_position(), net_obj->get_position()); dist < lowest_dist)
+				if (const auto dist = glm::distance2(player->get_position(), obj_position); dist < lowest_dist)
 				{
-					new_streamer = player;
+					new_owner = player;
 					lowest_dist = dist;
 				}
 			});
 
-			net_obj->set_owner(new_streamer);
+			net_obj->set_owner(new_owner);
 		}
 	}
 
@@ -283,10 +285,10 @@ void Net::refresh_net_object_sync()
 	}
 }
 
-void Net::sync_net_objects()
+void Net::sync_net_objects(bool force)
 {
 	static TimerRaw refresh_timer(250);
 
-	if (refresh_timer.ready())
+	if (force || refresh_timer.ready())
 		world_rg->update();
 }

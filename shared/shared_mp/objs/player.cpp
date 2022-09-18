@@ -143,6 +143,8 @@ vec3 Player::generate_bullet_rand_spread()
 	};
 }
 #else
+#define DEBUG_OWNERSHIP 0
+
 Player::Player(PlayerClient* pc) : client(pc)
 {
 	set_sync_type(SyncType_Locked);
@@ -176,8 +178,10 @@ void Player::transfer_net_object_ownership_to(NetObject* obj, Player* new_stream
 	const auto old_streamer_pc = client;
 	const auto new_streamer_pc = new_streamer->get_client();
 
+#if DEBUG_OWNERSHIP
 	log(YELLOW, "{} lost ownerships of a net object type {}", get_nick(), get_type());
 	log(GREEN, "{} now owns a net object type {}", get_nick(), get_type());
+#endif
 
 	Packet p(WorldPID_SetOwnership, ChannelID_World, true, new_streamer, obj);
 
@@ -191,7 +195,9 @@ void Player::set_net_object_ownership_of(NetObject* obj)
 {
 	check(obj, "Net object must be valid");
 
-	log(GREEN, "{} now owns a net object type {}", this->get_nick(), this->get_type());
+#if DEBUG_OWNERSHIP
+	log(GREEN, "{} now owns a net object type {}", get_nick(), get_type());
+#endif
 
 	Packet p(WorldPID_SetOwnership, ChannelID_World, true, this, obj);
 

@@ -105,6 +105,9 @@ public:
 
 	static constexpr NetObject* INVALID() { return nullptr; }
 
+	static constexpr float MIN_HP() { return -MAX_HP(); }
+	static constexpr float MAX_HP() { return static_cast<float>(1 << 16); }
+
 	NetObject();
 
 	bool sync();

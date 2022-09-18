@@ -260,7 +260,7 @@ NetObject* ObjectLists::spawn_net_object(
 		object->spawn();
 
 #ifdef JC_SERVER
-		g_net->send_broadcast_joined(Packet(WorldPID_SpawnObject, ChannelID_World, object, object_id, transform));
+		g_net->sync_net_objects(true);
 #endif
 	}
 

@@ -60,6 +60,8 @@ public:
 	librg_chunk get_chunk_from_position(const vec3& position);
 
 	librg_chunk get_chunk_from_chunk_position(const i16vec3& position);
+
+	u16vec3 get_chunk_size() const;
 };
 
 class EntityRg
@@ -78,7 +80,8 @@ public:
 	~EntityRg();
 
 	void set_chunk(librg_chunk chunk);
-	void set_owner(EntityRg* entity);
+	void set_owner(EntityRg* owner);
+	void update_chunk();
 
 	NetObject* get_net_obj() const { return net_object; }
 

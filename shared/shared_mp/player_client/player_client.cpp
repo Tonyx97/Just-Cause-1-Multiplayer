@@ -41,6 +41,7 @@ PlayerClient::~PlayerClient()
 								Packet p(PlayerClientPID_ObjectInstanceSync, ChannelID_PlayerClient); \
 								p.add(player, NetObjectActionSyncType_Create); \
 								p.add(joined); \
+								p.add(player->get_transform().pack()); \
 								p.add(player->get_hp()); \
 								p.add(player->get_max_hp()); \
 								p.add(player->get_skin_info()); \

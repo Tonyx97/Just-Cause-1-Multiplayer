@@ -119,10 +119,11 @@ void enet::setup_channels()
 #ifdef JC_CLIENT
 		case WorldPID_SetTime:				return nh::world::day_time(p);
 		case WorldPID_SetOwnership:			return nh::world::set_ownership(p);
+#else
+		case WorldPID_SpawnObject:			return nh::world::spawn_object(p);
 #endif
 		case WorldPID_SetTimeScale:			return nh::world::time_scale(p);
 		case WorldPID_SetPunchForce:		return nh::world::punch_force(p);
-		case WorldPID_SpawnObject:			return nh::world::spawn_object(p);
 		case WorldPID_DestroyObject:		return nh::world::destroy_object(p);
 		case WorldPID_SyncObject:			return nh::world::sync_object(p);
 		}

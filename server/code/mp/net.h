@@ -25,7 +25,7 @@ public:
 	void destroy();
 	void tick();
 	void refresh_net_object_sync();
-	void sync_net_objects();
+	void sync_net_objects(bool force = false);
 
 	void send_broadcast(const Packet& p) { send_broadcast(nullptr, p); }
 	void send_broadcast(PlayerClient* ignore_pc, const Packet& p) { send_broadcast_impl(p, ignore_pc); }

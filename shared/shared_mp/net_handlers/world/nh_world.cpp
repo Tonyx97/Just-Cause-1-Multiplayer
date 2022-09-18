@@ -56,22 +56,14 @@ PacketResult nh::world::punch_force(const Packet& p)
 
 PacketResult nh::world::spawn_object(const Packet& p)
 {
-#ifdef JC_CLIENT
-	const auto [nid, net_type] = p.get_nid_and_type();
-#else
+#ifdef JC_SERVER
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
-
 	const auto net_type = p.get<NetObjectType>();
-#endif
-
 	const auto object_id = p.get_u16();
 	const auto transform = p.get<TransformTR>();
 
-#ifdef JC_CLIENT
-	const auto obj = g_net->spawn_net_object(nid, net_type, object_id, transform);
-#else
-	const auto obj = g_net->spawn_net_object(SyncType_Distance, net_type, object_id, transform);
+	g_net->spawn_net_object(SyncType_Distance, net_type, object_id, transform);
 #endif
 
 	return PacketRes_Ok;

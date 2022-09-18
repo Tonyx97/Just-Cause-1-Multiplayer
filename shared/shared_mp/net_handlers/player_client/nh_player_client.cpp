@@ -105,6 +105,7 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			}
 
 			const bool joined = p.get_bool();
+			const auto transform = p.get<TransformPackedTR>();
 			const auto hp = p.get_float();
 			const auto max_hp = p.get_float();
 			const auto skin_info = p.get<Player::SkinInfo>();
@@ -114,6 +115,7 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			if (!player->is_spawned())
 				player->spawn();
 
+			player->set_transform(transform);
 			player->set_hp(hp);
 			player->set_max_hp(max_hp);
 			player->set_skin(skin, skin_info.cloth_skin, skin_info.head_skin, skin_info.cloth_color, skin_info.props);

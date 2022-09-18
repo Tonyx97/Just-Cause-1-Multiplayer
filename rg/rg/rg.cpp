@@ -5,8 +5,8 @@
 
 #include "rg.h"
 
-#define DEBUG_RG 1
-#define DEBUG_RG_OWNERSHIP 0
+#define DEBUG_RG 0
+#define DEBUG_RG_OWNERSHIP 1
 
 namespace world_rg
 {
@@ -96,7 +96,7 @@ void WorldRg::update()
 			// be very small yet causing the entity to disappear in the observer's view, so using 1-2 as
 			// chunk radius should fix this
 
-			result = librg_world_write(world, id, 1, write_buffer, &size, nullptr);
+			result = librg_world_write(world, id, 2, write_buffer, &size, nullptr);
 
 			check(result != LIBRG_WORLD_INVALID, "Invalid world");
 			check(result != LIBRG_OWNER_INVALID, "Invalid owner");
@@ -110,19 +110,9 @@ void WorldRg::update()
 
 		} while (result != LIBRG_OK);
 
-		if (const auto net_obj = entity->get_net_obj())
-		{
-			const auto& position = net_obj->get_position();
+		// refresh the chunk according to the position of the entity
 
-			const auto old_chunk = entity->get_chunk();
-
-			if (const auto new_chunk = get_chunk_from_position(position); new_chunk != LIBRG_CHUNK_INVALID && old_chunk != new_chunk)
-				entity->set_chunk(new_chunk);
-
-#if DEBUG_RG
-			log(GREEN, "Entity {:x} chunk: {}", net_obj->get_nid(), entity->get_chunk());
-#endif
-		}
+		entity->update_chunk();
 	}
 }
 
@@ -197,6 +187,13 @@ librg_chunk WorldRg::get_chunk_from_chunk_position(const i16vec3& position)
 	return librg_chunk_from_chunkpos(world, position.x, position.y, position.z);
 }
 
+u16vec3 WorldRg::get_chunk_size() const
+{
+	u16vec3 out;
+
+	return librg_config_chunksize_get(world, &out.x, &out.y, &out.z) == LIBRG_OK ? out : u16vec3 {};
+}
+
 EntityRg::EntityRg(WorldRg* world, NetObject* net_obj, int64_t id) : world(world), net_object(net_obj), id(id)
 {
 	const auto world_rg = world->get_world();
@@ -217,24 +214,41 @@ void EntityRg::set_chunk(librg_chunk chunk)
 	librg_entity_chunk_set(world->get_world(), id, chunk);
 }
 
-void EntityRg::set_owner(EntityRg* entity)
+void EntityRg::set_owner(EntityRg* owner)
 {
-	if (!entity)
+	if (!owner)
 	{
-		librg_entity_owner_set(world->get_world(), get_id(), get_id());
+		if (get_owner() == this)
+			return;
+
+		librg_entity_owner_set(world->get_world(), id, id);
 
 #if DEBUG_RG_OWNERSHIP
 		log(RED, "reset owner");
 #endif
 	}
-	else if (get_owner_id() != entity->id)
+	else if (get_owner_id() != owner->id)
 	{
-		librg_entity_owner_set(world->get_world(), get_id(), entity->id);
+		librg_entity_owner_set(world->get_world(), id, owner->id);
 
 #if DEBUG_RG_OWNERSHIP
-		log(RED, "new owner");
+		log(RED, "new owner {:x}", owner->id);
 #endif
 	}
+}
+
+void EntityRg::update_chunk()
+{
+	const auto& position = net_object->get_position();
+
+	const auto old_chunk = get_chunk();
+
+	if (const auto new_chunk = world->get_chunk_from_position(position); new_chunk != LIBRG_CHUNK_INVALID && old_chunk != new_chunk)
+		set_chunk(new_chunk);
+
+#if DEBUG_RG
+	log(GREEN, "Entity {:x} chunk: {} ({:.2f} {:.2f} {:.2f})", net_object->get_nid(), get_chunk(), position.x, position.y, position.z);
+#endif
 }
 
 const EntityRg* EntityRg::get_owner() const
@@ -242,9 +256,11 @@ const EntityRg* EntityRg::get_owner() const
 	const auto owner_id = get_owner_id();
 
 	if (owner_id == LIBRG_WORLD_INVALID ||
-		owner_id == LIBRG_ENTITY_UNTRACKED ||
-		owner_id == id)
+		owner_id == LIBRG_ENTITY_UNTRACKED)
 		return nullptr;
+
+	if (owner_id == id)
+		return this;
 
 	return world->get_entity_by_id(owner_id);
 }

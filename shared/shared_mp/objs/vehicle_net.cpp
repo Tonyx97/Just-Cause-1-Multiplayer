@@ -79,7 +79,8 @@ VehicleNetObject::~VehicleNetObject()
 void VehicleNetObject::destroy_object()
 {
 #ifdef JC_CLIENT
-	g_factory->destroy_vehicle(obj);
+	if (obj)
+		g_factory->destroy_vehicle(std::exchange(obj, nullptr));
 #endif
 }
 

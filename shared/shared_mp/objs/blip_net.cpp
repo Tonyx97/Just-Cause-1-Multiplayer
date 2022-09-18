@@ -35,7 +35,8 @@ BlipNetObject::~BlipNetObject()
 void BlipNetObject::destroy_object()
 {
 #ifdef JC_CLIENT
-	g_factory->destroy_map_icon(obj);
+	if (obj)
+		g_factory->destroy_map_icon(std::exchange(obj, nullptr));
 #endif
 }
 

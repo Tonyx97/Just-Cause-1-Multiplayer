@@ -73,10 +73,10 @@ bool NetObject::sync()
 	const auto hp = get_hp(),
 			   max_hp = get_max_hp();
 
-	if (real_hp != get_hp() || hp == jc::nums::MAXF)
+	if (real_hp != hp)
 		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Health, vars.hp = real_hp));
 
-	if (real_max_hp != get_max_hp() || max_hp == jc::nums::MAXF)
+	if (real_max_hp != max_hp)
 		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_MaxHealth, vars.max_hp = real_max_hp));
 
 	// parent object sync
@@ -159,10 +159,9 @@ void NetObject::set_owner(Player* new_owner)
 	owned = g_net->get_localplayer() == new_owner;
 #else
 	const auto curr_owner_rg = rg->get_owner();
-	const auto curr_owner_player = curr_owner_rg ? curr_owner_rg->get_net_obj()->cast_safe<Player>() : nullptr;
-	const auto new_owner_rg = new_owner ? new_owner->get_rg() : nullptr;
+	const auto curr_owner_player = curr_owner_rg ? curr_owner_rg->get_net_obj()->cast<Player>() : nullptr;
 
-	if (curr_owner_rg && new_owner_rg != curr_owner_rg)
+	if (curr_owner_player && new_owner != curr_owner_player)
 	{
 		// if the object has a streamer, then we want to know if we have to transfer it to another
 		// player or simply remove any ownership
@@ -171,7 +170,7 @@ void NetObject::set_owner(Player* new_owner)
 			curr_owner_player->transfer_net_object_ownership_to(this, new_owner);
 		else curr_owner_player->remove_net_object_ownership(this);
 	}
-	else if (!curr_owner_rg && new_owner_rg)
+	else if (!curr_owner_player && new_owner)
 	{
 		// if the object had no streamer but we want to set one then simply
 		// set the object's ownership to the player
@@ -179,7 +178,7 @@ void NetObject::set_owner(Player* new_owner)
 		new_owner->set_net_object_ownership_of(this);
 	}
 
-	rg->set_owner(new_owner_rg);
+	rg->set_owner(new_owner ? new_owner->get_rg() : nullptr);
 #endif
 }
 
@@ -232,6 +231,9 @@ void NetObject::set_rotation(const quat& v)
 
 void NetObject::set_hp(float v)
 {
+	if (v < MIN_HP() || v > MAX_HP())
+		return;
+
 	vars.hp = v;
 
 	if (spawned)
@@ -240,6 +242,9 @@ void NetObject::set_hp(float v)
 
 void NetObject::set_max_hp(float v)
 {
+	if (v < MIN_HP() || v > MAX_HP())
+		return;
+
 	vars.max_hp = v;
 
 	if (spawned)
