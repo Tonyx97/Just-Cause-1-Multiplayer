@@ -21,7 +21,7 @@ public:
 #ifdef JC_CLIENT
 	BlipNetObject(NID nid, const TransformTR& transform);
 
-	class ObjectBase* get_object_base() override;
+	class ObjectBase* get_object_base() const override;
 #else
 	BlipNetObject(SyncType sync_type, const TransformTR& transform);
 #endif

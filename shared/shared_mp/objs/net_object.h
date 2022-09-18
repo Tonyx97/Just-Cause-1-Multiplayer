@@ -118,7 +118,7 @@ public:
 	virtual void on_sync() = 0;
 
 #ifdef JC_CLIENT
-	virtual class ObjectBase* get_object_base() = 0;
+	virtual class ObjectBase* get_object_base() const = 0;
 #endif
 
 	virtual void on_net_var_change(NetObjectVarType var_type) = 0;
@@ -160,7 +160,7 @@ public:
 
 	bool is_valid_type() const;
 	bool is_owned_by(Player* player) const;
-	bool is_spawned() const { return spawned; }
+	bool is_spawned() const;
 	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
 	bool equal(NID _nid) const { return nid == _nid; }
 

@@ -19,7 +19,7 @@ VehicleNetObject::VehicleNetObject(NID nid, const TransformTR& transform)
 	set_velocity_timer(500);
 }
 
-ObjectBase* VehicleNetObject::get_object_base()
+ObjectBase* VehicleNetObject::get_object_base() const
 {
 	return get_object();
 }

@@ -100,6 +100,11 @@ bool NetObject::is_owned() const
 {
 	return owned;
 }
+
+bool NetObject::is_spawned() const
+{
+	return spawned && !!get_object_base();
+}
 #else
 namespace enet
 {
@@ -150,6 +155,11 @@ bool NetObject::sync()
 bool NetObject::is_owned_by(Player* player) const
 {
 	return rg->get_owner() == player->get_rg();
+}
+
+bool NetObject::is_spawned() const
+{
+	return spawned;
 }
 #endif
 

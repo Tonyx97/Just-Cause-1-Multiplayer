@@ -21,7 +21,7 @@ public:
 #ifdef JC_CLIENT
 	DamageableNetObject(NID nid, const TransformTR& transform);
 
-	class ObjectBase* get_object_base() override;
+	class ObjectBase* get_object_base() const override;
 #else
 	DamageableNetObject(SyncType sync_type, const TransformTR& transform);
 #endif

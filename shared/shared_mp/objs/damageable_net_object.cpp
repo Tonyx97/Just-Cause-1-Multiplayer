@@ -16,7 +16,7 @@ DamageableNetObject::DamageableNetObject(NID nid, const TransformTR& transform)
 	set_transform(transform);
 }
 
-ObjectBase* DamageableNetObject::get_object_base()
+ObjectBase* DamageableNetObject::get_object_base() const
 {
 	return obj;
 }

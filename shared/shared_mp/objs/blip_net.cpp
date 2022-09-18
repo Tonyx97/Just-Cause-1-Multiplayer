@@ -15,7 +15,7 @@ BlipNetObject::BlipNetObject(NID nid, const TransformTR& transform)
 	set_transform(transform);
 }
 
-ObjectBase* BlipNetObject::get_object_base()
+ObjectBase* BlipNetObject::get_object_base() const
 {
 	return obj;
 }

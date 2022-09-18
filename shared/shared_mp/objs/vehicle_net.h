@@ -108,7 +108,7 @@ public:
 
 	class Vehicle* get_object() const { return obj; }
 
-	class ObjectBase* get_object_base() override;
+	class ObjectBase* get_object_base() const override;
 
 	void fire();
 	void fire_mounted_gun();

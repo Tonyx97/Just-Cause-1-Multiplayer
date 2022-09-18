@@ -31,7 +31,7 @@ Player::~Player()
 	destroy_object();
 }
 
-ObjectBase* Player::get_object_base()
+ObjectBase* Player::get_object_base() const
 {
 	return get_character();
 }

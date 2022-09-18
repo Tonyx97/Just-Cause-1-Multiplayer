@@ -119,7 +119,7 @@ public:
 #ifdef JC_CLIENT
 	Player(PlayerClient* pc, NID nid);
 
-	class ObjectBase* get_object_base() override;
+	class ObjectBase* get_object_base() const override;
 
 	void verify_exec(const std::function<void(Character*)>& fn);
 	void respawn(float hp, float max_hp, bool sync = true);
