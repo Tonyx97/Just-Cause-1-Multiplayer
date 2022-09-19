@@ -8,7 +8,7 @@
 #endif
 
 #define FORCE_ENABLE_BUG_RIPPER 0
-#define ENABLE_EXCEPTION_REROUTING 0
+#define ENABLE_EXCEPTION_REROUTING 1
 
 #define IDD_CRASH_DIALOG            114
 #define IDC_SEND_DESC				9701
@@ -113,8 +113,8 @@ namespace jc::bug_ripper
 		{
 			static auto kernelbase = BITCAST(uintptr_t, GetModuleHandleW(L"KERNELBASE"));
 
-			/*if (mod_base == kernelbase)
-				return EXCEPTION_CONTINUE_SEARCH;*/
+			if (mod_base == kernelbase)
+				return EXCEPTION_CONTINUE_SEARCH;
 
 #ifdef JC_CLIENT
 			// hide the fucking game

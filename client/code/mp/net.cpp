@@ -33,7 +33,11 @@ bool Net::init(const std::string& ip, const std::string& nick)
 
 	enet_peer_timeout(peer, 0, 0, enet::PEER_TIMEOUT);
 
+#ifdef JC_DBG
 	while (!connected && enet_host_service(client, &e, 1000) >= 0)
+#else
+	while (!connected && enet_host_service(client, &e, 10000) >= 0)
+#endif
 		if (e.type == ENET_EVENT_TYPE_CONNECT)
 			connected = true;
 
