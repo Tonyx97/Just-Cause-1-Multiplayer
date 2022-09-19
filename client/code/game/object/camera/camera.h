@@ -25,6 +25,7 @@ public:
 	vec3 get_model_right_vector() const;
 	vec3 get_model_up_vector() const;
 	vec3 get_model_forward_vector() const;
+	vec3 get_model_translation() const;
 
 	vec3 get_proj_right_vector() const;
 	vec3 get_proj_up_vector() const;

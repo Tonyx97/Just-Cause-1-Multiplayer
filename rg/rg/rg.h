@@ -2,6 +2,8 @@
 
 #include <librg/librg.h>
 
+#include <defs/rg_defs.h>
+
 class WorldRg;
 class EntityRg;
 class NetObject;

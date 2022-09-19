@@ -246,15 +246,9 @@ void jc::mp::logic::on_update_objects()
 			// make sure we put the player inside or outside the vehicle
 
 			if (vehicle && char_vehicle != vehicle)
-			{
-				log(GREEN, "warped player into vehicle");
-
 				vehicle_net->warp_to_seat(player, seat_type);
-			}
 			else if (!vehicle && char_vehicle)
 			{
-				log(GREEN, "kicked player from vehicle");
-
 				if (const auto seat = char_vehicle->get_seat_by_type(seat_type))
 					seat->instant_exit();
 			}

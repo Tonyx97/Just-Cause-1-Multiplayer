@@ -83,6 +83,12 @@ public:
 		{
 			return jc::read<T>(ebp, -offset);
 		}
+
+		template <typename T>
+		T* at_ebp(int offset)
+		{
+			return REF(T*, ebp, -offset);
+		}
 	};
 
 private:

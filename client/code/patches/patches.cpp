@@ -100,6 +100,10 @@ namespace jc::patches
 	// patches the automatic game freeze the original devs coded for some reason
 	// 
 	patch game_freeze_patch(0x40342F);
+
+	// removes existing character's bone distance culling check
+	// 
+	patch bone_culling_distance_patch(0x590B96);
 }
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
@@ -298,10 +302,6 @@ void jc::patches::apply()
 
 	jc::nop(0x4F522E, 0x5);
 
-	// increase max bone full update distance (by default it's 225 aka 15 meters away from camera)
-
-	jc::write(std::pow(1024.f, 2.f), 0xA56990);
-
 	// patches vehicles get input conditional so it will try to get the input from all vehicles
 	// no matter what, this helps us syncing the movement of vehicles easily without too much overkill
 
@@ -447,10 +447,15 @@ void jc::patches::apply()
 	// apply game freeze patch
 
 	game_freeze_patch.nop(22);
+
+	// apply bone distance culling check path
+
+	bone_culling_distance_patch.jump(0x590D81);
 }
 
 void jc::patches::undo()
 {
+	bone_culling_distance_patch._undo();
 	game_freeze_patch._undo();
 	heartbeat_sound_patch._undo();
 	land_vehicle_engine_patch._undo();

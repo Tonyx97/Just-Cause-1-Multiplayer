@@ -23,6 +23,7 @@
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/vehicle/comps/vehicle_seat.h>
 #include <game/object/interactable/interactable.h>
+#include <game/object/camera/camera.h>
 #include <game/object/ui/map_icon.h>
 #include <game/object/localplayer/localplayer.h>
 #include <game/object/physics/pfx_collision.h>
@@ -99,7 +100,6 @@ DEFINE_HOOK_THISCALL_S(_test4, 0x59A560, bool, int _this)
 	return res;
 }
 
-
 void jc::test_units::init()
 {
 	//_test1_hook.hook();
@@ -114,7 +114,7 @@ void jc::test_units::init()
 
 void jc::test_units::destroy()
 {
-	_test1_hook.unhook();
+	//_test1_hook.unhook();
 	/*_test2_hook.unhook();
 	_test3_hook.unhook();
 	_test4_hook.unhook();*/

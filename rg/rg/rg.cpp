@@ -96,7 +96,7 @@ void WorldRg::update()
 			// be very small yet causing the entity to disappear in the observer's view, so using 1-2 as
 			// chunk radius should fix this
 
-			result = librg_world_write(world, id, 2, write_buffer, &size, nullptr);
+			result = librg_world_write(world, id, RG_WORLD_CHUNK_RADIUS, write_buffer, &size, nullptr);
 
 			check(result != LIBRG_WORLD_INVALID, "Invalid world");
 			check(result != LIBRG_OWNER_INVALID, "Invalid owner");

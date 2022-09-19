@@ -1,4 +1,5 @@
 #include <defs/standard.h>
+#include <defs/rg_defs.h>
 
 #include "character.h"
 
@@ -469,6 +470,17 @@ namespace jc::character::hook
 		set_vehicle_seat_hook(character, seat_ref);
 	}
 
+	DEFINE_INLINE_HOOK_IMPL(distance_culling_check, 0x590B90)
+	{
+		const auto character = ihp->read_ebp<VehicleSeat*>(0x47C);
+		const auto update_bones = ihp->at_ebp<bool>(0xDD);
+
+		// todojc - temporary ignore the limit for all characters, in the future
+		// we will add custom boundaries
+
+		*update_bones = true;
+	}
+
 	void enable(bool apply)
 	{
 		update_hook.hook(apply);
@@ -483,6 +495,7 @@ namespace jc::character::hook
 		force_launch_hook.hook(apply);
 		character_proxy_add_velocity_hook.hook(apply);
 		set_vehicle_seat_hook.hook(apply);
+		distance_culling_check_hook.hook(apply);
 	}
 }
 

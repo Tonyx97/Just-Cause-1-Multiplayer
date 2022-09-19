@@ -65,6 +65,11 @@ vec3 Camera::get_model_forward_vector() const
 	return jc::read<Transform>(this, jc::camera::MODEL_MATRIX).forward();
 }
 
+vec3 Camera::get_model_translation() const
+{
+	return jc::read<Transform>(this, jc::camera::MODEL_MATRIX).get_position();
+}
+
 vec3 Camera::get_view_right_vector() const
 {
 	return jc::read<Transform>(this, jc::camera::VIEW_MATRIX).right();

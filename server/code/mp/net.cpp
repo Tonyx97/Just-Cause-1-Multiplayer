@@ -73,8 +73,8 @@ bool Net::init()
 		return logbwt(RED, "Could not create server host");
 
 	world_rg = JC_ALLOC(WorldRg,
-		i16vec3 { 64, 1, 64 },
-		u16vec3 { 512u, UINT16_MAX, 512u },
+		i16vec3 { RG_WORLD_CHUNK_COUNT, 1, RG_WORLD_CHUNK_COUNT },
+		u16vec3 { RG_WORLD_CHUNK_SIZE, UINT16_MAX, RG_WORLD_CHUNK_SIZE },
 		//i16vec3 { 1024, 1, 1024 },
 		//u16vec3 { 10u, UINT16_MAX, 10u },
 		world_rg::on_create,

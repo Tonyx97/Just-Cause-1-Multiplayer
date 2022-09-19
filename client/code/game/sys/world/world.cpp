@@ -1,4 +1,5 @@
 #include <defs/standard.h>
+#include <defs/rg_defs.h>
 
 #include "world.h"
 
@@ -6,7 +7,7 @@
 
 void World::init()
 {
-	set_character_update_max_distance(500.f);
+	set_character_update_max_distance(std::sqrtf(RG_WORLD_MAX_SQUARE_DISTANCE_IN_CHUNK));
 }
 
 void World::destroy()
