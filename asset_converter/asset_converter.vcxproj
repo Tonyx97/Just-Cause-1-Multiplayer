@@ -75,13 +75,13 @@
     <OutDir>$(SolutionDir)bins\asset_converter\</OutDir>
     <IntDir>build\</IntDir>
     <IncludePath>$(SolutionDir)external\include;$(SolutionDir)shared;$(ProjectDir)code\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)external\lib\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)bins\asset_converter\</OutDir>
     <IntDir>build\</IntDir>
     <IncludePath>$(SolutionDir)external\include;$(SolutionDir)shared;$(ProjectDir)code\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)external\lib\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

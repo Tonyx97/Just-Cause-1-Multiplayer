@@ -77,7 +77,7 @@
     <IntDir>build\</IntDir>
     <TargetName>loader</TargetName>
     <IncludePath>$(SolutionDir)external\include;$(SolutionDir)shared;$(ProjectDir)code\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)external\lib\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -85,7 +85,7 @@
     <IntDir>build\</IntDir>
     <TargetName>loader</TargetName>
     <IncludePath>$(SolutionDir)external\include;$(SolutionDir)shared;$(ProjectDir)code\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)external\lib\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

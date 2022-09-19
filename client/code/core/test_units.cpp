@@ -33,6 +33,8 @@
 
 #include <net/serializer.h>
 
+#include <dukpp/dukpp.hpp>
+
 // 40E940 = FnThatReadsAssetFromDisk
 
 DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* name, int type, ptr data, ptr size)
@@ -140,12 +142,6 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
-		//jc::this_call(0x4CE770, localplayer, g_player_global_info->get_local_controller());
-
-		auto veh = BITCAST(Vehicle*, g_global_ptr);
-
-		local_char->set_stance_exit_vehicle_forced();
-		veh->open_door(VehicleDoor_Left);
 
 		//jc::this_call(0x74DE20, *seat, true);
 

@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{88cd857c-f04c-49d5-a25c-1a450d5c299f}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\class.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\context.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_class_proto.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_constructor.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_eval.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_function.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_method.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_object.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_primitive_types.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_refs.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_stack.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_traits.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_typeinfo.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\detail\detail_types.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\dukexception.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\dukpp.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\duk_value.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\public_util.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\stream_duk_value.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\this_context.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)dukpp\variadic_args.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)dukpp\detail\duk_value.cpp" />
+  </ItemGroup>
+</Project>

@@ -24,6 +24,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rg", "rg\rg.vcxitems", "{FE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared_projects", "shared_projects", "{850C26C5-A573-4C24-8607-F01C35716989}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scripting", "scripting\scripting.vcxitems", "{88CD857C-F04C-49D5-A25C-1A450D5C299F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -73,6 +75,7 @@ Global
 		{C71A13A3-8825-4C05-8925-E11ECBE42EEB} = {850C26C5-A573-4C24-8607-F01C35716989}
 		{F4FFAD47-5958-4180-A64C-8E64D8B46368} = {850C26C5-A573-4C24-8607-F01C35716989}
 		{FECC2CD2-9D4B-43D2-81E2-C135D7B71727} = {850C26C5-A573-4C24-8607-F01C35716989}
+		{88CD857C-F04C-49D5-A25C-1A450D5C299F} = {850C26C5-A573-4C24-8607-F01C35716989}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5F58BCCD-4443-445F-B734-F6FFC6054D74}
@@ -80,10 +83,13 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		profiling\profiling.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
 		rg\rg.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
+		scripting\scripting.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
 		shared\shared.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
 		hde\hde.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		profiling\profiling.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
+		scripting\scripting.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		shared\shared.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
+		scripting\scripting.vcxitems*{88cd857c-f04c-49d5-a25c-1a450d5c299f}*SharedItemsImports = 9
 		profiling\profiling.vcxitems*{c71a13a3-8825-4c05-8925-e11ecbe42eeb}*SharedItemsImports = 9
 		profiling\profiling.vcxitems*{dcf6d994-54fa-4ad0-9adb-e34faffaf46f}*SharedItemsImports = 4
 		shared\shared.vcxitems*{dffbc708-890d-491b-980f-e8613869783b}*SharedItemsImports = 9

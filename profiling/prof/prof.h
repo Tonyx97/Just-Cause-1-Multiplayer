@@ -131,7 +131,7 @@ namespace jc::prof
 		{
 			const auto cycles_passed = __rdtsc() - cycles;
 			const auto time_passed	 = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - m_start).count();
-			log(true, YELLOW, "%s: %.3f ms | %i mcs | %i cycles", name, static_cast<double>(time_passed) / 1000.f, time_passed, cycles_passed);
+			log(true, YELLOW, "{}: {:.3f} ms | {} mcs | {} cycles", name, static_cast<double>(time_passed) / 1000.f, time_passed, cycles_passed);
 		}
 	};
 }

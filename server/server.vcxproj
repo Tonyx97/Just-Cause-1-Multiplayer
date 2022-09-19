@@ -59,6 +59,7 @@
     <Import Project="..\shared\shared.vcxitems" Label="Shared" />
     <Import Project="..\profiling\profiling.vcxitems" Label="Shared" />
     <Import Project="..\rg\rg.vcxitems" Label="Shared" />
+    <Import Project="..\scripting\scripting.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -78,14 +79,14 @@
     <OutDir>$(SolutionDir)bins\server\</OutDir>
     <IntDir>build\</IntDir>
     <IncludePath>$(SolutionDir)external\include\;$(SolutionDir)shared\;$(ProjectDir)code\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\lib\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)external\lib\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>jcmp_server</TargetName>
     <OutDir>$(SolutionDir)bins\server\</OutDir>
     <IntDir>build\</IntDir>
     <IncludePath>$(SolutionDir)external\include\;$(SolutionDir)shared\;$(ProjectDir)code\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\lib\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)external\lib\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

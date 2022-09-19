@@ -63,7 +63,7 @@ void Chat::add_char(wchar_t c)
 		return;
 
 	if (curr_msg.length() < 256)
-		curr_msg += c;
+		curr_msg += static_cast<char>(c);
 }
 
 void Chat::remove_char()

@@ -16,6 +16,36 @@
 
 #include <core/keycode.h>
 
+#include <dukpp/dukpp.hpp>
+
+static void native_print(dukpp::duk_value const& arg) {
+	std::cout << arg << std::endl;
+}
+
+class Dog {
+	std::string name;
+public:
+	Dog() : name("") {
+		std::cout << "Dog created" << std::endl;
+	}
+
+	~Dog() {
+		std::cout << "Dog deleted" << std::endl;
+	}
+
+	void SetName(std::optional<std::string> const& n) {
+		name = n.value_or("Dog");
+	}
+
+	std::optional<std::string> GetName() const {
+		return name;
+	}
+
+	void Bark() const {
+		std::cout << "Bark!" << std::endl;
+	}
+};
+
 void jc::mp::logic::on_tick()
 {
 	if (!g_net->is_joined())
@@ -200,6 +230,62 @@ void jc::mp::logic::on_tick()
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
 				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, 51ui16, transform));
+			}
+
+			if (g_key->is_key_pressed(VK_NUMPAD9))
+			{
+				dukpp::context ctx;
+
+				ctx["print"] = native_print;
+				ctx["AY"] = 5.1238f;
+
+				ctx["trash"] = +[](const dukpp::variadic_args& args)
+				{
+					float res = 0.f;
+
+					for (auto const& val : args)
+						res += val.as_float();
+
+					return res;
+				};
+
+				ctx.register_class<Dog>("Dog")
+					.add_method("bark", &Dog::Bark)
+					.add_property("name", &Dog::GetName, &Dog::SetName);
+
+				ctx.peval(R"(
+function tick()
+{
+	return trash(1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5);
+}
+)");
+
+				//log(RED, "exists 1: {}", duk_get_global_string(ctx.mCtx, "ticka"));
+				//log(RED, "exists 2: {}", duk_is_function(ctx.mCtx, -1));
+
+				std::string tick_fn = "tick";
+
+				while (true)
+				{
+					float res = 0.f;
+
+					{
+						TimeProfiling p("test");
+
+						try
+						{
+							res = ctx.call<float>(tick_fn);
+						}
+						catch (...)
+						{
+							//log(RED, "sad error");
+						}
+					}
+
+					log(GREEN, "result: {}", res);
+
+					Sleep(250);
+				}
 			}
 		}
 }
