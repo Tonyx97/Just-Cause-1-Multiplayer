@@ -247,7 +247,7 @@ void jc::mp::logic::on_tick()
 
 				(*ctx)["print"] = native_print;
 
-				for (int i = 0; i < 100000; ++i)
+				for (int i = 0; i < 1000; ++i)
 				{
 					(*ctx)["ay" + std::to_string(i)] = util::rand::rand_flt(-1000.f, 1000.f);
 
@@ -268,24 +268,31 @@ void jc::mp::logic::on_tick()
 
 				ctx->peval(R"(
 
-function tick()
+function tick(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10)
 {
-	trash(1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5);
+	var a = 0;
+
+	for (var i = 0; i < 1000; ++i)
+		a += v1 + v2 + v3 + v4 + v5 + v6 + v7 + v8 + v9 + v10;
 }
 )");
 
 				//log(RED, "exists 1: {}", duk_get_global_string(ctx.mCtx, "ticka"));
 				//log(RED, "exists 2: {}", duk_is_function(ctx.mCtx, -1));
 
-				std::string tick_fn = "ticka";
+				std::string tick_fn = "tick";
 
 				while (true)
 				{
-					{
-						TimeProfiling p("test");
+					int i = 0;
 
-						ctx->call(tick_fn);
+					{
+						TimeProfiling p("time");
+
+						ctx->call<void>(tick_fn, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 					}
+
+					log(RED, "{}", i);
 
 					Sleep(250);
 				}

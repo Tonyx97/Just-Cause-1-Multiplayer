@@ -200,7 +200,7 @@ namespace dukpp {
          * @param[in]  val    value to push
          */
         template<typename FullT>
-        void push(FullT const &val) const {
+        void _push(FullT const &val) const {
             // ArgStorage has some static_asserts in it that validate value types,
             // so we typedef it to force ArgStorage<RetType> to compile and run the asserts
             typedef typename types::ArgStorage<FullT>::type ValidateReturnType;
@@ -210,8 +210,8 @@ namespace dukpp {
 
         template<typename T, typename... ArgTs>
         void push(T const &arg, ArgTs... args) const {
-            push(mCtx, arg);
-            push(mCtx, args...);
+			_push(arg);
+            push(args...);
         }
 
         inline void push() const {
