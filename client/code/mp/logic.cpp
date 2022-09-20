@@ -10,6 +10,7 @@
 
 #include <game/object/base/comps/physical.h>
 #include <game/object/character/character.h>
+#include <game/object/character/comps/stance_controller.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/weapon/weapon_belt.h>
 #include <game/object/vehicle/vehicle.h>
@@ -26,11 +27,11 @@ class Dog {
 	std::string name;
 public:
 	Dog() : name("") {
-		std::cout << "Dog created" << std::endl;
+		//std::cout << "Dog created" << std::endl;
 	}
 
 	~Dog() {
-		std::cout << "Dog deleted" << std::endl;
+		//std::cout << "Dog deleted" << std::endl;
 	}
 
 	void SetName(std::optional<std::string> const& n) {
@@ -211,6 +212,14 @@ void jc::mp::logic::on_tick()
 				localplayer->set_weapon_id(current_weapon_id);
 			}
 
+			/*static int last_id = 0;
+
+			if (last_id != local_char->get_body_stance()->get_movement_id())
+			{
+				last_id = local_char->get_body_stance()->get_movement_id();
+				log(GREEN, "current stance: {}", last_id);
+			}*/
+
 			// aiming
 
 			if ((hip_aiming || full_aiming) && aiming_timer.ready())
@@ -234,12 +243,20 @@ void jc::mp::logic::on_tick()
 
 			if (g_key->is_key_pressed(VK_NUMPAD9))
 			{
-				dukpp::context ctx;
+				dukpp::context* ctx = new dukpp::context();
 
-				ctx["print"] = native_print;
-				ctx["AY"] = 5.1238f;
+				(*ctx)["print"] = native_print;
 
-				ctx["trash"] = +[](const dukpp::variadic_args& args)
+				for (int i = 0; i < 100000; ++i)
+				{
+					(*ctx)["ay" + std::to_string(i)] = util::rand::rand_flt(-1000.f, 1000.f);
+
+					ctx->register_class<Dog>(("Dog" + std::to_string(i)).c_str())
+						.add_method("bark", &Dog::Bark)
+						.add_property("name", &Dog::GetName, &Dog::SetName);
+				}
+
+				(*ctx)["trash"] = +[](const dukpp::variadic_args& args)
 				{
 					float res = 0.f;
 
@@ -249,43 +266,31 @@ void jc::mp::logic::on_tick()
 					return res;
 				};
 
-				ctx.register_class<Dog>("Dog")
-					.add_method("bark", &Dog::Bark)
-					.add_property("name", &Dog::GetName, &Dog::SetName);
+				ctx->peval(R"(
 
-				ctx.peval(R"(
 function tick()
 {
-	return trash(1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5);
+	trash(1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5);
 }
 )");
 
 				//log(RED, "exists 1: {}", duk_get_global_string(ctx.mCtx, "ticka"));
 				//log(RED, "exists 2: {}", duk_is_function(ctx.mCtx, -1));
 
-				std::string tick_fn = "tick";
+				std::string tick_fn = "ticka";
 
 				while (true)
 				{
-					float res = 0.f;
-
 					{
 						TimeProfiling p("test");
 
-						try
-						{
-							res = ctx.call<float>(tick_fn);
-						}
-						catch (...)
-						{
-							//log(RED, "sad error");
-						}
+						ctx->call(tick_fn);
 					}
-
-					log(GREEN, "result: {}", res);
 
 					Sleep(250);
 				}
+
+				delete ctx;
 			}
 		}
 }
@@ -330,13 +335,23 @@ void jc::mp::logic::on_update_objects()
 			player->dispatch_movement();
 
 			// make sure we put the player inside or outside the vehicle
+			// NOTE: i don't know if this is safe because it was causing
+			// crashes before but with the stance checks it should work fine
 
 			if (vehicle && char_vehicle != vehicle)
+			{
+				log(PURPLE, "trying to warp player to vehicle, {:x} {:x}", ptr(char_vehicle), ptr(vehicle));
+
 				vehicle_net->warp_to_seat(player, seat_type);
+			}
 			else if (!vehicle && char_vehicle)
 			{
 				if (const auto seat = char_vehicle->get_seat_by_type(seat_type))
+				{
+					log(PURPLE, "trying to klick player from vehicle");
+
 					seat->instant_exit();
+				}
 			}
 
 			// aiming weapon

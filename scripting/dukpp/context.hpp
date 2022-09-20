@@ -145,7 +145,7 @@ namespace dukpp {
         typename std::enable_if<std::is_void<RetT>::value, RetT>::type call(std::string const &fn, Ts ...args) const {
             duk_get_global_string(mCtx, fn.data());
             push(args...);
-            duk_call(mCtx, sizeof...(args));
+			duk_pcall(mCtx, sizeof...(args));
         }
 
         template<typename RetT, typename... Ts>

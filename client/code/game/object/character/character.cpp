@@ -934,6 +934,16 @@ bool Character::is_on_ground() const
 	return get_air_time() <= 0.f;
 }
 
+bool Character::is_opening_any_vehicle_door() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_OPENING_ANY_VEHICLE_DOOR, this);
+}
+
+bool Character::is_in_vehicle_stance() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_IN_VEHICLE_STANCE, this);
+}
+
 int32_t Character::get_grenades_ammo() const
 {
 	return jc::read<int32_t>(this, jc::character::GRENADES_AMMO);

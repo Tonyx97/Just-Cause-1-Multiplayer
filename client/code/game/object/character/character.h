@@ -59,6 +59,8 @@ namespace jc::character
 		static constexpr uint32_t SET_STANCE_TO_VEHICLE_ROOF				= 0x59F590;
 		static constexpr uint32_t SET_STANCE_EXIT_VEHICLE_FORCED			= 0x59F450;
 		static constexpr uint32_t SET_VEHICLE_SEAT							= 0x74DDC0;
+		static constexpr uint32_t IS_OPENING_ANY_VEHICLE_DOOR				= 0x5A1F30;
+		static constexpr uint32_t IS_IN_VEHICLE_STANCE						= 0x597B80;
 		
 	}
 
@@ -157,6 +159,8 @@ public:
 
 	bool has_flag(uint32_t mask) const;
 	bool is_on_ground() const;
+	bool is_opening_any_vehicle_door() const;
+	bool is_in_vehicle_stance() const;
 
 	int32_t get_grenades_ammo() const;
 
