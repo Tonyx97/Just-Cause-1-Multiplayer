@@ -18,23 +18,11 @@
 #include <core/keycode.h>
 
 #include <luas.h>
-#include <asio.hpp>
 
 void jc::mp::logic::on_tick()
 {
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
-		asio::error_code ec;
-		asio::io_context ctx;
-
-		asio::ip::tcp::endpoint ep(asio::ip::make_address("127.0.0.1", ec), 48291);
-		asio::ip::tcp::socket socket(ctx);
-
-		socket.connect(ep, ec);
-
-		if (!ec)
-			log(GREEN, "nice!");
-		else log(RED, "not nice :(");
 	}
 
 	if (!g_net->is_joined())
