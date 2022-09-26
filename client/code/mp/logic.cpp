@@ -27,7 +27,7 @@ void jc::mp::logic::on_tick()
 		asio::error_code ec;
 		asio::io_context ctx;
 
-		asio::ip::tcp::endpoint ep(asio::ip::make_address("217.182.174.42", ec), 48291);
+		asio::ip::tcp::endpoint ep(asio::ip::make_address("127.0.0.1", ec), 48291);
 		asio::ip::tcp::socket socket(ctx);
 
 		socket.connect(ep, ec);
