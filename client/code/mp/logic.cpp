@@ -17,38 +17,26 @@
 
 #include <core/keycode.h>
 
-#include <dukpp/dukpp.hpp>
-
-static void native_print(dukpp::duk_value const& arg) {
-	std::cout << arg << std::endl;
-}
-
-class Dog {
-	std::string name;
-public:
-	Dog() : name("") {
-		//std::cout << "Dog created" << std::endl;
-	}
-
-	~Dog() {
-		//std::cout << "Dog deleted" << std::endl;
-	}
-
-	void SetName(std::optional<std::string> const& n) {
-		name = n.value_or("Dog");
-	}
-
-	std::optional<std::string> GetName() const {
-		return name;
-	}
-
-	void Bark() const {
-		std::cout << "Bark!" << std::endl;
-	}
-};
+#include <luas.h>
+#include <asio.hpp>
 
 void jc::mp::logic::on_tick()
 {
+	if (g_key->is_key_pressed(VK_NUMPAD9))
+	{
+		asio::error_code ec;
+		asio::io_context ctx;
+
+		asio::ip::tcp::endpoint ep(asio::ip::make_address("217.182.174.42", ec), 48291);
+		asio::ip::tcp::socket socket(ctx);
+
+		socket.connect(ep, ec);
+
+		if (!ec)
+			log(GREEN, "nice!");
+		else log(RED, "not nice :(");
+	}
+
 	if (!g_net->is_joined())
 		return;
 
@@ -239,65 +227,6 @@ void jc::mp::logic::on_tick()
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
 				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, 51ui16, transform));
-			}
-
-			if (g_key->is_key_pressed(VK_NUMPAD9))
-			{
-				dukpp::context* ctx = new dukpp::context();
-
-				(*ctx)["print"] = native_print;
-
-				for (int i = 0; i < 1000; ++i)
-				{
-					(*ctx)["ay" + std::to_string(i)] = util::rand::rand_flt(-1000.f, 1000.f);
-
-					ctx->register_class<Dog>(("Dog" + std::to_string(i)).c_str())
-						.add_method("bark", &Dog::Bark)
-						.add_property("name", &Dog::GetName, &Dog::SetName);
-				}
-
-				(*ctx)["trash"] = +[](const dukpp::variadic_args& args)
-				{
-					float res = 0.f;
-
-					for (auto const& val : args)
-						res += val.as_float();
-
-					return res;
-				};
-
-				ctx->peval(R"(
-
-function tick(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10)
-{
-	var a = 0;
-
-	for (var i = 0; i < 1000; ++i)
-		a += v1 + v2 + v3 + v4 + v5 + v6 + v7 + v8 + v9 + v10;
-}
-)");
-
-				//log(RED, "exists 1: {}", duk_get_global_string(ctx.mCtx, "ticka"));
-				//log(RED, "exists 2: {}", duk_is_function(ctx.mCtx, -1));
-
-				std::string tick_fn = "tick";
-
-				while (true)
-				{
-					int i = 0;
-
-					{
-						TimeProfiling p("time");
-
-						ctx->call<void>(tick_fn, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-					}
-
-					log(RED, "{}", i);
-
-					Sleep(250);
-				}
-
-				delete ctx;
 			}
 		}
 }

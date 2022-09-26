@@ -16,7 +16,7 @@
 // client and server libs
 
 #if defined(JC_CLIENT) || defined(JC_SERVER)
-#pragma comment(lib, "duktape_static.lib")
+#pragma comment(lib, "lua544_static.lib")
 #endif
 
 // asset converter libs

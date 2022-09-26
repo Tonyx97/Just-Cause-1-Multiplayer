@@ -33,7 +33,7 @@
 
 #include <net/serializer.h>
 
-#include <dukpp/dukpp.hpp>
+#include <luas.h>
 
 // 40E940 = FnThatReadsAssetFromDisk
 

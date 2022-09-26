@@ -1,0 +1,41 @@
+Home Page Packets Layout:
+
+	- Refresh Request (sent from the launcher to request the page N):
+		int page_index; // 4 bytes, the page index we want to retrieve from the server.
+		
+	- Refresh (sent from the server to the client):
+		int text_size;	// 4 bytes
+		string text; // a string with the news text with size begin "text_size"
+		
+	NOTE: For home page packets, we should request the first 10-15 for example and the more we scroll down, the more pages it will request to the server, so basically it will get the pages when the launcher needs them otherwise it would lead to unneeded overhead.
+	
+Servers List Packets Layout:
+
+	- Request Server List (sent from the server):
+		int nickname_size; // 4 bytes, the string size of the client's nickname.
+		string nickname; // string containing the nickname of the client who send this packet.
+
+	- Refresh Server List:
+		int servers_count; // 4 bytes, the amount of servers registered in the masterserver.
+		ServerInfo // write/read this structure of info "server_count" times
+		{
+			int server_name_size; // 4 bytes, name size of the server
+			string server_name; // string containing the server name with size being "server_name_size"
+			int gamemode_size; // 4 bytes, name of the gamemode
+			string gamemode; // string containing the gamemode name with size being "gamemode_size"
+			int discord_size; // 4 bytes, the string size of the discord link (if it's 0, we assume the server has no discord link available)
+			string discord_available; // string containing the discord link string (this field should be present if discord_size > 0)
+			bool uses_password; // 1 byte, does the server require password or not?
+			int community_size; // 4 bytes, string size of the community link string
+			string community; // string containing the community link (this field is only present when community_size > 0)
+			int players_count; // count of total players in the server
+			Player	// write/read this structure "players_count" times
+			{
+				int player_name_size; // 4 bytes, the string size of the current player's name
+				string player_name; // string containing the current player's name
+				int player_role; // 4 bytes, just an int with a role id (you don't need to do any special logic for this field, just add it)
+			}
+		}
+		
+		
+GLOBAL NOTE: Strings are not zero terminated, make sure the size of each string is exactly the total size without zero terminated character, for example, serializing "test" string is writing the size as 4 and the string as "test".
