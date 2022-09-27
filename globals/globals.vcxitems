@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{c71a13a3-8825-4c05-8925-e11ecbe42eeb}</ItemsProjectGuid>
+    <ItemsProjectGuid>{2b2a9069-2cc0-4081-8e04-8b1e512597be}</ItemsProjectGuid>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -14,13 +14,12 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)bug_ripper\bug_ripper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)prof\prof.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)registry\registry.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)bug_ripper\bug_ripper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)prof\prof.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)registry\registry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)defs\glm.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)defs\json.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)defs\libs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)defs\rg_defs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)defs\standard.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)memory\defs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)memory\memory.h" />
   </ItemGroup>
 </Project>

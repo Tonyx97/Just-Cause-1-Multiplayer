@@ -9,7 +9,6 @@ class PlayerClient;
 
 namespace enet
 {
-	static constexpr uint32_t GAME_PORT		= 19971;
 	static constexpr uint32_t MAX_PLAYERS	= 128;
 	static constexpr uint32_t TICKS			= 62;
 	static constexpr uint32_t TICKS_MS		= 16;

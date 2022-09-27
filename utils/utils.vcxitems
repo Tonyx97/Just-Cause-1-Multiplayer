@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{c71a13a3-8825-4c05-8925-e11ecbe42eeb}</ItemsProjectGuid>
+    <ItemsProjectGuid>{4c75cf4f-7821-4e40-b21a-d417b93be9e6}</ItemsProjectGuid>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -14,13 +14,12 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)bug_ripper\bug_ripper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)prof\prof.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)registry\registry.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)timer\timer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)bug_ripper\bug_ripper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)prof\prof.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)registry\registry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)timer\timer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\buffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\utils.h" />
   </ItemGroup>
 </Project>

@@ -24,3 +24,8 @@
 #if defined(JC_ASSET_CONV)
 #pragma comment(lib, "assimp.lib")
 #endif
+
+// masterserver libs
+
+#if defined(JC_MASTERSV)
+#endif

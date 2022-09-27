@@ -1,5 +1,7 @@
 #include <defs/standard.h>
 
+#include <ports.h>
+
 #include "net.h"
 #include "logic.h"
 
@@ -26,7 +28,7 @@ bool Net::init(const std::string& ip, const std::string& nick)
 	ENetEvent	e		= {};
 
 	enet_address_set_host(&address, ip.c_str());
-	address.port = enet::GAME_PORT;
+	address.port = netcp::CLIENT_TO_SERVER_GAME_PORT;
 
 	if (!(peer = enet_host_connect(client, &address, 255, 0)))
 		return logb(RED, "No peers available for initiating enet");

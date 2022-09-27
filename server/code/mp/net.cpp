@@ -1,5 +1,7 @@
 #include <defs/standard.h>
 
+#include <ports.h>
+
 #include <timer/timer.h>
 
 #include "net.h"
@@ -60,7 +62,7 @@ bool Net::init()
 	const auto address = ENetAddress
 	{
 		.host = ENET_HOST_ANY,
-		.port = enet::GAME_PORT
+		.port = netcp::CLIENT_TO_SERVER_GAME_PORT
 	};
 
 	// setup channels

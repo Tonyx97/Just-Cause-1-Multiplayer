@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)netcp_interface.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ports.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)netcp_interface.cpp" />

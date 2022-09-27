@@ -34,7 +34,9 @@
 #include <utils/utils.h>
 #include <utils/buffer.h>
 
+#if defined(JC_CLIENT) || defined(JC_SERVER) || defined(JC_ASSET_CONV)
 #include <math/math.h>
+#endif
 
 #ifdef JC_CLIENT
 #include "main.h"
