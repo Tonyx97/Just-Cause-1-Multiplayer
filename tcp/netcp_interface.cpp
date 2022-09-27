@@ -18,19 +18,16 @@ namespace netcp
 
 	void client_interface::send_packet(uint16_t id, void* out_data, size_t size)
 	{
-		const auto header_ptr = std::bit_cast<uint8_t*>(&header_out);
-		const auto data_ptr = std::bit_cast<uint8_t*>(out_data);
-
 		header_out.id = id;
 		header_out.size = static_cast<uint32_t>(size);
 
-		data_out.v.clear();
-		data_out.v.insert(data_out.v.end(), header_ptr, header_ptr + sizeof(packet_header));
-		data_out.v.insert(data_out.v.end(), data_ptr, data_ptr + size);
+		data_out.clear();
+		data_out.add(header_out);
+		data_out.insert(out_data, size);
 
 		std::error_code ec;
 
-		asio::write(socket, asio::buffer(data_out.v.data(), data_out.v.size()), asio::transfer_all(), ec);
+		asio::write(socket, asio::buffer(data_out.data.data(), data_out.data.size()), asio::transfer_all(), ec);
 	}
 
 	void client_interface::update()
@@ -45,13 +42,12 @@ namespace netcp
 
 			if (ec) break;
 
-			data_in.v.clear();
-			data_in.v.shrink_to_fit();
-			data_in.v.resize(header_in.size);
+			data_in.clear();
+			data_in.data.resize(header_in.size);
 
 			// read data
 
-			asio::read(socket, asio::buffer(data_in.v.data(), data_in.v.size()), asio::transfer_exactly(header_in.size), ec);
+			asio::read(socket, asio::buffer(data_in.data.data(), data_in.data.size()), asio::transfer_exactly(header_in.size), ec);
 
 			if (ec) break;
 

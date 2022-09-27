@@ -13,6 +13,6 @@ namespace netcp
 		tcp_client(const on_receive_t& on_receive_fn);
 		~tcp_client();
 
-		void connect(const std::string& ip, uint16_t port);
+		bool connect(const std::string& ip, uint16_t port);
 	};
 }

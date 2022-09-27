@@ -86,9 +86,11 @@ namespace jc::prof
 			SetConsoleTextAttribute(CONSOLE_OUT, WHITE);
 #endif
 
-#ifdef JC_SERVER
 #ifdef _DEBUG
+#ifdef JC_SERVER
 			SetWindowPos(console_hwnd, 0, 0, 675, 1000, 650, 0);
+#elif defined(JC_MASTERSV)
+			SetWindowPos(console_hwnd, 0, -1000, 675, 1000, 650, 0);
 #endif
 #endif
 		}

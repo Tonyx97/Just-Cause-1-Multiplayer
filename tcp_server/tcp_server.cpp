@@ -1,3 +1,5 @@
+#include <defs/standard.h>
+
 #include "tcp_server.h"
 
 namespace netcp
@@ -12,7 +14,7 @@ namespace netcp
 		port = remote_ep.port();
 		ip = remote_ep.address().to_string();
 
-		printf_s("client connected (0x%x -> %s:%i)\n", cid, ip.c_str(), port);
+		log(GREEN, "Client connected ({:x} -> {}:{})", cid, ip, port);
 
 		future = std::async(std::launch::async, &tcp_server_client::update, this);
 	}
@@ -49,7 +51,7 @@ namespace netcp
 
 	void tcp_server::update()
 	{
-		while (!GetAsyncKeyState(VK_F8))
+		while (!GetAsyncKeyState(VK_F7))
 		{
 			{
 				std::lock_guard lock(clients_mtx);
@@ -68,7 +70,7 @@ namespace netcp
 				SetConsoleTitleA(std::format("Connections: {} (free cids: {})", clients.size(), free_cids.size()).c_str());
 			}
 
-			Sleep(250);
+			Sleep(25);
 		}
 	}
 
@@ -82,8 +84,6 @@ namespace netcp
 
 	void tcp_server::accept_connections()
 	{
-		printf_s("waiting for connection...\n");
-
 		acceptor.async_accept([this](asio::error_code ec, asio::ip::tcp::socket socket)
 		{
 			if (!ec)
@@ -92,7 +92,7 @@ namespace netcp
 
 				clients.push_back(std::make_shared<tcp_server_client>(on_receive_fn, socket, get_free_cid()));
 			}
-			else printf_s("connection refused %s\n", ec.message().c_str());
+			else log(RED, "Connection refused '{}'", ec.message());
 
 			accept_connections();
 		});

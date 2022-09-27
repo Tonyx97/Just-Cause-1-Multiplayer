@@ -1,7 +1,5 @@
 #include <defs/standard.h>
 
-#include <ports.h>
-
 #include <timer/timer.h>
 
 #include "net.h"
@@ -10,6 +8,8 @@
 
 #include <shared_mp/net_handlers/all.h>
 #include <shared_mp/player_client/player_client.h>
+
+#include <tcp_client.h>
 
 namespace world_rg
 {
@@ -71,8 +71,12 @@ bool Net::init()
 
 	// create server host
 
+	logt(YELLOW, "Creating host...");
+
 	if (!(sv = enet_host_create(&address, enet::MAX_PLAYERS, ChannelID_Max, 0, 0)))
 		return logbwt(RED, "Could not create server host");
+
+	logt(GREEN, "Host created");
 
 	world_rg = JC_ALLOC(WorldRg,
 		i16vec3 { RG_WORLD_CHUNK_COUNT, 1, RG_WORLD_CHUNK_COUNT },
@@ -83,6 +87,30 @@ bool Net::init()
 		world_rg::on_update,
 		world_rg::on_remove);
 
+	logt(GREEN, "WorldRg created");
+
+	// initialize masterserver connection
+
+	ms_conn = new netcp::tcp_client([](netcp::client_interface* cl, const netcp::packet_header& header, const Buffer& data)
+	{
+		switch (header.id)
+		{
+		case ServerToMsPacket_Verify:
+		{
+			log(YELLOW, "Message from masterserver: {}", data.get<std::string>());
+			break;
+		}
+		}
+	});
+
+	const bool ms_connected = ms_conn->connect("127.0.0.1", netcp::CLIENT_OR_SERVER_TO_MS_PORT);
+
+	check(ms_connected, "Could not establish connection to the master server");
+
+	logt(GREEN, "Connected to masterserver");
+
+	ms_conn->send_packet(ServerToMsPacket_Verify, "todo - pending key");
+
 	logt(GREEN, "Server initialized");
 
 	return true;
@@ -90,6 +118,10 @@ bool Net::init()
 
 void Net::destroy()
 {
+	// close masterserver connection
+
+	delete ms_conn;
+
 	// destroy and clear object list
 
 	clear_object_list();

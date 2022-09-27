@@ -6,6 +6,8 @@
 
 class WorldRg;
 
+namespace netcp { class tcp_client; }
+
 class Net : public ObjectLists
 {
 private:
@@ -15,6 +17,8 @@ private:
 	Settings settings {};
 
 	ENetHost* sv = nullptr;
+
+	netcp::tcp_client* ms_conn = nullptr;
 
 	void send_broadcast_impl(const Packet& p, PlayerClient* ignore_pc = nullptr);
 	void send_broadcast_joined_impl(const Packet& p, PlayerClient* ignore_pc = nullptr);

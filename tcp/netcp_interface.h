@@ -7,6 +7,9 @@
 #include <asio.hpp>
 
 #include "ports.h"
+#include "packets.h"
+
+#include <utils/buffer.h>
 
 namespace netcp
 {
@@ -21,14 +24,9 @@ namespace netcp
 		uint16_t id = 0ui16;
 		uint32_t size = 0u;
 	};
-
-	struct packet_data
-	{
-		std::vector<uint8_t> v;
-	};
 #pragma pack(pop)
 
-	using on_receive_t = std::function<void(class client_interface*, const packet_header& header, const packet_data& data)>;
+	using on_receive_t = std::function<void(class client_interface*, const packet_header& header, const Buffer& data)>;
 
 	class client_interface
 	{
@@ -43,8 +41,8 @@ namespace netcp
 		packet_header header_in {},
 					  header_out {};
 
-		packet_data data_in {},
-					data_out {};
+		Buffer data_in {},
+			   data_out {};
 
 		CID cid = INVALID_CID;
 
@@ -72,7 +70,11 @@ namespace netcp
 		template <typename T>
 		void send_packet(uint16_t id, const T& out_data)
 		{
-			send_packet(id, &out_data, sizeof(out_data));
+			Buffer data;
+
+			data.add(out_data);
+
+			send_packet(id, std::bit_cast<void*>(data.data.data()), data.data.size());
 		}
 
 		bool is_connected() const { return socket.is_open(); }
