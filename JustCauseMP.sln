@@ -26,6 +26,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared_projects", "shared_p
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scripting", "scripting\scripting.vcxitems", "{88CD857C-F04C-49D5-A25C-1A450D5C299F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "masterserver", "masterserver\masterserver.vcxproj", "{CE796F0F-0DB5-4436-9955-5B0E33A868CC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tcp", "tcp", "{AC5A57F4-B329-4EB2-A7A9-84E67093367F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tcp_client", "tcp_client\tcp_client.vcxitems", "{6F1F0BFD-A43E-4D5A-9E21-4E693019C2AE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tcp_server", "tcp_server\tcp_server.vcxitems", "{6C30D496-B14C-4F2A-A94D-380CCC0B4ED4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tcp", "tcp\tcp.vcxitems", "{4F5A76FB-8B26-4930-972A-65D8364176F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -66,6 +76,14 @@ Global
 		{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}.Release|x64.Build.0 = Release|x64
 		{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}.Release|x86.ActiveCfg = Release|Win32
 		{DCF6D994-54FA-4AD0-9ADB-E34FAFFAF46F}.Release|x86.Build.0 = Release|Win32
+		{CE796F0F-0DB5-4436-9955-5B0E33A868CC}.Debug|x64.ActiveCfg = Debug|x64
+		{CE796F0F-0DB5-4436-9955-5B0E33A868CC}.Debug|x64.Build.0 = Debug|x64
+		{CE796F0F-0DB5-4436-9955-5B0E33A868CC}.Debug|x86.ActiveCfg = Debug|Win32
+		{CE796F0F-0DB5-4436-9955-5B0E33A868CC}.Debug|x86.Build.0 = Debug|Win32
+		{CE796F0F-0DB5-4436-9955-5B0E33A868CC}.Release|x64.ActiveCfg = Release|x64
+		{CE796F0F-0DB5-4436-9955-5B0E33A868CC}.Release|x64.Build.0 = Release|x64
+		{CE796F0F-0DB5-4436-9955-5B0E33A868CC}.Release|x86.ActiveCfg = Release|Win32
+		{CE796F0F-0DB5-4436-9955-5B0E33A868CC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +94,10 @@ Global
 		{F4FFAD47-5958-4180-A64C-8E64D8B46368} = {850C26C5-A573-4C24-8607-F01C35716989}
 		{FECC2CD2-9D4B-43D2-81E2-C135D7B71727} = {850C26C5-A573-4C24-8607-F01C35716989}
 		{88CD857C-F04C-49D5-A25C-1A450D5C299F} = {850C26C5-A573-4C24-8607-F01C35716989}
+		{AC5A57F4-B329-4EB2-A7A9-84E67093367F} = {850C26C5-A573-4C24-8607-F01C35716989}
+		{6F1F0BFD-A43E-4D5A-9E21-4E693019C2AE} = {AC5A57F4-B329-4EB2-A7A9-84E67093367F}
+		{6C30D496-B14C-4F2A-A94D-380CCC0B4ED4} = {AC5A57F4-B329-4EB2-A7A9-84E67093367F}
+		{4F5A76FB-8B26-4930-972A-65D8364176F3} = {AC5A57F4-B329-4EB2-A7A9-84E67093367F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5F58BCCD-4443-445F-B734-F6FFC6054D74}
@@ -85,12 +107,22 @@ Global
 		rg\rg.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
 		scripting\scripting.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
 		shared\shared.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
+		tcp\tcp.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
+		tcp_client\tcp_client.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
+		tcp_server\tcp_server.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
+		tcp\tcp.vcxitems*{4f5a76fb-8b26-4930-972a-65d8364176f3}*SharedItemsImports = 9
 		hde\hde.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		profiling\profiling.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		scripting\scripting.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		shared\shared.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
+		tcp\tcp.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
+		tcp_client\tcp_client.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
+		tcp_server\tcp_server.vcxitems*{6c30d496-b14c-4f2a-a94d-380ccc0b4ed4}*SharedItemsImports = 9
+		tcp_client\tcp_client.vcxitems*{6f1f0bfd-a43e-4d5a-9e21-4e693019c2ae}*SharedItemsImports = 9
 		scripting\scripting.vcxitems*{88cd857c-f04c-49d5-a25c-1a450d5c299f}*SharedItemsImports = 9
 		profiling\profiling.vcxitems*{c71a13a3-8825-4c05-8925-e11ecbe42eeb}*SharedItemsImports = 9
+		tcp\tcp.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
+		tcp_server\tcp_server.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
 		profiling\profiling.vcxitems*{dcf6d994-54fa-4ad0-9adb-e34faffaf46f}*SharedItemsImports = 4
 		shared\shared.vcxitems*{dffbc708-890d-491b-980f-e8613869783b}*SharedItemsImports = 9
 		profiling\profiling.vcxitems*{f3a1c58e-2ea8-414b-a0a0-abce1d08a247}*SharedItemsImports = 4
