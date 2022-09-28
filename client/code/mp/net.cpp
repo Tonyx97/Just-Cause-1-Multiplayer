@@ -11,14 +11,26 @@
 
 bool Net::init(const std::string& ip, const std::string& nick)
 {
+	this->nick = nick;
+
+	// initialize tpc connection first
+
+	tcp = JC_ALLOC(netcp::tcp_client, [](netcp::client_interface* ci, const netcp::packet_header& header, serialization_ctx& data)
+	{
+		g_net->on_tcp_message(ci, &header, data);
+	});
+
+	check(tcp, "Could not initialize TCP connection");
+	check(tcp->connect(ip, netcp::CLIENT_TO_SERVER_TCP_PORT), "Could not connect to server via TCP");
+
+	tcp->send_packet(ClientToMsPacket_Password, std::string("password test"));
+
 	enet::init();
 
 	logb(GREEN, "enet initialized");
 
 	if (!(client = enet_host_create(nullptr, 1, 2, 0, 0)))
 		return logb(RED, "Could not create enet client");
-
-	this->nick = nick;
 
 	// setup channels
 
@@ -73,6 +85,10 @@ void Net::pre_destroy()
 	// destroy and clear object list
 
 	clear_object_list();
+
+	// close tcp connection
+
+	JC_FREE(tcp);
 }
 
 void Net::disconnect()
@@ -202,4 +218,21 @@ void Net::update_objects()
 Player* Net::get_localplayer() const
 {
 	return local ? local->get_player() : nullptr;
+}
+
+void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header* header, serialization_ctx& data)
+{
+	using namespace netcp;
+
+	const auto cl = std::bit_cast<netcp::tcp_client*>(ci);
+
+	switch (header->id)
+	{
+	case ClientToMsPacket_Password:
+	{
+		logt(YELLOW, "OK password {}", _deserialize<std::string>(data));
+		break;
+	}
+	default: logt(RED, "[{}] Unknown packet id: {}", CURR_FN, header->id);
+	}
 }

@@ -79,6 +79,9 @@ bool Net::init()
 		g_net->on_client_tcp_message(ci, &header, data);
 	});
 
+	tcp_server->start();
+	//tcp_server->update();
+
 	// initialize enet
 
 	enet::init();
@@ -350,6 +353,9 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 	case ClientToMsPacket_Password:
 	{
 		logt(YELLOW, "Received password from {}: {}", cl->get_ip(), _deserialize<std::string>(data));
+
+		cl->send_packet(ClientToMsPacket_Password, std::string("password received test"));
+
 		break;
 	}
 	default: logt(RED, "[{}] Unknown packet id: {}", CURR_FN, header->id);

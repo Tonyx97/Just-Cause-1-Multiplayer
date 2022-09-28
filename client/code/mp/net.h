@@ -4,6 +4,14 @@
 
 class PlayerClient;
 
+namespace netcp
+{
+	class tcp_client;
+	class client_interface;
+
+	struct packet_header;
+}
+
 class Net : public ObjectLists
 {
 private:
@@ -14,6 +22,8 @@ private:
 	PlayerClient* local = nullptr;
 
 	std::string nick {};
+
+	netcp::tcp_client* tcp = nullptr;
 
 #ifdef JC_DBG
 	int net_stat = 3;
@@ -64,6 +74,10 @@ public:
 	ENetPeer* get_peer() const { return peer; }
 
 	const std::string& get_nick() const { return nick; }
+
+	// callbacks
+
+	void on_tcp_message(netcp::client_interface* ci, const netcp::packet_header* header, serialization_ctx& data);
 };
 
 inline Net* g_net = nullptr;
