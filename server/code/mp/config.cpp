@@ -21,6 +21,9 @@ bool Config::init()
 
 	bool ok = false;
 
+	if (std::tie(server_info.masterserver_ip, ok) = get_field<std::string>("masterserver_ip"); !ok)
+		server_info.masterserver_ip.clear();
+
 	if (std::tie(server_info.ip, ok) = get_field<std::string>("ip"); !ok)
 		server_info.ip.clear();
 
@@ -57,7 +60,7 @@ bool Config::init()
 	});
 
 	check(ms_conn, "Could not create master server connection");
-	check(ms_conn->connect("127.0.0.1", netcp::SERVER_TO_MS_PORT), "Could not establish connection to the master server");
+	check(ms_conn->connect(server_info.masterserver_ip, netcp::SERVER_TO_MS_PORT), "Could not establish connection to the master server");
 
 	ms_conn->send_packet(SharedMsPacket_Type, netcp::ServerClientType_Server);
 	ms_conn->send_packet(ServerToMsPacket_Verify, std::string("todo - pending key"));

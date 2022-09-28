@@ -111,6 +111,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 		g_game_control->create_global_objects();
 
+		g_ui->init();
 		g_renderer->hook_present();
 		g_game_status->hook_dispatcher();
 		g_key->hook_key_input();
@@ -134,6 +135,10 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		jc::hooks::hook_queued();
 
 		log(GREEN, "Loaded from hook");
+
+		// show game window after the initialization is completed
+
+		ShowWindow(g_ui->get_window(), SW_SHOW);
 
 		initialized = true;
 	}

@@ -8,9 +8,8 @@
 class UI
 {
 private:
-	HWND jc_hwnd = nullptr;
 
-	std::once_flag initialize_flag;
+	HWND jc_hwnd = nullptr;
 
 	bool initialized = false,
 		 show_overlay_debug = true,
@@ -39,9 +38,6 @@ private:
 
 	int bullets_per_shoot = 1;
 
-	std::atomic_bool destroying = false,
-					 destroyed	= false;
-
 	ImGuiIO* io = nullptr;
 
 	void begin();
@@ -54,6 +50,7 @@ private:
 	void end();
 
 public:
+
 	void init();
 	void destroy();
 	void dispatch();
@@ -61,9 +58,6 @@ public:
 	void begin_window(const char* name, const ImVec2& pos, const ImVec2& size, const ImVec4& color);
 	void end_window();
 	void draw_filled_rect(float x, float y, float w, float h, const ImVec4& color);
-
-	bool is_destroying() const { return destroying; }
-	bool is_destroyed() const { return destroyed; }
 
 	float add_text(const char* text, float x, float y, float s, const ImVec4& color, bool center, int shadow = -1, float wrap = 0.f);
 	float add_text(const wchar_t* text, float x, float y, float s, const ImVec4& color, bool center, int shadow = -1, float wrap = 0.f);

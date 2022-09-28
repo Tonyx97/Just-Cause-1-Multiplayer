@@ -12,11 +12,11 @@ int main()
 
 	netcp::tcp_server sv(netcp::SERVER_TO_MS_PORT);
 
-	sv.set_on_receive_fn([](netcp::client_interface* _cl, const netcp::packet_header& header, serialization_ctx& data)
+	sv.set_on_receive_fn([](netcp::client_interface* ci, const netcp::packet_header& header, serialization_ctx& data)
 	{
 		using namespace netcp;
 
-		const auto cl = std::bit_cast<netcp::tcp_server_client*>(_cl);
+		const auto cl = std::bit_cast<netcp::tcp_server_client*>(ci);
 
 		switch (header.id)
 		{

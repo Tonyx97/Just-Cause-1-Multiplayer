@@ -10,7 +10,8 @@ private:
 
 	struct ServerInfo
 	{
-		std::string ip,
+		std::string masterserver_ip,
+					ip,
 					name,
 					password,
 					gamemode,

@@ -129,7 +129,7 @@ void UI::init()
 
 	initialized = true;
 
-	log(GREEN, "Created UI in thread 0x{:x}", GetCurrentThreadId());
+	log(GREEN, "Created UI");
 }
 
 void UI::destroy()
@@ -147,8 +147,6 @@ void UI::destroy()
 	g_key->block_input(false);
 
 	initialized = false;
-	destroyed	= true;
-	destroying	= false;
 }
 
 void UI::dispatch()
@@ -231,8 +229,6 @@ ImVec2 UI::calc_text_size(const char* text, float size, float wrap)
 
 void UI::begin()
 {
-	std::call_once(initialize_flag, [&]() { init(); });
-
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();

@@ -9,7 +9,7 @@
 #include <shared_mp/net_handlers/all.h>
 #include <shared_mp/player_client/player_client.h>
 
-#include "ports.h"
+#include <tcp_server.h>
 
 namespace world_rg
 {
@@ -67,6 +67,18 @@ bool Net::init()
 
 	logt(GREEN, "Connected to masterserver");
 
+	// initialize tcp server so players can connect and communicate
+	// with tcp as well
+
+	tcp_server = JC_ALLOC(netcp::tcp_server, netcp::CLIENT_TO_SERVER_TCP_PORT);
+
+	check(tcp_server, "Could not create tcp connection");
+	
+	tcp_server->set_on_receive_fn([](netcp::client_interface* ci, const netcp::packet_header& header, serialization_ctx& data)
+	{
+		g_net->on_client_tcp_message(ci, &header, data);
+	});
+
 	// initialize enet
 
 	enet::init();
@@ -118,6 +130,10 @@ void Net::destroy()
 
 	enet_host_destroy(sv);
 	enet_deinitialize();
+
+	// close the tcp connection to clients
+
+	JC_FREE(tcp_server);
 
 	// destroy settings
 
@@ -321,4 +337,21 @@ void Net::sync_net_objects(bool force)
 
 	if (force || refresh_timer.ready())
 		world_rg->update();
+}
+
+void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet_header* header, serialization_ctx& data)
+{
+	using namespace netcp;
+
+	const auto cl = std::bit_cast<netcp::tcp_server_client*>(ci);
+
+	switch (header->id)
+	{
+	case ClientToMsPacket_Password:
+	{
+		logt(YELLOW, "Received password from {}: {}", cl->get_ip(), _deserialize<std::string>(data));
+		break;
+	}
+	default: logt(RED, "[{}] Unknown packet id: {}", CURR_FN, header->id);
+	}
 }

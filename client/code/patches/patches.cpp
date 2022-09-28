@@ -234,6 +234,17 @@ void jc::patches::apply_initial_patches()
 	jc::write(0x74ui8, 0x7FED33);
 #endif
 
+	// replace 10 with 0 so the game opening doesn't delay
+
+	jc::write(0, jc::g::FOCUS_FREEZE_TIME);
+
+	// avoid showing the game window before the mod initializes
+
+	jc::nop(0x403335, 9); // nop ecx move & pushes
+	jc::nop(0x403343, 6); // nop ShowWindow call
+
+	//jc::write(0ui64, 0x403424);
+
 	// remove the localplayer minimum regeneration
 
 	jc::write(0.f, 0x4C0C07);

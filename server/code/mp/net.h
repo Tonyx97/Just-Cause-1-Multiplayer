@@ -7,6 +7,14 @@
 
 class WorldRg;
 
+namespace netcp
+{
+	class tcp_server;
+	class client_interface;
+
+	struct packet_header;
+}
+
 class Net : public ObjectLists
 {
 private:
@@ -18,6 +26,8 @@ private:
 	Config config {};
 
 	ENetHost* sv = nullptr;
+
+	netcp::tcp_server* tcp_server = nullptr;
 
 	void send_broadcast_impl(const Packet& p, PlayerClient* ignore_pc = nullptr);
 	void send_broadcast_joined_impl(const Packet& p, PlayerClient* ignore_pc = nullptr);
@@ -41,6 +51,10 @@ public:
 
 	Settings& get_settings() { return settings; }
 	Config& get_config() { return config; }
+
+	// callbacks
+
+	void on_client_tcp_message(netcp::client_interface* ci, const netcp::packet_header* header, serialization_ctx& data);
 };
 
 inline Net* g_net = nullptr;
