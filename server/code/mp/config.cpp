@@ -3,8 +3,11 @@
 #include <timer/timer.h>
 
 #include "config.h"
+#include "net.h"
 
 #include <tcp_client.h>
+
+#include <shared_mp/player_client/player_client.h>
 
 bool Config::init()
 {
@@ -24,6 +27,12 @@ bool Config::init()
 	if (std::tie(server_info.name, ok) = get_field<std::string>("server_name"); !ok)
 		server_info.name = "Default JC1:MP Server";
 
+	if (std::tie(server_info.discord, ok) = get_field<std::string>("discord"); !ok)
+		server_info.discord.clear();
+
+	if (std::tie(server_info.community, ok) = get_field<std::string>("community"); !ok)
+		server_info.community.clear();
+
 	if (std::tie(server_info.password, ok) = get_field<std::string>("password"); !ok)
 		server_info.ip.clear();
 
@@ -35,13 +44,13 @@ bool Config::init()
 
 	// initialize masterserver connection
 
-	ms_conn = JC_ALLOC(netcp::tcp_client, [](netcp::client_interface* _cl, const netcp::packet_header& header, const Buffer& data)
+	ms_conn = JC_ALLOC(netcp::tcp_client, [](netcp::client_interface* _cl, const netcp::packet_header& header, serialization_ctx& data)
 	{
 		switch (header.id)
 		{
 		case ServerToMsPacket_Verify:
 		{
-			logt(YELLOW, "Message from masterserver: {}", data.get<std::string>());
+			logt(YELLOW, "Message from masterserver: {}", _deserialize<std::string>(data));
 			break;
 		}
 		}
@@ -51,7 +60,7 @@ bool Config::init()
 	check(ms_conn->connect("127.0.0.1", netcp::SERVER_TO_MS_PORT), "Could not establish connection to the master server");
 
 	ms_conn->send_packet(SharedMsPacket_Type, netcp::ServerClientType_Server);
-	ms_conn->send_packet(ServerToMsPacket_Verify, "todo - pending key");
+	ms_conn->send_packet(ServerToMsPacket_Verify, std::string("todo - pending key"));
 
 	return true;
 }
@@ -69,6 +78,28 @@ void Config::process()
 
 	if (update_ms_info.ready())
 	{
-		ms_conn->send_packet(ServerToMsPacket_Info, server_info.name);
+		serialization_ctx data;
+
+		_serialize(data,
+			server_info.ip,
+			server_info.name,
+			server_info.discord,
+			server_info.community,
+			server_info.password,
+			server_info.gamemode,
+			server_info.refresh_rate);
+
+		int players_count = 0;
+
+		g_net->for_each_player_client([&](NID, PlayerClient* pc)
+		{
+			_serialize(data, pc->get_nick(), pc->get_roles());
+			
+			++players_count;
+		});
+
+		// send this server's info to the masterserver
+
+		ms_conn->send_packet(ServerToMsPacket_Info, data);
 	}
 }

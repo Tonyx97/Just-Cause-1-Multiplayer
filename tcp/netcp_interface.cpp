@@ -22,8 +22,8 @@ namespace netcp
 		header_out.size = static_cast<uint32_t>(size);
 
 		data_out.clear();
-		data_out.add(header_out);
-		data_out.insert(out_data, size);
+		_serialize(data_out, header_out);
+		data_out.append(std::bit_cast<uint8_t*>(out_data), size);
 
 		std::error_code ec;
 
@@ -42,14 +42,15 @@ namespace netcp
 
 			if (ec) break;
 
-			data_in.clear();
-			data_in.data.resize(header_in.size);
-
 			// read data
+
+			data_in.resize(header_in.size);
 
 			asio::read(socket, asio::buffer(data_in.data.data(), data_in.data.size()), asio::transfer_exactly(header_in.size), ec);
 
 			if (ec) break;
+
+			data_in.recalculate_begin_end();
 
 			on_receive_fn(this, header_in, data_in);
 		}

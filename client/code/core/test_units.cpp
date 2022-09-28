@@ -31,7 +31,7 @@
 #include <game/object/base/comps/physical.h>
 #include <game/sys/all.h>
 
-#include <net/serializer.h>
+#include <serializer/serializer.h>
 
 #include <luas.h>
 

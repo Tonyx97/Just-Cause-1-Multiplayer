@@ -32,7 +32,6 @@
 #include <memory/memory.h>
 
 #include <utils/utils.h>
-#include <utils/buffer.h>
 
 #if defined(JC_CLIENT) || defined(JC_SERVER) || defined(JC_ASSET_CONV)
 #include <math/math.h>

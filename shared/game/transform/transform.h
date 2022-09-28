@@ -63,6 +63,8 @@ public:
 
 	TransformTR get_tr() const;
 
+	raw_mat4 to_raw() const;
+
 	const mat4& get_matrix() const { return m; }
 
 	const vec4& row(int i) const { return m[i]; }

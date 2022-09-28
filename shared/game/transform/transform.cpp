@@ -92,6 +92,15 @@ TransformTR Transform::get_tr() const
 	return tr;
 }
 
+raw_mat4 Transform::to_raw() const
+{
+	raw_mat4 out;
+
+	memcpy(&out, this, sizeof(out));
+
+	return out;
+}
+
 #ifdef JC_CLIENT
 Transform Transform::look_at(const vec3& eye, const vec3& target)
 {

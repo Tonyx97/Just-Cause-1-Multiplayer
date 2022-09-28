@@ -13,7 +13,9 @@ private:
 		std::string ip,
 					name,
 					password,
-					gamemode;
+					gamemode,
+					discord,
+					community;
 
 		int refresh_rate;
 	} server_info;

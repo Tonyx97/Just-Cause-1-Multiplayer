@@ -37,7 +37,7 @@ public:
 	{
 		// add the packet data to the serialization context
 
-		ctx.add_data(e.packet->data, e.packet->dataLength);
+		ctx.set_data(e.packet->data, e.packet->dataLength);
 
 		// always get the packet id first
 

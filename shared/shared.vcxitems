@@ -22,8 +22,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)math\math.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\channels.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\interface.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)net\obj_serializer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)net\packet.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)net\serializer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\all.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\chat\nh_chat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\debug\nh_dbg.h" />
@@ -44,7 +44,7 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)game\transform\transform.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)net\interface.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)net\serializer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)net\obj_serializer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\chat\nh_chat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\debug\nh_dbg.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)shared_mp\net_handlers\generic\vehicle\nh_vehicle.cpp" />

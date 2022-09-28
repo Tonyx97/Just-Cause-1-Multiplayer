@@ -10,7 +10,7 @@
 #include "packets.h"
 #include "tcp_enums.h"
 
-#include <utils/buffer.h>
+#include <serializer/serializer.h>
 
 namespace netcp
 {
@@ -27,7 +27,7 @@ namespace netcp
 	};
 #pragma pack(pop)
 
-	using on_receive_t = std::function<void(class client_interface*, const packet_header& header, const Buffer& data)>;
+	using on_receive_t = std::function<void(class client_interface*, const packet_header& header, serialization_ctx& data)>;
 
 	class client_interface
 	{
@@ -42,8 +42,8 @@ namespace netcp
 		packet_header header_in {},
 					  header_out {};
 
-		Buffer data_in {},
-			   data_out {};
+		serialization_ctx data_in {},
+						  data_out {};
 
 		CID cid = INVALID_CID;
 
@@ -69,12 +69,17 @@ namespace netcp
 		void update();
 
 		template <typename T>
-		void send_packet(uint16_t id, const T& out_data)
+		void send_packet(uint16_t id, const T& out_data) requires(!std::is_same_v<T, serialization_ctx>)
 		{
-			Buffer data;
+			serialization_ctx data;
 
-			data.add(out_data);
+			_serialize(data, out_data);
 
+			send_packet(id, std::bit_cast<void*>(data.data.data()), data.data.size());
+		}
+
+		void send_packet(uint16_t id, const serialization_ctx& data)
+		{
 			send_packet(id, std::bit_cast<void*>(data.data.data()), data.data.size());
 		}
 

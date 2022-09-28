@@ -37,6 +37,11 @@ using ivec2 = glm::i32vec2;
 using uvec2 = glm::u32vec2;
 using ivec1 = glm::i32vec1;
 
+struct raw_mat4
+{
+	float m[4][4];
+};
+
 /**
 * Matrix 4x4 overload from GLM to use better SSE
 * operations such as multiplication.

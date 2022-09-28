@@ -1,8 +1,17 @@
 #pragma once
 
+#define ENET_FEATURE_ADDRESS_MAPPING
+
+#include <enet.h>
+
+#include <shared_mp/objs/all.h>
+
+#include <serializer/serializer.h>
+
+#include <net/obj_serializer.h>
+
 #include "channels.h"
 #include "packets.h"
-#include "serializer.h"
 #include "packet.h"
 
 class PlayerClient;

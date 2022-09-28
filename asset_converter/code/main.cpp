@@ -1,6 +1,8 @@
 #include <defs/libs.h>
 #include <defs/standard.h>
 
+#include <serializer/serializer.h>
+
 #include <assimp/Exporter.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/SceneCombiner.h>
@@ -45,11 +47,11 @@ bool convert_to_rbm(const std::string& path, const std::string& filename, const 
 
 	const auto scene_transform = *(mat4*)&scene->mRootNode->mTransformation;
 
-	Buffer out {};
+	serialization_ctx out {};
 
 	// add header
 
-	out.add("RBMDL", 1, 3, 1, -vec3(10.f, 10.f, 10.f), vec3(10.f, 10.f, 10.f), scene->mNumMeshes);
+	_serialize(out, std::string("RBMDL"), 1, 3, 1, -vec3(10.f, 10.f, 10.f), vec3(10.f, 10.f, 10.f), scene->mNumMeshes);
 
 	std::function<void(aiNode*)> node_processing = [&](aiNode* node)
 	{
@@ -104,36 +106,36 @@ bool convert_to_rbm(const std::string& path, const std::string& filename, const 
 			// write the data
 			// todojc - add support for more material types like bump, skinned etc
 
-			out.add("DiffuseVertexColors");
-			out.add(texture);
+			_serialize(out, std::string("DiffuseVertexColors"));
+			_serialize(out, texture);
 
-			for (int i = 0; i < 20; ++i) out.add(0.f);
+			for (int i = 0; i < 20; ++i) _serialize(out, 0.f);
 
-			out.add(3); // triangle list
-			out.add(vertices.size()); // vertex count
+			_serialize(out, 3); // triangle list
+			_serialize(out, vertices.size()); // vertex count
 
 			for (const auto& vertex : vertices)
-				out.add(vertex.position);
+				_serialize(out, vertex.position);
 
-			out.add(vertices.size());
+			_serialize(out, vertices.size());
 
 			for (const auto& vertex : vertices)
 			{
-				out.add(vertex.uv);
-				out.add(vertex.color);
-				out.add(util::pack::pack_float<int8_t>(vertex.normal.x, 127.f));
-				out.add(util::pack::pack_float<int8_t>(vertex.normal.y, 127.f));
-				out.add(util::pack::pack_float<int8_t>(vertex.normal.z, 127.f));
-				out.add(0ui8);
+				_serialize(out, vertex.uv);
+				_serialize(out, vertex.color);
+				_serialize(out, util::pack::pack_float<int8_t>(vertex.normal.x, 127.f));
+				_serialize(out, util::pack::pack_float<int8_t>(vertex.normal.y, 127.f));
+				_serialize(out, util::pack::pack_float<int8_t>(vertex.normal.z, 127.f));
+				_serialize(out, 0ui8);
 			}
 
-			out.add(0);
-			out.add(indices.size());
+			_serialize(out, 0);
+			_serialize(out, indices.size());
 
 			for (auto index : indices)
-				out.add(index);
+				_serialize(out, index);
 
-			out.add(0x89ABCDEF);
+			_serialize(out, 0x89ABCDEF);
 		}
 
 		for (auto i = 0u; i < node->mNumChildren; ++i)

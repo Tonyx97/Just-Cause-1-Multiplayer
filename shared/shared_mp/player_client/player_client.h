@@ -2,6 +2,16 @@
 
 class Player;
 
+using PlayerClientRole = uint64_t;
+
+enum _PlayerClientRole : PlayerClientRole
+{
+	PlayerClientRole_Normal			= (1 << 0),
+	PlayerClientRole_Moderator		= (1 << 1),
+	PlayerClientRole_Admin			= (1 << 2),
+	PlayerClientRole_Owner			= (1 << 3),
+};
+
 class PlayerClient
 {
 private:
@@ -13,6 +23,8 @@ private:
 
 #ifdef JC_SERVER
 	ENetPeer* peer = nullptr;
+
+	PlayerClientRole roles = PlayerClientRole_Normal;
 
 	bool timed_out = false;
 #endif
@@ -40,6 +52,9 @@ public:
 	const std::string& get_nick() const;
 
 #ifdef JC_SERVER
+	void add_role(PlayerClientRole v);
+	void set_role(PlayerClientRole v);
+	void remove_role(PlayerClientRole v);
 	void startup_sync();
 
 	/**
@@ -61,6 +76,8 @@ public:
 
 	bool is_timed_out() const { return timed_out; }
 	bool compare_address(const ENetAddress& peer);
+
+	PlayerClientRole get_roles() const { return roles; }
 
 	ENetPeer* get_peer() const { return peer; }
 

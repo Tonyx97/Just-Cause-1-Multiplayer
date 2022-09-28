@@ -12,7 +12,7 @@ int main()
 
 	netcp::tcp_server sv(netcp::SERVER_TO_MS_PORT);
 
-	sv.set_on_receive_fn([](netcp::client_interface* _cl, const netcp::packet_header& header, const Buffer& data)
+	sv.set_on_receive_fn([](netcp::client_interface* _cl, const netcp::packet_header& header, serialization_ctx& data)
 	{
 		using namespace netcp;
 
@@ -22,7 +22,7 @@ int main()
 		{
 		case SharedMsPacket_Type:
 		{
-			const auto type = data.get<ServerClientType>();
+			const auto type = _deserialize<ServerClientType>(data);
 
 			cl->set_type(type);
 
@@ -38,9 +38,9 @@ int main()
 		{
 			if (cl->is_server())
 			{
-				logt(YELLOW, "Verifying server with key: {}", data.get<std::string>());
+				logt(YELLOW, "Verifying server with key: {}", _deserialize<std::string>(data));
 
-				cl->send_packet(ServerToMsPacket_Verify, "verified");
+				cl->send_packet(ServerToMsPacket_Verify, std::string("verified"));
 			}
 
 			break;
@@ -49,7 +49,17 @@ int main()
 		{
 			if (cl->is_server())
 			{
-				logt(YELLOW, "info: {}", data.get<std::string>());
+				const auto ip = _deserialize<std::string>(data);
+				const auto name = _deserialize<std::string>(data);
+				const auto discord = _deserialize<std::string>(data);
+				const auto community = _deserialize<std::string>(data);
+				const auto password = _deserialize<std::string>(data);
+				const auto gamemode = _deserialize<std::string>(data);
+				const auto refresh_rate = _deserialize<int>(data);
+
+				logt(YELLOW, "info 1: {}", name);
+				logt(YELLOW, "info 2: {}", discord);
+				logt(YELLOW, "info 3: {}", community);
 			}
 
 			break;

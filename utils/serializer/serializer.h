@@ -1,11 +1,5 @@
 #pragma once
 
-#define ENET_FEATURE_ADDRESS_MAPPING
-
-#include <enet.h>
-
-#include <shared_mp/objs/all.h>
-
 // declarations
 
 struct serialization_ctx
@@ -19,14 +13,30 @@ struct serialization_ctx
 
 	serialization_ctx() {}
 
-	inline void add_data(uint8_t* src, size_t size)
+	inline void set_data(uint8_t* src, size_t size)
 	{
 		data.resize(size);
 
 		memcpy(data.data(), src, size);
 
+		recalculate_begin_end();
+	}
+
+	inline void recalculate_begin_end()
+	{
 		begin = data.data();
 		end = begin + data.size();
+	}
+
+	inline void append(uint8_t* src, size_t size)
+	{
+		data.insert(data.end(), src, src + size);
+	}
+
+	inline void resize(size_t v)
+	{
+		clear();
+		data.resize(v);
 	}
 
 	template <typename T>
@@ -63,18 +73,31 @@ struct serialization_ctx
 	{
 		memcpy(out, std::exchange(begin, begin + size), size);
 	}
+
+	inline void clear()
+	{
+		data.clear();
+		begin = end = nullptr;
+		write_offset = -1;
+	}
+
+	void to_file(const std::string& filename);
+
+	inline void copy_to(uint8_t* dst)
+	{
+		memcpy(dst, data.data(), data.size());
+	}
 };
 
+#if defined(JC_CLIENT) || defined(JC_SERVER)
 #ifdef JC_DBG
-inline std::set<std::string> serialized_objects;
+void register_serialized_object(int t, const std::string& name);
 
-#define ADD_SERIALIZED_OBJECT(T, t)	const auto type_name = typeid(T).name(); \
-									if (!serialized_objects.contains(type_name)) \
-									{ \
-										log(CYAN, "Serialized Object ({}): {}", t, type_name); \
-										serialized_objects.insert(type_name); \
-									}
+#define ADD_SERIALIZED_OBJECT(T, t)	register_serialized_object(t, typeid(T).name())
 								 
+#else
+#define ADD_SERIALIZED_OBJECT(T, t)
+#endif
 #else
 #define ADD_SERIALIZED_OBJECT(T, t)
 #endif
@@ -123,11 +146,6 @@ constexpr bool is_string_v = std::is_same_v<T, std::string>;
 template <typename T>
 constexpr bool is_complex_v = !is_plain_copyable_v<T> && !is_string_v<T> && !std::is_pointer_v<T> && !is_vector_v<T>;
 
-template <typename T>
-constexpr bool is_net_object_v = std::derived_from<std::remove_pointer_t<std::remove_reference_t<T>>, NetObject>;
-
-NetObject* get_net_object_from_lists(NID nid, NetObjectType type);
-
 template <typename T, typename... A>
 void _serialize(serialization_ctx&, const T&, A&&...) requires(is_plain_copyable_v<T>);
 
@@ -140,9 +158,6 @@ void _serialize(serialization_ctx&, const T&, A&&...) requires(is_string_v<T>);
 template <typename T, typename... A>
 void _serialize(serialization_ctx&, const T&, A&&...) requires(is_complex_v<T>);
 
-template <typename T, typename... A>
-void _serialize(serialization_ctx&, const T&, A&&...) requires(is_net_object_v<T>);
-
 template <typename T>
 T _deserialize(serialization_ctx&) requires(is_plain_copyable_v<T>);
 
@@ -154,9 +169,6 @@ T _deserialize(serialization_ctx&) requires(is_string_v<T>);
 
 template <typename T>
 T _deserialize(serialization_ctx&) requires(is_complex_v<T>);
-
-template <typename T>
-T _deserialize(serialization_ctx&) requires(is_net_object_v<T>);
 
 // definitions
 
@@ -260,24 +272,6 @@ void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_com
 		_serialize(ctx, args...);
 }
 
-template <typename T, typename... A>
-void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_net_object_v<T>)
-{
-	ADD_SERIALIZED_OBJECT(v, 4);
-
-	const auto nid = v ? v->get_nid() : INVALID_NID;
-
-	if (nid != INVALID_NID)
-	{
-		_serialize(ctx, nid);
-		_serialize(ctx, v->get_type());
-	}
-	else _serialize(ctx, INVALID_NID);
-
-	if constexpr (sizeof...(args) > 0)
-		_serialize(ctx, args...);
-}
-
 template <typename T>
 T _deserialize(serialization_ctx& ctx) requires(is_plain_copyable_v<T>)
 {
@@ -319,21 +313,6 @@ T _deserialize(serialization_ctx& ctx) requires(is_complex_v<T>)
 	iterate_members<T, deserialize_fn, false>(ctx, v);
 
 	return v;
-}
-
-template <typename T>
-T _deserialize(serialization_ctx& ctx) requires(is_net_object_v<T>)
-{
-	const auto nid = _deserialize<NID>(ctx);
-
-	if (nid != INVALID_NID)
-	{
-		const auto type = _deserialize<NetObjectType>(ctx);
-
-		return get_net_object_from_lists(nid, type);
-	}
-
-	return nullptr;
 }
 
 template <typename... A>

@@ -321,38 +321,38 @@ DEFINE_HOOK_STDCALL(load_save, 0x66D7F0, void*, ref<void*>* r)
 //
 DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filename, uint8_t* buffer, size_t size, size_t offset)
 {
-	Buffer savegame;
+	serialization_ctx savegame;
 
-	savegame.add(1.f);
-	savegame.add(Transform(vec3(658.f, 100.08f, 4773.71f)));
-	//savegame.add(Transform(vec3(2891.f, 71.65f, -3438.51f)));
-	//savegame.add(Transform(vec3(2857.f, 92.f, -3604.f)));
-	//savegame.add(Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
-	savegame.add(0);	// ammo grenades
+	_serialize(savegame, 1.f);
+	_serialize(savegame, Transform(vec3(658.f, 100.08f, 4773.71f)).to_raw());
+	//_serialize(savegame, Transform(vec3(2891.f, 71.65f, -3438.51f)));
+	//_serialize(savegame, Transform(vec3(2857.f, 92.f, -3604.f)));
+	//_serialize(savegame, Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
+	_serialize(savegame, 0);	// ammo grenades
 
 	for (int i = 0; i < 14; ++i)
-		savegame.add(0);
+		_serialize(savegame, 0);
 
-	savegame.add(0);
-	savegame.add(0); // weapon count
+	_serialize(savegame, 0);
+	_serialize(savegame, 0); // weapon count
 
-	savegame.add(0);
-	savegame.add(0);
-	savegame.add(0);
-	savegame.add(0);
+	_serialize(savegame, 0);
+	_serialize(savegame, 0);
+	_serialize(savegame, 0);
+	_serialize(savegame, 0);
 
-	savegame.add(0ui8);
+	_serialize(savegame, 0ui8);
 
-	savegame.add(0ui8);
-	savegame.add(0ui8);
+	_serialize(savegame, 0ui8);
+	_serialize(savegame, 0ui8);
 
-	savegame.add(25.f);
-	savegame.add(3);
-	savegame.add(12.5f);
-	savegame.add(25.f);
+	_serialize(savegame, 25.f);
+	_serialize(savegame, 3);
+	_serialize(savegame, 12.5f);
+	_serialize(savegame, 25.f);
 
 	for (int i = 0; i < 21; ++i)
-		savegame.add(true);
+		_serialize(savegame, true);
 
 	savegame.copy_to(buffer);
 
