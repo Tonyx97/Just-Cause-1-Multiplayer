@@ -41,7 +41,7 @@ bool Config::init()
 		{
 		case ServerToMsPacket_Verify:
 		{
-			log(YELLOW, "Message from masterserver: {}", data.get<std::string>());
+			logt(YELLOW, "Message from masterserver: {}", data.get<std::string>());
 			break;
 		}
 		}

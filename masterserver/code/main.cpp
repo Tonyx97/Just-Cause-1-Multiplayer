@@ -27,10 +27,10 @@ int main()
 			cl->set_type(type);
 
 			if (type == ServerClientType_Client)
-				log(GREEN, "Client connected ({:x} -> {}:{})", cl->get_cid(), cl->get_ip(), cl->get_port());
+				logt(GREEN, "Client connected ({:x} -> {}:{})", cl->get_cid(), cl->get_ip(), cl->get_port());
 			else if (type == ServerClientType_Server)
-				log(GREEN, "Server connected ({:x} -> {}:{})", cl->get_cid(), cl->get_ip(), cl->get_port());
-			else log(RED, "Invalid type of connection received: {}", uint8_t(type));
+				logt(GREEN, "Server connected ({:x} -> {}:{})", cl->get_cid(), cl->get_ip(), cl->get_port());
+			else logt(RED, "Invalid type of connection received: {}", uint8_t(type));
 
 			break;
 		}
@@ -38,7 +38,7 @@ int main()
 		{
 			if (cl->is_server())
 			{
-				log(YELLOW, "Verifying server with key: {}", data.get<std::string>());
+				logt(YELLOW, "Verifying server with key: {}", data.get<std::string>());
 
 				cl->send_packet(ServerToMsPacket_Verify, "verified");
 			}
@@ -49,12 +49,12 @@ int main()
 		{
 			if (cl->is_server())
 			{
-				log(YELLOW, "info: {}", data.get<std::string>());
+				logt(YELLOW, "info: {}", data.get<std::string>());
 			}
 
 			break;
 		}
-		default: log(RED, "Unknown packet id: {}", header.id);
+		default: logt(RED, "Unknown packet id: {}", header.id);
 		}
 	});
 
