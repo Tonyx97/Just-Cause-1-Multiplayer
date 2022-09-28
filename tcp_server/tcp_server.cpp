@@ -13,9 +13,6 @@ namespace netcp
 
 		port = remote_ep.port();
 		ip = remote_ep.address().to_string();
-
-		log(GREEN, "Client connected ({:x} -> {}:{})", cid, ip, port);
-
 		future = std::async(std::launch::async, &tcp_server_client::update, this);
 	}
 

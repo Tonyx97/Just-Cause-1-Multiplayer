@@ -91,7 +91,7 @@ bool Net::init()
 
 	// initialize masterserver connection
 
-	ms_conn = new netcp::tcp_client([](netcp::client_interface* cl, const netcp::packet_header& header, const Buffer& data)
+	ms_conn = JC_ALLOC(netcp::tcp_client, [](netcp::client_interface* _cl, const netcp::packet_header& header, const Buffer& data)
 	{
 		switch (header.id)
 		{
@@ -103,12 +103,11 @@ bool Net::init()
 		}
 	});
 
-	const bool ms_connected = ms_conn->connect("127.0.0.1", netcp::CLIENT_OR_SERVER_TO_MS_PORT);
-
-	check(ms_connected, "Could not establish connection to the master server");
+	check(ms_conn->connect("127.0.0.1", netcp::SERVER_TO_MS_PORT), "Could not establish connection to the master server");
 
 	logt(GREEN, "Connected to masterserver");
 
+	ms_conn->send_packet(SharedMsPacket_Type, netcp::ServerClientType_Server);
 	ms_conn->send_packet(ServerToMsPacket_Verify, "todo - pending key");
 
 	logt(GREEN, "Server initialized");
@@ -120,7 +119,7 @@ void Net::destroy()
 {
 	// close masterserver connection
 
-	delete ms_conn;
+	JC_FREE(ms_conn);
 
 	// destroy and clear object list
 

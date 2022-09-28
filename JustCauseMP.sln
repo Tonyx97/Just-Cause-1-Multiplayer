@@ -136,6 +136,7 @@ Global
 		globals\globals.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
 		profiling\profiling.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
 		tcp\tcp.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
+		tcp_client\tcp_client.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
 		tcp_server\tcp_server.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
 		utils\utils.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
 		globals\globals.vcxitems*{dcf6d994-54fa-4ad0-9adb-e34faffaf46f}*SharedItemsImports = 4

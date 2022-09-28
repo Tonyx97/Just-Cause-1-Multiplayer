@@ -8,6 +8,7 @@
 
 #include "ports.h"
 #include "packets.h"
+#include "tcp_enums.h"
 
 #include <utils/buffer.h>
 
