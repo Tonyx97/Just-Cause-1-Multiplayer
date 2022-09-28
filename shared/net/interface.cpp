@@ -49,9 +49,9 @@ ENetHost* enet::GET_HOST()
 void enet::init()
 {
 	if (enet_initialize() != 0)
-		return log(RED, "Error initializing enet");
+		return logt(RED, "Error initializing enet");
 
-	log(GREEN, "Net initialized");
+	logt(GREEN, "Net initialized");
 
 #ifdef JC_CLIENT
 	//

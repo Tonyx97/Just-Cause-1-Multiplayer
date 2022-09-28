@@ -36,9 +36,21 @@ int main()
 		}
 		case ServerToMsPacket_Verify:
 		{
-			log(YELLOW, "Verifying server with key: {}", data.get<std::string>());
+			if (cl->is_server())
+			{
+				log(YELLOW, "Verifying server with key: {}", data.get<std::string>());
 
-			cl->send_packet(ServerToMsPacket_Verify, "verified");
+				cl->send_packet(ServerToMsPacket_Verify, "verified");
+			}
+
+			break;
+		}
+		case ServerToMsPacket_Info:
+		{
+			if (cl->is_server())
+			{
+				log(YELLOW, "info: {}", data.get<std::string>());
+			}
 
 			break;
 		}

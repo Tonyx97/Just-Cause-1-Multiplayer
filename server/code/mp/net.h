@@ -3,10 +3,9 @@
 #include <shared_mp/object_lists.h>
 
 #include "settings.h"
+#include "config.h"
 
 class WorldRg;
-
-namespace netcp { class tcp_client; }
 
 class Net : public ObjectLists
 {
@@ -16,9 +15,9 @@ private:
 
 	Settings settings {};
 
-	ENetHost* sv = nullptr;
+	Config config {};
 
-	netcp::tcp_client* ms_conn = nullptr;
+	ENetHost* sv = nullptr;
 
 	void send_broadcast_impl(const Packet& p, PlayerClient* ignore_pc = nullptr);
 	void send_broadcast_joined_impl(const Packet& p, PlayerClient* ignore_pc = nullptr);
@@ -41,6 +40,7 @@ public:
 	ENetHost* get_host() const { return sv; }
 
 	Settings& get_settings() { return settings; }
+	Config& get_config() { return config; }
 };
 
 inline Net* g_net = nullptr;

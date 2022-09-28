@@ -11,9 +11,11 @@ enum SharedMsPacketID : TcpPacketID
 enum ServerToMsPacketID : TcpPacketID
 {
 	ServerToMsPacket_Verify = SharedMsPacket_Max,
+	ServerToMsPacket_Info,
+	ServerToMsPacket_Max,
 };
 
 enum ClientToServerPacketID : TcpPacketID
 {
-	ClientToMsPacket_Todo = SharedMsPacket_Max,
+	ClientToMsPacket_Todo = ServerToMsPacket_Max,
 };

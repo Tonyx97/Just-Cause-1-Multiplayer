@@ -20,6 +20,9 @@ namespace netcp
 
 		void set_type(ServerClientType v) { type = v; }
 
+		bool is_client() const { return type == ServerClientType_Client; }
+		bool is_server() const { return type == ServerClientType_Server; }
+
 		ServerClientType get_type() const { return type; }
 
 		uint16_t get_port() const { return port; }

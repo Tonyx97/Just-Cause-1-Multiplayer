@@ -9,7 +9,7 @@
 #include <shared_mp/net_handlers/all.h>
 #include <shared_mp/player_client/player_client.h>
 
-#include <tcp_client.h>
+#include "ports.h"
 
 namespace world_rg
 {
@@ -57,6 +57,18 @@ namespace world_rg
 
 bool Net::init()
 {
+	// initialize server config
+	
+	check(config.init(), "Could not initialize config");
+
+	// initialize server world settings
+
+	check(settings.init(), "Could not initialize world settings");
+
+	logt(GREEN, "Connected to masterserver");
+
+	// initialize enet
+
 	enet::init();
 
 	const auto address = ENetAddress
@@ -87,29 +99,6 @@ bool Net::init()
 		world_rg::on_update,
 		world_rg::on_remove);
 
-	logt(GREEN, "WorldRg created");
-
-	// initialize masterserver connection
-
-	ms_conn = JC_ALLOC(netcp::tcp_client, [](netcp::client_interface* _cl, const netcp::packet_header& header, const Buffer& data)
-	{
-		switch (header.id)
-		{
-		case ServerToMsPacket_Verify:
-		{
-			log(YELLOW, "Message from masterserver: {}", data.get<std::string>());
-			break;
-		}
-		}
-	});
-
-	check(ms_conn->connect("127.0.0.1", netcp::SERVER_TO_MS_PORT), "Could not establish connection to the master server");
-
-	logt(GREEN, "Connected to masterserver");
-
-	ms_conn->send_packet(SharedMsPacket_Type, netcp::ServerClientType_Server);
-	ms_conn->send_packet(ServerToMsPacket_Verify, "todo - pending key");
-
 	logt(GREEN, "Server initialized");
 
 	return true;
@@ -117,10 +106,6 @@ bool Net::init()
 
 void Net::destroy()
 {
-	// close masterserver connection
-
-	JC_FREE(ms_conn);
-
 	// destroy and clear object list
 
 	clear_object_list();
@@ -133,6 +118,14 @@ void Net::destroy()
 
 	enet_host_destroy(sv);
 	enet_deinitialize();
+
+	// destroy settings
+
+	settings.destroy();
+
+	// destroy config
+
+	config.destroy();
 }
 
 void Net::send_broadcast_impl(const Packet& p, PlayerClient* ignore_pc)
@@ -167,6 +160,10 @@ void Net::send_broadcast_joined_impl(const Packet& p, PlayerClient* ignore_pc)
 
 void Net::tick()
 {
+	// config update
+	
+	config.process();
+
 	// process settings and server environment
 	
 	settings.process();
@@ -241,7 +238,7 @@ void Net::tick()
 		sv->totalReceivedPackets = 0;
 	});
 
-	std::this_thread::sleep_for(std::chrono::microseconds(8333));
+	std::this_thread::sleep_for(std::chrono::milliseconds(config.get_info().refresh_rate));
 }
 
 void Net::refresh_net_object_sync()
