@@ -35,11 +35,19 @@ HMODULE g_module = nullptr;
 std::atomic_bool unload_mod = false;
 std::atomic_bool mod_unloaded = false;
 
+bool was_initialized = false;
 bool initialized = false;
 bool game_focused = true;
 
 DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 {
+	if (std::exchange(was_initialized, false))
+	{
+		// show game window after the initialization is completed
+
+		ShowWindow(g_ui->get_window(), SW_SHOW);
+	}
+
 	if (!initialized)
 	{
 		g_registry.init();
@@ -136,11 +144,8 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 		log(GREEN, "Loaded from hook");
 
-		// show game window after the initialization is completed
-
-		ShowWindow(g_ui->get_window(), SW_SHOW);
-
 		initialized = true;
+		was_initialized = true;
 	}
 	else if (unload_mod)
 	{
