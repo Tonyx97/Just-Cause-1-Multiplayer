@@ -57,6 +57,8 @@ namespace world_rg
 
 bool Net::init()
 {
+	logt(YELLOW, "Starting...");
+
 	// initialize server config
 	
 	check(config.init(), "Could not initialize config");

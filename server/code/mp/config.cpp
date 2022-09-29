@@ -45,6 +45,18 @@ bool Config::init()
 	if (std::tie(server_info.refresh_rate, ok) = get_field<int>("refresh_rate"); !ok)
 		server_info.refresh_rate = 60;
 
+	const auto [startup_resources_key, rsrc_list_ok] = get_field<json>("startup_resources");
+
+	if (rsrc_list_ok)
+	{
+		for (const std::string& rsrc_name : startup_resources_key)
+		{
+			logt(PURPLE, "Resource '{}' registered as startup", rsrc_name);
+
+			server_info.startup_rsrcs.push_back(rsrc_name);
+		}
+	}
+
 	// initialize masterserver connection
 
 	ms_conn = JC_ALLOC(netcp::tcp_client, [](netcp::client_interface* _cl, const netcp::packet_header& header, serialization_ctx& data)

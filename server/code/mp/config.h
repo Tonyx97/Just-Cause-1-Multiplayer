@@ -10,6 +10,8 @@ private:
 
 	struct ServerInfo
 	{
+		std::vector<std::string> startup_rsrcs;
+
 		std::string masterserver_ip,
 					ip,
 					name,
