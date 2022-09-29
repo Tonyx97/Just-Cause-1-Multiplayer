@@ -2,8 +2,6 @@
 
 #include <shared_mp/object_lists.h>
 
-#include <thread_system/cancellable_sleep.h>
-
 class PlayerClient;
 
 namespace netcp
@@ -16,19 +14,9 @@ namespace netcp
 
 struct TcpContext
 {
-	CancellableSleep cs;
-
 	std::atomic_bool password_ack = false,
 					 password_valid = false,
 					 default_server_files_received = false;
-
-	template <typename Fn>
-	bool wait_for(const Fn& fn, auto timeout)
-	{
-		cs.sleep(timeout);
-
-		return fn();
-	}
 };
 
 class Net : public ObjectLists

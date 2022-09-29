@@ -29,29 +29,13 @@ bool Net::init(const std::string& ip, const std::string& pw, const std::string& 
 
 	// wait until we received the password ack
 
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-	// IMPLEMENT wait_for IN NETCP INTERFACE
-
-	check(tcp_ctx.wait_for([&]() -> bool { return tcp_ctx.password_ack && tcp_ctx.password_valid; }, 32s), "Invalid password");
+	check(tcp->wait_for(32s, [&]() -> bool { return tcp_ctx.password_ack && tcp_ctx.password_valid; }), "Invalid password");
 
 	log(YELLOW, "Waiting for default server files ack...");
 
-	// wait until we received all default server files (max of 1024 seconds trying to download lmao)
+	// wait until we received all default server files
 
-	check(tcp_ctx.wait_for([&]() -> bool { return tcp_ctx.default_server_files_received; }, 1024s), "Could not receive default server files");
+	check(tcp->wait_for(1024s, [&]() -> bool { return tcp_ctx.default_server_files_received; }), "Could not receive default server files");
 
 	// initialize enet after the important tcp communication
 
@@ -267,7 +251,8 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 	{
 		tcp_ctx.password_ack = true;
 		tcp_ctx.password_valid = _deserialize<bool>(data);
-		tcp_ctx.cs.cancel();
+
+		tcp->cancel_sleep();
 
 		break;
 	}
@@ -291,7 +276,8 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 		}
 
 		tcp_ctx.default_server_files_received = true;
-		tcp_ctx.cs.cancel();
+
+		tcp->cancel_sleep();
 
 		break;
 	}

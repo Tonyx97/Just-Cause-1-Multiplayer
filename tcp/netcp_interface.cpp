@@ -62,6 +62,15 @@ namespace netcp
 
 		if (is_connected())
 			socket.close();
+
+		// if there was a waiting operation running then cancel it
+
+		cancel_sleep();
+	}
+
+	void client_interface::cancel_sleep()
+	{
+		cs.cancel();
 	}
 
 	// PEER INTERFACE

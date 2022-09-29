@@ -3,7 +3,6 @@
 #include "netcp_interface.h"
 
 #include <thread_system/stl/vector.h>
-#include <thread_system/cancellable_sleep.h>
 
 namespace netcp
 {

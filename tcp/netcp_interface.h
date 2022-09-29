@@ -12,6 +12,8 @@
 
 #include <serializer/serializer.h>
 
+#include <thread_system/cancellable_sleep.h>
+
 namespace netcp
 {
 	using CID = uint16_t;
@@ -36,6 +38,8 @@ namespace netcp
 		std::future<void> future;
 
 		asio::ip::tcp::socket socket;
+
+		CancellableSleep cs;
 
 		std::mutex send_mtx;
 
@@ -69,6 +73,7 @@ namespace netcp
 
 		void send_packet(uint16_t id, void* out_data, size_t size);
 		void update();
+		void cancel_sleep();
 
 		template <typename T>
 		void send_packet(uint16_t id, const T& out_data) requires(!std::is_same_v<T, serialization_ctx>)
@@ -85,6 +90,18 @@ namespace netcp
 			send_packet(id, std::bit_cast<void*>(data.data.data()), data.data.size());
 		}
 
+		/**
+		* if connection is closed or lost, the sleep will be cancelled
+		* and returning properly without any halt
+		*/
+		template <typename T, typename Fn>
+		bool wait_for(T timeout, const Fn& fn)
+		{
+			cs.sleep(timeout);
+
+			return fn();
+		}
+		
 		bool is_connected() const { return socket.is_open(); }
 
 		CID get_cid() const { return cid; }
