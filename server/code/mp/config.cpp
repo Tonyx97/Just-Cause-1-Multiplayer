@@ -50,14 +50,8 @@ bool Config::init()
 		const auto [startup_resources_key, rsrc_list_ok] = get_field<json>("startup_resources");
 
 		if (rsrc_list_ok)
-		{
 			for (const std::string& rsrc_name : startup_resources_key)
-			{
-				logt(PURPLE, "Resource '{}' registered as startup", rsrc_name);
-
 				server_info.startup_rsrcs.push_back(rsrc_name);
-			}
-		}
 	}
 	catch (...)
 	{
