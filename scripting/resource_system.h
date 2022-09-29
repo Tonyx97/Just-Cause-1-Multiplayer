@@ -14,7 +14,11 @@ private:
 
 public:
 
+	bool init();
 
+#ifdef JC_CLIENT
+#else
+#endif
 
 };
 

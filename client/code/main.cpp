@@ -147,15 +147,14 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		const bool conn_ok = g_net->init(g_registry.get_string("ip"), g_registry.get_string("password"), nick);
 #endif
 
-		if (conn_ok)
-		{
-			jc::hooks::hook_queued();
+		jc::hooks::hook_queued();
 
-			log(GREEN, "Loaded from hook");
+		log(GREEN, "Loaded from hook");
 
-			initialized = true;
-			was_initialized = true;
-		}
+		check(g_rsrc->init(), "Could not initialize resource system");
+
+		initialized = true;
+		was_initialized = true;
 	}
 	else if (unload_mod)
 	{

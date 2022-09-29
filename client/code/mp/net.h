@@ -75,6 +75,7 @@ public:
 		enet::send_packet(peer, p);
 	}
 
+	bool is_tcp_connected() const;
 	bool is_initialized() const { return initialized; }
 	bool is_joined() const { return joined; }
 	bool can_finish_load_game() const { return load_game_available; }

@@ -2,6 +2,8 @@
 
 #include "resource_system.h"
 
+#include <mp/net.h>
+
 namespace resource_system
 {
 	void create_resource_system()
@@ -17,4 +19,22 @@ namespace resource_system
 
 		g_rsrc.reset();
 	}
+}
+
+bool ResourceSystem::init()
+{
+#ifdef JC_CLIENT
+
+#else
+	const auto startup_resources_list = g_net->get_config().get_info().startup_rsrcs;
+
+	for (const auto& rsrc : startup_resources_list)
+	{
+		logt(GREEN, "Starting up '{}'...", rsrc);
+	}
+
+	// startup the specified resources in settings.json
+#endif
+
+	return true;
 }

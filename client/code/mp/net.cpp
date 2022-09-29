@@ -197,6 +197,10 @@ void Net::set_game_load_available()
 
 void Net::tick()
 {
+	// check tcp connection
+
+	check(is_tcp_connected(), "TCP connection lost");
+
 	if (!connected || !client)
 		return;
 
@@ -232,6 +236,11 @@ void Net::tick()
 void Net::update_objects()
 {
 	jc::mp::logic::on_update_objects();
+}
+
+bool Net::is_tcp_connected() const
+{
+	return tcp->is_connected();
 }
 
 Player* Net::get_localplayer() const

@@ -11,6 +11,8 @@
 
 #include <tcp_server.h>
 
+#include <resource_system.h>
+
 namespace world_rg
 {
 	void on_create_remove(WorldRg* w, librg_event* e, bool create)
@@ -115,6 +117,8 @@ bool Net::init()
 		world_rg::on_create,
 		world_rg::on_update,
 		world_rg::on_remove);
+
+	check(g_rsrc->init(), "Could not initialize resource system");
 
 	logt(GREEN, "Server initialized");
 
