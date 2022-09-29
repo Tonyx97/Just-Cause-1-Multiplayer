@@ -53,13 +53,9 @@ int main()
 				const auto name = _deserialize<std::string>(data);
 				const auto discord = _deserialize<std::string>(data);
 				const auto community = _deserialize<std::string>(data);
-				const auto password = _deserialize<std::string>(data);
 				const auto gamemode = _deserialize<std::string>(data);
 				const auto refresh_rate = _deserialize<int>(data);
-
-				logt(YELLOW, "info 1: {}", name);
-				logt(YELLOW, "info 2: {}", discord);
-				logt(YELLOW, "info 3: {}", community);
+				const auto password = _deserialize<bool>(data);
 			}
 
 			break;

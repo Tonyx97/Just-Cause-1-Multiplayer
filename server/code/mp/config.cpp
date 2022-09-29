@@ -122,9 +122,9 @@ void Config::update()
 			server_info.name,
 			server_info.discord,
 			server_info.community,
-			server_info.password,
 			server_info.gamemode,
-			server_info.refresh_rate);
+			server_info.refresh_rate,
+			!server_info.password.empty());
 
 		int players_count = 0;
 

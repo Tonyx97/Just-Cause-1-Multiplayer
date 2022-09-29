@@ -9,7 +9,13 @@ namespace resource_system
 class ResourceSystem
 {
 private:
+
+
+
 public:
+
+
+
 };
 
 inline std::unique_ptr<ResourceSystem> g_rsrc;
