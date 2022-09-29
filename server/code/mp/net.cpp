@@ -134,7 +134,7 @@ void Net::destroy()
 	enet_host_destroy(sv);
 	enet_deinitialize();
 
-	// close the tcp connection to clients
+	// close the tcp connection
 
 	JC_FREE(tcp_server);
 
