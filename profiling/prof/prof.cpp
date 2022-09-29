@@ -6,6 +6,10 @@
 
 #include <utils/utils.h>
 
+#ifdef JC_CLIENT
+#include <bug_ripper/bug_ripper.h>
+#endif
+
 namespace jc::prof
 {
     HANDLE console_handle = nullptr;
@@ -187,11 +191,17 @@ namespace jc::prof
 
 	bool error_internal(const std::string& text, int type)
 	{
+#ifdef JC_CLIENT
+		jc::bug_ripper::exception_catch_enabled = false;
+#endif
+
 		if (type == 0)
 		{
 			MessageBoxA(nullptr, text.c_str(), "JC:MP", MB_OK | MB_ICONERROR);
 
+#ifdef JC_DBG
 			__debugbreak();
+#endif
 
 			TerminateProcess(GetCurrentProcess(), 1);
 		}
@@ -199,12 +209,16 @@ namespace jc::prof
 		{
 			MessageBoxA(nullptr, text.c_str(), "JC:MP", MB_OK | MB_ICONWARNING);
 
+#ifdef JC_DBG
 			__debugbreak();
+#endif
 
 			return (type == 2);
 		}
 
+#ifdef JC_DBG
 		__debugbreak();
+#endif
 
 		return false;
 	}

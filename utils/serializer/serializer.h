@@ -255,7 +255,8 @@ void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_str
 
 	const auto size = ctx.write(v.size());
 
-	ctx.write(v.data(), size);
+	if (size > 0u)
+		ctx.write(v.data(), size);
 
 	if constexpr (sizeof...(args) > 0)
 		_serialize(ctx, args...);

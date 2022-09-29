@@ -10,6 +10,7 @@ class WorldRg;
 namespace netcp
 {
 	class tcp_server;
+	class tcp_server_client;
 	class client_interface;
 
 	struct packet_header;
@@ -44,6 +45,7 @@ public:
 	void send_broadcast(PlayerClient* ignore_pc, const Packet& p) { send_broadcast_impl(p, ignore_pc); }
 	void send_broadcast_joined(const Packet& p) { send_broadcast_joined(nullptr, p); }
 	void send_broadcast_joined(PlayerClient* ignore_pc, const Packet& p) { send_broadcast_impl(p, ignore_pc); }
+	void sync_default_files(netcp::tcp_server_client* cl);
 
 	WorldRg* get_rg() const { return world_rg; }
 

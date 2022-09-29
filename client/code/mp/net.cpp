@@ -9,7 +9,7 @@
 
 #include <tcp_client.h>
 
-bool Net::init(const std::string& ip, const std::string& nick)
+bool Net::init(const std::string& ip, const std::string& pw, const std::string& nick)
 {
 	this->nick = nick;
 
@@ -23,7 +23,37 @@ bool Net::init(const std::string& ip, const std::string& nick)
 	check(tcp, "Could not initialize TCP connection");
 	check(tcp->connect(ip, netcp::CLIENT_TO_SERVER_TCP_PORT), "Could not connect to server via TCP");
 
-	tcp->send_packet(ClientToMsPacket_Password, std::string("password test"));
+	tcp->send_packet(ClientToMsPacket_Password, pw);
+
+	log(YELLOW, "Waiting for password ack...");
+
+	// wait until we received the password ack
+
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+	// IMPLEMENT wait_for IN NETCP INTERFACE
+
+	check(tcp_ctx.wait_for([&]() -> bool { return tcp_ctx.password_ack && tcp_ctx.password_valid; }, 32s), "Invalid password");
+
+	log(YELLOW, "Waiting for default server files ack...");
+
+	// wait until we received all default server files (max of 1024 seconds trying to download lmao)
+
+	check(tcp_ctx.wait_for([&]() -> bool { return tcp_ctx.default_server_files_received; }, 1024s), "Could not receive default server files");
+
+	// initialize enet after the important tcp communication
 
 	enet::init();
 
@@ -176,6 +206,11 @@ void Net::set_joined(bool v)
 	}
 }
 
+void Net::set_game_load_available()
+{
+	load_game_available = true;
+}
+
 void Net::tick()
 {
 	if (!connected || !client)
@@ -230,7 +265,34 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 	{
 	case ClientToMsPacket_Password:
 	{
-		logt(YELLOW, "OK password {}", _deserialize<std::string>(data));
+		tcp_ctx.password_ack = true;
+		tcp_ctx.password_valid = _deserialize<bool>(data);
+		tcp_ctx.cs.cancel();
+
+		break;
+	}
+	case ClientToMsPacket_SyncDefaultFiles:
+	{
+		const auto default_files_count = _deserialize<size_t>(data);
+
+		if (default_files_count > 0u)
+		{
+			for (size_t i = 0u; i < default_files_count; ++i)
+			{
+				const auto target_path = _deserialize<std::string>(data);
+				const auto data_size = _deserialize<size_t>(data);
+
+				std::vector<uint8_t> file_data(data_size);
+
+				data.read(file_data.data(), file_data.size());
+
+				util::fs::create_bin_file(target_path, file_data);
+			}
+		}
+
+		tcp_ctx.default_server_files_received = true;
+		tcp_ctx.cs.cancel();
+
 		break;
 	}
 	default: logt(RED, "[{}] Unknown packet id: {}", CURR_FN, header->id);

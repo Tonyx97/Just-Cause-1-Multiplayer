@@ -17,43 +17,65 @@ bool Config::init()
 	if (!config_file)
 		return false;
 
-	config_file >> server_config;
-
-	bool ok = false;
-
-	if (std::tie(server_info.masterserver_ip, ok) = get_field<std::string>("masterserver_ip"); !ok)
-		server_info.masterserver_ip.clear();
-
-	if (std::tie(server_info.ip, ok) = get_field<std::string>("ip"); !ok)
-		server_info.ip.clear();
-
-	if (std::tie(server_info.name, ok) = get_field<std::string>("server_name"); !ok)
-		server_info.name = "Default JC1:MP Server";
-
-	if (std::tie(server_info.discord, ok) = get_field<std::string>("discord"); !ok)
-		server_info.discord.clear();
-
-	if (std::tie(server_info.community, ok) = get_field<std::string>("community"); !ok)
-		server_info.community.clear();
-
-	if (std::tie(server_info.password, ok) = get_field<std::string>("password"); !ok)
-		server_info.ip.clear();
-
-	if (std::tie(server_info.gamemode, ok) = get_field<std::string>("gamemode"); !ok)
-		server_info.gamemode.clear();
-
-	if (std::tie(server_info.refresh_rate, ok) = get_field<int>("refresh_rate"); !ok)
-		server_info.refresh_rate = 60;
-
-	const auto [startup_resources_key, rsrc_list_ok] = get_field<json>("startup_resources");
-
-	if (rsrc_list_ok)
+	try
 	{
-		for (const std::string& rsrc_name : startup_resources_key)
-		{
-			logt(PURPLE, "Resource '{}' registered as startup", rsrc_name);
+		config_file >> j_server_config;
 
-			server_info.startup_rsrcs.push_back(rsrc_name);
+		bool ok = false;
+
+		if (std::tie(server_info.masterserver_ip, ok) = get_field<std::string>("masterserver_ip"); !ok)
+			server_info.masterserver_ip.clear();
+
+		if (std::tie(server_info.ip, ok) = get_field<std::string>("ip"); !ok)
+			server_info.ip.clear();
+
+		if (std::tie(server_info.name, ok) = get_field<std::string>("server_name"); !ok)
+			server_info.name = "Default JC1:MP Server";
+
+		if (std::tie(server_info.discord, ok) = get_field<std::string>("discord"); !ok)
+			server_info.discord.clear();
+
+		if (std::tie(server_info.community, ok) = get_field<std::string>("community"); !ok)
+			server_info.community.clear();
+
+		if (std::tie(server_info.password, ok) = get_field<std::string>("password"); !ok)
+			server_info.ip.clear();
+
+		if (std::tie(server_info.gamemode, ok) = get_field<std::string>("gamemode"); !ok)
+			server_info.gamemode.clear();
+
+		if (std::tie(server_info.refresh_rate, ok) = get_field<int>("refresh_rate"); !ok)
+			server_info.refresh_rate = 60;
+
+		const auto [startup_resources_key, rsrc_list_ok] = get_field<json>("startup_resources");
+
+		if (rsrc_list_ok)
+		{
+			for (const std::string& rsrc_name : startup_resources_key)
+			{
+				logt(PURPLE, "Resource '{}' registered as startup", rsrc_name);
+
+				server_info.startup_rsrcs.push_back(rsrc_name);
+			}
+		}
+	}
+	catch (...)
+	{
+		return logbt(RED, "Could not parse {}", CONFIG_FILE());
+	}
+
+	if (auto default_server_files_config = std::ifstream(DEFAULT_FILES_CONFIG_FILE()))
+	{
+		try
+		{
+			default_server_files_config >> j_server_files;
+
+			for (const auto [src_path, dst_path] : j_server_files.items())
+				default_files.emplace_back(std::move(util::fs::read_bin_file(src_path)), src_path, dst_path);
+		}
+		catch (...)
+		{
+			logt(RED, "Could not parse {}", DEFAULT_FILES_CONFIG_FILE());
 		}
 	}
 

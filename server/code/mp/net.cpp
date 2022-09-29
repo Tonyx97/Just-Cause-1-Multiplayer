@@ -344,6 +344,26 @@ void Net::sync_net_objects(bool force)
 		world_rg->update();
 }
 
+void Net::sync_default_files(netcp::tcp_server_client* cl)
+{
+	serialization_ctx data;
+
+	_serialize(data, config.get_default_files_count());
+
+	config.for_each_default_file([&](const Config::DefaultFile& file)
+	{
+		if (auto fd = std::ifstream(file.src_path, std::ios::binary))
+		{
+			_serialize(data, file.dst_path);
+			_serialize(data, file.data.size());
+
+			data.append(BITCAST(uint8_t*, file.data.data()), file.data.size());
+		}
+	});
+	
+	cl->send_packet(ClientToMsPacket_SyncDefaultFiles, data);
+}
+
 void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet_header* header, serialization_ctx& data)
 {
 	using namespace netcp;
@@ -354,9 +374,21 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 	{
 	case ClientToMsPacket_Password:
 	{
-		logt(YELLOW, "Received password from {}: {}", cl->get_ip(), _deserialize<std::string>(data));
+		const auto sv_password = get_config().get_info().password;
+		const auto cl_password = _deserialize<std::string>(data);
 
-		cl->send_packet(ClientToMsPacket_Password, std::string("password received test"));
+		if (sv_password.empty() || cl_password == sv_password)
+		{
+			// send the password ack to the client
+
+			cl->send_packet(ClientToMsPacket_Password, true);
+
+			// since the password is correct, let's also send the packet to sync the
+			// default server files
+			
+			sync_default_files(cl);
+		}
+		else cl->send_packet(ClientToMsPacket_Password, false);
 
 		break;
 	}

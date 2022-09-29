@@ -2,6 +2,8 @@
 
 namespace jc::bug_ripper
 {
+	inline bool exception_catch_enabled = true;
+
 	bool init(void* mod_base);
 	bool destroy();
 	bool reroute_exception_handler(bool place);

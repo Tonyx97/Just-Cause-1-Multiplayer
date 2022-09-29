@@ -494,6 +494,8 @@ namespace util
 		std::string strip_parent_path(const std::string& str);
 
 		std::vector<uint8_t> read_bin_file(const std::string& filename);
+
+		bool create_bin_file(const std::string& filename, const std::vector<uint8_t>& data);
 	}
 
 	namespace mem

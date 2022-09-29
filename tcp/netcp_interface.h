@@ -37,6 +37,8 @@ namespace netcp
 
 		asio::ip::tcp::socket socket;
 
+		std::mutex send_mtx;
+
 		on_receive_t on_receive_fn = nullptr;
 
 		packet_header header_in {},

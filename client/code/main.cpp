@@ -135,17 +135,20 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		log(GREEN, "Initializing NET...");
 
 #ifdef _DEBUG
-		g_net->init("192.168.0.23", nick);
+		const bool conn_ok = g_net->init("192.168.0.23", {}, nick);
 #else
-		g_net->init(g_registry.get_string("ip"), nick);
+		const bool conn_ok = g_net->init(g_registry.get_string("ip"), g_registry.get_string("password"), nick);
 #endif
 
-		jc::hooks::hook_queued();
+		if (conn_ok)
+		{
+			jc::hooks::hook_queued();
 
-		log(GREEN, "Loaded from hook");
+			log(GREEN, "Loaded from hook");
 
-		initialized = true;
-		was_initialized = true;
+			initialized = true;
+			was_initialized = true;
+		}
 	}
 	else if (unload_mod)
 	{
@@ -408,7 +411,7 @@ void dll_thread()
 
 	bool game_exit = false;
 
-	while (
+	while (!unload_mod &&
 #ifdef JC_DBG
 		!GetAsyncKeyState(VK_F8) &&
 #endif

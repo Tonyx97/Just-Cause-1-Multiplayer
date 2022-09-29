@@ -311,5 +311,8 @@ INT_PTR __stdcall crash_wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_p
 
 long __stdcall global_veh(_EXCEPTION_POINTERS* ep)
 {
+	if (!jc::bug_ripper::exception_catch_enabled)
+		return EXCEPTION_CONTINUE_SEARCH;
+
 	return jc::bug_ripper::show_and_dump_crash(ep);
 }

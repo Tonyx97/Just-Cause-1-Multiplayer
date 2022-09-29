@@ -1,3 +1,4 @@
+
 #include <defs/standard.h>
 
 #include "game_status.h"
@@ -8,10 +9,10 @@ DEFINE_HOOK_FASTCALL(dispatch, 0x497A70, bool, GameStatus* gs)
 {
 	switch (gs->get_status())
 	{
-	case GameStatus_MainMenu: break;
-	case GameStatus_StartLoad: break;
-	case GameStatus_BeginLoad: break;
-	case GameStatus_Load: break;
+	case GameStatus_MainMenu:	break;
+	case GameStatus_StartLoad:	break;
+	case GameStatus_BeginLoad:	break;
+	case GameStatus_Load:		return g_net->can_finish_load_game();	// block the loading screen until we are ready
 	case GameStatus_InGame:
 	{
 		if (!g_net->is_joined())

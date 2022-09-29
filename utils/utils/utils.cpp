@@ -146,3 +146,19 @@ std::vector<uint8_t> util::fs::read_bin_file(const std::string& filename)
 
 	return data;
 }
+
+bool util::fs::create_bin_file(const std::string& filename, const std::vector<uint8_t>& data)
+{
+#ifdef JC_CLIENT
+	std::ofstream file(GET_MODULE_PATH() + string::convert(filename), std::ios::binary);
+#else
+	std::ofstream file(filename, std::ios::binary);
+#endif
+
+	if (!file)
+		return false;
+
+	file.write(BITCAST(char*, data.data()), data.size());
+
+	return true;
+}

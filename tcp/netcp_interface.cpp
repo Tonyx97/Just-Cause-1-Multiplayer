@@ -18,6 +18,11 @@ namespace netcp
 
 	void client_interface::send_packet(uint16_t id, void* out_data, size_t size)
 	{
+		// since this function can be called from different threads,
+		// lock it
+		
+		std::lock_guard lock(send_mtx);
+
 		header_out.id = id;
 		header_out.size = static_cast<uint32_t>(size);
 

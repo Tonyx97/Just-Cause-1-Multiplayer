@@ -18,4 +18,5 @@ enum ServerToMsPacketID : TcpPacketID
 enum ClientToServerPacketID : TcpPacketID
 {
 	ClientToMsPacket_Password = ServerToMsPacket_Max,
+	ClientToMsPacket_SyncDefaultFiles,
 };
