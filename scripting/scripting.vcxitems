@@ -15,5 +15,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)luas.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)resource_system.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)resource_system.cpp" />
   </ItemGroup>
 </Project>

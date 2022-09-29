@@ -109,7 +109,7 @@ void Config::destroy()
 	JC_FREE(ms_conn);
 }
 
-void Config::process()
+void Config::update()
 {
 	static TimerRaw update_ms_info(2500);
 

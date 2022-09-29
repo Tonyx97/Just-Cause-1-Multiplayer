@@ -15,7 +15,7 @@ void Settings::destroy()
 {
 }
 
-void Settings::process()
+void Settings::update()
 {
 	static TimerRaw day_cycle_timer(1000);
 

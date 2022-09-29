@@ -15,8 +15,7 @@ public:
 	bool init();
 
 	void destroy();
-
-	void process();
+	void update();
 	void set_time_scale(float v) { timescale = v; }
 	void set_day_time(float v) { day_time = v; }
 	void set_day_time_enabled(bool v) { day_time_enabled = v; }

@@ -14,9 +14,9 @@ namespace netcp
 
 struct TcpContext
 {
-	std::atomic_bool password_ack = false,
-					 password_valid = false,
-					 default_server_files_received = false;
+	std::atomic_bool password_ack = false;
+	std::atomic_bool password_valid = false;
+	std::atomic_bool default_server_files_received = false;
 };
 
 class Net : public ObjectLists

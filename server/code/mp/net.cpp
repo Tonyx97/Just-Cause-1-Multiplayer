@@ -121,12 +121,12 @@ bool Net::init()
 	return true;
 }
 
-void Net::destroy()
+Net::~Net()
 {
 	// destroy and clear object list
 
 	clear_object_list();
-	
+
 	// free the world rg
 
 	JC_FREE(world_rg);
@@ -181,13 +181,13 @@ void Net::send_broadcast_joined_impl(const Packet& p, PlayerClient* ignore_pc)
 
 void Net::tick()
 {
-	// config update
+	// update config stuff
 	
-	config.process();
+	config.update();
 
-	// process settings and server environment
+	// update settings and server environment
 	
-	settings.process();
+	settings.update();
 
 	// update the sync of all net objects
 

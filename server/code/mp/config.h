@@ -48,7 +48,7 @@ public:
 	bool init();
 
 	void destroy();
-	void process();
+	void update();
 
 	template <typename T>
 	std::pair<T, bool> get_field(const std::string& name) const

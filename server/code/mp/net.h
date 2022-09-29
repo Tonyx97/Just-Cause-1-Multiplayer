@@ -35,8 +35,9 @@ private:
 
 public:
 
+	~Net();
+
 	bool init();
-	void destroy();
 	void tick();
 	void refresh_net_object_sync();
 	void sync_net_objects(bool force = false);

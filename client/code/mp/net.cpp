@@ -22,7 +22,7 @@ bool Net::init(const std::string& ip, const std::string& pw, const std::string& 
 
 	check(tcp, "Could not initialize TCP connection");
 	check(tcp->connect(ip, netcp::CLIENT_TO_SERVER_TCP_PORT), "Could not connect to server via TCP");
-
+	
 	tcp->send_packet(ClientToMsPacket_Password, pw);
 
 	log(YELLOW, "Waiting for password ack...");

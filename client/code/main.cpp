@@ -26,6 +26,9 @@
 
 #include <game/object/savegame/savegame.h>
 #include <game/object/character/character.h>
+
+#include <resource_system.h>
+
 #include "main.h"
 
 #define PAUSE_BEFORE_OPENING 0
@@ -57,6 +60,10 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		auto len = DWORD(256);
 
 		GetUserNameA(nick, &len);	// todojc
+
+		// create resource system instance
+
+		resource_system::create_resource_system();
 
 		// initialize game systems/managers
 
@@ -226,6 +233,12 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 			JC_FREE(g_key);
 			JC_FREE(g_ui);
 			JC_FREE(g_net);
+
+			// destroy resource system
+
+			resource_system::destroy_resource_system();
+
+			// close registry
 
 			g_registry.destroy();
 
