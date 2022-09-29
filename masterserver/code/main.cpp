@@ -69,7 +69,9 @@ int main()
 	});
 
 	sv.start();
-	sv.update();
+	sv.launch_update_thread();
+
+	while (!GetAsyncKeyState(VK_F7)) Sleep(25);
 
 	return EXIT_SUCCESS;
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace tvg::thread_safe
+namespace jc::thread_safe
 {
 	template <typename T>
 	class vector
@@ -30,11 +30,11 @@ namespace tvg::thread_safe
 			return value;
 		}
 
-		void push(T& value)
+		void push(T&& value)
 		{
 			std::lock_guard lock(mtx);
 
-			data.push_back(value);
+			data.push_back(std::move(value));
 		}
 
 		bool erase(const T& value)
@@ -90,6 +90,17 @@ namespace tvg::thread_safe
 
 			for (auto& e : data)
 				fn(e);
+		}
+
+		template <typename Fn>
+		void for_each_it(const Fn& fn)
+		{
+			std::lock_guard lock(mtx);
+
+			for (auto it = data.begin(); it != data.end();)
+				if (!fn(it))
+					++it;
+				else it = data.erase(it);
 		}
 	};
 }

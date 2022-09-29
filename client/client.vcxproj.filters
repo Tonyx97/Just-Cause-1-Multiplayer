@@ -285,12 +285,6 @@
     <ClCompile Include="code\core\task_system\task_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\core\thread_system\thread_handle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\core\thread_system\thread_system.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\game\sys\world\player_global_info.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -636,24 +630,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\core\task_system\task_system.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\core\thread_system\cancellable_sleep.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\core\thread_system\event.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\core\thread_system\thread_handle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\core\thread_system\thread_system.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\core\thread_system\stl\queue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\core\thread_system\stl\vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\sys\world\player_global_info.h">

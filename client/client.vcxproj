@@ -43,6 +43,7 @@
     <Import Project="..\tcp_client\tcp_client.vcxitems" Label="Shared" />
     <Import Project="..\globals\globals.vcxitems" Label="Shared" />
     <Import Project="..\utils\utils.vcxitems" Label="Shared" />
+    <Import Project="..\thread_system\thread_system.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -135,8 +136,6 @@
     <ClCompile Include="code\core\task_system\task.cpp" />
     <ClCompile Include="code\core\task_system\task_system.cpp" />
     <ClCompile Include="code\core\test_units.cpp" />
-    <ClCompile Include="code\core\thread_system\thread_handle.cpp" />
-    <ClCompile Include="code\core\thread_system\thread_system.cpp" />
     <ClCompile Include="code\game\object\action_point_owner\action_point_owner.cpp" />
     <ClCompile Include="code\game\object\agent_type\npc_variant.cpp" />
     <ClCompile Include="code\game\object\agent_type\vehicle_type.cpp" />
@@ -246,12 +245,6 @@
     <ClInclude Include="code\core\task_system\task.h" />
     <ClInclude Include="code\core\task_system\task_system.h" />
     <ClInclude Include="code\core\test_units.h" />
-    <ClInclude Include="code\core\thread_system\cancellable_sleep.h" />
-    <ClInclude Include="code\core\thread_system\event.h" />
-    <ClInclude Include="code\core\thread_system\stl\queue.h" />
-    <ClInclude Include="code\core\thread_system\stl\vector.h" />
-    <ClInclude Include="code\core\thread_system\thread_handle.h" />
-    <ClInclude Include="code\core\thread_system\thread_system.h" />
     <ClInclude Include="code\defs\client_basic.h" />
     <ClInclude Include="code\game\object\action_point_owner\action_point_owner.h" />
     <ClInclude Include="code\game\object\agent_type\npc_variant.h" />

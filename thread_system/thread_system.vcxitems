@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{ea89091a-89a1-426e-8156-640044773980}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)thread_system\cancellable_sleep.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)thread_system\event.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)thread_system\stl\queue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)thread_system\stl\vector.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)thread_system\thread_handle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)thread_system\thread_system.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)thread_system\thread_handle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)thread_system\thread_system.cpp" />
+  </ItemGroup>
+</Project>

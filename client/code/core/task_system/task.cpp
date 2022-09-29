@@ -1,6 +1,6 @@
 #include <defs/standard.h>
 
-#include <core/thread_system/thread_system.h>
+#include <thread_system/thread_system.h>
 
 #include "task.h"
 

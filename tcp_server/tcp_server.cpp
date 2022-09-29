@@ -26,7 +26,18 @@ namespace netcp
 			free_cids.insert(free_cids.end(), i);
 	}
 
-	tcp_server::~tcp_server() {}
+	tcp_server::~tcp_server()
+	{
+		// notify the update thread we are done
+
+		cs.cancel();
+
+		// wait until the update thread terminates
+
+		log(GREEN, "Update thread terminated");
+
+		update_thread.join();
+	}
 
 	CID tcp_server::get_free_cid()
 	{
@@ -46,29 +57,26 @@ namespace netcp
 		ctx_thread = std::thread([this]() { ctx.run(); });
 	}
 
-	void tcp_server::update()
+	void tcp_server::launch_update_thread()
 	{
-		while (!GetAsyncKeyState(VK_F7))
+		update_thread = std::thread([&]()
 		{
+			while (cs.sleep(1s))
 			{
-				std::lock_guard lock(clients_mtx);
-
-				for (auto it = clients.begin(); it != clients.end();)
+				clients.for_each_it([&](auto it)
 				{
-					if (const auto& cl = *it; !cl->is_connected())
+					if (const auto cl = *it; !cl->is_connected())
 					{
 						free_cid(cl->get_cid());
-
-						it = clients.erase(it);
+						return true;
 					}
-					else ++it;
-				}
+
+					return false;
+				});
 
 				SetConsoleTitleA(std::format("Connections: {} (free cids: {})", clients.size(), free_cids.size()).c_str());
 			}
-
-			Sleep(25);
-		}
+		});
 	}
 
 	void tcp_server::free_cid(CID cid)
@@ -84,11 +92,7 @@ namespace netcp
 		acceptor.async_accept([this](asio::error_code ec, asio::ip::tcp::socket socket)
 		{
 			if (!ec)
-			{
-				std::lock_guard lock(clients_mtx);
-
-				clients.push_back(std::make_shared<tcp_server_client>(on_receive_fn, socket, get_free_cid()));
-			}
+				clients.push(std::make_shared<tcp_server_client>(on_receive_fn, socket, get_free_cid()));
 			else log(RED, "Connection refused '{}'", ec.message());
 
 			accept_connections();

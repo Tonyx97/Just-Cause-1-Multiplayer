@@ -80,7 +80,7 @@ bool Net::init()
 	});
 
 	tcp_server->start();
-	//tcp_server->update();
+	tcp_server->launch_update_thread();
 
 	// initialize enet
 

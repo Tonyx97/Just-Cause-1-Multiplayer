@@ -15,7 +15,7 @@
 
 #include <registry/registry.h>
 #include <core/task_system/task_system.h>
-#include <core/thread_system/thread_system.h>
+#include <thread_system/thread_system.h>
 #include <core/clean_dbg.h>
 #include <core/keycode.h>
 #include <core/test_units.h>

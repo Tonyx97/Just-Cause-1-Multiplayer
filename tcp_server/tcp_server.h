@@ -2,6 +2,9 @@
 
 #include "netcp_interface.h"
 
+#include <thread_system/stl/vector.h>
+#include <thread_system/cancellable_sleep.h>
+
 namespace netcp
 {
 	class tcp_server_client : public client_interface
@@ -38,9 +41,11 @@ namespace netcp
 
 		asio::ip::tcp::acceptor acceptor;
 
-		std::vector<server_client> clients;
+		CancellableSleep cs;
 
-		std::mutex clients_mtx;
+		jc::thread_safe::vector<server_client> clients;
+
+		std::thread update_thread;
 
 		on_receive_t on_receive_fn = nullptr;
 
@@ -55,7 +60,7 @@ namespace netcp
 		CID get_free_cid();
 
 		void start();
-		void update();
+		void launch_update_thread();
 		void set_on_receive_fn(const on_receive_t& fn) { on_receive_fn = fn; }
 		void free_cid(CID cid);
 		void accept_connections();

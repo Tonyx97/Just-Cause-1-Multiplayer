@@ -40,6 +40,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "globals", "globals\globals.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utils", "utils\utils.vcxitems", "{4C75CF4F-7821-4E40-B21A-D417B93BE9E6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "thread_system", "thread_system\thread_system.vcxitems", "{EA89091A-89A1-426E-8156-640044773980}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -104,6 +106,7 @@ Global
 		{4F5A76FB-8B26-4930-972A-65D8364176F3} = {AC5A57F4-B329-4EB2-A7A9-84E67093367F}
 		{2B2A9069-2CC0-4081-8E04-8B1E512597BE} = {850C26C5-A573-4C24-8607-F01C35716989}
 		{4C75CF4F-7821-4E40-B21A-D417B93BE9E6} = {850C26C5-A573-4C24-8607-F01C35716989}
+		{EA89091A-89A1-426E-8156-640044773980} = {850C26C5-A573-4C24-8607-F01C35716989}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5F58BCCD-4443-445F-B734-F6FFC6054D74}
@@ -118,6 +121,7 @@ Global
 		tcp\tcp.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
 		tcp_client\tcp_client.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
 		tcp_server\tcp_server.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
+		thread_system\thread_system.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
 		utils\utils.vcxitems*{2f9a50ff-1352-44a3-913d-523b3658a4ca}*SharedItemsImports = 4
 		utils\utils.vcxitems*{4c75cf4f-7821-4e40-b21a-d417b93be9e6}*SharedItemsImports = 9
 		tcp\tcp.vcxitems*{4f5a76fb-8b26-4930-972a-65d8364176f3}*SharedItemsImports = 9
@@ -128,6 +132,7 @@ Global
 		shared\shared.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		tcp\tcp.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		tcp_client\tcp_client.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
+		thread_system\thread_system.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		utils\utils.vcxitems*{611a5ffd-81fa-49a1-a193-c61284e8222e}*SharedItemsImports = 4
 		tcp_server\tcp_server.vcxitems*{6c30d496-b14c-4f2a-a94d-380ccc0b4ed4}*SharedItemsImports = 9
 		tcp_client\tcp_client.vcxitems*{6f1f0bfd-a43e-4d5a-9e21-4e693019c2ae}*SharedItemsImports = 9
@@ -138,11 +143,13 @@ Global
 		tcp\tcp.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
 		tcp_client\tcp_client.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
 		tcp_server\tcp_server.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
+		thread_system\thread_system.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
 		utils\utils.vcxitems*{ce796f0f-0db5-4436-9955-5b0e33a868cc}*SharedItemsImports = 4
 		globals\globals.vcxitems*{dcf6d994-54fa-4ad0-9adb-e34faffaf46f}*SharedItemsImports = 4
 		profiling\profiling.vcxitems*{dcf6d994-54fa-4ad0-9adb-e34faffaf46f}*SharedItemsImports = 4
 		utils\utils.vcxitems*{dcf6d994-54fa-4ad0-9adb-e34faffaf46f}*SharedItemsImports = 4
 		shared\shared.vcxitems*{dffbc708-890d-491b-980f-e8613869783b}*SharedItemsImports = 9
+		thread_system\thread_system.vcxitems*{ea89091a-89a1-426e-8156-640044773980}*SharedItemsImports = 9
 		globals\globals.vcxitems*{f3a1c58e-2ea8-414b-a0a0-abce1d08a247}*SharedItemsImports = 4
 		profiling\profiling.vcxitems*{f3a1c58e-2ea8-414b-a0a0-abce1d08a247}*SharedItemsImports = 4
 		utils\utils.vcxitems*{f3a1c58e-2ea8-414b-a0a0-abce1d08a247}*SharedItemsImports = 4
