@@ -1,6 +1,6 @@
 #pragma once
 
-#include "resource.h"
+#include "game_resource.h"
 
 #include "../vars/exported_entities.h"
 
@@ -23,7 +23,7 @@ namespace jc::ee_resource
 
 class ExportedEntity;
 
-class ExportedEntityResource : public Resource
+class ExportedEntityResource : public GameResource
 {
 public:
 

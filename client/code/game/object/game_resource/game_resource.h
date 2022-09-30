@@ -17,7 +17,7 @@ namespace jc::resource
 
 class ExportedEntityResource;
 
-class Resource
+class GameResource
 {
 public:
 

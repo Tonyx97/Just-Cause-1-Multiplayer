@@ -27,7 +27,7 @@
 
 #include "../vars/anims.h"
 #include "../exported_entity/exported_entity.h"
-#include "../resource/ee_resource.h"
+#include "../game_resource/ee_resource.h"
 
 namespace jc::character::hook
 {

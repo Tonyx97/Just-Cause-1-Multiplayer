@@ -11,7 +11,7 @@
 #include <game/object/mounted_gun/mounted_gun.h>
 #include <game/object/item/item_pickup.h>
 #include <game/object/weapon/weapon.h>
-#include <game/object/resource/ee_resource.h>
+#include <game/object/game_resource/ee_resource.h>
 #include <game/object/exported_entity/exported_entity.h>
 #include <game/object/agent_type/vehicle_type.h>
 #include <game/object/agent_type/npc_variant.h>

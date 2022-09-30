@@ -4,7 +4,7 @@
 
 #include <game/sys/game/game_control.h>
 
-#include <game/object/resource/ee_resource.h>
+#include <game/object/game_resource/ee_resource.h>
 #include <game/object/agent_type/vehicle_type.h>
 
 #include <core/task_system/task_system.h>

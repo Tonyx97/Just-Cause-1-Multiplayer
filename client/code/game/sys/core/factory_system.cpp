@@ -26,7 +26,7 @@
 #include <game/object/ui/map_icon.h>
 #include <game/object/ui/map_icon_type.h>
 #include <game/object/sound/sound_game_obj.h>
-#include <game/object/resource/ee_resource.h>
+#include <game/object/game_resource/ee_resource.h>
 #include <game/object/exported_entity/exported_entity.h>
 #include <game/object/vehicle/vehicle.h>
 

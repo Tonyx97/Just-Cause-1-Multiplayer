@@ -17,7 +17,7 @@ namespace jc::resource_streamer
 	}
 }
 
-class Resource;
+class GameResource;
 class ExportedEntityResource;
 class AssetRBM;
 class AssetPFX;

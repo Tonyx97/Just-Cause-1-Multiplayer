@@ -2,7 +2,7 @@
 
 #include "vehicle_type.h"
 
-#include "../resource/ee_resource.h"
+#include "../game_resource/ee_resource.h"
 #include "../vehicle/vehicle.h"
 
 VehicleType* VehicleType::CREATE()

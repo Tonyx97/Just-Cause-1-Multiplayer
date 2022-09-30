@@ -237,10 +237,10 @@
     <ClCompile Include="code\game\sys\resource\resource_streamer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\object\resource\resource.cpp">
+    <ClCompile Include="code\game\object\game_resource\game_resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\object\resource\ee_resource.cpp">
+    <ClCompile Include="code\game\object\game_resource\ee_resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\exported_entity\exported_entity.cpp">
@@ -575,10 +575,10 @@
     <ClInclude Include="code\game\sys\resource\resource_streamer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\object\resource\resource.h">
+    <ClInclude Include="code\game\object\game_resource\game_resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\object\resource\ee_resource.h">
+    <ClInclude Include="code\game\object\game_resource\ee_resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\exported_entity\exported_entity.h">
