@@ -50,6 +50,8 @@ private:
 
 public:
 
+	static constexpr auto DEFAULT_SERVER_FILES_PATH() { return "default_server_files\\"; }
+
 	bool init(const std::string& ip, const std::string& pw, const std::string& nick);
 	void pre_destroy();
 	void destroy();

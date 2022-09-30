@@ -147,6 +147,18 @@ std::vector<uint8_t> util::fs::read_bin_file(const std::string& filename)
 	return data;
 }
 
+void util::fs::create_directory(const std::string& path)
+{
+	std::wstring _path = string::convert(path);
+
+#ifdef JC_CLIENT
+	_path = GET_MODULE_PATH() + _path;
+#endif
+
+	if (!std::filesystem::is_directory(_path))
+		std::filesystem::create_directory(_path);
+}
+
 bool util::fs::create_bin_file(const std::string& filename, const std::vector<uint8_t>& data)
 {
 #ifdef JC_CLIENT

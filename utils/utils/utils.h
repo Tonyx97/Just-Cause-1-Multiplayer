@@ -495,6 +495,8 @@ namespace util
 
 		std::vector<uint8_t> read_bin_file(const std::string& filename);
 
+		void create_directory(const std::string& path);
+
 		bool create_bin_file(const std::string& filename, const std::vector<uint8_t>& data);
 	}
 

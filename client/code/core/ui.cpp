@@ -122,6 +122,9 @@ void UI::init()
 
 	io->Fonts->AddFontFromMemoryTTF(font_data, font_size, 22.f, nullptr, io->Fonts->GetGlyphRangesDefault());
 
+	if (const auto splash_data = util::fs::read_bin_file(std::string(Net::DEFAULT_SERVER_FILES_PATH()) + "splash"); !splash_data.empty())
+		D3DXCreateTextureFromFileInMemory(dx_device, splash_data.data(), splash_data.size(), &splash_texture);
+
 	g_key->set_wnd_proc(jc_hwnd);
 
 	SendMessageW(jc_hwnd, WM_SETICON, ICON_SMALL, GET_GAME_ICON());
@@ -244,36 +247,49 @@ void UI::render()
 
 	static bool open_overlay = true;
 
-	ImGui::SetNextWindowPos({ 0.f, 0.f });
-	ImGui::SetNextWindowSize({ static_cast<float>(camera->get_width()), static_cast<float>(camera->get_height()) });
+	ImGui::SetNextWindowPos({ 0.f, 0.f }, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(io->DisplaySize, ImGuiCond_Always);
 
 	constexpr auto window_flags = ImGuiWindowFlags_NoBackground |
 								  ImGuiWindowFlags_NoCollapse |
 								  ImGuiWindowFlags_NoDecoration |
 								  ImGuiWindowFlags_NoResize |
+								  ImGuiWindowFlags_NoTitleBar |
 								  ImGuiWindowFlags_NoSavedSettings |
 								  ImGuiWindowFlags_NoFocusOnAppearing |
 								  ImGuiWindowFlags_NoNav;
 
 	ImGui::SetNextWindowBgAlpha(0.10f);
 
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.f, 0.f });
+
 	if (ImGui::Begin("overlay", &open_overlay, window_flags))
 	{
-		overlay_debug();
-		render_players();
-		loading_screen();
-		net_debug();
+		if (g_net->is_joined())
+		{
+			if (show_overlay_debug)
+				overlay_debug();
+
+			render_players();
+		}
+		else loading_screen();
+
+		if (g_net)
+			net_debug();
 
 		g_chat->update();
 	}
 
+	ImGui::PopStyleVar();
 	ImGui::End();
 }
 
 void UI::loading_screen()
 {
-	if (g_net->is_joined())
-		return;
+	// if server provided splash texture then use it
+
+	if (splash_texture)
+		ImGui::Image(splash_texture, io->DisplaySize);
 
 	add_text("Welcome to JC:MP! Please wait until all resources are downloaded and the game loads",
 		0.1f * io->DisplaySize.x, 0.45f * io->DisplaySize.y, 24.f, { 1.f, 1.f, 1.f, 1.f }, false, true, 300.f);
@@ -281,9 +297,6 @@ void UI::loading_screen()
 
 void UI::render_players()
 {
-	if (!g_net->is_joined())
-		return;
-
 	const auto main_cam = g_camera->get_main_camera();
 	if (!main_cam)
 		return;
@@ -659,9 +672,6 @@ void UI::render_admin_panel()
 
 void UI::overlay_debug()
 {
-	if (!show_overlay_debug)
-		return;
-
 	const auto camera = g_camera->get_main_camera();
 	const auto v_list = ImGui::GetBackgroundDrawList();
 	const auto red_color = ImColor(255, 0, 0);
@@ -934,9 +944,6 @@ void UI::overlay_debug()
 
 void UI::net_debug()
 {
-	if (!g_net)
-		return;
-
 	const auto stat_level = g_net->get_net_stat();
 
 	if (stat_level == 0)

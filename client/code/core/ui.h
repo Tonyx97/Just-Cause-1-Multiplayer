@@ -15,6 +15,8 @@ private:
 		 show_overlay_debug = true,
 		 show_admin_panel = false;
 
+	IDirect3DTexture9* splash_texture = nullptr;
+
 	// ImGui bindings.
 	//
 #ifdef JC_DBG

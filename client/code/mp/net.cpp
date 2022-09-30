@@ -267,6 +267,8 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 	}
 	case ClientToMsPacket_SyncDefaultFiles:
 	{
+		util::fs::create_directory(DEFAULT_SERVER_FILES_PATH());
+
 		const auto default_files_count = _deserialize<size_t>(data);
 
 		if (default_files_count > 0u)
@@ -280,7 +282,7 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 				data.read(file_data.data(), file_data.size());
 
-				util::fs::create_bin_file(target_path, file_data);
+				util::fs::create_bin_file(DEFAULT_SERVER_FILES_PATH() + target_path, file_data);
 			}
 		}
 
