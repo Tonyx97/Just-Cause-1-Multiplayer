@@ -12,7 +12,7 @@ class VehicleNetObject;
 class CharacterHandle;
 class UIMapIcon;
 
-enum PlayerDynamicInfoID : uint8_t
+DEFINE_ENUM(PlayerDynamicInfoID, uint8_t)
 {
 	PlayerDynInfo_HeadRotation,
 	PlayerDynInfo_Skin,
@@ -20,7 +20,7 @@ enum PlayerDynamicInfoID : uint8_t
 	PlayerDynInfo_NPCVariant,
 };
 
-enum PlayerStanceID : uint8_t
+DEFINE_ENUM(PlayerStanceID, uint8_t)
 {
 	PlayerStanceID_Movement,
 	PlayerStanceID_MovementAngle,

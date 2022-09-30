@@ -1,6 +1,6 @@
 #pragma once
 
-enum ChannelID : uint8_t
+DEFINE_ENUM(ChannelID, uint8_t)
 {
 	ChannelID_PlayerClient,		// for player client related packets (including initialization)
 	ChannelID_Chat,				// for chat related packets

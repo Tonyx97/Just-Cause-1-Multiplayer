@@ -58,4 +58,6 @@
 
 #include <bug_ripper/bug_ripper.h>
 
+#include "general_purpose_macros.h"
+
 using namespace std::chrono_literals;

@@ -82,7 +82,7 @@ enum VehicleFaction
 	VehFaction_Rioja
 };
 
-enum VehicleTypeID : uint8_t
+DEFINE_ENUM(VehicleTypeID, uint8_t)
 {
 	VehicleTypeID_None,
 	VehicleTypeID_Car,
@@ -95,18 +95,18 @@ enum VehicleTypeID : uint8_t
 	VehicleTypeID_Submarine,
 };
 
-enum VehicleFlags : uint8_t
+DEFINE_ENUM(VehicleFlags, uint8_t)
 {
 	VehicleFlag_BlockPassengerToDriver = (1 << 4),
 };
 
-enum VehicleDoor : uint8_t
+DEFINE_ENUM(VehicleDoor, uint8_t)
 {
 	VehicleDoor_Left,
 	VehicleDoor_Right
 };
 
-enum VehicleDoorState : uint8_t
+DEFINE_ENUM(VehicleDoorState, uint8_t)
 {
 	VehicleDoorState_Closed,
 	VehicleDoorState_Opening,

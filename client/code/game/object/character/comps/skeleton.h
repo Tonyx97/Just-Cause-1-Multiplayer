@@ -19,7 +19,7 @@ namespace jc::skeleton_instance
 
 class Transform;
 
-enum class BoneID : uint8_t
+DEFINE_ENUM(BoneID, uint8_t)
 {
 	Root		 = 0,
 	Head		 = 11,

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <unordered_set>
-
 #define _WIN32_WINNT 0x0A00
 
 #include <asio.hpp>

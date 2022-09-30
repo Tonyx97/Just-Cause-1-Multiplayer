@@ -4,7 +4,7 @@
 
 #include <game/shared/vehicle_seat.h>
 
-enum VehicleEnterExitCommand : uint8_t
+DEFINE_ENUM(VehicleEnterExitCommand, uint8_t)
 {
 	VehicleEnterExit_RequestEnter,
 	VehicleEnterExit_SetVehicle,

@@ -18,7 +18,7 @@ namespace jc::item_pickup
 	}
 }
 
-enum ItemType : uint32_t
+DEFINE_ENUM(ItemType, uint32_t)
 {
 	ItemType_Health,
 	ItemType_Weapon,

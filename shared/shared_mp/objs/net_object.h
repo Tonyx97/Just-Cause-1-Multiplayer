@@ -7,10 +7,6 @@
 // network id of an object
 //
 using NID = uint16_t;
-using NetObjectType = uint8_t;
-using SyncType = uint8_t;
-using NetObjectVarType = uint8_t;
-using NetObjectActionSyncType = uint8_t;
 
 static constexpr NID INVALID_NID = 0ui16;
 
@@ -25,7 +21,7 @@ namespace enet
 }
 #endif
 
-enum _NetObjectType : NetObjectType
+DEFINE_ENUM(NetObjectType, uint8_t)
 {
 	NetObject_Invalid,
 	NetObject_Player,
@@ -35,7 +31,7 @@ enum _NetObjectType : NetObjectType
 	NetObject_Max,
 };
 
-enum _SyncType : SyncType
+DEFINE_ENUM(SyncType, uint8_t)
 {
 	SyncType_None,
 	SyncType_Global,			// global sync used by the server to sync stuff such as player blips etc
@@ -43,7 +39,7 @@ enum _SyncType : SyncType
 	SyncType_Locked,			// sync locked to a specific player at a given moment
 };
 
-enum _NetObjectVarType : NetObjectVarType
+DEFINE_ENUM(NetObjectVarType, uint8_t)
 {
 	NetObjectVar_Begin,
 	NetObjectVar_Transform = NetObjectVar_Begin,
@@ -55,7 +51,7 @@ enum _NetObjectVarType : NetObjectVarType
 	NetObjectVar_End,
 };
 
-enum _NetObjectActionSyncType : NetObjectActionSyncType
+DEFINE_ENUM(NetObjectActionSyncType, uint8_t)
 {
 	NetObjectActionSyncType_Create,
 	NetObjectActionSyncType_Hide,

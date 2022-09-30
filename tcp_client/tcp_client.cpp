@@ -1,3 +1,5 @@
+#include <defs/standard.h>
+
 #include "tcp_client.h"
 
 namespace netcp

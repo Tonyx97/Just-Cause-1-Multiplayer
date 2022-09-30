@@ -18,30 +18,47 @@
 
 namespace jc::game_control
 {
-	static constexpr std::string_view default_blocked_objects[] =
+	static inline const std::set<std::string_view> default_blocked_objects =
 	{
-		"CAgentSpawnPoint",
-		"CVehicleSpawnPoint",
-		"CObjectSpawnPoint",
+		// ui
+
+		"CGuiLiberateSettlement",
+		"CGuiPdaMap",
+		"CGuiExtract",
+		"CGuiRadioBtnGrp",
+		"CGuiFactions",
+		"CGuiAnimatedWindow",
+		"CGuiDialog",
+		"CGuiActionMap_PC",
+		"CGuiCreditsScreen",
+		"CTextResource",
+		"CGuiMenuWindow",
 		"CUserInputObject",
 		"CGuiFMVObject",
 		"CGuiMapIcon",
 		"CGuiMapSwitchIcon",
-		"CGuiPdaMap",
+		"CMusicObject",
+		"CGuiErrorMsg",
+		"CGuiRouterObject",
+		"CGuiTextObject",
+		"CGuiSpinner",
+		"CInfoMessage",
+		"CProvinceInfoMessage",
+
+		// rest
+
+		"CAgentSpawnPoint",
+		"CVehicleSpawnPoint",
+		"CObjectSpawnPoint",
 		"CObjective",
 		"CSafeHouse",
 		"CGarage",
 		"CRaceManager",
 		"CItemPickup",
 		"CMountedGun",
-		"CGuiLiberateSettlement",
 		"CProvinceSettlement",
 		"CSettlementSoundObject",
 		"CInterestPoint",
-		"CGuiExtract",
-		"CGuiRadioBtnGrp",
-		"CGuiFactions",
-		"CGuiAnimatedWindow",
 		"CBookMark",
 		"CNamedPoint",
 		"CNamedArea",
@@ -49,8 +66,6 @@ namespace jc::game_control
 		"CRoadFileLoader",
 		"CDropoffPoint",
 		"CSideMissionTarget",
-		"CInfoMessage",
-		"CProvinceInfoMessage",
 		"CMission",
 		"CCollectItemsManager",
 		"CGroupSpawner",
@@ -77,15 +92,14 @@ DEFINE_HOOK_THISCALL(create_object, 0x4EE350, ref<ObjectBase>*, GameControl* gc,
 	{
 		const auto class_name_str = class_name->c_str();
 
-		for (const auto& object_name : jc::game_control::default_blocked_objects)
-			if (!object_name.compare(class_name_str))
-			{
-				r->make_invalid();
+		if (jc::game_control::default_blocked_objects.contains(class_name_str))
+		{
+			r->make_invalid();
 
-				return nullptr;
-			}
+			return nullptr;
+		}
 
-		log(RED, "created '{}'", class_name_str);
+		//log(RED, "created '{}'", class_name_str);
 	}
 
 	return create_object_hook(gc, r, class_name, enable_now);

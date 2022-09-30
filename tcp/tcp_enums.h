@@ -2,7 +2,7 @@
 
 namespace netcp
 {
-	enum ServerClientType : uint8_t
+	DEFINE_ENUM(ServerClientType, uint8_t)
 	{
 		ServerClientType_None,
 		ServerClientType_Client,

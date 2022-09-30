@@ -2,9 +2,7 @@
 
 class Player;
 
-using PlayerClientRole = uint64_t;
-
-enum _PlayerClientRole : PlayerClientRole
+DEFINE_ENUM(PlayerClientRole, uint64_t)
 {
 	PlayerClientRole_Normal			= (1 << 0),
 	PlayerClientRole_Moderator		= (1 << 1),

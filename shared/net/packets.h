@@ -4,7 +4,7 @@ using PacketID = uint8_t;
 
 // player client
 
-enum PlayerClientPacketID : PacketID
+DEFINE_ENUM(PlayerClientPacketID, PacketID)
 {
 	PlayerClientPID_Init,
 	PlayerClientPID_Join,
@@ -15,26 +15,26 @@ enum PlayerClientPacketID : PacketID
 
 // check packets
 
-enum CheckPacketID : PacketID
+DEFINE_ENUM(CheckPacketID, PacketID)
 {
 	CheckPID_NetObjects,					// sync the instances for all net objects
 };
 
 // chat packets
 
-enum ChatPacketID : PacketID
+DEFINE_ENUM(ChatPacketID, PacketID)
 {
 	ChatPID_Msg,							// chat message
 };
 
 // generic packets
 
-enum GenericPacketID : PacketID
+DEFINE_ENUM(GenericPacketID, PacketID)
 {
 	GenericPID_Max
 };
 
-enum PlayerPacketID : PacketID
+DEFINE_ENUM(PlayerPacketID, PacketID)
 {
 	PlayerPID_StateSync = GenericPID_Max,			// syncs all the critical info of a player
 	PlayerPID_Respawn,								// respawns a player
@@ -51,7 +51,7 @@ enum PlayerPacketID : PacketID
 	PlayerPID_Max
 };
 
-enum WorldPacketID : PacketID
+DEFINE_ENUM(WorldPacketID, PacketID)
 {
 	WorldPID_SetTime = PlayerPID_Max,			// day cycle set hour time (0.0-24.0)
 	WorldPID_SetTimeScale,						// syncs the time scale
@@ -65,7 +65,7 @@ enum WorldPacketID : PacketID
 
 // debug packets
 
-enum DbgPacketID : PacketID
+DEFINE_ENUM(DbgPacketID, PacketID)
 {
 	DbgPID_SetTime = WorldPID_Max,
 };

@@ -13,7 +13,7 @@ namespace jc::traffic_light
 	}
 }
 
-enum TrafficLightStatus : uint32_t
+DEFINE_ENUM(TrafficLightStatus, uint32_t)
 {
 	TrafficLight_Green,
 	TrafficLight_Orange,

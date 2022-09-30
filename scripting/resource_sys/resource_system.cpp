@@ -4,6 +4,8 @@
 
 #include <mp/net.h>
 
+#include <resource/resource.h>
+
 namespace resource_system
 {
 	void create_resource_system()
@@ -37,4 +39,13 @@ bool ResourceSystem::init()
 #endif
 
 	return true;
+}
+
+uint8_t ResourceSystem::start_resource(const std::string& name)
+{
+#ifdef JC_CLIENT
+#else
+#endif
+
+	return ResourceResult_Ok;
 }

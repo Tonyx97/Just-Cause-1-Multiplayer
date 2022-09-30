@@ -8,7 +8,7 @@ namespace jc::game_status
 	static constexpr uint32_t STATUS = 0x20; // uint32_t
 }
 
-enum GameStatusID : uint32_t
+DEFINE_ENUM(GameStatusID, uint32_t)
 {
 	GameStatus_MainMenu,
 	GameStatus_StartLoad,

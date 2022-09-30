@@ -308,7 +308,7 @@ void UI::render_players()
 
 		if (auto distance_to_player = glm::distance(local_char->get_position(), player_pos); distance_to_player > 0.f && distance_to_player < MAX_DISTANCE)
 		{
-			const auto head_pos = player_char->get_bone_position(BoneID::Head);
+			const auto head_pos = player_char->get_bone_position(Head);
 
 			if (vec2 out; main_cam->w2s(head_pos + vec3(0.f, 0.25f, 0.f), out))
 			{
@@ -846,31 +846,31 @@ void UI::overlay_debug()
 			if (show_skeleton)
 			{
 				static std::vector<std::pair<BoneID, BoneID>> connections = {
-					{ BoneID::Head, BoneID::Neck },
+					{ Head, Neck },
 
-					{ BoneID::Neck, BoneID::ClavicleL },
-					{ BoneID::Neck, BoneID::ClavicleR },
-					{ BoneID::Neck, BoneID::Stomach },
-					{ BoneID::Stomach, BoneID::Waist },
-					{ BoneID::Waist, BoneID::Pelvis },
-					{ BoneID::Pelvis, BoneID::LegL },
-					{ BoneID::Pelvis, BoneID::LegR },
+					{ Neck, ClavicleL },
+					{ Neck, ClavicleR },
+					{ Neck, Stomach },
+					{ Stomach, Waist },
+					{ Waist, Pelvis },
+					{ Pelvis, LegL },
+					{ Pelvis, LegR },
 
-					{ BoneID::ClavicleL, BoneID::ShoulderArmL },
-					{ BoneID::ShoulderArmL, BoneID::ElbowL },
-					{ BoneID::ElbowL, BoneID::HandL },
-					{ BoneID::HandL, BoneID::FingersL },
+					{ ClavicleL, ShoulderArmL },
+					{ ShoulderArmL, ElbowL },
+					{ ElbowL, HandL },
+					{ HandL, FingersL },
 
-					{ BoneID::ClavicleR, BoneID::ShoulderArmR },
-					{ BoneID::ShoulderArmR, BoneID::ElbowR },
-					{ BoneID::ElbowR, BoneID::HandR },
-					{ BoneID::HandR, BoneID::FingersR },
+					{ ClavicleR, ShoulderArmR },
+					{ ShoulderArmR, ElbowR },
+					{ ElbowR, HandR },
+					{ HandR, FingersR },
 
-					{ BoneID::LegL, BoneID::KneeL },
-					{ BoneID::KneeL, BoneID::FootL },
+					{ LegL, KneeL },
+					{ KneeL, FootL },
 
-					{ BoneID::LegR, BoneID::KneeR },
-					{ BoneID::KneeR, BoneID::FootR },
+					{ LegR, KneeR },
+					{ KneeR, FootR },
 				};
 
 				for (const auto& [from, to] : connections)
