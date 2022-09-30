@@ -267,15 +267,14 @@ void UI::render()
 	{
 		if (g_net->is_joined())
 		{
+			net_debug();
+
 			if (show_overlay_debug)
 				overlay_debug();
 
 			render_players();
 		}
 		else loading_screen();
-
-		if (g_net)
-			net_debug();
 
 		g_chat->update();
 	}
