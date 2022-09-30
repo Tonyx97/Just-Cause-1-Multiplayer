@@ -115,8 +115,6 @@ bool Net::init()
 		world_rg::on_update,
 		world_rg::on_remove);
 
-	check(g_rsrc->init(), "Could not initialize resource system");
-
 	logt(GREEN, "Server initialized");
 
 	return true;

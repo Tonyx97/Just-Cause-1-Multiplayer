@@ -23,12 +23,12 @@ int main()
 
 	g_net = JC_ALLOC(Net);
 
-	if (!g_net->init())
-		return EXIT_FAILURE;
-
 	// create resource system instance
 
 	resource_system::create_resource_system();
+
+	check(g_net->init(), "Could not initialize server");
+	check(g_rsrc->init(), "Could not initialize resource system");
 
 	// start with the server logic
 
@@ -40,6 +40,10 @@ int main()
 		
 		timer::dispatch();
 	}
+
+	// clean up resource system stuff (resources, scripts etc)
+	
+	g_rsrc->destroy();
 
 	// destroy resource system
 

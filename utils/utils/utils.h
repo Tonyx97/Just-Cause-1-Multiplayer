@@ -342,7 +342,7 @@ namespace util
 			{
 				for (auto it = container.begin(); it != container.end();)
 				{
-					if (fn(it->first, it->second))
+					if (!fn(it->first, it->second))
 						++it;
 					else it = container.erase(it);
 				}
@@ -353,11 +353,11 @@ namespace util
 			{
 				for (auto it = container.begin(); it != container.end();)
 				{
-					if (fn(it->first, it->second))
+					if (!fn(it->first, it->second))
 						++it;
 					else
 					{
-						TVG_FREE(it->second);
+						JC_FREE(it->second);
 
 						container.erase(it);
 

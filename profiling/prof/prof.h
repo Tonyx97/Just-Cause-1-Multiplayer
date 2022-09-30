@@ -68,10 +68,23 @@ namespace jc::prof
 	}
 
 	template <typename T, typename... A>
+	inline void logt_nl(eColor color, const T text, A... args)
+	{
+		detail::log(false, true, color, FORMAT(text, args));
+	}
+
+	template <typename T, typename... A>
 	inline bool logb(eColor color, const T text, A... args)
 	{
 		detail::log(true, color, FORMAT(text, args));
 		return false;
+	}
+
+	template <typename R, typename T, typename... A>
+	inline R logbtc(R ret, eColor color, const T text, A... args)
+	{
+		detail::log(true, color, FORMAT(text, args));
+		return ret;
 	}
 
 	template <typename T, typename... A>

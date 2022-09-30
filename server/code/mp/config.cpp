@@ -23,31 +23,31 @@ bool Config::init()
 
 		bool ok = false;
 
-		if (std::tie(server_info.masterserver_ip, ok) = get_field<std::string>("masterserver_ip"); !ok)
+		if (std::tie(server_info.masterserver_ip, ok) = jc_json::get_field<std::string>(j_server_config, "masterserver_ip"); !ok)
 			server_info.masterserver_ip.clear();
 
-		if (std::tie(server_info.ip, ok) = get_field<std::string>("ip"); !ok)
+		if (std::tie(server_info.ip, ok) = jc_json::get_field<std::string>(j_server_config, "ip"); !ok)
 			server_info.ip.clear();
 
-		if (std::tie(server_info.name, ok) = get_field<std::string>("server_name"); !ok)
+		if (std::tie(server_info.name, ok) = jc_json::get_field<std::string>(j_server_config, "server_name"); !ok)
 			server_info.name = "Default JC1:MP Server";
 
-		if (std::tie(server_info.discord, ok) = get_field<std::string>("discord"); !ok)
+		if (std::tie(server_info.discord, ok) = jc_json::get_field<std::string>(j_server_config, "discord"); !ok)
 			server_info.discord.clear();
 
-		if (std::tie(server_info.community, ok) = get_field<std::string>("community"); !ok)
+		if (std::tie(server_info.community, ok) = jc_json::get_field<std::string>(j_server_config, "community"); !ok)
 			server_info.community.clear();
 
-		if (std::tie(server_info.password, ok) = get_field<std::string>("password"); !ok)
+		if (std::tie(server_info.password, ok) = jc_json::get_field<std::string>(j_server_config, "password"); !ok)
 			server_info.ip.clear();
 
-		if (std::tie(server_info.gamemode, ok) = get_field<std::string>("gamemode"); !ok)
+		if (std::tie(server_info.gamemode, ok) = jc_json::get_field<std::string>(j_server_config, "gamemode"); !ok)
 			server_info.gamemode.clear();
 
-		if (std::tie(server_info.refresh_rate, ok) = get_field<int>("refresh_rate"); !ok)
+		if (std::tie(server_info.refresh_rate, ok) = jc_json::get_field<int>(j_server_config, "refresh_rate"); !ok)
 			server_info.refresh_rate = 60;
 
-		const auto [startup_resources_key, rsrc_list_ok] = get_field<json>("startup_resources");
+		const auto [startup_resources_key, rsrc_list_ok] = jc_json::get_field<json>(j_server_config, "startup_resources");
 
 		if (rsrc_list_ok)
 			for (const std::string& rsrc_name : startup_resources_key)

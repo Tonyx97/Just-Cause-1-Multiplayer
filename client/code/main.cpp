@@ -173,6 +173,10 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 			g_task->destroy();
 
+			// cleanup the resource system stuff (resources, scripts etc)
+
+			g_rsrc->destroy();
+
 			// clear timers
 
 			timer::clear_timers();

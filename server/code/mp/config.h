@@ -50,20 +50,6 @@ public:
 	void destroy();
 	void update();
 
-	template <typename T>
-	std::pair<T, bool> get_field(const std::string& name) const
-	{
-		try { return { j_server_config.at(name), true }; }
-		catch (...) { return { {}, false }; }
-	}
-
-	template <typename T>
-	std::pair<T, bool> get_field(json& key, const std::string& name) const
-	{
-		try { return { key.at(name), true }; }
-		catch (...) { return { {}, false }; }
-	}
-
 	const ServerInfo& get_info() const { return server_info; }
 
 	size_t get_default_files_count() const { return default_files.size(); }
