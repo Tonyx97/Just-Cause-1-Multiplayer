@@ -26,6 +26,7 @@ public:
 	void destroy();
 	void hook_dispatcher();
 	void unhook_dispatcher();
+	void load_game();
 
 	bool is_in_game() const { return get_status() == GameStatus_InGame; }
 	bool is_game_loaded() const;

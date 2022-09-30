@@ -190,9 +190,9 @@ void Net::set_joined(bool v)
 	}
 }
 
-void Net::set_game_load_available()
+void Net::set_game_ready_to_load()
 {
-	load_game_available = true;
+	game_ready_to_load = true;
 }
 
 void Net::tick()

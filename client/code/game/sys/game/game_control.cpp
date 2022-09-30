@@ -39,7 +39,9 @@ namespace jc::game_control
 		"CSettlementSoundObject",
 		"CInterestPoint",
 		"CGuiExtract",
+		"CGuiRadioBtnGrp",
 		"CGuiFactions",
+		"CGuiAnimatedWindow",
 		"CBookMark",
 		"CNamedPoint",
 		"CNamedArea",
@@ -83,7 +85,7 @@ DEFINE_HOOK_THISCALL(create_object, 0x4EE350, ref<ObjectBase>*, GameControl* gc,
 				return nullptr;
 			}
 
-		//log(RED, "created '{}'", class_name_str);
+		log(RED, "created '{}'", class_name_str);
 	}
 
 	return create_object_hook(gc, r, class_name, enable_now);

@@ -40,12 +40,11 @@ private:
 	int net_stat = 0;
 #endif
 
-	std::atomic_bool load_game_available = false;
-
 	bool connected = false,
 		 timed_out = false,
 		 initialized = false,
-		 joined = false;
+		 joined = false,
+		 game_ready_to_load = false;
 
 	void disconnect();
 
@@ -57,7 +56,7 @@ public:
 	void add_local(NID nid);
 	void set_initialized(bool v);
 	void set_joined(bool v);
-	void set_game_load_available();
+	void set_game_ready_to_load();
 	void tick();
 
 	/*
@@ -78,7 +77,7 @@ public:
 	bool is_tcp_connected() const;
 	bool is_initialized() const { return initialized; }
 	bool is_joined() const { return joined; }
-	bool can_finish_load_game() const { return load_game_available; }
+	bool is_game_ready_to_load() const { return game_ready_to_load; }
 
 	int get_net_stat() const { return net_stat; }
 

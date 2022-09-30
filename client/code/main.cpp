@@ -27,7 +27,7 @@
 #include <game/object/savegame/savegame.h>
 #include <game/object/character/character.h>
 
-#include <resource_system.h>
+#include <resource_sys/resource_system.h>
 
 #include "main.h"
 
@@ -51,6 +51,11 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		ShowWindow(g_ui->get_window(), SW_SHOW);
 	}
 
+#ifdef JC_DBG
+	if (GetAsyncKeyState(VK_F3))
+		g_game_status->load_game();
+#endif
+
 	if (!initialized)
 	{
 		g_registry.init();
@@ -60,10 +65,6 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		auto len = DWORD(256);
 
 		GetUserNameA(nick, &len);	// todojc
-
-		// create resource system instance
-
-		resource_system::create_resource_system();
 
 		// initialize game systems/managers
 
@@ -149,9 +150,15 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 		jc::hooks::hook_queued();
 
-		log(GREEN, "Loaded from hook");
+		log(GREEN, "Connected and hooked");
+
+		// create resource system instance
+
+		resource_system::create_resource_system();
 
 		check(g_rsrc->init(), "Could not initialize resource system");
+
+		log(GREEN, "Resource system initialized");
 
 		initialized = true;
 		was_initialized = true;

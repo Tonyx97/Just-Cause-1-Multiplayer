@@ -11,8 +11,8 @@ DEFINE_HOOK_FASTCALL(dispatch, 0x497A70, bool, GameStatus* gs)
 	{
 	case GameStatus_MainMenu:	break;
 	case GameStatus_StartLoad:	break;
-	case GameStatus_BeginLoad:	break;
-	case GameStatus_Load:		return g_net->can_finish_load_game();	// block the loading screen until we are ready
+	case GameStatus_BeginLoad: 	g_net->set_game_ready_to_load(); return false;	// do not being load until the mod has done everything and its ready
+	case GameStatus_Load:		break;
 	case GameStatus_InGame:
 	{
 		if (!g_net->is_joined())
@@ -42,6 +42,13 @@ void GameStatus::hook_dispatcher()
 void GameStatus::unhook_dispatcher()
 {
 	dispatch_hook.unhook();
+}
+
+void GameStatus::load_game()
+{
+	jc::write(GameStatus_Load, this, jc::game_status::STATUS);
+
+	dispatch_hook(this);
 }
 
 bool GameStatus::is_game_loaded() const

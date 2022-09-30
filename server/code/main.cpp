@@ -10,7 +10,7 @@
 
 #include <timer/timer.h>
 
-#include <resource_system.h>
+#include <resource_sys/resource_system.h>
 
 int main()
 {
@@ -19,16 +19,16 @@ int main()
 
 	util::init();
 
-	// create resource system instance
-
-	resource_system::create_resource_system();
-
 	// initialize the server
 
 	g_net = JC_ALLOC(Net);
 
 	if (!g_net->init())
 		return EXIT_FAILURE;
+
+	// create resource system instance
+
+	resource_system::create_resource_system();
 
 	// start with the server logic
 
@@ -41,6 +41,10 @@ int main()
 		timer::dispatch();
 	}
 
+	// destroy resource system
+
+	resource_system::destroy_resource_system();
+
 	// clear all resources
 
 	timer::clear_timers();
@@ -48,10 +52,6 @@ int main()
 	// destroy the server
 
 	JC_FREE(g_net);
-
-	// destroy resource system
-
-	resource_system::destroy_resource_system();
 
 	// destroy bug ripper
 

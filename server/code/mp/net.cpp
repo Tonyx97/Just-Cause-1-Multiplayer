@@ -11,15 +11,12 @@
 
 #include <tcp_server.h>
 
-#include <resource_system.h>
+#include <resource_sys/resource_system.h>
 
 namespace world_rg
 {
 	void on_create_remove(WorldRg* w, librg_event* e, bool create)
 	{
-		const auto owner_id = librg_event_owner_get(w->get_world(), e);
-		const auto entity_id = librg_event_entity_get(w->get_world(), e);
-
 		const auto observer_entity = w->get_event_owner(e);
 		const auto visible_entity = w->get_event_entity(e);
 
