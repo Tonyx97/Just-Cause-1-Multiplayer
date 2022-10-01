@@ -42,6 +42,7 @@ struct ResourceVerificationCtx
 		std::string type;
 	};
 
+	std::string path;
 	std::string author;
 	std::string version;
 	std::string description;
@@ -53,14 +54,20 @@ class Resource
 {
 private:
 	
+	std::string path;
 	std::string name;
+	std::string author;
+	std::string version;
+	std::string description;
+
+	std::unordered_map<std::string, Script*> scripts;
 
 public:
 
 	static constexpr auto ALLOWED_CHARACTERS() { return "0123456789abcdefghijklmnopqrstuvwxyz_"; }
 	static constexpr auto META_FILE() { return "meta.json"; }
 
-	Resource(const std::string& name);
+	Resource(const std::string& name, const ResourceVerificationCtx& ctx);
 	~Resource();
 	
 	ResourceResult start();

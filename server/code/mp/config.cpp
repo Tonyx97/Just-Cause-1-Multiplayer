@@ -21,35 +21,16 @@ bool Config::init()
 	{
 		config_file >> j_server_config;
 
-		bool ok = false;
+		if (!jc_json::get_field(j_server_config, "masterserver_ip", server_info.masterserver_ip))	server_info.masterserver_ip.clear();
+		if (!jc_json::get_field(j_server_config, "ip", server_info.ip))								server_info.ip.clear();
+		if (!jc_json::get_field(j_server_config, "server_name", server_info.name))					server_info.name = "Default JC1:MP Server";
+		if (!jc_json::get_field(j_server_config, "discord", server_info.discord))					server_info.discord.clear();
+		if (!jc_json::get_field(j_server_config, "community", server_info.community))				server_info.community.clear();
+		if (!jc_json::get_field(j_server_config, "password", server_info.password))					server_info.password.clear();
+		if (!jc_json::get_field(j_server_config, "gamemode", server_info.gamemode))					server_info.gamemode.clear();
+		if (!jc_json::get_field(j_server_config, "refresh_rate", server_info.refresh_rate))			server_info.refresh_rate = 60;
 
-		if (std::tie(server_info.masterserver_ip, ok) = jc_json::get_field<std::string>(j_server_config, "masterserver_ip"); !ok)
-			server_info.masterserver_ip.clear();
-
-		if (std::tie(server_info.ip, ok) = jc_json::get_field<std::string>(j_server_config, "ip"); !ok)
-			server_info.ip.clear();
-
-		if (std::tie(server_info.name, ok) = jc_json::get_field<std::string>(j_server_config, "server_name"); !ok)
-			server_info.name = "Default JC1:MP Server";
-
-		if (std::tie(server_info.discord, ok) = jc_json::get_field<std::string>(j_server_config, "discord"); !ok)
-			server_info.discord.clear();
-
-		if (std::tie(server_info.community, ok) = jc_json::get_field<std::string>(j_server_config, "community"); !ok)
-			server_info.community.clear();
-
-		if (std::tie(server_info.password, ok) = jc_json::get_field<std::string>(j_server_config, "password"); !ok)
-			server_info.ip.clear();
-
-		if (std::tie(server_info.gamemode, ok) = jc_json::get_field<std::string>(j_server_config, "gamemode"); !ok)
-			server_info.gamemode.clear();
-
-		if (std::tie(server_info.refresh_rate, ok) = jc_json::get_field<int>(j_server_config, "refresh_rate"); !ok)
-			server_info.refresh_rate = 60;
-
-		const auto [startup_resources_key, rsrc_list_ok] = jc_json::get_field<json>(j_server_config, "startup_resources");
-
-		if (rsrc_list_ok)
+		if (json startup_resources_key; jc_json::get_field(j_server_config, "startup_resources", startup_resources_key))
 			for (const std::string& rsrc_name : startup_resources_key)
 				server_info.startup_rsrcs.push_back(rsrc_name);
 	}

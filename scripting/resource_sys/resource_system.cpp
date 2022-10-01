@@ -58,7 +58,7 @@ void ResourceSystem::refresh()
 {
 #ifdef JC_CLIENT
 #else
-	std::unordered_set<std::string> updated_list;
+	std::unordered_map<std::string, ResourceVerificationCtx> updated_list;
 
 	// grab new list of valid resources first
 
@@ -70,16 +70,16 @@ void ResourceSystem::refresh()
 		ResourceVerificationCtx ctx;
 
 		if (verify_resource(rsrc_name, &ctx) == ResourceVerification_Ok)
-			updated_list.insert(rsrc_name);
+			updated_list.insert({ rsrc_name, std::move(ctx) });
 	}
 
 	// add new resources
 
-	for (const auto& rsrc_name : updated_list)
+	for (const auto& [rsrc_name, ctx] : updated_list)
 	{
 		if (!resources.contains(rsrc_name))
 		{
-			const auto resource = JC_ALLOC(Resource, rsrc_name);
+			const auto resource = JC_ALLOC(Resource, rsrc_name, ctx);
 
 			resources.insert({ rsrc_name, resource });
 
@@ -113,29 +113,27 @@ ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_nam
 	if (rsrc_name.find_first_not_of(Resource::ALLOWED_CHARACTERS()) != std::string::npos)
 		return logbtc(ResourceVerification_InvalidName, RED, "Resource '{}' has an invalid name (only '_' and alphanumeric characters allowed)", rsrc_name);
 
-	const auto rsrc_path = RESOURCES_FOLDER() + rsrc_name + '\\';
+	const auto rsrc_path = ctx->path = RESOURCES_FOLDER() + rsrc_name + '\\';
 
 	json meta;
 
 	if (!jc_json::from_file(meta, rsrc_path + Resource::META_FILE()))
 		return logbtc(ResourceVerification_InvalidMeta, RED, "Resource '{}' has an invalid meta file (or no file at all)", rsrc_name);
 
-	bool ok = false;
+	if (!jc_json::get_field(meta, "author", ctx->author))				ctx->author = "unknown";
+	if (!jc_json::get_field(meta, "version", ctx->version))				ctx->version = "unknown";
+	if (!jc_json::get_field(meta, "description", ctx->description))		ctx->description = "none";
 
-	if (std::tie(ctx->author, ok) = jc_json::get_field<std::string>(meta, "author"); !ok)				ctx->author = "unknown";
-	if (std::tie(ctx->version, ok) = jc_json::get_field<std::string>(meta, "version"); !ok)				ctx->version = "unknown";
-	if (std::tie(ctx->description, ok) = jc_json::get_field<std::string>(meta, "description"); !ok)		ctx->description = "none";
-
-	if (auto [scripts_list, ok] = jc_json::get_field<json>(meta, "scripts"); ok)
+	if (json scripts_list; jc_json::get_field(meta, "scripts", scripts_list))
 	{
 		for (json& script_info : scripts_list)
 		{
 			std::string source, type;
 
-			if (std::tie(source, ok) = jc_json::get_field<std::string>(script_info, "src"); !ok)
+			if (!jc_json::get_field(script_info, "src", source))
 				return logbtc(ResourceVerification_InvalidScriptSource, RED, "Resource '{}' has an invalid script source path", rsrc_name);
 
-			if (std::tie(type, ok) = jc_json::get_field<std::string>(script_info, "type"); !ok)
+			if (!jc_json::get_field(script_info, "type", type))
 				return logbtc(ResourceVerification_InvalidScriptType, RED, "Resource '{}' has an invalid script type", rsrc_name);
 
 			if (!std::filesystem::is_regular_file(rsrc_path + source))
