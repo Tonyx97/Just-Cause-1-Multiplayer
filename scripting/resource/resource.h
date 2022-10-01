@@ -39,7 +39,8 @@ struct ResourceVerificationCtx
 	struct ScriptCtx
 	{
 		std::string source;
-		std::string type;
+
+		ScriptType type;
 	};
 
 	std::string path;
@@ -71,4 +72,6 @@ public:
 	~Resource();
 	
 	ResourceResult start();
+	ResourceResult stop();
+	ResourceResult restart();
 };

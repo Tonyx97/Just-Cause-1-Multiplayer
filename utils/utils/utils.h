@@ -494,6 +494,7 @@ namespace util
 		std::string strip_parent_path(const std::string& str);
 
 		std::vector<uint8_t> read_bin_file(const std::string& filename);
+		std::vector<char> read_plain_file(const std::string& filename, bool zero_terminated = true);
 
 		void create_directory(const std::string& path);
 

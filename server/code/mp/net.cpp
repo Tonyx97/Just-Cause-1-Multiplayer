@@ -258,7 +258,7 @@ void Net::tick()
 		sv->totalReceivedPackets = 0;
 	});
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(config.get_info().refresh_rate));
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000 / config.get_info().refresh_rate));
 }
 
 void Net::refresh_net_object_sync()
@@ -388,6 +388,15 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 			sync_default_files(cl);
 		}
 		else cl->send_packet(ClientToMsPacket_Password, false);
+
+		break;
+	}
+	case ClientToMsPacket_SyncResource:
+	{
+		//serialization_ctx ay;
+		//_serialize(ay, 1234);
+		//tcp_server->broadcast(ClientToMsPacket_SyncResource, ay);
+
 
 		break;
 	}

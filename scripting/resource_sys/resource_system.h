@@ -26,7 +26,11 @@ public:
 	ResourceVerification verify_resource(const std::string& rsrc_name, ResourceVerificationCtx* ctx);
 
 	ResourceResult start_resource(const std::string& name);
+	ResourceResult stop_resource(const std::string& name);
+	ResourceResult restart_resource(const std::string& name);
 	ResourceResult start_resource(Resource* rsrc);
+	ResourceResult stop_resource(Resource* rsrc);
+	ResourceResult restart_resource(Resource* rsrc);
 
 #ifdef JC_CLIENT
 #else

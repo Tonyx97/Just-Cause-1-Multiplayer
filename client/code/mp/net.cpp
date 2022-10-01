@@ -20,8 +20,12 @@ bool Net::init(const std::string& ip, const std::string& pw, const std::string& 
 		g_net->on_tcp_message(ci, &header, data);
 	});
 
+	log(YELLOW, "Connecting TCP...");
+
 	check(tcp, "Could not initialize TCP connection");
 	check(tcp->connect(ip, netcp::CLIENT_TO_SERVER_TCP_PORT), "Could not connect to server via TCP");
+
+	log(GREEN, "TCP Connected");
 	
 	tcp->send_packet(ClientToMsPacket_Password, pw);
 
@@ -289,6 +293,18 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 		tcp_ctx.default_server_files_received = true;
 
 		tcp->cancel_sleep();
+
+		break;
+	}
+	case ClientToMsPacket_SyncResource:
+	{
+		logt(RED, "Server wants you to sync a resource");
+
+		break;
+	}
+	case ClientToMsPacket_ResourceFiles:
+	{
+		logt(RED, "Server sent you files");
 
 		break;
 	}

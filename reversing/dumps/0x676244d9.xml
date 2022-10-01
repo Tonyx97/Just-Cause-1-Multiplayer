@@ -1,0 +1,351 @@
+<object name="road_decorations">
+<object name="road_decoration_0">
+<value name="_class" type="string">CDamageableObject</value>
+<value name="name" type="string">CDmgObj</value>
+<value name="world" type="mat">0,0,1, 0,1,0, -1,0,0, 0,0,0</value>
+<value name="_scalable" type="int">0</value>
+<value name="_exportable" type="int">1</value>
+<value name="visible" type="int">1</value>
+<value name="filename" type="string">building_blocks\general\roadside_stick.lod</value>
+<value name="collision" type="string">models\building_blocks\general\roadside_stick.pfx</value>
+<value name="showonevent" type="string"></value>
+<value name="hideonevent" type="string"></value>
+<value name="savestate_id" type="string"></value>
+<value name="receive_matrix_event" type="string"></value>
+<value name="stop_key_frame" type="string"></value>
+<value name="start_key_frame" type="string"></value>
+<value name="key_framed" type="int">0</value>
+<value name="sendmatrix" type="string"></value>
+<value name="faction" type="int">0</value>
+<value name="force_power" type="float">-1</value>
+<value name="particle_system" type="string"></value>
+<value name="remove_after_destroyed" type="int">1</value>
+<value name="destroyed_remove_time" type="float">10</value>
+<value name="is_hiding_place" type="int">0</value>
+<value name="force_range" type="float">0</value>
+<value name="force_damage" type="float">0</value>
+<value name="damage_over_time" type="float">0</value>
+<value name="damage_over_time_duration" type="float">0</value>
+<value name="destroyed_model_name" type="string">building_blocks\general\roadside_stick.lod</value>
+<value name="destroyed_collision_name" type="string">models\building_blocks\general\roadside_stick_d.pfx</value>
+<value name="particle_system_offset" type="mat">1,0,0, 0,1,0, 0,0,1, 0,0,0</value>
+<value name="maxarmour" type="int">0</value>
+<value name="armour" type="int">0</value>
+<value name="maxhealth" type="int">1</value>
+<value name="curhealth" type="int">1</value>
+<value name="affected_by_bullets" type="int">0</value>
+<value name="affected_by_explosives" type="int">1</value>
+<value name="affected_by_collision" type="int">1</value>
+<value name="targetable" type="int">0</value>
+<value name="stopsendmatrix" type="string"></value>
+<value name="restorehealthevent" type="string"></value>
+<value name="sendhit" type="string"></value>
+<value name="senddestroyed" type="string"></value>
+<value name="forceactivateonevent" type="string"></value>
+<value name="destroy_on_event" type="string"></value>
+<value name="destructable" type="int">1</value>
+<value name="make_indestructable_event" type="string"></value>
+<value name="make_destructable_event" type="string"></value>
+<value name="spawn_distance" type="float">120.0</value>
+</object>
+
+<object name="road_decoration_1">
+<value name="_class" type="string">CDamageableObject</value>
+<value name="name" type="string">CDmgObj</value>
+<value name="world" type="mat">-1,0,0, 0,1,0, 0,0,-1, 0,0,0</value>
+<value name="_scalable" type="int">0</value>
+<value name="_exportable" type="int">1</value>
+<value name="visible" type="int">1</value>
+<value name="filename" type="string">building_blocks\general\roadside_streetlight.lod</value>
+<value name="collision" type="string">models\building_blocks\general\roadside_streetlight.pfx</value>
+<value name="showonevent" type="string"></value>
+<value name="hideonevent" type="string"></value>
+<value name="savestate_id" type="string"></value>
+<value name="receive_matrix_event" type="string"></value>
+<value name="stop_key_frame" type="string"></value>
+<value name="start_key_frame" type="string"></value>
+<value name="key_framed" type="int">0</value>
+<value name="sendmatrix" type="string"></value>
+<value name="faction" type="int">0</value>
+<value name="force_power" type="float">-1</value>
+<value name="particle_system" type="string"></value>
+<value name="remove_after_destroyed" type="int">1</value>
+<value name="destroyed_remove_time" type="float">10</value>
+<value name="is_hiding_place" type="int">0</value>
+<value name="force_range" type="float">0</value>
+<value name="force_damage" type="float">0</value>
+<value name="damage_over_time" type="float">0</value>
+<value name="damage_over_time_duration" type="float">0</value>
+<value name="destroyed_model_name" type="string">building_blocks\general\roadside_streetlight_d.lod</value>
+<value name="destroyed_collision_name" type="string">models\building_blocks\general\roadside_streetlight_d.pfx</value>
+<value name="particle_system_offset" type="mat">1,0,0, 0,1,0, 0,0,1, 0,0,0</value>
+<value name="maxarmour" type="int">0</value>
+<value name="armour" type="int">0</value>
+<value name="maxhealth" type="int">20</value>
+<value name="curhealth" type="int">20</value>
+<value name="affected_by_bullets" type="int">0</value>
+<value name="affected_by_explosives" type="int">1</value>
+<value name="affected_by_collision" type="int">1</value>
+<value name="targetable" type="int">0</value>
+<value name="stopsendmatrix" type="string"></value>
+<value name="restorehealthevent" type="string"></value>
+<value name="sendhit" type="string"></value>
+<value name="senddestroyed" type="string"></value>
+<value name="forceactivateonevent" type="string"></value>
+<value name="destroy_on_event" type="string"></value>
+<value name="destructable" type="int">1</value>
+<value name="make_indestructable_event" type="string"></value>
+<value name="make_destructable_event" type="string"></value>
+<value name="spawn_distance" type="float">400.0</value>
+</object>
+
+<object name="road_decoration_2">
+<value name="_class" type="string">CDamageableObject</value>
+<value name="name" type="string">CDmgObj</value>
+<value name="world" type="mat">1,0,0, 0,1,0, 0,0,1, 0,0,0</value>
+<value name="_scalable" type="int">0</value>
+<value name="_exportable" type="int">1</value>
+<value name="visible" type="int">1</value>
+<value name="filename" type="string">building_blocks\general\roadside_streetlight_double.lod</value>
+<value name="collision" type="string">models\building_blocks\general\roadside_streetlight_double.pfx</value>
+<value name="showonevent" type="string"></value>
+<value name="hideonevent" type="string"></value>
+<value name="savestate_id" type="string"></value>
+<value name="receive_matrix_event" type="string"></value>
+<value name="stop_key_frame" type="string"></value>
+<value name="start_key_frame" type="string"></value>
+<value name="key_framed" type="int">0</value>
+<value name="sendmatrix" type="string"></value>
+<value name="faction" type="int">0</value>
+<value name="force_power" type="float">-1</value>
+<value name="particle_system" type="string"></value>
+<value name="remove_after_destroyed" type="int">1</value>
+<value name="destroyed_remove_time" type="float">10</value>
+<value name="is_hiding_place" type="int">0</value>
+<value name="force_range" type="float">0</value>
+<value name="force_damage" type="float">0</value>
+<value name="damage_over_time" type="float">0</value>
+<value name="damage_over_time_duration" type="float">0</value>
+<value name="destroyed_model_name" type="string">building_blocks\general\roadside_streetlight_double_d.lod</value>
+<value name="destroyed_collision_name" type="string">models\building_blocks\general\roadside_streetlight_double_d.pfx</value>
+<value name="particle_system_offset" type="mat">1,0,0, 0,1,0, 0,0,1, 0,0,0</value>
+<value name="maxarmour" type="int">0</value>
+<value name="armour" type="int">0</value>
+<value name="maxhealth" type="int">20</value>
+<value name="curhealth" type="int">20</value>
+<value name="affected_by_bullets" type="int">0</value>
+<value name="affected_by_explosives" type="int">1</value>
+<value name="affected_by_collision" type="int">1</value>
+<value name="targetable" type="int">0</value>
+<value name="stopsendmatrix" type="string"></value>
+<value name="restorehealthevent" type="string"></value>
+<value name="sendhit" type="string"></value>
+<value name="senddestroyed" type="string"></value>
+<value name="forceactivateonevent" type="string"></value>
+<value name="destroy_on_event" type="string"></value>
+<value name="destructable" type="int">1</value>
+<value name="make_indestructable_event" type="string"></value>
+<value name="make_destructable_event" type="string"></value>
+<value name="spawn_distance" type="float">400.0</value>
+</object>
+
+<object name="road_decoration_3">
+<value name="_class" type="string">CDamageableObject</value>
+<value name="name" type="string">CDmgObj</value>
+<value name="world" type="mat">1,0,0, 0,1,0, 0,0,1, 0,0,0</value>
+<value name="_scalable" type="int">0</value>
+<value name="_exportable" type="int">1</value>
+<value name="visible" type="int">1</value>
+<value name="filename" type="string">building_blocks\general\roadside_metalrig.lod</value>
+<value name="collision" type="string">models\building_blocks\general\roadside_metalrig.pfx</value>
+<value name="showonevent" type="string"></value>
+<value name="hideonevent" type="string"></value>
+<value name="savestate_id" type="string"></value>
+<value name="receive_matrix_event" type="string"></value>
+<value name="stop_key_frame" type="string"></value>
+<value name="start_key_frame" type="string"></value>
+<value name="key_framed" type="int">0</value>
+<value name="sendmatrix" type="string"></value>
+<value name="faction" type="int">0</value>
+<value name="force_power" type="float">-1</value>
+<value name="particle_system" type="string"></value>
+<value name="remove_after_destroyed" type="int">1</value>
+<value name="destroyed_remove_time" type="float">10</value>
+<value name="is_hiding_place" type="int">0</value>
+<value name="force_range" type="float">0</value>
+<value name="force_damage" type="float">0</value>
+<value name="damage_over_time" type="float">0</value>
+<value name="damage_over_time_duration" type="float">0</value>
+<value name="destroyed_model_name" type="string">building_blocks\general\roadside_metalrig_d.lod</value>
+<value name="destroyed_collision_name" type="string">models\building_blocks\general\roadside_metalrig_d.pfx</value>
+<value name="particle_system_offset" type="mat">1,0,0, 0,1,0, 0,0,1, 0,0,0</value>
+<value name="maxarmour" type="int">0</value>
+<value name="armour" type="int">0</value>
+<value name="maxhealth" type="int">20</value>
+<value name="curhealth" type="int">20</value>
+<value name="affected_by_bullets" type="int">0</value>
+<value name="affected_by_explosives" type="int">1</value>
+<value name="affected_by_collision" type="int">1</value>
+<value name="targetable" type="int">0</value>
+<value name="stopsendmatrix" type="string"></value>
+<value name="restorehealthevent" type="string"></value>
+<value name="sendhit" type="string"></value>
+<value name="senddestroyed" type="string"></value>
+<value name="forceactivateonevent" type="string"></value>
+<value name="destroy_on_event" type="string"></value>
+<value name="destructable" type="int">1</value>
+<value name="make_indestructable_event" type="string"></value>
+<value name="make_destructable_event" type="string"></value>
+<value name="spawn_distance" type="float">400.0</value>
+</object>
+
+<object name="road_decoration_4">
+<value name="_class" type="string">CDamageableObject</value>
+<value name="name" type="string">CDmgObj</value>
+<value name="world" type="mat">-0.707057476,0,0.7071559429, 0,1,0, -0.7071559429,0,-0.707057476, 0,0.3669021726,0</value>
+<value name="_scalable" type="int">0</value>
+<value name="_exportable" type="int">1</value>
+<value name="visible" type="int">1</value>
+<value name="filename" type="string">building_blocks\general\roadside_curvesign.lod</value>
+<value name="collision" type="string">models\building_blocks\general\roadside_curvesign.pfx</value>
+<value name="showonevent" type="string"></value>
+<value name="hideonevent" type="string"></value>
+<value name="savestate_id" type="string"></value>
+<value name="receive_matrix_event" type="string"></value>
+<value name="stop_key_frame" type="string"></value>
+<value name="start_key_frame" type="string"></value>
+<value name="key_framed" type="int">0</value>
+<value name="sendmatrix" type="string"></value>
+<value name="faction" type="int">0</value>
+<value name="force_power" type="float">-1</value>
+<value name="particle_system" type="string"></value>
+<value name="remove_after_destroyed" type="int">1</value>
+<value name="destroyed_remove_time" type="float">10</value>
+<value name="is_hiding_place" type="int">0</value>
+<value name="force_range" type="float">0</value>
+<value name="force_damage" type="float">0</value>
+<value name="damage_over_time" type="float">0</value>
+<value name="damage_over_time_duration" type="float">0</value>
+<value name="destroyed_model_name" type="string">building_blocks\general\roadside_curvesign_d.lod</value>
+<value name="destroyed_collision_name" type="string">models\building_blocks\general\roadside_curvesign_d.pfx</value>
+<value name="particle_system_offset" type="mat">1,0,0, 0,1,0, 0,0,1, 0,0,0</value>
+<value name="maxarmour" type="int">0</value>
+<value name="armour" type="int">0</value>
+<value name="maxhealth" type="int">20</value>
+<value name="curhealth" type="int">20</value>
+<value name="affected_by_bullets" type="int">0</value>
+<value name="affected_by_explosives" type="int">1</value>
+<value name="affected_by_collision" type="int">1</value>
+<value name="targetable" type="int">0</value>
+<value name="stopsendmatrix" type="string"></value>
+<value name="restorehealthevent" type="string"></value>
+<value name="sendhit" type="string"></value>
+<value name="senddestroyed" type="string"></value>
+<value name="forceactivateonevent" type="string"></value>
+<value name="destroy_on_event" type="string"></value>
+<value name="destructable" type="int">1</value>
+<value name="make_indestructable_event" type="string"></value>
+<value name="make_destructable_event" type="string"></value>
+<value name="spawn_distance" type="float">150.0</value>
+</object>
+
+<object name="road_decoration_5">
+<value name="_class" type="string">CDamageableObject</value>
+<value name="name" type="string">CDmgObj</value>
+<value name="world" type="mat">1,0,0, 0,1,0, 0,0,1, 0,0,0</value>
+<value name="_scalable" type="int">0</value>
+<value name="_exportable" type="int">1</value>
+<value name="visible" type="int">1</value>
+<value name="filename" type="string">building_blocks\general\roadside_cone.lod</value>
+<value name="collision" type="string">models\building_blocks\general\roadside_cone.pfx</value>
+<value name="showonevent" type="string"></value>
+<value name="hideonevent" type="string"></value>
+<value name="savestate_id" type="string"></value>
+<value name="receive_matrix_event" type="string"></value>
+<value name="stop_key_frame" type="string"></value>
+<value name="start_key_frame" type="string"></value>
+<value name="key_framed" type="int">0</value>
+<value name="sendmatrix" type="string"></value>
+<value name="faction" type="int">0</value>
+<value name="force_power" type="float">-1</value>
+<value name="particle_system" type="string"></value>
+<value name="remove_after_destroyed" type="int">1</value>
+<value name="destroyed_remove_time" type="float">10</value>
+<value name="is_hiding_place" type="int">0</value>
+<value name="force_range" type="float">0</value>
+<value name="force_damage" type="float">0</value>
+<value name="damage_over_time" type="float">0</value>
+<value name="damage_over_time_duration" type="float">0</value>
+<value name="destroyed_model_name" type="string">building_blocks\general\roadside_cone.lod</value>
+<value name="destroyed_collision_name" type="string">models\building_blocks\general\roadside_cone.pfx</value>
+<value name="particle_system_offset" type="mat">1,0,0, 0,1,0, 0,0,1, 0,0,0</value>
+<value name="maxarmour" type="int">0</value>
+<value name="armour" type="int">0</value>
+<value name="maxhealth" type="int">3</value>
+<value name="curhealth" type="int">3</value>
+<value name="affected_by_bullets" type="int">0</value>
+<value name="affected_by_explosives" type="int">1</value>
+<value name="affected_by_collision" type="int">1</value>
+<value name="targetable" type="int">0</value>
+<value name="stopsendmatrix" type="string"></value>
+<value name="restorehealthevent" type="string"></value>
+<value name="sendhit" type="string"></value>
+<value name="senddestroyed" type="string"></value>
+<value name="forceactivateonevent" type="string"></value>
+<value name="destroy_on_event" type="string"></value>
+<value name="destructable" type="int">1</value>
+<value name="make_indestructable_event" type="string"></value>
+<value name="make_destructable_event" type="string"></value>
+<value name="spawn_distance" type="float">120.0</value>
+</object>
+
+<object name="road_decoration_6">
+<value name="_class" type="string">CDamageableObject</value>
+<value name="name" type="string">CDmgObj</value>
+<value name="world" type="mat">-1,0,0, 0,1,0, 0,0,-1, 0,0,0</value>
+<value name="_scalable" type="int">0</value>
+<value name="_exportable" type="int">1</value>
+<value name="visible" type="int">1</value>
+<value name="filename" type="string">building_blocks\general\roadside_streetlight_poster.lod</value>
+<value name="collision" type="string">models\building_blocks\general\roadside_streetlight.pfx</value>
+<value name="showonevent" type="string"></value>
+<value name="hideonevent" type="string"></value>
+<value name="savestate_id" type="string"></value>
+<value name="receive_matrix_event" type="string"></value>
+<value name="stop_key_frame" type="string"></value>
+<value name="start_key_frame" type="string"></value>
+<value name="key_framed" type="int">0</value>
+<value name="sendmatrix" type="string"></value>
+<value name="faction" type="int">0</value>
+<value name="force_power" type="float">-1</value>
+<value name="particle_system" type="string"></value>
+<value name="remove_after_destroyed" type="int">1</value>
+<value name="destroyed_remove_time" type="float">10</value>
+<value name="is_hiding_place" type="int">0</value>
+<value name="force_range" type="float">0</value>
+<value name="force_damage" type="float">0</value>
+<value name="damage_over_time" type="float">0</value>
+<value name="damage_over_time_duration" type="float">0</value>
+<value name="destroyed_model_name" type="string">building_blocks\general\roadside_streetlight_poster_d.lod</value>
+<value name="destroyed_collision_name" type="string">models\building_blocks\general\roadside_streetlight_d.pfx</value>
+<value name="particle_system_offset" type="mat">1,0,0, 0,1,0, 0,0,1, 0,0,0</value>
+<value name="maxarmour" type="int">0</value>
+<value name="armour" type="int">0</value>
+<value name="maxhealth" type="int">20</value>
+<value name="curhealth" type="int">20</value>
+<value name="affected_by_bullets" type="int">0</value>
+<value name="affected_by_explosives" type="int">1</value>
+<value name="affected_by_collision" type="int">1</value>
+<value name="targetable" type="int">0</value>
+<value name="stopsendmatrix" type="string"></value>
+<value name="restorehealthevent" type="string"></value>
+<value name="sendhit" type="string"></value>
+<value name="senddestroyed" type="string"></value>
+<value name="forceactivateonevent" type="string"></value>
+<value name="destroy_on_event" type="string"></value>
+<value name="destructable" type="int">1</value>
+<value name="make_indestructable_event" type="string"></value>
+<value name="make_destructable_event" type="string"></value>
+<value name="spawn_distance" type="float">400.0</value>
+</object>
+</object>

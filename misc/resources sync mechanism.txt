@@ -1,0 +1,3 @@
+When a resource is started, the mechanism starts in the server, it will send an information packet (with the meta file too, including timestamps), to all
+clients connected through TCP, the client will verify the files and request the ones that are outdated or don't exist. The server will send the files requested
+by each client and notify the client that the resource is ready to be loaded.

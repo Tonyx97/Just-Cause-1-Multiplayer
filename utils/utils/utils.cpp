@@ -147,6 +147,32 @@ std::vector<uint8_t> util::fs::read_bin_file(const std::string& filename)
 	return data;
 }
 
+std::vector<char> util::fs::read_plain_file(const std::string& filename, bool zero_terminated)
+{
+#ifdef JC_CLIENT
+	std::ifstream file(GET_MODULE_PATH() + string::convert(filename), std::ios::binary);
+#else
+	std::ifstream file(filename);
+#endif
+
+	if (!file)
+		return {};
+
+	const auto file_size = static_cast<size_t>(get_file_size(file));
+
+	if (file_size <= 0u)
+		return {};
+
+	std::vector<char> data(file_size);
+
+	file.read(data.data(), file_size);
+
+	if (zero_terminated)
+		data.push_back('\0');
+
+	return data;
+}
+
 void util::fs::create_directory(const std::string& path)
 {
 	std::wstring _path = string::convert(path);

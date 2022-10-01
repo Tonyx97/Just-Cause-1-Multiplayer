@@ -60,6 +60,7 @@ namespace netcp
 
 		void start();
 		void launch_update_thread();
+		void broadcast(uint16_t id, const serialization_ctx& data, client_interface* ignore_ci = nullptr);
 		void set_on_receive_fn(const on_receive_t& fn) { on_receive_fn = fn; }
 		void free_cid(CID cid);
 		void accept_connections();

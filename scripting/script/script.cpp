@@ -6,8 +6,6 @@
 
 Script::Script(const std::string& path, const std::string& name, ScriptType type) : path(path), name(name), type(type)
 {
-	log(PURPLE, "script {} {} loaded ({:x})", path, name, type);
-	start();
 }
 
 Script::~Script()
@@ -18,6 +16,9 @@ Script::~Script()
 void Script::start()
 {
 	vm = JC_ALLOC(luas::ctx);
+
+	if (const auto data = util::fs::read_plain_file(path); !data.empty())
+		vm->exec_string(data.data());
 }
 
 void Script::stop()

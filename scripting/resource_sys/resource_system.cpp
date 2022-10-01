@@ -7,6 +7,8 @@
 
 #include <resource/resource.h>
 
+#include <luas.h>
+
 namespace resource_system
 {
 	void create_resource_system()
@@ -14,6 +16,9 @@ namespace resource_system
 		check(!g_rsrc, "Resource system must not exist before creating it");
 
 		g_rsrc = std::make_unique<ResourceSystem>();
+
+		fatal_error_callback = [](const char*) { return 0; };
+		error_callback = [](const char* err) { log(RED, "{}", err); return 0; };
 	}
 
 	void destroy_resource_system()
@@ -136,10 +141,22 @@ ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_nam
 			if (!jc_json::get_field(script_info, "type", type))
 				return logbtc(ResourceVerification_InvalidScriptType, RED, "Resource '{}' has an invalid script type", rsrc_name);
 
+			const auto type_value = util::hash::JENKINS(type);
+
+			// save scripts only if they match their running machine type
+			
+#if defined(JC_CLIENT)
+			if (type_value == ScriptType_Server)
+				continue;
+#elif defined(JC_SERVER)
+			if (type_value == ScriptType_Client)
+				continue;
+#endif
+
 			if (!std::filesystem::is_regular_file(rsrc_path + source))
 				return logbtc(ResourceVerification_ScriptNotExists, RED, "Resource '{}', script '{}' does not exist", rsrc_name, source);
 
-			ctx->scripts.insert({ source, { source, type } });
+			ctx->scripts.insert({ source, { source, type_value } });
 		}
 	}
 	else return logbtc(ResourceVerification_InvalidScriptList, RED, "Resource '{}' has an invalid script list", rsrc_name);
@@ -159,4 +176,30 @@ ResourceResult ResourceSystem::start_resource(Resource* rsrc)
 {
 
 	return rsrc->start();
+}
+
+ResourceResult ResourceSystem::stop_resource(const std::string& name)
+{
+	if (const auto it = resources.find(name); it != resources.end())
+		return stop_resource(it->second);
+
+	return ResourceResult_NotExists;
+}
+
+ResourceResult ResourceSystem::stop_resource(Resource* rsrc)
+{
+	return rsrc->stop();
+}
+
+ResourceResult ResourceSystem::restart_resource(const std::string& name)
+{
+	if (const auto it = resources.find(name); it != resources.end())
+		return restart_resource(it->second);
+
+	return ResourceResult_NotExists;
+}
+
+ResourceResult ResourceSystem::restart_resource(Resource* rsrc)
+{
+	return rsrc->restart();
 }

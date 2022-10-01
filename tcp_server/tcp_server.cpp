@@ -79,6 +79,15 @@ namespace netcp
 		});
 	}
 
+	void tcp_server::broadcast(uint16_t id, const serialization_ctx& data, client_interface* ignore_ci)
+	{
+		clients.for_each([&](server_client ci)
+		{
+			if (ci.get() != ignore_ci)
+				ci->send_packet(id, data);
+		});
+	}
+
 	void tcp_server::free_cid(CID cid)
 	{
 		auto it = used_cids.find(cid);
