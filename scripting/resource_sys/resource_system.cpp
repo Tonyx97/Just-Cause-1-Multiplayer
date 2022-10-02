@@ -129,6 +129,8 @@ ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_nam
 	if (!jc_json::get_field(meta, "version", ctx->version))				ctx->version = "unknown";
 	if (!jc_json::get_field(meta, "description", ctx->description))		ctx->description = "none";
 
+	// get scripts
+
 	if (json scripts_list; jc_json::get_field(meta, "scripts", scripts_list))
 	{
 		for (json& script_info : scripts_list)
@@ -144,22 +146,43 @@ ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_nam
 			const auto type_value = util::hash::JENKINS(type);
 
 			// save scripts only if they match their running machine type
-			
-#if defined(JC_CLIENT)
-			if (type_value == ScriptType_Server)
-				continue;
-#elif defined(JC_SERVER)
-			if (type_value == ScriptType_Client)
-				continue;
-#endif
 
 			if (!std::filesystem::is_regular_file(rsrc_path + source))
 				return logbtc(ResourceVerification_ScriptNotExists, RED, "Resource '{}', script '{}' does not exist", rsrc_name, source);
-
-			ctx->scripts.insert({ source, { source, type_value } });
+			
+			switch (type_value)
+			{
+			case ScriptType_Shared: ctx->shared.scripts.insert({ source, { source, type_value } }); break;
+			case ScriptType_Client: ctx->client.scripts.insert({ source, { source, type_value } }); break;
+#ifdef JC_SERVER
+			case ScriptType_Server: ctx->server.scripts.insert({ source, { source, type_value } }); break;
+#endif
+			default: return logbtc(ResourceVerification_InvalidScriptList, RED, "Resource '{}', script '{}' has an invalid script file type", rsrc_name, source);
+			}
 		}
 	}
 	else return logbtc(ResourceVerification_InvalidScriptList, RED, "Resource '{}' has an invalid script list", rsrc_name);
+
+	// get files
+
+	if (json files_list; jc_json::get_field(meta, "files", files_list))
+	{
+		for (json& file_key : files_list)
+		{
+			std::string source, type;
+
+			if (!jc_json::get_field(file_key, "src", source))
+				return logbtc(ResourceVerification_InvalidScriptSource, RED, "Resource '{}' has an invalid script source path", rsrc_name);
+
+			if (!jc_json::get_field(file_key, "type", type))
+				return logbtc(ResourceVerification_InvalidScriptType, RED, "Resource '{}' has an invalid script type", rsrc_name);
+
+			if (!std::filesystem::is_regular_file(rsrc_path + source))
+				return logbtc(ResourceVerification_ScriptNotExists, RED, "Resource '{}', file '{}' does not exist", rsrc_name, source);
+
+			ctx->client.files.insert({ source, { source } }); break;
+		}
+	}
 
 	return ResourceVerification_Ok;
 }
@@ -174,7 +197,6 @@ ResourceResult ResourceSystem::start_resource(const std::string& name)
 
 ResourceResult ResourceSystem::start_resource(Resource* rsrc)
 {
-
 	return rsrc->start();
 }
 

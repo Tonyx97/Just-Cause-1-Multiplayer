@@ -490,6 +490,10 @@ namespace util
 	namespace fs
 	{
 		int64_t get_file_size(std::ifstream& file);
+
+		uint64_t get_last_write_time(const std::string& filename);
+
+		void set_last_write_time(const std::string& filename, uint64_t new_time);
 		
 		std::string strip_parent_path(const std::string& str);
 

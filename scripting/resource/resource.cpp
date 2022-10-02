@@ -11,13 +11,28 @@ Resource::Resource(const std::string& name, const ResourceVerificationCtx& ctx) 
 
 	// create scripts (in suspended state ofc)
 
-	for (const auto& [script_name, script_ctx] : ctx.scripts)
+	auto create_add_script = [&](const ResourceVerificationCtx::ScriptCtx& script_ctx, const auto& script_name)
 	{
 		const auto script_path = ctx.path + script_name;
 		const auto script = JC_ALLOC(Script, script_path, script_name, script_ctx.type);
 
 		scripts.insert({ script_name, script });
-	}
+	};
+
+	// client will load scripts inside the client and shared list
+	// and server will load scripts inside server and shared list
+
+#if defined(JC_CLIENT)
+	for (const auto& [script_name, script_ctx] : ctx.client.scripts)
+#else
+	for (const auto& [script_name, script_ctx] : ctx.server.scripts)
+#endif
+		create_add_script(script_ctx, script_name);
+
+	// load shared scripts in both ends
+
+	for (const auto& [script_name, script_ctx] : ctx.shared.scripts)
+		create_add_script(script_ctx, script_name);
 }
 
 Resource::~Resource()

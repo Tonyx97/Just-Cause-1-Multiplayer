@@ -114,6 +114,31 @@ int64_t util::fs::get_file_size(std::ifstream& file)
 	return static_cast<int64_t>(length);
 }
 
+uint64_t util::fs::get_last_write_time(const std::string& filename)
+{
+	std::wstring _filename = string::convert(filename);
+
+#ifdef JC_CLIENT
+	_filename = GET_MODULE_PATH() + _filename;
+#endif
+
+	return static_cast<uint64_t>(std::filesystem::last_write_time(_filename).time_since_epoch().count());
+}
+
+void util::fs::set_last_write_time(const std::string& filename, uint64_t new_time)
+{
+	std::wstring _filename = string::convert(filename);
+
+#ifdef JC_CLIENT
+	_filename = GET_MODULE_PATH() + _filename;
+#endif
+
+	const auto duration = std::chrono::file_clock::duration(new_time);
+	const auto time_point = std::chrono::file_clock::time_point(duration);
+
+	std::filesystem::last_write_time(_filename, time_point);
+}
+
 std::string util::fs::strip_parent_path(const std::string& str)
 {
 	const auto pos = str.find_last_of('\\');

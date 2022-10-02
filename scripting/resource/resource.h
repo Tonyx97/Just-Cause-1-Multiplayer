@@ -36,11 +36,20 @@ DEFINE_ENUM(ResourceAction, uint8_t)
 
 struct ResourceVerificationCtx
 {
-	struct ScriptCtx
+	struct FileCtx
 	{
 		std::string source;
+	};
 
+	struct ScriptCtx : public FileCtx
+	{
 		ScriptType type;
+	};
+
+	struct FileList
+	{
+		std::unordered_map<std::string, FileCtx> files;
+		std::unordered_map<std::string, ScriptCtx> scripts;
 	};
 
 	std::string path;
@@ -48,7 +57,15 @@ struct ResourceVerificationCtx
 	std::string version;
 	std::string description;
 
-	std::unordered_map<std::string, ScriptCtx> scripts;
+	// server needs all the lists
+	// but client only needs client and shared lists
+
+	FileList client,
+			 shared;
+
+#ifdef JC_SERVER
+	FileList server;
+#endif
 };
 
 class Resource
