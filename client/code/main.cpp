@@ -265,10 +265,10 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		else if (!game_focused && game_hwnd == GetActiveWindow())
 			g_key->block_input(!(game_focused = true));
 
-#ifdef JC_DBG
+//#ifdef JC_DBG
 		if (g_key->is_key_pressed(VK_F3))
 			g_game_status->load_game();
-#endif
+//#endif
 
 		g_game_control->on_tick();
 	}
