@@ -373,7 +373,6 @@ void Net::on_client_tcp_connected(netcp::tcp_server_client* ci)
 	using namespace netcp;
 
 	log(YELLOW, "TCP Connection received");
-
 }
 
 void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet_header* header, serialization_ctx& data)
@@ -404,12 +403,28 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 
 		break;
 	}
-	case ClientToMsPacket_SyncResource:
+	case ClientToMsPacket_StartupSync:
 	{
+		const auto nid = _deserialize<NID>(data);
+		const auto pc = get_player_client_by_nid(nid);
+
+		check(pc, "Invalid player NID {:x} in startup sync", nid);
+
+		// check if the TCP IP is the same as the PlayerClient to 
+		// avoid exploits and abuses
+
+		check(pc->get_ip() == cl->get_ip(), "PlayerClient's IP is different from TCP connection, possible exploiter... {} - {}", pc->get_ip(), cl->get_ip());
+
+		log(BLUE, "A player with NID {:x} and CID {:x} wants to sync all resources", nid, cl->get_cid());
+
+		// associate this PlayerClient with the TCP client
+		
+		cl->set_userdata(pc);
+
+
 		//serialization_ctx ay;
 		//_serialize(ay, 1234);
 		//tcp_server->broadcast(ClientToMsPacket_SyncResource, ay);
-
 
 		break;
 	}

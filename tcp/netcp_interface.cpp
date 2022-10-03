@@ -37,6 +37,24 @@ namespace netcp
 		asio::write(socket, asio::buffer(data_out.data.data(), data_out.data.size()), asio::transfer_all(), ec);
 	}
 
+	void client_interface::send_packet(uint16_t id)
+	{
+		// since this function can be called from different threads,
+		// lock it
+
+		std::lock_guard lock(send_mtx);
+
+		header_out.id = id;
+		header_out.size = 0u;
+
+		data_out.clear();
+		_serialize(data_out, header_out);
+
+		std::error_code ec;
+
+		asio::write(socket, asio::buffer(data_out.data.data(), data_out.data.size()), asio::transfer_all(), ec);
+	}
+
 	void client_interface::update()
 	{
 		std::error_code ec;
@@ -49,15 +67,18 @@ namespace netcp
 
 			if (ec) break;
 
-			// read data
+			// read data (if size is bigger than 0 ofc)
 
-			data_in.resize(header_in.size);
+			if (header_in.size > 0u)
+			{
+				data_in.resize(header_in.size);
 
-			asio::read(socket, asio::buffer(data_in.data.data(), data_in.data.size()), asio::transfer_exactly(header_in.size), ec);
+				asio::read(socket, asio::buffer(data_in.data.data(), data_in.data.size()), asio::transfer_exactly(header_in.size), ec);
 
-			if (ec) break;
+				if (ec) break;
 
-			data_in.recalculate_begin_end();
+				data_in.recalculate_begin_end();
+			}
 
 			on_receive_fn(this, header_in, data_in);
 		}

@@ -50,6 +50,8 @@ namespace netcp
 		serialization_ctx data_in {},
 						  data_out {};
 
+		std::atomic<void*> userdata = nullptr;
+
 		CID cid = INVALID_CID;
 
 	public:
@@ -71,8 +73,10 @@ namespace netcp
 		~client_interface();
 
 		void send_packet(uint16_t id, void* out_data, size_t size);
+		void send_packet(uint16_t id);
 		void update();
 		void cancel_sleep();
+		void set_userdata(void* v) { userdata = v; }
 
 		template <typename T>
 		void send_packet(uint16_t id, const T& out_data) requires(!std::is_same_v<T, serialization_ctx>)
@@ -106,6 +110,9 @@ namespace netcp
 		CID get_cid() const { return cid; }
 
 		const asio::ip::tcp::socket& get_socket() const { return socket; }
+
+		template <typename T>
+		T* get_userdata() const { return std::bit_cast<T*>(userdata.load()); }
 	};
 
 	class peer_interface

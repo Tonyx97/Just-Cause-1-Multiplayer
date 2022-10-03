@@ -127,6 +127,15 @@ bool PlayerClient::compare_address(const ENetAddress& other)
 
 	return (in6_equal(address->host, other.host) && address->port == other.port);
 }
+
+std::string PlayerClient::get_ip() const
+{
+	char ip_str[64] = { 0 };
+
+	enet_address_get_host_ip(&peer->address, ip_str, sizeof(ip_str));
+
+	return ip_str;
+}
 #endif
 
 void PlayerClient::set_initialized(bool v)

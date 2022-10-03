@@ -80,6 +80,8 @@ public:
 	ENetPeer* get_peer() const { return peer; }
 
 	ENetAddress* get_address() const { return &peer->address; }
+
+	std::string get_ip() const;
 #endif
 };
 

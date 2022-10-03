@@ -90,6 +90,10 @@ bool Net::init(const std::string& ip, const std::string& pw, const std::string& 
 	while (!is_initialized())
 		tick();
 
+	// request complete resource sync
+	
+	tcp->send_packet(ClientToMsPacket_StartupSync, local->get_nid());
+
 	return connected;
 }
 
