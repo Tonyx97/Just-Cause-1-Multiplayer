@@ -57,6 +57,7 @@ public:
 
 	// callbacks
 
+	void on_client_tcp_connected(netcp::tcp_server_client* ci);
 	void on_client_tcp_message(netcp::client_interface* ci, const netcp::packet_header* header, serialization_ctx& data);
 };
 

@@ -28,6 +28,7 @@ namespace netcp
 #pragma pack(pop)
 
 	using on_receive_t = std::function<void(class client_interface*, const packet_header& header, serialization_ctx& data)>;
+	using on_connected_t = std::function<void(class tcp_server_client*)>;
 
 	class client_interface
 	{

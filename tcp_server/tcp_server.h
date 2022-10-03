@@ -47,6 +47,7 @@ namespace netcp
 		std::thread update_thread;
 
 		on_receive_t on_receive_fn = nullptr;
+		on_connected_t on_connected_fn = nullptr;
 
 		std::unordered_set<CID> free_cids,
 								used_cids;
@@ -62,6 +63,7 @@ namespace netcp
 		void launch_update_thread();
 		void broadcast(uint16_t id, const serialization_ctx& data, client_interface* ignore_ci = nullptr);
 		void set_on_receive_fn(const on_receive_t& fn) { on_receive_fn = fn; }
+		void set_on_connected_fn(const on_connected_t& fn) { on_connected_fn = fn; }
 		void free_cid(CID cid);
 		void accept_connections();
 	};

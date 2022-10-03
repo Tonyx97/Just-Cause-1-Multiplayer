@@ -80,6 +80,11 @@ bool Net::init()
 		g_net->on_client_tcp_message(ci, &header, data);
 	});
 
+	tcp_server->set_on_connected_fn([](netcp::tcp_server_client* ci)
+	{
+		g_net->on_client_tcp_connected(ci);
+	});
+
 	tcp_server->start();
 	tcp_server->launch_update_thread();
 
@@ -361,6 +366,14 @@ void Net::sync_default_files(netcp::tcp_server_client* cl)
 	});
 	
 	cl->send_packet(ClientToMsPacket_SyncDefaultFiles, data);
+}
+
+void Net::on_client_tcp_connected(netcp::tcp_server_client* ci)
+{
+	using namespace netcp;
+
+	log(YELLOW, "TCP Connection received");
+
 }
 
 void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet_header* header, serialization_ctx& data)

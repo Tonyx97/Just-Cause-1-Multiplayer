@@ -101,7 +101,14 @@ namespace netcp
 		acceptor.async_accept([this](asio::error_code ec, asio::ip::tcp::socket socket)
 		{
 			if (!ec)
-				clients.push(std::make_shared<tcp_server_client>(on_receive_fn, socket, get_free_cid()));
+			{
+				auto ci = std::make_shared<tcp_server_client>(on_receive_fn, socket, get_free_cid());
+
+				if (on_connected_fn)
+					on_connected_fn(ci.get());
+
+				clients.push(std::move(ci));
+			}
 			else log(RED, "Connection refused '{}'", ec.message());
 
 			accept_connections();
