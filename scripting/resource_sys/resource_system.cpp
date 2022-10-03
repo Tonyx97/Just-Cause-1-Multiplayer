@@ -167,20 +167,12 @@ ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_nam
 
 	if (json files_list; jc_json::get_field(meta, "files", files_list))
 	{
-		for (json& file_key : files_list)
+		for (const std::string& filename : files_list)
 		{
-			std::string source, type;
+			if (!std::filesystem::is_regular_file(rsrc_path + filename))
+				return logbtc(ResourceVerification_ScriptNotExists, RED, "Resource '{}', file '{}' does not exist", rsrc_name, filename);
 
-			if (!jc_json::get_field(file_key, "src", source))
-				return logbtc(ResourceVerification_InvalidScriptSource, RED, "Resource '{}' has an invalid script source path", rsrc_name);
-
-			if (!jc_json::get_field(file_key, "type", type))
-				return logbtc(ResourceVerification_InvalidScriptType, RED, "Resource '{}' has an invalid script type", rsrc_name);
-
-			if (!std::filesystem::is_regular_file(rsrc_path + source))
-				return logbtc(ResourceVerification_ScriptNotExists, RED, "Resource '{}', file '{}' does not exist", rsrc_name, source);
-
-			ctx->client.files.insert({ source, { source } }); break;
+			ctx->client.files.insert({ filename, { filename } });
 		}
 	}
 
