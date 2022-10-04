@@ -1,6 +1,8 @@
 #pragma once
 
-namespace tvg::thread_safe
+#include <queue>
+
+namespace jc::thread_safe
 {
 	template <typename T>
 	class queue
@@ -23,11 +25,11 @@ namespace tvg::thread_safe
 			cond.notify_all();
 		}
 
-		void push(T& val)
+		void push(T&& val)
 		{
 			std::lock_guard<std::mutex> lock(mtx);
 
-			data.push(std::move(val));
+			data.push(val);
 			cond.notify_all();
 		}
 

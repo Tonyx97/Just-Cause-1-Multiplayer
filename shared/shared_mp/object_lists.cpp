@@ -9,18 +9,30 @@
 
 void ObjectLists::for_each_net_object(const nid_net_obj_fn_t& fn)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	for (const auto& [nid, obj] : net_objects)
 		fn(nid, obj);
 }
 
 void ObjectLists::for_each_player_client(const nid_pc_fn_t& fn)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	for (const auto& [nid, pc] : player_clients)
 		fn(nid, pc);
 }
 
 void ObjectLists::for_each_joined_player_client(const nid_pc_fn_t& fn)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	for (const auto& [nid, pc] : player_clients)
 		if (pc->is_joined())
 			fn(nid, pc);
@@ -28,6 +40,10 @@ void ObjectLists::for_each_joined_player_client(const nid_pc_fn_t& fn)
 
 void ObjectLists::for_each_player(const nid_player_fn_t& fn)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	for (const auto& [nid, player] : player_clients)
 		fn(nid, player->get_player());
 }
@@ -81,6 +97,10 @@ PlayerClient* ObjectLists::add_player_client(ENetPeer* peer)
 
 bool ObjectLists::remove_player_client(PlayerClient* pc)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	check(pc, "Invalid player client at '{}'", CURR_FN);
 
 	remove_net_object(pc->get_player());
@@ -92,11 +112,19 @@ bool ObjectLists::remove_player_client(PlayerClient* pc)
 
 bool ObjectLists::has_player_client(PlayerClient* pc) const
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	return player_clients_set.contains(pc);
 }
 
 void ObjectLists::clear_object_list()
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	// erase Player instances in this list because PlayerClient 
 	// destroys them in the dtor
 
@@ -130,12 +158,20 @@ void ObjectLists::clear_object_list()
 
 NetObject* ObjectLists::get_net_object_by_nid_impl(NID nid)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	auto it = net_objects.find(nid);
 	return it != net_objects.end() ? it->second : nullptr;
 }
 
 NetObject* ObjectLists::add_net_object(NetObject* net_obj)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	const auto nid = net_obj->get_nid();
 
 	switch (const auto type = net_obj->get_type())
@@ -169,6 +205,10 @@ NetObject* ObjectLists::add_net_object(NetObject* net_obj)
 
 bool ObjectLists::remove_net_object(NetObject* net_obj)
 {
+#ifdef JC_SERVER
+		std::lock_guard lock(mtx);
+#endif
+
 	const auto nid = net_obj->get_nid();
 
 	switch (net_obj->get_type())
@@ -202,12 +242,20 @@ bool ObjectLists::remove_net_object(NetObject* net_obj)
 
 Player* ObjectLists::get_player_by_nid(NID nid)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	const auto pc = get_player_client_by_nid(nid);
 	return pc ? pc->get_player() : nullptr;
 }
 
 PlayerClient* ObjectLists::get_player_client_by_nid(NID nid)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	auto it = player_clients.find(nid);
 	return it != player_clients.end() ? it->second : nullptr;
 }

@@ -1,6 +1,11 @@
 #pragma once
 
+#ifdef JC_SERVER
+#include <thread_system/stl/queue.h>
+#endif
+
 class Player;
+class Resource;
 
 DEFINE_ENUM(PlayerClientRole, uint64_t)
 {
@@ -20,6 +25,8 @@ private:
 		 joined = false;
 
 #ifdef JC_SERVER
+	jc::thread_safe::queue<Resource*> resources_to_sync;
+
 	ENetPeer* peer = nullptr;
 
 	PlayerClientRole roles = PlayerClientRole_Normal;
@@ -54,6 +61,7 @@ public:
 	void set_role(PlayerClientRole v);
 	void remove_role(PlayerClientRole v);
 	void startup_sync();
+	void add_resource_to_sync(Resource* v) { resources_to_sync.push(v); }
 
 	/**
 	* syncs this player with the rest of the server

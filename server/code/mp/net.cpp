@@ -406,20 +406,28 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 	case ClientToMsPacket_StartupSync:
 	{
 		const auto nid = _deserialize<NID>(data);
-		const auto pc = get_player_client_by_nid(nid);
 
-		check(pc, "Invalid player NID {:x} in startup sync", nid);
+		g_net->exec_with_object_lock([&]()
+		{
+			const auto pc = get_player_client_by_nid(nid);
 
-		// check if the TCP IP is the same as the PlayerClient to 
-		// avoid exploits and abuses
+			check(pc, "Invalid player NID {:x} in startup sync", nid);
 
-		check(pc->get_ip() == cl->get_ip(), "PlayerClient's IP is different from TCP connection, possible exploiter... {} - {}", pc->get_ip(), cl->get_ip());
+			// check if the TCP IP is the same as the PlayerClient to 
+			// avoid exploits and abuses
 
-		log(BLUE, "A player with NID {:x} and CID {:x} wants to sync all resources", nid, cl->get_cid());
+			check(pc->get_ip() == cl->get_ip(), "PlayerClient's IP is different from TCP connection, possible exploiter... {} - {}", pc->get_ip(), cl->get_ip());
 
-		// associate this PlayerClient with the TCP client
-		
-		cl->set_userdata(pc);
+			log(BLUE, "A player with NID {:x} and CID {:x} wants to sync all resources", nid, cl->get_cid());
+
+			// associate this PlayerClient with the TCP client
+
+			cl->set_userdata(pc);
+
+			// add all currently active resources to sync queue in PlayerClient
+
+
+		});
 
 
 		//serialization_ctx ay;

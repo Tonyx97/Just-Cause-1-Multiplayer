@@ -14,6 +14,15 @@ class ObjectLists
 {
 protected:
 
+#ifdef JC_SERVER
+	// it's possible that we access the object lists from another thread (TCP connection)
+	// so we want to add a recursive mutex: it's recursive because we should be able to 
+	// manipulate a player using multiple functions that acquire the lock such as 
+	// get_player_client_by_nid
+	//
+	mutable std::recursive_mutex mtx;
+#endif
+
 	void clear_object_list();
 
 private:
@@ -43,6 +52,16 @@ public:
 
 	bool remove_player_client(PlayerClient* pc);
 	bool has_player_client(PlayerClient* pc) const;
+
+#ifdef JC_SERVER
+	template <typename Fn>
+	void exec_with_objects_lock(const Fn& fn)
+	{
+		std::lock_guard lock(mtx);
+
+		fn();
+	}
+#endif
 
 	template <typename T = NetObject>
 	T* get_net_object_by_nid(NID nid)
