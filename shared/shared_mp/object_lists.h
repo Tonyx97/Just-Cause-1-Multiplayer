@@ -55,7 +55,7 @@ public:
 
 #ifdef JC_SERVER
 	template <typename Fn>
-	void exec_with_objects_lock(const Fn& fn)
+	void exec_with_object_lock(const Fn& fn)
 	{
 		std::lock_guard lock(mtx);
 

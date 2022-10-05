@@ -425,8 +425,6 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 			cl->set_userdata(pc);
 
 			// add all currently active resources to sync queue in PlayerClient
-
-
 		});
 
 
