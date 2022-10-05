@@ -206,7 +206,7 @@ NetObject* ObjectLists::add_net_object(NetObject* net_obj)
 bool ObjectLists::remove_net_object(NetObject* net_obj)
 {
 #ifdef JC_SERVER
-		std::lock_guard lock(mtx);
+	std::lock_guard lock(mtx);
 #endif
 
 	const auto nid = net_obj->get_nid();
