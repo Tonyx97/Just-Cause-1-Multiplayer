@@ -53,6 +53,10 @@ bool ResourceSystem::init()
 
 void ResourceSystem::destroy()
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	for (const auto& [name, rsrc] : resources)
 		JC_FREE(rsrc);
 
@@ -77,6 +81,8 @@ void ResourceSystem::refresh()
 		if (verify_resource(rsrc_name, &ctx) == ResourceVerification_Ok)
 			updated_list.insert({ rsrc_name, std::move(ctx) });
 	}
+
+	std::lock_guard lock(mtx);
 
 	// add new resources
 
@@ -108,8 +114,17 @@ void ResourceSystem::refresh()
 #endif
 }
 
+bool ResourceSystem::is_resource_valid(const std::string& rsrc_name) const
+{
+	return resources.contains(rsrc_name);
+}
+
 ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_name, ResourceVerificationCtx* ctx)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	// check if this resource name was already registered
 
 	if (resources.contains(rsrc_name))
@@ -181,39 +196,41 @@ ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_nam
 
 ResourceResult ResourceSystem::start_resource(const std::string& name)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	if (const auto it = resources.find(name); it != resources.end())
-		return start_resource(it->second);
+	{
+		return it->second->start();
+	}
 
 	return ResourceResult_NotExists;
-}
-
-ResourceResult ResourceSystem::start_resource(Resource* rsrc)
-{
-	return rsrc->start();
 }
 
 ResourceResult ResourceSystem::stop_resource(const std::string& name)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	if (const auto it = resources.find(name); it != resources.end())
-		return stop_resource(it->second);
+	{
+		return it->second->stop();
+	}
 
 	return ResourceResult_NotExists;
 }
-
-ResourceResult ResourceSystem::stop_resource(Resource* rsrc)
-{
-	return rsrc->stop();
-}
-
 ResourceResult ResourceSystem::restart_resource(const std::string& name)
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	if (const auto it = resources.find(name); it != resources.end())
-		return restart_resource(it->second);
+	{
+		return it->second->restart();
+	}
 
 	return ResourceResult_NotExists;
-}
-
-ResourceResult ResourceSystem::restart_resource(Resource* rsrc)
-{
-	return rsrc->restart();
 }

@@ -80,6 +80,8 @@ private:
 
 	std::unordered_map<std::string, Script*> scripts;
 
+	ResourceStatus status = ResourceStatus_Stopped;
+
 public:
 
 	static constexpr auto ALLOWED_CHARACTERS() { return "0123456789abcdefghijklmnopqrstuvwxyz_"; }
@@ -87,6 +89,11 @@ public:
 
 	Resource(const std::string& name, const ResourceVerificationCtx& ctx);
 	~Resource();
+
+	bool is_stopped() const { return get_status() == ResourceStatus_Stopped; }
+	bool is_running() const { return get_status() == ResourceStatus_Running; }
+
+	ResourceStatus get_status() const { return status; }
 	
 	ResourceResult start();
 	ResourceResult stop();

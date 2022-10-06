@@ -6,6 +6,10 @@
 
 #include <shared_mp/objs/player.h>
 
+#ifdef JC_SERVER
+#include <tcp_server.h>
+#endif
+
 #ifdef JC_CLIENT
 PlayerClient::PlayerClient(NID nid)
 {
@@ -47,6 +51,39 @@ PlayerClient::~PlayerClient()
 								p.add(player->get_skin_info()); \
 								p.add(dyn_info.skin); \
 								p.add(dyn_info.nick)
+
+void PlayerClient::sync_pending_resources()
+{
+	std::lock_guard lock(tcp_mtx);
+
+	// if TCP connection is invalid then ignore
+	// since we need need TCP to sync resources
+
+	if (!tcp)
+		return;
+	
+	// get and pop all the pending resources and send a packet to the client
+	// containing info about the resource the server wants to sync
+
+	while (!resources_to_sync.empty())
+	{
+		std::string rsrc_name;
+		
+		if (!resources_to_sync.wait_and_pop(rsrc_name))
+			break;
+
+		tcp->send_packet(1);
+
+		log(RED, "dispatching resource sync of '{}'", rsrc_name);
+	}
+}
+
+void PlayerClient::set_tcp(netcp::tcp_server_client* v)
+{
+	std::lock_guard lock(tcp_mtx);
+
+	tcp = v;
+}
 
 void PlayerClient::startup_sync()
 {

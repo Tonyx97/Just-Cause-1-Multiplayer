@@ -67,7 +67,11 @@ namespace netcp
 				{
 					if (const auto cl = *it; !cl->is_connected())
 					{
+						if (on_disconnected_fn)
+							on_disconnected_fn(cl.get());
+
 						free_cid(cl->get_cid());
+
 						return true;
 					}
 

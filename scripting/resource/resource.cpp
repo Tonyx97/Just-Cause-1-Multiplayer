@@ -50,12 +50,19 @@ ResourceResult Resource::start()
 	for (const auto& [script_name, script] : scripts)
 		script->start();
 
+	status = ResourceStatus_Running;
+
 	return ResourceResult_Ok;
 }
 
 ResourceResult Resource::stop()
 {
 	logt_nl(YELLOW, "Stopping '{}'... ", name);
+
+	for (const auto& [script_name, script] : scripts)
+		script->stop();
+
+	status = ResourceStatus_Stopped;
 
 	log(GREEN, "OK");
 
@@ -65,6 +72,9 @@ ResourceResult Resource::stop()
 ResourceResult Resource::restart()
 {
 	logt_nl(YELLOW, "Restarting '{}'... ", name);
+
+	stop();
+	start();
 
 	log(GREEN, "OK");
 

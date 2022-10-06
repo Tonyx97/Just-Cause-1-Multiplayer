@@ -7,6 +7,11 @@
 class Player;
 class Resource;
 
+namespace netcp
+{
+	class tcp_server_client;
+}
+
 DEFINE_ENUM(PlayerClientRole, uint64_t)
 {
 	PlayerClientRole_Normal			= (1 << 0),
@@ -25,7 +30,11 @@ private:
 		 joined = false;
 
 #ifdef JC_SERVER
-	jc::thread_safe::queue<Resource*> resources_to_sync;
+	jc::thread_safe::queue<std::string> resources_to_sync;
+
+	std::mutex tcp_mtx;
+
+	netcp::tcp_server_client* tcp = nullptr;
 
 	ENetPeer* peer = nullptr;
 
@@ -57,11 +66,13 @@ public:
 	const std::string& get_nick() const;
 
 #ifdef JC_SERVER
+	void sync_pending_resources();
+	void set_tcp(netcp::tcp_server_client* v);
 	void add_role(PlayerClientRole v);
 	void set_role(PlayerClientRole v);
 	void remove_role(PlayerClientRole v);
 	void startup_sync();
-	void add_resource_to_sync(Resource* v) { resources_to_sync.push(v); }
+	void add_resource_to_sync(const std::string& rsrc_name) { resources_to_sync.push(rsrc_name); }
 
 	/**
 	* syncs this player with the rest of the server
@@ -88,6 +99,8 @@ public:
 	ENetPeer* get_peer() const { return peer; }
 
 	ENetAddress* get_address() const { return &peer->address; }
+
+	netcp::tcp_server_client* get_tcp() const { return tcp; }
 
 	std::string get_ip() const;
 #endif

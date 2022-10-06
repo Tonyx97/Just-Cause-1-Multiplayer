@@ -85,6 +85,11 @@ bool Net::init()
 		g_net->on_client_tcp_connected(ci);
 	});
 
+	tcp_server->set_on_disconnected_fn([](netcp::tcp_server_client* ci)
+	{
+		g_net->on_client_tcp_disconnected(ci);
+	});
+
 	tcp_server->start();
 	tcp_server->launch_update_thread();
 
@@ -200,6 +205,13 @@ void Net::tick()
 	// sync (from the server) global objects such as players' blips etc
 
 	sync_net_objects();
+
+	// sync resources across all players
+
+	for_each_player_client([](NID, PlayerClient* pc)
+	{
+		pc->sync_pending_resources();
+	});
 
 	// process packets from the players
 
@@ -372,7 +384,24 @@ void Net::on_client_tcp_connected(netcp::tcp_server_client* ci)
 {
 	using namespace netcp;
 
-	log(YELLOW, "TCP Connection received");
+	log(GREEN, "TCP Connection OPENED");
+}
+
+void Net::on_client_tcp_disconnected(netcp::tcp_server_client* ci)
+{
+	using namespace netcp;
+
+	log(RED, "TCP Connection CLOSED");
+
+	// if TCP has an associated PlayerClient then make TCP unavailable
+
+	if (const auto pc = ci->get_userdata<PlayerClient>())
+	{
+		g_net->exec_with_object_lock([&]()
+		{
+			pc->set_tcp(nullptr);
+		});
+	}
 }
 
 void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet_header* header, serialization_ctx& data)
@@ -421,12 +450,19 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 			log(BLUE, "A player with NID {:x} and CID {:x} wants to sync all resources", nid, cl->get_cid());
 
 			// associate this PlayerClient with the TCP client
+			// and viceversa
 
 			cl->set_userdata(pc);
+			pc->set_tcp(cl);
 
 			// add all currently active resources to sync queue in PlayerClient
-		});
 
+			g_rsrc->for_each_resource([&](const std::string& rsrc_name, Resource* rsrc)
+			{
+				if (rsrc->is_running())
+					pc->add_resource_to_sync(rsrc_name);
+			});
+		});
 
 		//serialization_ctx ay;
 		//_serialize(ay, 1234);
