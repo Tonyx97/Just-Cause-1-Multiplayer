@@ -11,7 +11,7 @@ Resource::Resource(const std::string& name, const ResourceVerificationCtx& ctx) 
 
 	// create scripts (in suspended state ofc)
 
-	auto create_add_script = [&](const ResourceVerificationCtx::ScriptCtx& script_ctx, const auto& script_name)
+	auto create_add_script = [&](const ScriptCtx& script_ctx, const auto& script_name)
 	{
 		const auto script_path = ctx.path + script_name;
 		const auto script = JC_ALLOC(Script, script_path, script_name, script_ctx.type);
@@ -19,12 +19,22 @@ Resource::Resource(const std::string& name, const ResourceVerificationCtx& ctx) 
 		scripts.insert({ script_name, script });
 	};
 
+	// save client and shared files when client or server is running
+	// (server must know all client, server and shared files)
+
+	client_files = ctx.client;
+	shared_files = ctx.shared;
+
 	// client will load scripts inside the client and shared list
 	// and server will load scripts inside server and shared list
 
 #if defined(JC_CLIENT)
 	for (const auto& [script_name, script_ctx] : ctx.client.scripts)
 #else
+	// save server files if we are running the server
+
+	server_files = ctx.server;
+
 	for (const auto& [script_name, script_ctx] : ctx.server.scripts)
 #endif
 		create_add_script(script_ctx, script_name);

@@ -34,24 +34,31 @@ DEFINE_ENUM(ResourceAction, uint8_t)
 	ResourceResult_Restart,
 };
 
+struct ResourceFileInfo
+{
+	std::string filename;
+
+	uint64_t lwt; // last write time
+};
+
+struct FileCtx
+{
+	std::string source;
+};
+
+struct ScriptCtx : public FileCtx
+{
+	ScriptType type;
+};
+
+struct FileList
+{
+	std::unordered_map<std::string, FileCtx> files;
+	std::unordered_map<std::string, ScriptCtx> scripts;
+};
+
 struct ResourceVerificationCtx
 {
-	struct FileCtx
-	{
-		std::string source;
-	};
-
-	struct ScriptCtx : public FileCtx
-	{
-		ScriptType type;
-	};
-
-	struct FileList
-	{
-		std::unordered_map<std::string, FileCtx> files;
-		std::unordered_map<std::string, ScriptCtx> scripts;
-	};
-
 	std::string path;
 	std::string author;
 	std::string version;
@@ -78,6 +85,13 @@ private:
 	std::string version;
 	std::string description;
 
+	FileList client_files;
+	FileList shared_files;
+
+#ifdef JC_SERVER
+	FileList server_files;
+#endif
+	
 	std::unordered_map<std::string, Script*> scripts;
 
 	ResourceStatus status = ResourceStatus_Stopped;
@@ -90,6 +104,27 @@ public:
 	Resource(const std::string& name, const ResourceVerificationCtx& ctx);
 	~Resource();
 
+	template <typename Fn>
+	void for_each_file(const Fn& fn)
+	{
+		// client files
+
+		for (const auto& [filename, ctx] : client_files.files) fn(filename, &ctx);
+		for (const auto& [filename, ctx] : client_files.scripts) fn(filename, &ctx);
+
+		// shared files
+
+		for (const auto& [filename, ctx] : shared_files.files) fn(filename, &ctx);
+		for (const auto& [filename, ctx] : shared_files.scripts) fn(filename, &ctx);
+
+#ifdef JC_SERVER
+		// server files
+
+		for (const auto& [filename, ctx] : server_files.files) fn(filename, &ctx);
+		for (const auto& [filename, ctx] : server_files.scripts) fn(filename, &ctx);
+#endif
+	}
+
 	bool is_stopped() const { return get_status() == ResourceStatus_Stopped; }
 	bool is_running() const { return get_status() == ResourceStatus_Running; }
 
@@ -98,4 +133,6 @@ public:
 	ResourceResult start();
 	ResourceResult stop();
 	ResourceResult restart();
+
+	const std::string& get_path() const { return path; }
 };

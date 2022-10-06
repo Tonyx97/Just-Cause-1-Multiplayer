@@ -15,7 +15,7 @@ private:
 	std::unordered_map<std::string, Resource*> resources;
 
 #ifdef JC_SERVER
-	std::mutex mtx;
+	mutable std::recursive_mutex mtx;
 #endif
 
 public:
@@ -35,6 +35,8 @@ public:
 	ResourceResult stop_resource(const std::string& name);
 	ResourceResult restart_resource(const std::string& name);
 
+	Resource* get_resource(const std::string& name) const;
+
 	/**
 	* iterate all resources (thread-safe)
 	*/
@@ -51,6 +53,13 @@ public:
 
 #ifdef JC_CLIENT
 #else
+	template <typename Fn>
+	void exec_with_resource_lock(const Fn& fn)
+	{
+		std::lock_guard lock(mtx);
+
+		fn();
+	}
 #endif
 
 };

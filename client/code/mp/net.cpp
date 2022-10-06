@@ -9,6 +9,8 @@
 
 #include <tcp_client.h>
 
+#include <resource_sys/resource_system.h>
+
 bool Net::init(const std::string& ip, const std::string& pw, const std::string& nick)
 {
 	this->nick = nick;
@@ -305,7 +307,15 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 	}
 	case ClientToMsPacket_SyncResource:
 	{
-		logt(RED, "Server wants you to sync a resource");
+		const auto rsrc_name = _deserialize<std::string>(data);
+		const auto files_info = _deserialize<std::vector<ResourceFileInfo>>(data);
+
+		log(PURPLE, "Syncing resource '{}'...", rsrc_name);
+
+		for (const auto& file_info : files_info)
+		{
+			log(PURPLE, "File: {} {}", file_info.filename, file_info.lwt);
+		}
 
 		break;
 	}

@@ -32,7 +32,7 @@ private:
 #ifdef JC_SERVER
 	jc::thread_safe::queue<std::string> resources_to_sync;
 
-	std::mutex tcp_mtx;
+	mutable std::mutex tcp_mtx;
 
 	netcp::tcp_server_client* tcp = nullptr;
 

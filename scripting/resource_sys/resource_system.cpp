@@ -116,6 +116,10 @@ void ResourceSystem::refresh()
 
 bool ResourceSystem::is_resource_valid(const std::string& rsrc_name) const
 {
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
 	return resources.contains(rsrc_name);
 }
 
@@ -233,4 +237,14 @@ ResourceResult ResourceSystem::restart_resource(const std::string& name)
 	}
 
 	return ResourceResult_NotExists;
+}
+
+Resource* ResourceSystem::get_resource(const std::string& name) const
+{
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
+	const auto it = resources.find(name);
+	return it != resources.end() ? it->second : nullptr;
 }

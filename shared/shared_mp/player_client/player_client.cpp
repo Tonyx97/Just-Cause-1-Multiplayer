@@ -8,6 +8,7 @@
 
 #ifdef JC_SERVER
 #include <tcp_server.h>
+#include <resource_sys/resource_system.h>
 #endif
 
 #ifdef JC_CLIENT
@@ -72,7 +73,36 @@ void PlayerClient::sync_pending_resources()
 		if (!resources_to_sync.wait_and_pop(rsrc_name))
 			break;
 
-		tcp->send_packet(1);
+		g_rsrc->exec_with_resource_lock([&]()
+		{
+			// it's possible that by the time the server is handling the resource
+			// sync of this current client, the resource doesn't exist anymore (but unlikely)
+			// so check if it's valid
+
+			if (const auto rsrc = g_rsrc->get_resource(rsrc_name))
+			{
+				const auto resource_path = rsrc->get_path();
+
+				serialization_ctx out;
+
+				_serialize(out, rsrc_name);
+
+				std::vector<ResourceFileInfo> files_info;
+
+				rsrc->for_each_file([&](const std::string& filename, const FileCtx* ctx)
+				{
+					const auto file_path = resource_path + filename;
+
+					files_info.emplace_back(filename, util::fs::get_last_write_time(file_path));
+
+					log(BLUE, "{} {}", file_path, util::fs::get_last_write_time(file_path));
+				});
+
+				_serialize(out, files_info);
+
+				tcp->send_packet(ClientToMsPacket_SyncResource, out);
+			}
+		});
 
 		log(RED, "dispatching resource sync of '{}'", rsrc_name);
 	}
