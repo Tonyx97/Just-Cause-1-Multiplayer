@@ -53,9 +53,7 @@ bool ResourceSystem::init()
 
 void ResourceSystem::destroy()
 {
-#ifdef JC_SERVER
 	std::lock_guard lock(mtx);
-#endif
 
 	for (const auto& [name, rsrc] : resources)
 		JC_FREE(rsrc);
@@ -116,18 +114,14 @@ void ResourceSystem::refresh()
 
 bool ResourceSystem::is_resource_valid(const std::string& rsrc_name) const
 {
-#ifdef JC_SERVER
 	std::lock_guard lock(mtx);
-#endif
 
 	return resources.contains(rsrc_name);
 }
 
 ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_name, ResourceVerificationCtx* ctx)
 {
-#ifdef JC_SERVER
 	std::lock_guard lock(mtx);
-#endif
 
 	// check if this resource name was already registered
 
@@ -200,9 +194,7 @@ ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_nam
 
 ResourceResult ResourceSystem::start_resource(const std::string& name)
 {
-#ifdef JC_SERVER
 	std::lock_guard lock(mtx);
-#endif
 
 	if (const auto it = resources.find(name); it != resources.end())
 	{
@@ -214,9 +206,7 @@ ResourceResult ResourceSystem::start_resource(const std::string& name)
 
 ResourceResult ResourceSystem::stop_resource(const std::string& name)
 {
-#ifdef JC_SERVER
 	std::lock_guard lock(mtx);
-#endif
 
 	if (const auto it = resources.find(name); it != resources.end())
 	{
@@ -227,9 +217,7 @@ ResourceResult ResourceSystem::stop_resource(const std::string& name)
 }
 ResourceResult ResourceSystem::restart_resource(const std::string& name)
 {
-#ifdef JC_SERVER
 	std::lock_guard lock(mtx);
-#endif
 
 	if (const auto it = resources.find(name); it != resources.end())
 	{
@@ -241,9 +229,7 @@ ResourceResult ResourceSystem::restart_resource(const std::string& name)
 
 Resource* ResourceSystem::get_resource(const std::string& name) const
 {
-#ifdef JC_SERVER
 	std::lock_guard lock(mtx);
-#endif
 
 	const auto it = resources.find(name);
 	return it != resources.end() ? it->second : nullptr;

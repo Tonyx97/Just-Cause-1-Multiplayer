@@ -462,10 +462,50 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 			});
 		});
 
-		//serialization_ctx ay;
-		//_serialize(ay, 1234);
-		//tcp_server->broadcast(ClientToMsPacket_SyncResource, ay);
+		break;
+	}
+	case ClientToMsPacket_ResourceFiles:
+	{
+		// send the request resource files to the client who requested it
 
+		const auto rsrc_name = _deserialize<std::string>(data);
+		const auto do_complete_sync = _deserialize<bool>(data);
+
+		g_rsrc->exec_with_resource_lock([&]()
+		{
+			// maybe the resource doesn't exist anymore so let's check it
+
+			if (const auto rsrc = g_rsrc->get_resource(rsrc_name))
+			{
+				log(BLUE, "Sending file for resource '{}'...", rsrc_name);
+
+				if (!do_complete_sync)
+				{
+					// get the file list of the requested files
+
+					if (!data.empty())
+					{
+						const auto files_list = _deserialize<std::vector<std::string>>(data);
+
+						for (const auto& filename : files_list)
+							log(BLUE, "[{}] Client requested file: '{}'", do_complete_sync, filename);
+					}
+				}
+				else
+				{
+					// since it's a complete sync the client is requesting all client files,
+					// we can get them from here (server obv)
+
+					rsrc->for_each_client_file([&](const std::string& filename, const FileCtx* ctx)
+					{
+						log(BLUE, "[{}] Client requested file: '{}'", do_complete_sync, filename);
+					});
+				}
+
+				log(RED, "Resource requested: {} (complete sync: {})", rsrc_name, do_complete_sync);
+			}
+		});
+		
 		break;
 	}
 	default: logt(RED, "[{}] Unknown packet id: {}", CURR_FN, header->id);

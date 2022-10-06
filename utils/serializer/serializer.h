@@ -74,6 +74,11 @@ struct serialization_ctx
 		memcpy(out, std::exchange(begin, begin + size), size);
 	}
 
+	inline bool empty() const
+	{
+		return (end - begin) <= 0;
+	}
+
 	inline void clear()
 	{
 		data.clear();

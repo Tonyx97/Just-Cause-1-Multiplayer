@@ -14,9 +14,7 @@ private:
 
 	std::unordered_map<std::string, Resource*> resources;
 
-#ifdef JC_SERVER
 	mutable std::recursive_mutex mtx;
-#endif
 
 public:
 
@@ -43,16 +41,12 @@ public:
 	template <typename Fn>
 	void for_each_resource(const Fn& fn)
 	{
-#ifdef JC_SERVER
 		std::lock_guard lock(mtx);
-#endif
 
 		for (const auto& [rsrc_name, rsrc] : resources)
 			fn(rsrc_name, rsrc);
 	}
 
-#ifdef JC_CLIENT
-#else
 	template <typename Fn>
 	void exec_with_resource_lock(const Fn& fn)
 	{
@@ -60,6 +54,9 @@ public:
 
 		fn();
 	}
+
+#ifdef JC_CLIENT
+#else
 #endif
 
 };

@@ -105,7 +105,7 @@ public:
 	~Resource();
 
 	template <typename Fn>
-	void for_each_file(const Fn& fn)
+	void for_each_client_file(const Fn& fn)
 	{
 		// client files
 
@@ -116,12 +116,24 @@ public:
 
 		for (const auto& [filename, ctx] : shared_files.files) fn(filename, &ctx);
 		for (const auto& [filename, ctx] : shared_files.scripts) fn(filename, &ctx);
+	}
 
 #ifdef JC_SERVER
-		// server files
-
+	template <typename Fn>
+	void for_each_server_file(const Fn& fn)
+	{
 		for (const auto& [filename, ctx] : server_files.files) fn(filename, &ctx);
 		for (const auto& [filename, ctx] : server_files.scripts) fn(filename, &ctx);
+	}
+#endif
+
+	template <typename Fn>
+	void for_each_file(const Fn& fn)
+	{
+		for_each_client_file(fn);
+
+#ifdef JC_SERVER
+		for_each_server_file(fn);
 #endif
 	}
 

@@ -3,6 +3,7 @@
 #include <codecvt>
 #include <functional>
 #include <random>
+#include <filesystem>
 
 namespace util
 {
@@ -489,6 +490,8 @@ namespace util
 
 	namespace fs
 	{
+		using iterate_fn_t = std::function<void(const std::filesystem::directory_entry&)>;
+
 		int64_t get_file_size(std::ifstream& file);
 
 		uint64_t get_last_write_time(const std::string& filename);
@@ -500,8 +503,13 @@ namespace util
 		std::vector<uint8_t> read_bin_file(const std::string& filename);
 		std::vector<char> read_plain_file(const std::string& filename, bool zero_terminated = true);
 
+		void remove(const std::string& path);
 		void create_directory(const std::string& path);
+		void remove_empty_directories_in_directory(const std::string& path);
+		void for_each_file_in_directory(const std::string& path, const iterate_fn_t& fn);
 
+		bool is_empty(const std::string& path);
+		bool is_directory(const std::string& path);
 		bool create_bin_file(const std::string& filename, const std::vector<uint8_t>& data);
 	}
 

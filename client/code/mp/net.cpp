@@ -310,12 +310,93 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 		const auto rsrc_name = _deserialize<std::string>(data);
 		const auto files_info = _deserialize<std::vector<ResourceFileInfo>>(data);
 
-		log(PURPLE, "Syncing resource '{}'...", rsrc_name);
+		const auto rsrc_path = ResourceSystem::RESOURCES_FOLDER() + rsrc_name + '\\';
+		const bool do_complete_sync = !util::fs::is_directory(rsrc_path) || util::fs::is_empty(rsrc_path);
 
-		for (const auto& file_info : files_info)
+		log(PURPLE, "Syncing resource '{}'...", rsrc_path);
+
+		serialization_ctx out;
+
+		_serialize(out, rsrc_name);
+		_serialize(out, do_complete_sync);
+
+		// if the resource folder doesn't exist then clearly we need
+		// to do a complete sync of the resource
+		
+		if (!do_complete_sync)
 		{
-			log(PURPLE, "File: {} {}", file_info.filename, file_info.lwt);
+			// list of outdated/new files we have to request to
+			// the server
+			//
+			std::vector<std::string> files_to_request;
+
+			// get info about the current files in the resource
+			// folder and save it
+
+			std::vector<std::string> useless_files;
+			std::vector<std::string> outdated_files;
+			std::vector<std::string> new_files;
+
+			// get useless and outdated files first
+
+			std::unordered_set<std::string> files_in_directory;
+
+			util::fs::for_each_file_in_directory(rsrc_path, [&](const std::filesystem::directory_entry& p)
+			{
+				auto filename = p.path().string();
+
+				// it's mandatory that we find the resource path...
+
+				if (const auto i = filename.find(rsrc_path); i != std::string::npos)
+				{
+					filename = filename.substr(i + rsrc_path.length());
+
+					// save the existing file so we can use it to detect
+					// new files as well
+
+					files_in_directory.insert(filename);
+
+					const auto full_filename = rsrc_path + filename;
+					const auto it = std::find_if(files_info.begin(), files_info.end(), [&](const ResourceFileInfo& rfi) { return rfi.filename == filename; });
+
+					if (it != files_info.end())
+					{
+						// check if the file is outdated, if it's up to date then
+						// we will not request it
+
+						if (it->lwt != util::fs::get_last_write_time(full_filename))
+							files_to_request.push_back(filename);
+					}
+					else
+					{
+						// this file is not needed anymore so let's remove it
+
+						useless_files.push_back(full_filename);
+					}
+				}
+			});
+
+			// finally get the new files (if any)
+
+			for (const auto& file_info : files_info)
+				if (!files_in_directory.contains(file_info.filename))
+					files_to_request.push_back(file_info.filename);
+
+			// remove all useless files
+
+			for (const auto& f : useless_files)
+				util::fs::remove(f);
+
+			_serialize(out, files_to_request);
 		}
+
+		// make sure we don't keep empty folders
+
+		util::fs::remove_empty_directories_in_directory(rsrc_path);
+
+		// request the needed files to the server
+
+		ci->send_packet(ClientToMsPacket_ResourceFiles, out);
 
 		break;
 	}

@@ -89,13 +89,11 @@ void PlayerClient::sync_pending_resources()
 
 				std::vector<ResourceFileInfo> files_info;
 
-				rsrc->for_each_file([&](const std::string& filename, const FileCtx* ctx)
+				rsrc->for_each_client_file([&](const std::string& filename, const FileCtx* ctx)
 				{
 					const auto file_path = resource_path + filename;
 
 					files_info.emplace_back(filename, util::fs::get_last_write_time(file_path));
-
-					log(BLUE, "{} {}", file_path, util::fs::get_last_write_time(file_path));
 				});
 
 				_serialize(out, files_info);

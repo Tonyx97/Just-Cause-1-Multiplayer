@@ -198,6 +198,17 @@ std::vector<char> util::fs::read_plain_file(const std::string& filename, bool ze
 	return data;
 }
 
+void util::fs::remove(const std::string& path)
+{
+	std::wstring _path = string::convert(path);
+
+#ifdef JC_CLIENT
+	_path = GET_MODULE_PATH() + _path;
+#endif
+
+	std::filesystem::remove(_path);
+}
+
 void util::fs::create_directory(const std::string& path)
 {
 	std::wstring _path = string::convert(path);
@@ -208,6 +219,54 @@ void util::fs::create_directory(const std::string& path)
 
 	if (!std::filesystem::is_directory(_path))
 		std::filesystem::create_directory(_path);
+}
+
+void util::fs::remove_empty_directories_in_directory(const std::string& path)
+{
+	std::wstring _path = string::convert(path);
+
+#ifdef JC_CLIENT
+	_path = GET_MODULE_PATH() + _path;
+#endif
+
+	for (const auto& d : std::filesystem::recursive_directory_iterator(_path))
+		if (std::filesystem::is_directory(d) && std::filesystem::is_empty(d))
+			std::filesystem::remove(d);
+}
+
+void util::fs::for_each_file_in_directory(const std::string& path, const iterate_fn_t& fn)
+{
+	std::wstring _path = string::convert(path);
+
+#ifdef JC_CLIENT
+	_path = GET_MODULE_PATH() + _path;
+#endif
+
+	for (const auto& d : std::filesystem::recursive_directory_iterator(_path))
+		if (std::filesystem::is_regular_file(d))
+			fn(d);
+}
+
+bool util::fs::is_empty(const std::string& path)
+{
+	std::wstring _path = string::convert(path);
+
+#ifdef JC_CLIENT
+	_path = GET_MODULE_PATH() + _path;
+#endif
+
+	return std::filesystem::is_empty(_path);
+}
+
+bool util::fs::is_directory(const std::string& path)
+{
+	std::wstring _path = string::convert(path);
+
+#ifdef JC_CLIENT
+	_path = GET_MODULE_PATH() + _path;
+#endif
+
+	return std::filesystem::is_directory(_path);
 }
 
 bool util::fs::create_bin_file(const std::string& filename, const std::vector<uint8_t>& data)
