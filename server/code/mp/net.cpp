@@ -395,13 +395,11 @@ void Net::on_client_tcp_disconnected(netcp::tcp_server_client* ci)
 
 	// if TCP has an associated PlayerClient then make TCP unavailable
 
-	if (const auto pc = ci->get_userdata<PlayerClient>())
+	g_net->exec_with_object_lock([&]()
 	{
-		g_net->exec_with_object_lock([&]()
-		{
+		if (const auto pc = ci->get_userdata<PlayerClient>())
 			pc->set_tcp(nullptr);
-		});
-	}
+	});
 }
 
 void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet_header* header, serialization_ctx& data)
