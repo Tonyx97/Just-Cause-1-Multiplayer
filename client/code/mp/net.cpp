@@ -330,6 +330,12 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 		break;
 	}
+	case ClientToMsPacket_ResourcesCount:
+	{
+		tcp_ctx.rsrc.total_resources += _deserialize<size_t>(data);
+
+		break;
+	}
 	case ClientToMsPacket_SyncResource:
 	{
 		// it's important to note that the server must send this packet at least once
@@ -434,12 +440,6 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 		}
 		else tcp_ctx.rsrc.total_size += rsrc_size;
 
-		// if resources count is 0 then we will get this batch's count
-
-		if (tcp_ctx.rsrc.total_resources == 0u)
-			tcp_ctx.rsrc.total_resources = rsrcs_count;
-		else check(tcp_ctx.rsrc.total_resources == rsrcs_count, "Out of order TCP packet received, design mistake...");
-
 		// if it's up to date, increase the up to date resources count
 		
 		if (is_up_to_date)
@@ -524,9 +524,7 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 		// and set all resources synced to true
 
 		if (tcp_ctx.rsrc.downloaded_bytes == tcp_ctx.rsrc.total_size)
-		{
 			reset_counters_and_disable_download_bar();
-		}
 
 		break;
 	}

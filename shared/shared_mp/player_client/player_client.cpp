@@ -71,47 +71,52 @@ void PlayerClient::sync_pending_resources()
 	// get and pop all the pending resources and send a packet to the client
 	// containing info about the resource the server wants to sync
 
-	const auto resources_count = resources_to_sync.size();
-
-	while (!resources_to_sync.empty())
+	if (const auto resources_count = resources_to_sync.size(); resources_count > 0u)
 	{
-		std::string rsrc_name;
+		// send resource count first
+
+		tcp->send_packet(ClientToMsPacket_ResourcesCount, resources_count);
+
+		// send sync packet per resource
 		
-		if (!resources_to_sync.wait_and_pop(rsrc_name))
-			break;
-
-		g_rsrc->exec_with_resource_lock([&]()
+		while (!resources_to_sync.empty())
 		{
-			// it's possible that by the time the server is handling the resource
-			// sync of this current client, the resource doesn't exist anymore (but unlikely)
-			// so check if it's valid
+			std::string rsrc_name;
 
-			if (const auto rsrc = g_rsrc->get_resource(rsrc_name))
+			if (!resources_to_sync.wait_and_pop(rsrc_name))
+				break;
+
+			g_rsrc->exec_with_resource_lock([&]()
 			{
-				const auto resource_path = rsrc->get_path();
+				// it's possible that by the time the server is handling the resource
+				// sync of this current client, the resource doesn't exist anymore (but unlikely)
+				// so check if it's valid
 
-				serialization_ctx out;
-
-				_serialize(out, resources_count);
-				_serialize(out, rsrc_name);
-				_serialize(out, rsrc->get_total_client_file_size());
-
-				std::vector<ResourceFileInfo> files_info;
-
-				rsrc->for_each_client_file([&](const std::string& filename, const FileCtx* ctx)
+				if (const auto rsrc = g_rsrc->get_resource(rsrc_name))
 				{
-					const auto file_path = resource_path + filename;
+					const auto resource_path = rsrc->get_path();
 
-					files_info.emplace_back(filename, util::fs::get_last_write_time(file_path), static_cast<size_t>(util::fs::file_size(file_path)));
-				});
+					serialization_ctx out;
 
-				_serialize(out, files_info);
+					_serialize(out, resources_count);
+					_serialize(out, rsrc_name);
+					_serialize(out, rsrc->get_total_client_file_size());
 
-				tcp->send_packet(ClientToMsPacket_SyncResource, out);
-			}
-		});
+					std::vector<ResourceFileInfo> files_info;
 
-		log(RED, "dispatching resource sync of '{}'", rsrc_name);
+					rsrc->for_each_client_file([&](const std::string& filename, const FileCtx* ctx)
+					{
+						const auto file_path = resource_path + filename;
+
+						files_info.emplace_back(filename, util::fs::get_last_write_time(file_path), static_cast<size_t>(util::fs::file_size(file_path)));
+					});
+
+					_serialize(out, files_info);
+
+					tcp->send_packet(ClientToMsPacket_SyncResource, out);
+				}
+			});
+		}
 	}
 }
 

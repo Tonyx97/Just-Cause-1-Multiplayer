@@ -496,6 +496,8 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 					}
 
 					cl->send_packet(ClientToMsPacket_ResourceFile, out);
+
+					Sleep(1000);
 				};
 
 				if (!do_complete_sync)
