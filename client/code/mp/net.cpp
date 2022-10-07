@@ -416,7 +416,7 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 			log(RED, "data for {} received: {}", rsrc_name, file_data.size());
 
-			util::fs::create_bin_file(rsrc_path + filename, file_data);
+			//util::fs::create_bin_file(rsrc_path + filename, file_data);
 		}
 
 		break;
