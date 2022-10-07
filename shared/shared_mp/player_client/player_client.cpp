@@ -53,6 +53,11 @@ PlayerClient::~PlayerClient()
 								p.add(dyn_info.skin); \
 								p.add(dyn_info.nick)
 
+void PlayerClient::add_resource_to_sync(Resource* rsrc)
+{
+	resources_to_sync.push(rsrc->get_name());
+}
+
 void PlayerClient::sync_pending_resources()
 {
 	std::lock_guard lock(tcp_mtx);
@@ -86,6 +91,7 @@ void PlayerClient::sync_pending_resources()
 				serialization_ctx out;
 
 				_serialize(out, rsrc_name);
+				_serialize(out, rsrc->get_total_client_file_size());
 
 				std::vector<ResourceFileInfo> files_info;
 

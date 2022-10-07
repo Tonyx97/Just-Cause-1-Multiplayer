@@ -43,6 +43,12 @@ Resource::Resource(const std::string& name, const ResourceVerificationCtx& ctx) 
 
 	for (const auto& [script_name, script_ctx] : ctx.shared.scripts)
 		create_add_script(script_ctx, script_name);
+
+#if defined(JC_SERVER)
+	// get the total size of client files
+
+	client_files_total_size = calculate_total_client_file_size();
+#endif
 }
 
 Resource::~Resource()
@@ -51,11 +57,29 @@ Resource::~Resource()
 		JC_FREE(script);
 }
 
+#ifdef JC_CLIENT
+#else
+size_t Resource::calculate_total_client_file_size()
+{
+	size_t size = 0u;
+
+	for_each_client_file([&](const std::string& filename, const FileCtx* ctx)
+	{
+		size += static_cast<size_t>(util::fs::file_size(path + filename));
+	});
+
+	return size;
+}
+
+size_t Resource::get_total_client_file_size()
+{
+	return client_files_total_size;
+}
+#endif
+
 ResourceResult Resource::start()
 {
-	logt_nl(YELLOW, "Starting '{}'... ", name);
-
-	log(GREEN, "OK");
+	logt(YELLOW, "Starting '{}'... ", name);
 
 	for (const auto& [script_name, script] : scripts)
 		script->start();
@@ -67,26 +91,22 @@ ResourceResult Resource::start()
 
 ResourceResult Resource::stop()
 {
-	logt_nl(YELLOW, "Stopping '{}'... ", name);
+	logt(YELLOW, "Stopping '{}'... ", name);
 
 	for (const auto& [script_name, script] : scripts)
 		script->stop();
 
 	status = ResourceStatus_Stopped;
 
-	log(GREEN, "OK");
-
 	return ResourceResult_Ok;
 }
 
 ResourceResult Resource::restart()
 {
-	logt_nl(YELLOW, "Restarting '{}'... ", name);
+	logt(YELLOW, "Restarting '{}'... ", name);
 
 	stop();
 	start();
-
-	log(GREEN, "OK");
 
 	return ResourceResult_Ok;
 }

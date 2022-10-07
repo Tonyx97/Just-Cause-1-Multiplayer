@@ -66,13 +66,13 @@ public:
 	const std::string& get_nick() const;
 
 #ifdef JC_SERVER
+	void add_resource_to_sync(Resource* rsrc);
 	void sync_pending_resources();
 	void set_tcp(netcp::tcp_server_client* v);
 	void add_role(PlayerClientRole v);
 	void set_role(PlayerClientRole v);
 	void remove_role(PlayerClientRole v);
 	void startup_sync();
-	void add_resource_to_sync(const std::string& rsrc_name) { resources_to_sync.push(rsrc_name); }
 
 	/**
 	* syncs this player with the rest of the server

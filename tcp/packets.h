@@ -21,5 +21,5 @@ enum ClientToServerPacketID : TcpPacketID
 	ClientToMsPacket_SyncDefaultFiles,					// to sync the default server files such as the splash etc
 	ClientToMsPacket_StartupSync,						// used by the client to let the server know we need to sync every TCP thing such as resources
 	ClientToMsPacket_SyncResource,						// request to let a peer know that it wants to sync a resource
-	ClientToMsPacket_ResourceFiles,						// packet that contains the resource files that are outdated after a sync request
+	ClientToMsPacket_ResourceFile,						// packet that contains the resource files that are outdated/new after a sync request
 };

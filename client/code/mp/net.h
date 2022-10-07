@@ -17,6 +17,13 @@ struct TcpContext
 	std::atomic_bool password_ack = false;
 	std::atomic_bool password_valid = false;
 	std::atomic_bool default_server_files_received = false;
+	std::atomic_bool startup_all_resources_synced = false;
+	
+	struct ResourceContext
+	{
+		std::atomic_size_t downloaded_bytes = 0u;
+		std::atomic_size_t total_size = 0u;
+	} rsrc;
 };
 
 class Net : public ObjectLists
@@ -44,7 +51,8 @@ private:
 		 timed_out = false,
 		 initialized = false,
 		 joined = false,
-		 game_ready_to_load = false;
+		 game_ready_to_load = false,
+		 game_loaded = false;
 
 	void disconnect();
 

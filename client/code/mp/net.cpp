@@ -9,6 +9,10 @@
 
 #include <tcp_client.h>
 
+#include <core/ui.h>
+
+#include <game/sys/game/game_status.h>
+
 #include <resource_sys/resource_system.h>
 
 bool Net::init(const std::string& ip, const std::string& pw, const std::string& nick)
@@ -116,6 +120,8 @@ void Net::pre_destroy()
 	// close tcp connection
 
 	JC_FREE(tcp);
+
+	tcp = nullptr;
 }
 
 void Net::disconnect()
@@ -186,6 +192,8 @@ void Net::set_joined(bool v)
 	if (!is_initialized())
 		return;
 
+	// set joined
+
 	joined = v;
 
 	if (joined)
@@ -216,6 +224,16 @@ void Net::tick()
 
 	if (!connected || !client)
 		return;
+
+	// if the game is ready to load and we downloaded all startup resources
+	// then finally get into the game
+
+	if (is_game_ready_to_load() && tcp_ctx.startup_all_resources_synced && !game_loaded)
+	{
+		game_loaded = true;
+
+		g_game_status->load_game();
+	}
 
 	// do the net logic now
 
@@ -303,13 +321,21 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 	case ClientToMsPacket_SyncResource:
 	{
 		const auto rsrc_name = _deserialize<std::string>(data);
+		const auto rsrc_size = _deserialize<size_t>(data);
 		const auto files_info = _deserialize<std::vector<ResourceFileInfo>>(data);
 
 		const auto rsrc_path = ResourceSystem::RESOURCES_FOLDER() + rsrc_name + '\\';
 		const bool do_complete_sync = !util::fs::is_directory(rsrc_path) || util::fs::is_empty(rsrc_path);
 
-		log(PURPLE, "Syncing resource '{}'...", rsrc_path);
+		// increase the total size of resources files we have to download
+		
+		tcp_ctx.rsrc.total_size += rsrc_size;
 
+		g_ui->set_download_bar_enabled(true);
+		g_ui->set_download_bar_target(static_cast<float>(tcp_ctx.rsrc.total_size));
+
+		// start creating the request packet
+		
 		serialization_ctx out;
 
 		_serialize(out, rsrc_name);
@@ -391,15 +417,21 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 		// request the needed files to the server
 
-		ci->send_packet(ClientToMsPacket_ResourceFiles, out);
+		ci->send_packet(ClientToMsPacket_ResourceFile, out);
 
 		break;
 	}
-	case ClientToMsPacket_ResourceFiles:
+	case ClientToMsPacket_ResourceFile:
 	{
 		const auto rsrc_name = _deserialize<std::string>(data);
-		const auto files_count = _deserialize<size_t>(data);
 		const auto rsrc_path = ResourceSystem::RESOURCES_FOLDER() + rsrc_name + '\\';
+		const auto file = _deserialize<std::string>(data);
+		const auto filename = rsrc_path + file;
+		const auto data_size = _deserialize<size_t>(data);
+
+		// update the download bar current file display
+
+		g_ui->set_download_bar_file(file);
 
 		// create resource folder if it's not already created
 
@@ -407,24 +439,37 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 		// create/replace all the resource files
 
-		for (size_t i = 0u; i < files_count; ++i)
+		const auto parent_path = std::filesystem::path(filename).parent_path().string();
+
+		// create directories needed to place this file
+
+		if (!parent_path.empty())
+			util::fs::create_directories(parent_path);
+
+		// create the binary file
+
+		std::vector<uint8_t> file_data(data_size);
+
+		data.read(file_data.data(), file_data.size());
+
+		util::fs::create_bin_file(filename, file_data);
+
+		// increase downloaded bytes to keep track
+		
+		tcp_ctx.rsrc.downloaded_bytes += data_size;
+
+		g_ui->set_download_bar_progress(static_cast<float>(tcp_ctx.rsrc.downloaded_bytes));
+
+		// if we downloaded everything we had to then reset the counters
+		// and set all resources synced to true
+
+		if (tcp_ctx.rsrc.downloaded_bytes >= tcp_ctx.rsrc.total_size)
 		{
-			const auto filename = rsrc_path + _deserialize<std::string>(data);
-			const auto data_size = _deserialize<size_t>(data);
-			const auto parent_path = std::filesystem::path(filename).parent_path().string();
+			tcp_ctx.rsrc.downloaded_bytes = 0u;
+			tcp_ctx.rsrc.total_size = 0u;
+			tcp_ctx.startup_all_resources_synced = true;
 
-			// create directories needed to place this file
-
-			if (!parent_path.empty())
-				util::fs::create_directories(parent_path);
-
-			// create the binary file
-
-			std::vector<uint8_t> file_data(data_size);
-
-			data.read(file_data.data(), file_data.size());
-
-			util::fs::create_bin_file(filename, file_data);
+			g_ui->set_download_bar_enabled(false);
 		}
 
 		break;

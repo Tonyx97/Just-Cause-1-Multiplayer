@@ -395,9 +395,9 @@ void Net::on_client_tcp_disconnected(netcp::tcp_server_client* ci)
 
 	// if TCP has an associated PlayerClient then make TCP unavailable
 
-	g_net->exec_with_object_lock([&]()
+	exec_with_object_lock([&]()
 	{
-		if (const auto pc = ci->get_userdata<PlayerClient>())
+		if (const auto pc = get_valid_player_client(ci->get_userdata<PlayerClient>()))
 			pc->set_tcp(nullptr);
 	});
 }
@@ -434,7 +434,7 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 	{
 		const auto nid = _deserialize<NID>(data);
 
-		g_net->exec_with_object_lock([&]()
+		exec_with_object_lock([&]()
 		{
 			const auto pc = get_player_client_by_nid(nid);
 
@@ -455,16 +455,16 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 
 			// add all currently active resources to sync queue in PlayerClient
 
-			g_rsrc->for_each_resource([&](const std::string& rsrc_name, Resource* rsrc)
+			g_rsrc->for_each_resource([&](const std::string&, Resource* rsrc)
 			{
 				if (rsrc->is_running())
-					pc->add_resource_to_sync(rsrc_name);
+					pc->add_resource_to_sync(rsrc);
 			});
 		});
 
 		break;
 	}
-	case ClientToMsPacket_ResourceFiles:
+	case ClientToMsPacket_ResourceFile:
 	{
 		// send the request resource files to the client who requested it
 
@@ -472,16 +472,29 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 		const auto do_complete_sync = _deserialize<bool>(data);
 		const auto rsrc_path = ResourceSystem::RESOURCES_FOLDER() + rsrc_name + '\\';
 
-		serialization_ctx out;
-
-		std::vector<std::string> files_to_send;
-
 		g_rsrc->exec_with_resource_lock([&]()
 		{
 			// maybe the resource doesn't exist anymore so let's check it
 
 			if (const auto rsrc = g_rsrc->get_resource(rsrc_name))
 			{
+				auto send_file = [&](const std::string& filename)
+				{
+					serialization_ctx out;
+
+					_serialize(out, rsrc_name);
+
+					if (const auto file_data = util::fs::read_bin_file(rsrc_path + filename); !file_data.empty())
+					{
+						_serialize(out, filename);
+						_serialize(out, file_data.size());
+
+						out.append(BITCAST(uint8_t*, file_data.data()), file_data.size());
+					}
+
+					cl->send_packet(ClientToMsPacket_ResourceFile, out);
+				};
+
 				if (!do_complete_sync)
 				{
 					// get the file list of the requested files
@@ -491,7 +504,7 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 						const auto files_list = _deserialize<std::vector<std::string>>(data);
 
 						for (const auto& filename : files_list)
-							files_to_send.push_back(filename);
+							send_file(filename);
 					}
 				}
 				else
@@ -501,27 +514,11 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 
 					rsrc->for_each_client_file([&](const std::string& filename, const FileCtx* ctx)
 					{
-						files_to_send.push_back(filename);
+						send_file(filename);
 					});
 				}
 			}
 		});
-
-		_serialize(out, rsrc_name);
-		_serialize(out, files_to_send.size());
-
-		for (const auto& filename : files_to_send)
-		{
-			if (const auto file_data = util::fs::read_bin_file(rsrc_path + filename); !file_data.empty())
-			{
-				_serialize(out, filename);
-				_serialize(out, file_data.size());
-
-				out.append(BITCAST(uint8_t*, file_data.data()), file_data.size());
-			}
-		}
-
-		cl->send_packet(ClientToMsPacket_ResourceFiles, out);
 		
 		break;
 	}

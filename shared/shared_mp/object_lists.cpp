@@ -260,6 +260,16 @@ PlayerClient* ObjectLists::get_player_client_by_nid(NID nid)
 	return it != player_clients.end() ? it->second : nullptr;
 }
 
+PlayerClient* ObjectLists::get_valid_player_client(PlayerClient* pc)
+{
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
+	auto it = player_clients_set.find(pc);
+	return it != player_clients_set.end() ? *it : nullptr;
+}
+
 // spawning
 
 bool ObjectLists::destroy_net_object(NetObject* obj)

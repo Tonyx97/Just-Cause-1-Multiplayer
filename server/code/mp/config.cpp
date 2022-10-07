@@ -33,6 +33,8 @@ bool Config::init()
 		if (json startup_resources_key; jc_json::get_field(j_server_config, "startup_resources", startup_resources_key))
 			for (const std::string& rsrc_name : startup_resources_key)
 				server_info.startup_rsrcs.push_back(rsrc_name);
+
+		check(!server_info.startup_rsrcs.empty(), "Server must contain at least one resource to start right up");
 	}
 	catch (...)
 	{

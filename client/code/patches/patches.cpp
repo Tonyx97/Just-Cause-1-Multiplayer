@@ -17,6 +17,8 @@
 
 #include <mp/net.h>
 
+#define FORCE_WINDOWED_SMALL 0
+
 namespace jc::patches
 {
 #if FAST_LOAD
@@ -270,7 +272,7 @@ void jc::patches::apply_initial_patches()
 
 	jc::write(0xEBui8, 0x46DEA5);
 
-#ifdef JC_DBG
+#if defined(JC_DBG) || FORCE_WINDOWED_SMALL
 	g_game_ctx->set_window_resolution(1600, 1200);
 	g_game_ctx->set_fullscreen(false);
 #else

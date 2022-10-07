@@ -9,6 +9,45 @@ class UI
 {
 private:
 
+	struct download_progress_bar
+	{
+		std::mutex mtx;
+
+		std::string current_file;
+
+		float smoothed_progress = 0.f,
+			  progress = 0.f,
+			  target = 0.f,
+			  width = 600.f,
+			  height = 30.f;
+
+		bool enabled = false;
+
+		void set_enabled(bool v)
+		{
+			std::lock_guard lock(mtx);
+			enabled = v;
+		}
+
+		void set_progress(float v)
+		{
+			std::lock_guard lock(mtx);
+			progress = v;
+		}
+
+		void set_target(float v)
+		{
+			std::lock_guard lock(mtx);
+			target = v;
+		}
+
+		void set_file(const std::string& v)
+		{
+			std::lock_guard lock(mtx);
+			current_file = v;
+		}
+	} download_bar {};
+
 	HWND jc_hwnd = nullptr;
 
 	bool initialized = false,
@@ -16,6 +55,8 @@ private:
 		 show_admin_panel = false;
 
 	IDirect3DTexture9* splash_texture = nullptr;
+
+	float splash_texture_alpha = 1.f;
 
 	// ImGui bindings.
 	//
@@ -47,6 +88,7 @@ private:
 	void loading_screen();
 	void render_players();
 	void render_admin_panel();
+	void render_download_bar();
 	void overlay_debug();
 	void net_debug();
 	void end();
@@ -68,6 +110,13 @@ public:
 
 	ImVec2 calc_text_size(const char* text, float size, float wrap);
 	ImVec2 get_screen_size() { return io->DisplaySize; }
+
+	// download bar methods
+
+	void set_download_bar_progress(float v)				{ download_bar.set_progress(v); }
+	void set_download_bar_enabled(bool v)				{ download_bar.set_enabled(v); }
+	void set_download_bar_target(float v)				{ download_bar.set_target(v); }
+	void set_download_bar_file(const std::string& v)	{ download_bar.set_file(v); }
 };
 
 inline UI* g_ui = nullptr;

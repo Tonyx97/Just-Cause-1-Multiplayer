@@ -82,6 +82,7 @@ public:
 
 	Player* get_player_by_nid(NID nid);
 	PlayerClient* get_player_client_by_nid(NID nid);
+	PlayerClient* get_valid_player_client(PlayerClient* pc);
 
 	// spawning
 

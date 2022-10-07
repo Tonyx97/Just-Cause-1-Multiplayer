@@ -265,7 +265,7 @@ void UI::render()
 
 	if (ImGui::Begin("overlay", &open_overlay, window_flags))
 	{
-		if (g_net->is_joined())
+		if (g_net->is_joined() && splash_texture_alpha <= 0.f)
 		{
 			net_debug();
 
@@ -275,6 +275,13 @@ void UI::render()
 			render_players();
 		}
 		else loading_screen();
+
+		// render the download bar if we are downloading something
+
+		if (download_bar.enabled)
+			render_download_bar();
+
+		// lastly, update the chat
 
 		g_chat->update();
 	}
@@ -286,12 +293,19 @@ void UI::render()
 void UI::loading_screen()
 {
 	// if server provided splash texture then use it
-
+	
 	if (splash_texture)
-		ImGui::Image(splash_texture, io->DisplaySize);
+	{
+		ImGui::Image(splash_texture, io->DisplaySize, { 0.f, 0.f }, { 1.f, 1.f }, { 1.f, 1.f, 1.f, splash_texture_alpha });
 
-	add_text("Welcome to JC:MP! Please wait until all resources are downloaded and the game loads",
-		0.1f * io->DisplaySize.x, 0.45f * io->DisplaySize.y, 24.f, { 1.f, 1.f, 1.f, 1.f }, false, true, 300.f);
+		if (g_net->is_joined())
+			splash_texture_alpha = std::lerp(splash_texture_alpha, 0.f, g_time->get_delta() * 5.f);
+		else
+		{
+			add_text("Welcome to JC:MP! Please wait until all resources are downloaded and the game loads",
+				0.1f * io->DisplaySize.x, 0.45f * io->DisplaySize.y, 24.f, { 1.f, 1.f, 1.f, 1.f }, false, true, 300.f);
+		}
+	}
 }
 
 void UI::render_players()
@@ -667,6 +681,33 @@ void UI::render_admin_panel()
 	}
 
 	ImGui::End();
+}
+
+void UI::render_download_bar()
+{
+	std::lock_guard lock(download_bar.mtx);
+
+	if (download_bar.target > 0.f)
+	{
+		const auto& [sx, sy] = io->DisplaySize;
+
+		// make the bar smooth
+		
+		download_bar.smoothed_progress = std::lerp(download_bar.smoothed_progress, download_bar.progress, 0.01f);
+
+		const float progress = download_bar.smoothed_progress / download_bar.target;
+
+		const auto bar_pos = ImVec2(sx / 2.f - download_bar.width / 2.f, sy - 100.f);
+
+		draw_filled_rect(bar_pos.x, bar_pos.y, download_bar.width, download_bar.height, { 0.f, 0.f, 0.f, 0.5f });
+		draw_filled_rect(bar_pos.x + 2.f, bar_pos.y + 2.f, progress * (download_bar.width - 4.f), download_bar.height - 4.f, { 0.222f, 0.476f, 0.351f, 1.f });
+
+		add_text(std::format("Downloading '{}'... {:.0f} % ({:.1f} / {:.1f} MB)",
+			download_bar.current_file,
+			progress * 100.f,
+			download_bar.smoothed_progress / (1024.f * 1024.f),
+			download_bar.target / (1024.f * 1024.f)).c_str(), sx / 2.f, bar_pos.y + 13.f, 18.f, { 1.f, 1.f, 1.f, 1.f }, true, 0);
+	}
 }
 
 void UI::overlay_debug()

@@ -88,6 +88,8 @@ private:
 	FileList client_files;
 	FileList shared_files;
 
+	size_t client_files_total_size = 0u;
+
 #ifdef JC_SERVER
 	FileList server_files;
 #endif
@@ -125,6 +127,9 @@ public:
 		for (const auto& [filename, ctx] : server_files.files) fn(filename, &ctx);
 		for (const auto& [filename, ctx] : server_files.scripts) fn(filename, &ctx);
 	}
+
+	size_t calculate_total_client_file_size();
+	size_t get_total_client_file_size();
 #endif
 
 	template <typename Fn>
@@ -146,5 +151,9 @@ public:
 	ResourceResult stop();
 	ResourceResult restart();
 
+	const std::string& get_name() const { return name; }
 	const std::string& get_path() const { return path; }
+	const std::string& get_author() const { return author; }
+	const std::string& get_version() const { return version; }
+	const std::string& get_description() const { return description; }
 };

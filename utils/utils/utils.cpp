@@ -125,6 +125,19 @@ uint64_t util::fs::get_last_write_time(const std::string& filename)
 	return static_cast<uint64_t>(std::filesystem::last_write_time(_filename).time_since_epoch().count());
 }
 
+uint64_t util::fs::file_size(const std::string& filename)
+{
+	std::wstring _filename = string::convert(filename);
+
+#ifdef JC_CLIENT
+	_filename = GET_MODULE_PATH() + _filename;
+#endif
+
+	std::error_code ec;
+
+	return std::filesystem::file_size(_filename, ec);
+}
+
 void util::fs::set_last_write_time(const std::string& filename, uint64_t new_time)
 {
 	std::wstring _filename = string::convert(filename);

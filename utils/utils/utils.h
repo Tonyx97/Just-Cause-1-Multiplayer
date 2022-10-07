@@ -495,6 +495,7 @@ namespace util
 		int64_t get_file_size(std::ifstream& file);
 
 		uint64_t get_last_write_time(const std::string& filename);
+		uint64_t file_size(const std::string& filename);
 
 		void set_last_write_time(const std::string& filename, uint64_t new_time);
 		
