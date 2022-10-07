@@ -229,9 +229,15 @@ void util::fs::remove_empty_directories_in_directory(const std::string& path)
 	_path = GET_MODULE_PATH() + _path;
 #endif
 
-	for (const auto& d : std::filesystem::recursive_directory_iterator(_path))
-		if (std::filesystem::is_directory(d) && std::filesystem::is_empty(d))
-			std::filesystem::remove(d);
+	std::vector<std::filesystem::path> empty_dirs;
+
+	if (std::filesystem::is_directory(_path))
+		for (const auto& d : std::filesystem::recursive_directory_iterator(_path))
+			if (std::filesystem::is_directory(d) && std::filesystem::is_empty(d))
+				empty_dirs.push_back(d);
+
+	for (const auto& d : empty_dirs)
+		std::filesystem::remove(d);
 }
 
 void util::fs::for_each_file_in_directory(const std::string& path, const iterate_fn_t& fn)

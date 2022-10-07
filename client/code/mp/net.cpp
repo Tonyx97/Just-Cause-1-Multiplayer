@@ -265,8 +265,6 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 {
 	using namespace netcp;
 
-	const auto cl = std::bit_cast<netcp::tcp_client*>(ci);
-
 	switch (header->id)
 	{
 	case ClientToMsPacket_Password:
@@ -284,19 +282,16 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 		const auto default_files_count = _deserialize<size_t>(data);
 
-		if (default_files_count > 0u)
+		for (size_t i = 0u; i < default_files_count; ++i)
 		{
-			for (size_t i = 0u; i < default_files_count; ++i)
-			{
-				const auto target_path = _deserialize<std::string>(data);
-				const auto data_size = _deserialize<size_t>(data);
+			const auto target_path = _deserialize<std::string>(data);
+			const auto data_size = _deserialize<size_t>(data);
 
-				std::vector<uint8_t> file_data(data_size);
+			std::vector<uint8_t> file_data(data_size);
 
-				data.read(file_data.data(), file_data.size());
+			data.read(file_data.data(), file_data.size());
 
-				util::fs::create_bin_file(DEFAULT_SERVER_FILES_PATH() + target_path, file_data);
-			}
+			util::fs::create_bin_file(DEFAULT_SERVER_FILES_PATH() + target_path, file_data);
 		}
 
 		tcp_ctx.default_server_files_received = true;
@@ -402,7 +397,27 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 	}
 	case ClientToMsPacket_ResourceFiles:
 	{
-		logt(RED, "Server sent you files");
+		const auto rsrc_name = _deserialize<std::string>(data);
+		const auto files_count = _deserialize<size_t>(data);
+		const auto rsrc_path = ResourceSystem::RESOURCES_FOLDER() + rsrc_name + '\\';
+
+		// create resource folder if it's not already created
+
+		util::fs::create_directory(rsrc_path);
+
+		for (size_t i = 0u; i < files_count; ++i)
+		{
+			const auto filename = _deserialize<std::string>(data);
+			const auto data_size = _deserialize<size_t>(data);
+
+			std::vector<uint8_t> file_data(data_size);
+
+			data.read(file_data.data(), file_data.size());
+
+			log(RED, "data for {} received: {}", rsrc_name, file_data.size());
+
+			util::fs::create_bin_file(rsrc_path + filename, file_data);
+		}
 
 		break;
 	}

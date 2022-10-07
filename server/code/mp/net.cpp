@@ -470,6 +470,11 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 
 		const auto rsrc_name = _deserialize<std::string>(data);
 		const auto do_complete_sync = _deserialize<bool>(data);
+		const auto rsrc_path = ResourceSystem::RESOURCES_FOLDER() + rsrc_name + '\\';
+
+		serialization_ctx out;
+
+		std::vector<std::string> files_to_send;
 
 		g_rsrc->exec_with_resource_lock([&]()
 		{
@@ -477,8 +482,6 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 
 			if (const auto rsrc = g_rsrc->get_resource(rsrc_name))
 			{
-				log(BLUE, "Sending file for resource '{}'...", rsrc_name);
-
 				if (!do_complete_sync)
 				{
 					// get the file list of the requested files
@@ -488,7 +491,7 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 						const auto files_list = _deserialize<std::vector<std::string>>(data);
 
 						for (const auto& filename : files_list)
-							log(BLUE, "[{}] Client requested file: '{}'", do_complete_sync, filename);
+							files_to_send.push_back(filename);
 					}
 				}
 				else
@@ -498,13 +501,27 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 
 					rsrc->for_each_client_file([&](const std::string& filename, const FileCtx* ctx)
 					{
-						log(BLUE, "[{}] Client requested file: '{}'", do_complete_sync, filename);
+						files_to_send.push_back(filename);
 					});
 				}
-
-				log(RED, "Resource requested: {} (complete sync: {})", rsrc_name, do_complete_sync);
 			}
 		});
+
+		_serialize(out, rsrc_name);
+		_serialize(out, files_to_send.size());
+
+		for (const auto& filename : files_to_send)
+		{
+			if (const auto file_data = util::fs::read_bin_file(rsrc_path + filename); !file_data.empty())
+			{
+				_serialize(out, filename);
+				_serialize(out, file_data.size());
+
+				out.append(BITCAST(uint8_t*, file_data.data()), file_data.size());
+			}
+		}
+
+		cl->send_packet(ClientToMsPacket_ResourceFiles, out);
 		
 		break;
 	}
