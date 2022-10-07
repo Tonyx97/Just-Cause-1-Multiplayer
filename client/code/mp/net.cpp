@@ -428,6 +428,7 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 		const auto file = _deserialize<std::string>(data);
 		const auto filename = rsrc_path + file;
 		const auto data_size = _deserialize<size_t>(data);
+		const auto lwt = _deserialize<uint64_t>(data);
 
 		// update the download bar current file display
 
@@ -453,6 +454,11 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 		data.read(file_data.data(), file_data.size());
 
 		util::fs::create_bin_file(filename, file_data);
+
+		// update the last write time so it won't send the request for this
+		// file to the server if it's not changed
+
+		util::fs::set_last_write_time(filename, lwt);
 
 		// increase downloaded bytes to keep track
 		

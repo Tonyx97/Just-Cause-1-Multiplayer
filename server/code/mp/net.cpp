@@ -484,10 +484,13 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 
 					_serialize(out, rsrc_name);
 
-					if (const auto file_data = util::fs::read_bin_file(rsrc_path + filename); !file_data.empty())
+					const auto fullpath = rsrc_path + filename;
+
+					if (const auto file_data = util::fs::read_bin_file(fullpath); !file_data.empty())
 					{
 						_serialize(out, filename);
 						_serialize(out, file_data.size());
+						_serialize(out, util::fs::get_last_write_time(fullpath));
 
 						out.append(BITCAST(uint8_t*, file_data.data()), file_data.size());
 					}
