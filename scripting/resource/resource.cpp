@@ -79,6 +79,9 @@ size_t Resource::get_total_client_file_size()
 
 ResourceResult Resource::start()
 {
+	if (status == ResourceStatus_Running)
+		return ResourceResult_AlreadyStarted;
+
 	logt(YELLOW, "Starting '{}'... ", name);
 
 	for (const auto& [script_name, script] : scripts)
@@ -91,6 +94,9 @@ ResourceResult Resource::start()
 
 ResourceResult Resource::stop()
 {
+	if (status == ResourceStatus_Stopped)
+		return ResourceResult_AlreadyStopped;
+
 	logt(YELLOW, "Stopping '{}'... ", name);
 
 	for (const auto& [script_name, script] : scripts)
@@ -105,8 +111,10 @@ ResourceResult Resource::restart()
 {
 	logt(YELLOW, "Restarting '{}'... ", name);
 
-	stop();
-	start();
+	const auto stop_result = stop();
 
-	return ResourceResult_Ok;
+	if (stop_result == ResourceResult_Ok)
+		return start();
+
+	return stop_result;
 }

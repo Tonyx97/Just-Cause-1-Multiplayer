@@ -16,9 +16,12 @@ DEFINE_ENUM(ResourceVerification, uint8_t)
 
 DEFINE_ENUM(ResourceResult, uint8_t)
 {
-	ResourceResult_Ok,
 	ResourceResult_Fail,
+	ResourceResult_Ok,
 	ResourceResult_NotExists,
+	ResourceResult_AlreadyStarted,
+	ResourceResult_AlreadyStopped,
+	ResourceResult_ScriptError,
 };
 
 DEFINE_ENUM(ResourceStatus, uint8_t)

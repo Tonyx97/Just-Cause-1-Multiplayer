@@ -4,6 +4,8 @@
 
 #include "cmd.h"
 
+#include <resource_sys/resource_system.h>
+
 namespace cmd
 {
 	std::unordered_map<std::string, std::function<cmd_fn_t>> g_cmds;
@@ -43,13 +45,7 @@ namespace cmd
 		if (params.size() != 2)
 			return Cmd_InvalidParams;
 
-		/*gns::net_player::register_login info {};
-
-		info.user = params[0].c_str();
-		info.pass = params[1].c_str();
-
-		if (!g_client->send_packet(ID_NET_PLAYER_REGISTER, info))
-			return set_last_error("register failed");*/
+		g_net->send(Packet(PlayerClientPID_RegisterUser, ChannelID_PlayerClient, params[0], params[1]));
 
 		return Cmd_Ok;
 	}
@@ -59,13 +55,7 @@ namespace cmd
 		if (params.size() != 2)
 			return Cmd_InvalidParams;
 
-		/*gns::net_player::register_login info {};
-
-		info.user = params[0].c_str();
-		info.pass = params[1].c_str();
-
-		if (!g_client->send_packet(ID_NET_PLAYER_LOGIN, info))
-			return set_last_error("login failed");*/
+		g_net->send(Packet(PlayerClientPID_LoginUser, ChannelID_PlayerClient, params[0], params[1]));
 
 		return Cmd_Ok;
 	}
@@ -75,8 +65,7 @@ namespace cmd
 		if (params.size() != 0)
 			return Cmd_InvalidParams;
 
-		/*if (!g_client->send_packet(ID_NET_PLAYER_LOGOUT))
-			return set_last_error("logout failed");*/
+		g_net->send(Packet(PlayerClientPID_LogoutUser, ChannelID_PlayerClient));
 
 		return Cmd_Ok;
 	}
@@ -116,13 +105,7 @@ namespace cmd
 		if (params.size() != 1)
 			return Cmd_InvalidParams;
 
-		/*gns::resource::action info {};
-
-		info.name = params[0].c_str();
-		info.action = RESOURCE_ACTION_START;
-
-		if (!g_client->send_packet(ID_RESOURCE_ACTION, info))
-			return set_last_error("Start resource failed");*/
+		g_net->send(Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, params[0], ResourceResult_Start));
 
 		return Cmd_Ok;
 	}
@@ -132,13 +115,7 @@ namespace cmd
 		if (params.size() != 1)
 			return Cmd_InvalidParams;
 
-		/*gns::resource::action info {};
-
-		info.name = params[0].c_str();
-		info.action = RESOURCE_ACTION_STOP;
-
-		if (!g_client->send_packet(ID_RESOURCE_ACTION, info))
-			return set_last_error("Stop resource failed");*/
+		g_net->send(Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, params[0], ResourceResult_Stop));
 
 		return Cmd_Ok;
 	}
@@ -148,13 +125,7 @@ namespace cmd
 		if (params.size() != 1)
 			return Cmd_InvalidParams;
 
-		/*gns::resource::action info {};
-
-		info.name = params[0].c_str();
-		info.action = RESOURCE_ACTION_RESTART;
-
-		if (!g_client->send_packet(ID_RESOURCE_ACTION, info))
-			return set_last_error("Restart resource failed");*/
+		g_net->send(Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, params[0], ResourceResult_Restart));
 
 		return Cmd_Ok;
 	}
