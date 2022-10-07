@@ -21,8 +21,11 @@ struct TcpContext
 	
 	struct ResourceContext
 	{
+		std::atomic_size_t resources_info_count = 0u;
 		std::atomic_size_t downloaded_bytes = 0u;
+		std::atomic_size_t up_to_date_resources = 0u;
 		std::atomic_size_t total_size = 0u;
+		std::atomic_size_t total_resources = 0u;
 	} rsrc;
 };
 

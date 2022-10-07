@@ -71,6 +71,8 @@ void PlayerClient::sync_pending_resources()
 	// get and pop all the pending resources and send a packet to the client
 	// containing info about the resource the server wants to sync
 
+	const auto resources_count = resources_to_sync.size();
+
 	while (!resources_to_sync.empty())
 	{
 		std::string rsrc_name;
@@ -90,6 +92,7 @@ void PlayerClient::sync_pending_resources()
 
 				serialization_ctx out;
 
+				_serialize(out, resources_count);
 				_serialize(out, rsrc_name);
 				_serialize(out, rsrc->get_total_client_file_size());
 
@@ -99,7 +102,7 @@ void PlayerClient::sync_pending_resources()
 				{
 					const auto file_path = resource_path + filename;
 
-					files_info.emplace_back(filename, util::fs::get_last_write_time(file_path));
+					files_info.emplace_back(filename, util::fs::get_last_write_time(file_path), static_cast<size_t>(util::fs::file_size(file_path)));
 				});
 
 				_serialize(out, files_info);

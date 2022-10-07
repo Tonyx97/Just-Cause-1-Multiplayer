@@ -39,6 +39,8 @@ struct ResourceFileInfo
 	std::string filename;
 
 	uint64_t lwt; // last write time
+
+	size_t size;
 };
 
 struct FileCtx

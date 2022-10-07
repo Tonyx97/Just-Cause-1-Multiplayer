@@ -283,6 +283,18 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 {
 	using namespace netcp;
 
+	auto reset_counters_and_disable_download_bar = [&]()
+	{
+		tcp_ctx.rsrc.resources_info_count = 0u;
+		tcp_ctx.rsrc.downloaded_bytes = 0u;
+		tcp_ctx.rsrc.up_to_date_resources = 0u;
+		tcp_ctx.rsrc.total_size = 0u;
+		tcp_ctx.rsrc.total_resources = 0u;
+		tcp_ctx.startup_all_resources_synced = true;
+
+		g_ui->set_download_bar_enabled(false);
+	};
+
 	switch (header->id)
 	{
 	case ClientToMsPacket_Password:
@@ -320,19 +332,17 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 	}
 	case ClientToMsPacket_SyncResource:
 	{
+		// it's important to note that the server must send this packet at least once
+		// so we can continue, all servers will have several resources so it's fine,
+		// we don't want to have a server with no resources anyways...
+
+		const auto rsrcs_count = _deserialize<size_t>(data);
 		const auto rsrc_name = _deserialize<std::string>(data);
 		const auto rsrc_size = _deserialize<size_t>(data);
 		const auto files_info = _deserialize<std::vector<ResourceFileInfo>>(data);
 
 		const auto rsrc_path = ResourceSystem::RESOURCES_FOLDER() + rsrc_name + '\\';
 		const bool do_complete_sync = !util::fs::is_directory(rsrc_path) || util::fs::is_empty(rsrc_path);
-
-		// increase the total size of resources files we have to download
-		
-		tcp_ctx.rsrc.total_size += rsrc_size;
-
-		g_ui->set_download_bar_enabled(true);
-		g_ui->set_download_bar_target(static_cast<float>(tcp_ctx.rsrc.total_size));
 
 		// start creating the request packet
 		
@@ -343,6 +353,8 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 		// if the resource folder doesn't exist then clearly we need
 		// to do a complete sync of the resource
+
+		bool is_up_to_date = false;
 		
 		if (!do_complete_sync)
 		{
@@ -386,7 +398,11 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 						// we will not request it
 
 						if (it->lwt != util::fs::get_last_write_time(full_filename))
+						{
 							files_to_request.push_back(filename);
+
+							tcp_ctx.rsrc.total_size += it->size;
+						}
 					}
 					else
 					{
@@ -401,7 +417,11 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 			for (const auto& file_info : files_info)
 				if (!files_in_directory.contains(file_info.filename))
+				{
 					files_to_request.push_back(file_info.filename);
+
+					tcp_ctx.rsrc.total_size += file_info.size;
+				}
 
 			// remove all useless files
 
@@ -409,15 +429,49 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 				util::fs::remove(f);
 
 			_serialize(out, files_to_request);
+
+			is_up_to_date = files_to_request.empty();
+		}
+		else tcp_ctx.rsrc.total_size += rsrc_size;
+
+		// if resources count is 0 then we will get this batch's count
+
+		if (tcp_ctx.rsrc.total_resources == 0u)
+			tcp_ctx.rsrc.total_resources = rsrcs_count;
+		else check(tcp_ctx.rsrc.total_resources == rsrcs_count, "Out of order TCP packet received, design mistake...");
+
+		// if it's up to date, increase the up to date resources count
+		
+		if (is_up_to_date)
+			++tcp_ctx.rsrc.up_to_date_resources;
+		else
+		{
+			// increase the total size of resources files we have to download
+
+			g_ui->set_download_bar_enabled(true);
+			g_ui->set_download_bar_target(static_cast<float>(tcp_ctx.rsrc.total_size));
+
+			// make sure we don't keep empty folders
+
+			util::fs::remove_empty_directories_in_directory(rsrc_path);
+
+			// request the needed files to the server
+
+			ci->send_packet(ClientToMsPacket_ResourceFile, out);
 		}
 
-		// make sure we don't keep empty folders
-
-		util::fs::remove_empty_directories_in_directory(rsrc_path);
-
-		// request the needed files to the server
-
-		ci->send_packet(ClientToMsPacket_ResourceFile, out);
+		// if total size is 0 it means there is no resource we need to sync
+		// so we will check if we can load now.
+		// if the up to date resources count is the same as the amount of resources
+		// we received from the server to sync then just reset counters, disable download
+		// bar and load game
+		
+		if (++tcp_ctx.rsrc.resources_info_count == tcp_ctx.rsrc.total_resources &&
+			tcp_ctx.rsrc.up_to_date_resources == tcp_ctx.rsrc.total_resources &&
+			tcp_ctx.rsrc.total_size == 0u)
+		{
+			reset_counters_and_disable_download_bar();
+		}
 
 		break;
 	}
@@ -469,13 +523,9 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 		// if we downloaded everything we had to then reset the counters
 		// and set all resources synced to true
 
-		if (tcp_ctx.rsrc.downloaded_bytes >= tcp_ctx.rsrc.total_size)
+		if (tcp_ctx.rsrc.downloaded_bytes == tcp_ctx.rsrc.total_size)
 		{
-			tcp_ctx.rsrc.downloaded_bytes = 0u;
-			tcp_ctx.rsrc.total_size = 0u;
-			tcp_ctx.startup_all_resources_synced = true;
-
-			g_ui->set_download_bar_enabled(false);
+			reset_counters_and_disable_download_bar();
 		}
 
 		break;

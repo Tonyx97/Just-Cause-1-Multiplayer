@@ -84,6 +84,12 @@ namespace jc::thread_safe
 			return res;
 		}
 
+		size_t size()
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+			return data.size();
+		}
+
 		bool empty()
 		{
 			std::lock_guard<std::mutex> lock(mtx);
