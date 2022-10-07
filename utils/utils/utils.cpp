@@ -221,6 +221,17 @@ void util::fs::create_directory(const std::string& path)
 		std::filesystem::create_directory(_path);
 }
 
+void util::fs::create_directories(const std::string& path)
+{
+	std::wstring _path = string::convert(path);
+
+#ifdef JC_CLIENT
+	_path = GET_MODULE_PATH() + _path;
+#endif
+
+	std::filesystem::create_directories(_path);
+}
+
 void util::fs::remove_empty_directories_in_directory(const std::string& path)
 {
 	std::wstring _path = string::convert(path);

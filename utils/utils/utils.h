@@ -505,6 +505,7 @@ namespace util
 
 		void remove(const std::string& path);
 		void create_directory(const std::string& path);
+		void create_directories(const std::string& path);
 		void remove_empty_directories_in_directory(const std::string& path);
 		void for_each_file_in_directory(const std::string& path, const iterate_fn_t& fn);
 

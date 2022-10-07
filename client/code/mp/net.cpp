@@ -405,18 +405,26 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 		util::fs::create_directory(rsrc_path);
 
+		// create/replace all the resource files
+
 		for (size_t i = 0u; i < files_count; ++i)
 		{
-			const auto filename = _deserialize<std::string>(data);
+			const auto filename = rsrc_path + _deserialize<std::string>(data);
 			const auto data_size = _deserialize<size_t>(data);
+			const auto parent_path = std::filesystem::path(filename).parent_path().string();
+
+			// create directories needed to place this file
+
+			if (!parent_path.empty())
+				util::fs::create_directories(parent_path);
+
+			// create the binary file
 
 			std::vector<uint8_t> file_data(data_size);
 
 			data.read(file_data.data(), file_data.size());
 
-			log(RED, "data for {} received: {}", rsrc_name, file_data.size());
-
-			//util::fs::create_bin_file(rsrc_path + filename, file_data);
+			util::fs::create_bin_file(filename, file_data);
 		}
 
 		break;
