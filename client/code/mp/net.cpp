@@ -399,9 +399,9 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 			log(BLUE, "syncing resource {}", rsrc_name);
 
-			rsrc->up_to_date = false;
-			rsrc->files_to_download = 0;
-			rsrc->files_downloaded = 0;
+			rsrc->set_up_to_date(false);
+			rsrc->set_files_to_download(0);
+			rsrc->set_files_to_download(0);
 		
 			if (!do_complete_sync)
 			{
@@ -414,7 +414,8 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 				{
 					files_to_request.push_back(filename);
 
-					++rsrc->files_to_download;
+					rsrc->inc_files_to_download();
+
 					tcp_ctx.rsrc.total_size += filesize;
 				};
 
@@ -477,7 +478,7 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 				_serialize(out, files_to_request);
 
-				rsrc->up_to_date = files_to_request.empty();
+				rsrc->set_up_to_date(files_to_request.empty());
 			}
 			else
 			{
@@ -486,12 +487,12 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 				
 				tcp_ctx.rsrc.total_size += rsrc_size;
 
-				rsrc->files_to_download = rsrc_client_files_count;
+				rsrc->set_files_to_download(rsrc_client_files_count);
 			}
 
 			// if it's not up to date then being download
 		
-			if (!rsrc->up_to_date)
+			if (!rsrc->is_up_to_date())
 			{
 				// increase the total size of resources files we have to download
 
@@ -527,7 +528,7 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 			{
 				if (g_rsrc->for_each_resource_ret([](const std::string&, Resource* resource)
 				{
-					return resource->up_to_date;
+					return resource->is_up_to_date();
 				})) end_download();
 			}
 		});
@@ -587,7 +588,9 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 			// if we have downloaded all files from this resource then
 			// remove it from the download queue
 
-			if (++rsrc->files_downloaded == rsrc->files_to_download)
+			rsrc->inc_files_downloaded();
+
+			if (rsrc->get_files_downloaded() == rsrc->get_files_to_download())
 			{
 				tcp_ctx.rsrc.downloading_resources.erase(rsrc_name);
 

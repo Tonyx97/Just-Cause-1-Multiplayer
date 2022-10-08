@@ -107,7 +107,12 @@ private:
 
 	ResourceStatus status = ResourceStatus_Stopped;
 
-#ifdef JC_SERVER
+#ifdef JC_CLIENT
+	int files_to_download = 0,
+		files_downloaded = 0;
+
+	bool up_to_date = false;
+#else
 	FileList client_files;
 	FileList shared_files;
 	FileList server_files;
@@ -118,12 +123,6 @@ private:
 	void clear();
 
 public:
-
-#ifdef JC_CLIENT
-	bool up_to_date = false;
-	int files_to_download = 0,
-		files_downloaded = 0;
-#endif
 
 	static constexpr auto ALLOWED_CHARACTERS() { return "0123456789abcdefghijklmnopqrstuvwxyz_"; }
 	static constexpr auto META_FILE() { return "meta.json"; }
@@ -150,6 +149,17 @@ public:
 
 #ifdef JC_CLIENT
 	Resource(const std::string& name);
+
+	void set_up_to_date(bool v) { up_to_date = v; }
+	void set_files_downloaded(int v) { files_downloaded = v; }
+	void set_files_to_download(int v) { files_to_download = v; }
+	void inc_files_downloaded() { ++files_downloaded; }
+	void inc_files_to_download() { ++files_to_download; }
+
+	bool is_up_to_date() const { return up_to_date; }
+
+	int get_files_downloaded() const { return files_downloaded; }
+	int get_files_to_download() const { return files_to_download; }
 #else
 	Resource(const std::string& name, const ResourceVerificationCtx& ctx);
 
