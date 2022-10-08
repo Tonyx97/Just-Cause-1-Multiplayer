@@ -132,6 +132,12 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 		jc::hooks::hook_game_fns(true);
 
+		// create resource system instance
+
+		resource_system::create_resource_system();
+
+		check(g_rsrc->init(), "Could not initialize resource system");
+
 		// initialize net
 
 		log(GREEN, "Initializing NET...");
@@ -149,12 +155,6 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		// initialize ui now
 
 		g_ui->init();
-
-		// create resource system instance
-
-		resource_system::create_resource_system();
-
-		check(g_rsrc->init(), "Could not initialize resource system");
 
 		log(GREEN, "Resource system initialized");
 
@@ -384,6 +384,7 @@ DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filena
 void dll_thread()
 {
 	jc::prof::init("JC:MP");
+	jc::prof::set_main_thread();
 	jc::bug_ripper::init(g_module);
 
 	// wait until the shit is unpacked lol

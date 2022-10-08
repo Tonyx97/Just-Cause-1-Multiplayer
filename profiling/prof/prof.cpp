@@ -16,6 +16,8 @@ namespace jc::prof
     HWND console_hwnd = nullptr;
     bool console_allocated = false;
 
+	uint32_t main_thread = 0u;
+
 	int screen_width = 0,
 		screen_height = 0;
 
@@ -221,5 +223,15 @@ namespace jc::prof
 #endif
 
 		return false;
+	}
+
+	void set_main_thread()
+	{
+		main_thread = GetCurrentThreadId();
+	}
+
+	void check_main_thread()
+	{
+		check(GetCurrentThreadId() == main_thread, "This code cannot be executed from thread {:x} (main thread {:x})", GetCurrentThreadId(), main_thread);
 	}
 }

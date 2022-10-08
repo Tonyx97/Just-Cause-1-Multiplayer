@@ -49,6 +49,9 @@ namespace jc::prof
         void log_info(bool nl, const char* filename, int line, eColor color, const char* text);
     }
 
+	void set_main_thread();
+	void check_main_thread();
+
     template <typename T, typename... A>
     inline void log(bool nl, eColor color, const T text, A... args)
     {

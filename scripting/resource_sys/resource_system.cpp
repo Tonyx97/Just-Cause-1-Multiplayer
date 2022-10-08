@@ -9,6 +9,8 @@
 
 #include <luas.h>
 
+#include <mp/net.h>
+
 namespace resource_system
 {
 	void create_resource_system()
@@ -34,7 +36,6 @@ bool ResourceSystem::init()
 	util::fs::create_directory(RESOURCES_FOLDER());
 
 #ifdef JC_CLIENT
-
 #else
 	// verify and add all resources we can find
 
@@ -56,13 +57,19 @@ void ResourceSystem::destroy()
 	std::lock_guard lock(mtx);
 
 	for (const auto& [name, rsrc] : resources)
+	{
+		stop_resource(name);
+
 		JC_FREE(rsrc);
+	}
 
 	resources.clear();
 }
 
 void ResourceSystem::refresh()
 {
+	std::lock_guard lock(mtx);
+
 #ifdef JC_CLIENT
 #else
 	std::unordered_map<std::string, ResourceVerificationCtx> updated_list;
@@ -80,13 +87,13 @@ void ResourceSystem::refresh()
 			updated_list.insert({ rsrc_name, std::move(ctx) });
 	}
 
-	std::lock_guard lock(mtx);
-
 	// add new resources
 
 	for (const auto& [rsrc_name, ctx] : updated_list)
 	{
-		if (!resources.contains(rsrc_name))
+		// ignore already created ones
+
+		if (!is_resource_valid(rsrc_name))
 		{
 			const auto resource = JC_ALLOC(Resource, rsrc_name, ctx);
 
@@ -119,17 +126,120 @@ bool ResourceSystem::is_resource_valid(const std::string& rsrc_name) const
 	return resources.contains(rsrc_name);
 }
 
+ResourceResult ResourceSystem::start_resource(const std::string& name)
+{
+	std::lock_guard lock(mtx);
+
+	if (const auto it = resources.find(name); it != resources.end())
+	{
+		const auto rsrc = it->second;
+
+		if (rsrc->get_status() == ResourceStatus_Running)
+			return ResourceResult_AlreadyStarted;
+
+#ifdef JC_SERVER
+		// read the resource meta to see if it's ok before
+		// starting
+		
+		ResourceVerificationCtx ctx;
+
+		if (const auto verify_result = read_meta(name, &ctx); verify_result != ResourceVerification_Ok)
+			return verify_result;
+
+		// if verification was successful then build the resource
+		// and notify all clients
+
+		rsrc->build_with_verification_ctx(ctx);
+#endif
+
+		const auto result = rsrc->start();
+
+#ifdef JC_SERVER
+		// syncing a resource will start the resource so no need
+		// to sync resource start action
+		
+		if (result == ResourceResult_Ok)
+			g_net->sync_resource(name);
+#endif
+
+		return result;
+	}
+
+	return ResourceResult_NotExists;
+}
+
+ResourceResult ResourceSystem::stop_resource(const std::string& name)
+{
+	std::lock_guard lock(mtx);
+
+	if (const auto it = resources.find(name); it != resources.end())
+	{
+		const auto rsrc = it->second;
+
+		if (rsrc->get_status() == ResourceStatus_Stopped)
+			return ResourceResult_AlreadyStopped;
+
+		const auto result = rsrc->stop();
+
+#ifdef JC_SERVER
+		// if the resource was stopped then we will notify all clients
+		// to stop resource 
+
+		if (result == ResourceResult_Ok)
+			g_net->send_broadcast(nullptr, Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, name, ResourceResult_Stop));
+#endif
+
+		return result;
+	}
+
+	return ResourceResult_NotExists;
+}
+ResourceResult ResourceSystem::restart_resource(const std::string& name)
+{
+	std::lock_guard lock(mtx);
+
+	if (const auto stop_result = stop_resource(name); stop_result != ResourceResult_Ok && stop_result != ResourceResult_AlreadyStopped)
+		return stop_result;
+
+	return start_resource(name);
+}
+
+Resource* ResourceSystem::get_resource(const std::string& name) const
+{
+	std::lock_guard lock(mtx);
+
+	const auto it = resources.find(name);
+	return it != resources.end() ? it->second : nullptr;
+}
+
+#ifdef JC_CLIENT
+Resource* ResourceSystem::create_resource(const std::string& name)
+{
+	if (const auto rsrc = get_resource(name))
+		return rsrc;
+
+	const auto rsrc = JC_ALLOC(Resource, name);
+
+	resources.insert({ name, rsrc });
+
+	logt(YELLOW, "Client resource '{}' created", name);
+
+	return rsrc;
+}
+#else
 ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_name, ResourceVerificationCtx* ctx)
 {
 	std::lock_guard lock(mtx);
 
-	// check if this resource name was already registered
-
-	if (resources.contains(rsrc_name))
-		return logbtc(ResourceVerification_AlreadyExists, RED, "Resource '{}' already exists", rsrc_name);
-
 	if (rsrc_name.find_first_not_of(Resource::ALLOWED_CHARACTERS()) != std::string::npos)
 		return logbtc(ResourceVerification_InvalidName, RED, "Resource '{}' has an invalid name (only '_' and alphanumeric characters allowed)", rsrc_name);
+
+	return read_meta(rsrc_name, ctx);
+}
+
+ResourceVerification ResourceSystem::read_meta(const std::string& rsrc_name, ResourceVerificationCtx* ctx)
+{
+	std::lock_guard lock(mtx);
 
 	const auto rsrc_path = ctx->path = RESOURCES_FOLDER() + rsrc_name + '\\';
 
@@ -160,16 +270,16 @@ ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_nam
 
 			// save scripts only if they match their running machine type
 
-			if (!std::filesystem::is_regular_file(rsrc_path + source))
+			const auto fullpath = rsrc_path + source;
+
+			if (!std::filesystem::is_regular_file(fullpath))
 				return logbtc(ResourceVerification_ScriptNotExists, RED, "Resource '{}', script '{}' does not exist", rsrc_name, source);
-			
+
 			switch (type_value)
 			{
-			case ScriptType_Shared: ctx->shared.scripts.insert({ source, { source, type_value } }); break;
-			case ScriptType_Client: ctx->client.scripts.insert({ source, { source, type_value } }); break;
-#ifdef JC_SERVER
-			case ScriptType_Server: ctx->server.scripts.insert({ source, { source, type_value } }); break;
-#endif
+			case ScriptType_Client: ctx->client.scripts.insert({ source, { source, util::fs::get_last_write_time(fullpath), ScriptType_Client, type_value } }); break;
+			case ScriptType_Shared: ctx->shared.scripts.insert({ source, { source, util::fs::get_last_write_time(fullpath), ScriptType_Shared, type_value } }); break;
+			case ScriptType_Server: ctx->server.scripts.insert({ source, { source, util::fs::get_last_write_time(fullpath), ScriptType_Server, type_value } }); break;
 			default: return logbtc(ResourceVerification_InvalidScriptList, RED, "Resource '{}', script '{}' has an invalid script file type", rsrc_name, source);
 			}
 		}
@@ -182,55 +292,15 @@ ResourceVerification ResourceSystem::verify_resource(const std::string& rsrc_nam
 	{
 		for (const std::string& filename : files_list)
 		{
-			if (!std::filesystem::is_regular_file(rsrc_path + filename))
+			const auto fullpath = rsrc_path + filename;
+
+			if (!std::filesystem::is_regular_file(fullpath))
 				return logbtc(ResourceVerification_ScriptNotExists, RED, "Resource '{}', file '{}' does not exist", rsrc_name, filename);
 
-			ctx->client.files.insert({ filename, { filename } });
+			ctx->client.files.insert({ filename, { filename, util::fs::get_last_write_time(fullpath), ScriptType_NoScript } });
 		}
 	}
 
 	return ResourceVerification_Ok;
 }
-
-ResourceResult ResourceSystem::start_resource(const std::string& name)
-{
-	std::lock_guard lock(mtx);
-
-	if (const auto it = resources.find(name); it != resources.end())
-	{
-		return it->second->start();
-	}
-
-	return ResourceResult_NotExists;
-}
-
-ResourceResult ResourceSystem::stop_resource(const std::string& name)
-{
-	std::lock_guard lock(mtx);
-
-	if (const auto it = resources.find(name); it != resources.end())
-	{
-		return it->second->stop();
-	}
-
-	return ResourceResult_NotExists;
-}
-ResourceResult ResourceSystem::restart_resource(const std::string& name)
-{
-	std::lock_guard lock(mtx);
-
-	if (const auto it = resources.find(name); it != resources.end())
-	{
-		return it->second->restart();
-	}
-
-	return ResourceResult_NotExists;
-}
-
-Resource* ResourceSystem::get_resource(const std::string& name) const
-{
-	std::lock_guard lock(mtx);
-
-	const auto it = resources.find(name);
-	return it != resources.end() ? it->second : nullptr;
-}
+#endif

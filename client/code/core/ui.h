@@ -11,7 +11,7 @@ private:
 
 	struct download_progress_bar
 	{
-		std::mutex mtx;
+		mutable std::mutex mtx;
 
 		std::string current_file;
 
@@ -27,6 +27,9 @@ private:
 		{
 			std::lock_guard lock(mtx);
 			enabled = v;
+
+			if (!enabled)
+				smoothed_progress = progress = target = 0.f;
 		}
 
 		void set_progress(float v)
@@ -45,6 +48,12 @@ private:
 		{
 			std::lock_guard lock(mtx);
 			current_file = v;
+		}
+
+		float get_progress() const
+		{
+			std::lock_guard lock(mtx);
+			return progress;
 		}
 	} download_bar {};
 
@@ -117,6 +126,8 @@ public:
 	void set_download_bar_enabled(bool v)				{ download_bar.set_enabled(v); }
 	void set_download_bar_target(float v)				{ download_bar.set_target(v); }
 	void set_download_bar_file(const std::string& v)	{ download_bar.set_file(v); }
+
+	float get_download_bar_progress() const				{ return download_bar.get_progress(); }
 };
 
 inline UI* g_ui = nullptr;

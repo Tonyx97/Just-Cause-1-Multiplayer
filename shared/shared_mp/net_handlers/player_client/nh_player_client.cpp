@@ -190,15 +190,16 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 PacketResult nh::player_client::resource_action(const Packet& p)
 {
 #ifdef JC_CLIENT
-	const auto result = p.get_u8();
+	const auto rsrc_name = p.get_str();
+	const auto action_type = p.get_u8();
 
-	switch (result)
+	ResourceResult result = ResourceResult_Ok;
+
+	switch (action_type)
 	{
-	case ResourceResult_AlreadyStarted: log(RED, "Resource already running");	break;
-	case ResourceResult_AlreadyStopped: log(RED, "Resource already stopped");	break;
-	case ResourceResult_NotExists:		log(RED, "Resource does not exist");	break;
-	case ResourceResult_Ok:				log(GREEN, "Ok");						break;
-	default: log(GREEN, "Unknown error: {}", result);
+	case ResourceResult_Start:		result = g_rsrc->start_resource(rsrc_name);		break;
+	case ResourceResult_Stop:		result = g_rsrc->stop_resource(rsrc_name);		break;
+	case ResourceResult_Restart:	result = g_rsrc->restart_resource(rsrc_name);	break;
 	}
 #else
 	const auto pc = p.get_pc();
@@ -214,7 +215,16 @@ PacketResult nh::player_client::resource_action(const Packet& p)
 	case ResourceResult_Restart:	result = g_rsrc->restart_resource(rsrc_name);	break;
 	}
 
-	pc->send(Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, result), true);
+	pc->send(Packet(PlayerClientPID_DebugLog, ChannelID_PlayerClient, Resource::RESULT_TO_STRING(result)), true);
+#endif
+
+	return PacketRes_Ok;
+}
+
+PacketResult nh::player_client::resources_refresh(const Packet& p)
+{
+#ifdef JC_SERVER
+	g_rsrc->refresh();
 #endif
 
 	return PacketRes_Ok;
@@ -255,6 +265,17 @@ PacketResult nh::player_client::logout_user(const Packet& p)
 	const auto pc = p.get_pc();
 
 	log(RED, "logout");
+#endif
+
+	return PacketRes_Ok;
+}
+
+PacketResult nh::player_client::debug_log(const Packet& p)
+{
+#ifdef JC_CLIENT
+	g_chat->add_chat_msg(p.get_str());
+
+	// todojc - add the message to the debug box
 #endif
 
 	return PacketRes_Ok;

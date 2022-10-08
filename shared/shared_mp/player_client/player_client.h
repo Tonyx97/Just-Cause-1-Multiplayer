@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef JC_SERVER
-#include <thread_system/stl/queue.h>
+#include <thread_system/stl/vector.h>
 #endif
 
 class Player;
@@ -30,7 +30,7 @@ private:
 		 joined = false;
 
 #ifdef JC_SERVER
-	jc::thread_safe::queue<std::string> resources_to_sync;
+	jc::thread_safe::vector<std::string> resources_to_sync;
 
 	mutable std::mutex tcp_mtx;
 

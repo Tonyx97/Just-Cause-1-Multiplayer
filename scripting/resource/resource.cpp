@@ -2,63 +2,32 @@
 
 #include "resource.h"
 
-Resource::Resource(const std::string& name, const ResourceVerificationCtx& ctx) : name(name)
+void Resource::clear()
 {
-	path = ctx.path;
-	author = ctx.author;
-	version = ctx.version;
-	description = ctx.description;
-
-	// create scripts (in suspended state ofc)
-
-	auto create_add_script = [&](const ScriptCtx& script_ctx, const auto& script_name)
-	{
-		const auto script_path = ctx.path + script_name;
-		const auto script = JC_ALLOC(Script, script_path, script_name, script_ctx.type);
-
-		scripts.insert({ script_name, script });
-	};
-
-	// save client and shared files when client or server is running
-	// (server must know all client, server and shared files)
-
-	client_files = ctx.client;
-	shared_files = ctx.shared;
-
-	// client will load scripts inside the client and shared list
-	// and server will load scripts inside server and shared list
-
-#if defined(JC_CLIENT)
-	for (const auto& [script_name, script_ctx] : ctx.client.scripts)
-#else
-	// save server files if we are running the server
-
-	server_files = ctx.server;
-
-	for (const auto& [script_name, script_ctx] : ctx.server.scripts)
+#ifdef JC_SERVER
+	destroy_file_lists();
 #endif
-		create_add_script(script_ctx, script_name);
 
-	// load shared scripts in both ends
-
-	for (const auto& [script_name, script_ctx] : ctx.shared.scripts)
-		create_add_script(script_ctx, script_name);
-
-#if defined(JC_SERVER)
-	// get the total size of client files
-
-	client_files_total_size = calculate_total_client_file_size();
-#endif
-}
-
-Resource::~Resource()
-{
-	for (const auto& [_, script] : scripts)
-		JC_FREE(script);
+	destroy_scripts();
 }
 
 #ifdef JC_CLIENT
+Resource::Resource(const std::string& name) : name(name)
+{
+}
 #else
+Resource::Resource(const std::string& name, const ResourceVerificationCtx& ctx) : name(name)
+{
+	build_with_verification_ctx(ctx);
+}
+
+void Resource::destroy_file_lists()
+{
+	client_files.clear();
+	shared_files.clear();
+	server_files.clear();
+}
+
 size_t Resource::calculate_total_client_file_size()
 {
 	size_t size = 0u;
@@ -75,13 +44,56 @@ size_t Resource::get_total_client_file_size()
 {
 	return client_files_total_size;
 }
+
+void Resource::build_with_verification_ctx(const ResourceVerificationCtx& ctx)
+{
+	check(status == ResourceStatus_Stopped, "Resource must be stopped before building");
+
+	clear();
+
+	path = ctx.path;
+	author = ctx.author;
+	version = ctx.version;
+	description = ctx.description;
+
+	client_files = ctx.client;
+	shared_files = ctx.shared;
+	server_files = ctx.server;
+
+	for (const auto& [script_name, script_ctx] : ctx.client.scripts) create_script(script_ctx, ctx.path, script_name);
+	for (const auto& [script_name, script_ctx] : ctx.shared.scripts) create_script(script_ctx, ctx.path, script_name);
+
+	// get the total size of client files
+
+	client_files_total_size = calculate_total_client_file_size();
+}
 #endif
+
+Resource::~Resource()
+{
+	clear();
+}
+
+void Resource::destroy_scripts()
+{
+	check(is_stopped(), "Resource must be stopped to destroy scripts");
+
+	for (const auto& [_, script] : scripts)
+		JC_FREE(script);
+
+	scripts.clear();
+}
+
+void Resource::create_script(const ScriptCtx& script_ctx, const std::string& path, const std::string& script_name)
+{
+	const auto script_path = path + script_name;
+	const auto script = JC_ALLOC(Script, script_path, script_name, script_ctx.type);
+
+	scripts.insert({ script_name, script });
+}
 
 ResourceResult Resource::start()
 {
-	if (status == ResourceStatus_Running)
-		return ResourceResult_AlreadyStarted;
-
 	logt(YELLOW, "Starting '{}'... ", name);
 
 	for (const auto& [script_name, script] : scripts)
@@ -105,16 +117,4 @@ ResourceResult Resource::stop()
 	status = ResourceStatus_Stopped;
 
 	return ResourceResult_Ok;
-}
-
-ResourceResult Resource::restart()
-{
-	logt(YELLOW, "Restarting '{}'... ", name);
-
-	const auto stop_result = stop();
-
-	if (stop_result == ResourceResult_Ok)
-		return start();
-
-	return stop_result;
 }

@@ -9,7 +9,7 @@ namespace jc::thread_safe
 	{
 	private:
 
-		std::queue<T> data;
+		std::deque<T> data;
 		std::condition_variable cond;
 		std::mutex mtx;
 

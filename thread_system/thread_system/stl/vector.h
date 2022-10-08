@@ -40,7 +40,7 @@ namespace jc::thread_safe
 		bool erase(const T& value)
 		{
 			std::lock_guard lock(mtx);
-			return (std::remove(data.begin(), data.end(), value) != data.end());
+			return std::erase_if(data, [&](const auto& v) { return v == value; }) > 0;
 		}
 
 		auto erase(data_const_it it)

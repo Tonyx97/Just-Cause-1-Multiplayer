@@ -271,7 +271,7 @@ void Net::update_objects()
 
 bool Net::is_tcp_connected() const
 {
-	return tcp->is_connected();
+	return tcp->is_connected(); // todojc - possible data race, check it out
 }
 
 Player* Net::get_localplayer() const
@@ -283,13 +283,19 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 {
 	using namespace netcp;
 
-	auto reset_counters_and_disable_download_bar = [&]()
+	auto end_download = [&]()
 	{
-		tcp_ctx.rsrc.resources_info_count = 0u;
-		tcp_ctx.rsrc.downloaded_bytes = 0u;
-		tcp_ctx.rsrc.up_to_date_resources = 0u;
+		// if the player didn't synced startup resources it means this is
+		// the startup resource sync so let's make sure all resources we
+		// downloaded are running right before loading the game
+
+		if (!tcp_ctx.startup_all_resources_synced)
+			g_rsrc->for_each_resource([](const std::string& name, Resource*)
+			{
+				g_rsrc->start_resource(name);
+			});
+
 		tcp_ctx.rsrc.total_size = 0u;
-		tcp_ctx.rsrc.total_resources = 0u;
 		tcp_ctx.startup_all_resources_synced = true;
 
 		g_ui->set_download_bar_enabled(false);
@@ -330,9 +336,16 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 		break;
 	}
-	case ClientToMsPacket_ResourcesCount:
+	case ClientToMsPacket_MetadataResourcesList:
 	{
-		tcp_ctx.rsrc.total_resources += _deserialize<size_t>(data);
+		const auto resources_count = _deserialize<size_t>(data);
+
+		// keep track of the resources the server wants for us to download
+
+		log(GREEN, "Downloading resources: {}", resources_count);
+		
+		for (size_t i = 0u; i < resources_count; ++i)
+			tcp_ctx.rsrc.downloading_resources.push(_deserialize<std::string>(data));
 
 		break;
 	}
@@ -342,136 +355,182 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 		// so we can continue, all servers will have several resources so it's fine,
 		// we don't want to have a server with no resources anyways...
 
-		const auto rsrcs_count = _deserialize<size_t>(data);
 		const auto rsrc_name = _deserialize<std::string>(data);
 		const auto rsrc_size = _deserialize<size_t>(data);
+		const auto rsrc_client_files_count = _deserialize<size_t>(data);
 		const auto files_info = _deserialize<std::vector<ResourceFileInfo>>(data);
 
 		const auto rsrc_path = ResourceSystem::RESOURCES_FOLDER() + rsrc_name + '\\';
 		const bool do_complete_sync = !util::fs::is_directory(rsrc_path) || util::fs::is_empty(rsrc_path);
 
-		// start creating the request packet
-		
-		serialization_ctx out;
+		// create the resource in the client
 
-		_serialize(out, rsrc_name);
-		_serialize(out, do_complete_sync);
-
-		// if the resource folder doesn't exist then clearly we need
-		// to do a complete sync of the resource
-
-		bool is_up_to_date = false;
-		
-		if (!do_complete_sync)
+		g_rsrc->exec_with_resource_lock([&]()
 		{
-			// list of outdated/new files we have to request to
-			// the server
-			//
-			std::vector<std::string> files_to_request;
+			auto rsrc = g_rsrc->get_resource(rsrc_name);
 
-			// get info about the current files in the resource
-			// folder and save it
+			if (!rsrc)
+				rsrc = g_rsrc->create_resource(rsrc_name);
 
-			std::vector<std::string> useless_files;
-			std::vector<std::string> outdated_files;
-			std::vector<std::string> new_files;
+			check(rsrc, "Could not get/create client resource when receiving SyncResource");
 
-			// get useless and outdated files first
+			// stop the resource if it's not stopped already so we can clear the scripts
+			// and add the new ones
 
-			std::unordered_set<std::string> files_in_directory;
+			g_rsrc->stop_resource(rsrc_name);
 
-			util::fs::for_each_file_in_directory(rsrc_path, [&](const std::filesystem::directory_entry& p)
-			{
-				auto filename = p.path().string();
+			rsrc->destroy_scripts();
 
-				// it's mandatory that we find the resource path...
-
-				if (const auto i = filename.find(rsrc_path); i != std::string::npos)
-				{
-					filename = filename.substr(i + rsrc_path.length());
-
-					// save the existing file so we can use it to detect
-					// new files as well
-
-					files_in_directory.insert(filename);
-
-					const auto full_filename = rsrc_path + filename;
-					const auto it = std::find_if(files_info.begin(), files_info.end(), [&](const ResourceFileInfo& rfi) { return rfi.filename == filename; });
-
-					if (it != files_info.end())
-					{
-						// check if the file is outdated, if it's up to date then
-						// we will not request it
-
-						if (it->lwt != util::fs::get_last_write_time(full_filename))
-						{
-							files_to_request.push_back(filename);
-
-							tcp_ctx.rsrc.total_size += it->size;
-						}
-					}
-					else
-					{
-						// this file is not needed anymore so let's remove it
-
-						useless_files.push_back(full_filename);
-					}
-				}
-			});
-
-			// finally get the new files (if any)
+			// add scripts info to the resource before doing anything else
 
 			for (const auto& file_info : files_info)
-				if (!files_in_directory.contains(file_info.filename))
+				if (file_info.script_type != ScriptType_NoScript)
+					rsrc->create_script({ .type = file_info.script_type }, rsrc_path, file_info.filename);
+
+			// start creating the request packet
+		
+			serialization_ctx out;
+
+			_serialize(out, rsrc_name);
+			_serialize(out, do_complete_sync);
+
+			// if the resource folder doesn't exist then clearly we need
+			// to do a complete sync of the resource
+
+			log(BLUE, "syncing resource {}", rsrc_name);
+
+			rsrc->up_to_date = false;
+			rsrc->files_to_download = 0;
+			rsrc->files_downloaded = 0;
+		
+			if (!do_complete_sync)
+			{
+				// list of outdated/new files we have to request to
+				// the server
+				//
+				std::vector<std::string> files_to_request;
+
+				auto add_file_to_request = [&](const std::string& filename, size_t filesize)
 				{
-					files_to_request.push_back(file_info.filename);
+					files_to_request.push_back(filename);
 
-					tcp_ctx.rsrc.total_size += file_info.size;
-				}
+					++rsrc->files_to_download;
+					tcp_ctx.rsrc.total_size += filesize;
+				};
 
-			// remove all useless files
+				// get info about the current files in the resource
+				// folder and save it
 
-			for (const auto& f : useless_files)
-				util::fs::remove(f);
+				std::vector<std::string> useless_files;
+				std::vector<std::string> outdated_files;
+				std::vector<std::string> new_files;
 
-			_serialize(out, files_to_request);
+				// get useless and outdated files first
 
-			is_up_to_date = files_to_request.empty();
-		}
-		else tcp_ctx.rsrc.total_size += rsrc_size;
+				std::unordered_set<std::string> files_in_directory;
 
-		// if it's up to date, increase the up to date resources count
+				util::fs::for_each_file_in_directory(rsrc_path, [&](const std::filesystem::directory_entry& p)
+				{
+					auto filename = p.path().string();
+
+					// it's mandatory that we find the resource path...
+
+					if (const auto i = filename.find(rsrc_path); i != std::string::npos)
+					{
+						filename = filename.substr(i + rsrc_path.length());
+
+						// save the existing file so we can use it to detect
+						// new files as well
+
+						files_in_directory.insert(filename);
+
+						const auto full_filename = rsrc_path + filename;
+						const auto it = std::find_if(files_info.begin(), files_info.end(), [&](const ResourceFileInfo& rfi) { return rfi.filename == filename; });
+
+						if (it != files_info.end())
+						{
+							// check if the file is outdated, if it's up to date then
+							// we will not request it
+
+							if (it->lwt != util::fs::get_last_write_time(full_filename))
+								add_file_to_request(filename, it->size);
+						}
+						else
+						{
+							// this file is not needed anymore so let's remove it
+
+							useless_files.push_back(full_filename);
+						}
+					}
+				});
+
+				// finally get the new files (if any)
+
+				for (const auto& file_info : files_info)
+					if (!files_in_directory.contains(file_info.filename))
+						add_file_to_request(file_info.filename, file_info.size);
+
+				// remove all useless files
+
+				for (const auto& f : useless_files)
+					util::fs::remove(f);
+
+				_serialize(out, files_to_request);
+
+				rsrc->up_to_date = files_to_request.empty();
+			}
+			else
+			{
+				// for a complete sync we will just set the whole resource
+				// size and all client files count
+				
+				tcp_ctx.rsrc.total_size += rsrc_size;
+
+				rsrc->files_to_download = rsrc_client_files_count;
+			}
+
+			// if it's not up to date then being download
 		
-		if (is_up_to_date)
-			++tcp_ctx.rsrc.up_to_date_resources;
-		else
-		{
-			// increase the total size of resources files we have to download
+			if (!rsrc->up_to_date)
+			{
+				// increase the total size of resources files we have to download
 
-			g_ui->set_download_bar_enabled(true);
-			g_ui->set_download_bar_target(static_cast<float>(tcp_ctx.rsrc.total_size));
+				g_ui->set_download_bar_enabled(true);
+				g_ui->set_download_bar_target(static_cast<float>(tcp_ctx.rsrc.total_size));
 
-			// make sure we don't keep empty folders
+				// make sure we don't keep empty folders
 
-			util::fs::remove_empty_directories_in_directory(rsrc_path);
+				util::fs::remove_empty_directories_in_directory(rsrc_path);
 
-			// request the needed files to the server
+				// request the needed files to the server
 
-			ci->send_packet(ClientToMsPacket_ResourceFile, out);
-		}
+				ci->send_packet(ClientToMsPacket_ResourceFile, out);
+			}
+			else
+			{
+				// if this resource is already up to date, then remove it from
+				// downloading queue
+				
+				tcp_ctx.rsrc.downloading_resources.erase(rsrc_name);
 
-		// if total size is 0 it means there is no resource we need to sync
-		// so we will check if we can load now.
-		// if the up to date resources count is the same as the amount of resources
-		// we received from the server to sync then just reset counters, disable download
-		// bar and load game
+				// if the startup resources are already synced and
+				// this resource is up to date, start it right away
+
+				if (tcp_ctx.startup_all_resources_synced)
+					g_rsrc->start_resource(rsrc_name);
+			}
+
+			// if the downloading queue is empty due to all resources
+			// being up to date then proceed to load the game
 		
-		if (++tcp_ctx.rsrc.resources_info_count == tcp_ctx.rsrc.total_resources &&
-			tcp_ctx.rsrc.up_to_date_resources == tcp_ctx.rsrc.total_resources &&
-			tcp_ctx.rsrc.total_size == 0u)
-		{
-			reset_counters_and_disable_download_bar();
-		}
+			if (tcp_ctx.rsrc.downloading_resources.empty())
+			{
+				if (g_rsrc->for_each_resource_ret([](const std::string&, Resource* resource)
+				{
+					return resource->up_to_date;
+				})) end_download();
+			}
+		});
 
 		break;
 	}
@@ -484,47 +543,68 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 		const auto data_size = _deserialize<size_t>(data);
 		const auto lwt = _deserialize<uint64_t>(data);
 
-		// update the download bar current file display
+		g_rsrc->exec_with_resource_lock([&]()
+		{
+			auto rsrc = g_rsrc->get_resource(rsrc_name);
 
-		g_ui->set_download_bar_file(file);
+			if (!rsrc)
+				rsrc = g_rsrc->create_resource(rsrc_name);
 
-		// create resource folder if it's not already created
+			// update the download bar current file display
 
-		util::fs::create_directory(rsrc_path);
+			g_ui->set_download_bar_file(file);
 
-		// create/replace all the resource files
+			// create resource folder if it's not already created
 
-		const auto parent_path = std::filesystem::path(filename).parent_path().string();
+			util::fs::create_directory(rsrc_path);
 
-		// create directories needed to place this file
+			// create/replace all the resource files
 
-		if (!parent_path.empty())
-			util::fs::create_directories(parent_path);
+			const auto parent_path = std::filesystem::path(filename).parent_path().string();
 
-		// create the binary file
+			// create directories needed to place this file
 
-		std::vector<uint8_t> file_data(data_size);
+			if (!parent_path.empty())
+				util::fs::create_directories(parent_path);
 
-		data.read(file_data.data(), file_data.size());
+			// create the binary file
 
-		util::fs::create_bin_file(filename, file_data);
+			std::vector<uint8_t> file_data(data_size);
 
-		// update the last write time so it won't send the request for this
-		// file to the server if it's not changed
+			data.read(file_data.data(), file_data.size());
 
-		util::fs::set_last_write_time(filename, lwt);
+			util::fs::create_bin_file(filename, file_data);
 
-		// increase downloaded bytes to keep track
-		
-		tcp_ctx.rsrc.downloaded_bytes += data_size;
+			// update the last write time so it won't send the request for this
+			// file to the server if it's not changed
 
-		g_ui->set_download_bar_progress(static_cast<float>(tcp_ctx.rsrc.downloaded_bytes));
+			util::fs::set_last_write_time(filename, lwt);
 
-		// if we downloaded everything we had to then reset the counters
-		// and set all resources synced to true
+			// increase downloaded bytes to keep track
 
-		if (tcp_ctx.rsrc.downloaded_bytes == tcp_ctx.rsrc.total_size)
-			reset_counters_and_disable_download_bar();
+			g_ui->set_download_bar_progress(g_ui->get_download_bar_progress() + static_cast<float>(data_size));
+
+			// if we have downloaded all files from this resource then
+			// remove it from the download queue
+
+			if (++rsrc->files_downloaded == rsrc->files_to_download)
+			{
+				tcp_ctx.rsrc.downloading_resources.erase(rsrc_name);
+
+				// if the player synced all startup resources then we want to
+				// start the script right away once we downloaded all its
+				// files
+
+				if (tcp_ctx.startup_all_resources_synced)
+					g_rsrc->start_resource(rsrc_name);
+			}
+
+			// if the download queue is empty it means we downloaded everything
+			// so we can end the download and load the game (if it's not loaded yet)
+			
+			if (tcp_ctx.rsrc.downloading_resources.empty())
+				end_download();
+		});
 
 		break;
 	}

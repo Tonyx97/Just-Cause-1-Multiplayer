@@ -2,6 +2,8 @@
 
 #include <shared_mp/object_lists.h>
 
+#include <thread_system/stl/vector.h>
+
 class PlayerClient;
 
 namespace netcp
@@ -21,11 +23,9 @@ struct TcpContext
 	
 	struct ResourceContext
 	{
-		std::atomic_size_t resources_info_count = 0u;
-		std::atomic_size_t downloaded_bytes = 0u;
-		std::atomic_size_t up_to_date_resources = 0u;
-		std::atomic_size_t total_size = 0u;
-		std::atomic_size_t total_resources = 0u;
+		jc::thread_safe::vector<std::string> downloading_resources;
+
+		size_t total_size = 0u;
 	} rsrc;
 };
 

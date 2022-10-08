@@ -380,6 +380,20 @@ void Net::sync_default_files(netcp::tcp_server_client* cl)
 	cl->send_packet(ClientToMsPacket_SyncDefaultFiles, data);
 }
 
+void Net::sync_resource(const std::string& rsrc_name)
+{
+	check_main_thread();
+
+	g_rsrc->exec_with_resource_lock([&]()
+	{
+		for_each_player_client([&](NID, PlayerClient* pc)
+		{
+			if (const auto rsrc = g_rsrc->get_resource(rsrc_name))
+				pc->add_resource_to_sync(rsrc);
+		});
+	});
+}
+
 void Net::on_client_tcp_connected(netcp::tcp_server_client* ci)
 {
 	using namespace netcp;

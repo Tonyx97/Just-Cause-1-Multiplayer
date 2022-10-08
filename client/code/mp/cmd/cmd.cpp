@@ -135,8 +135,7 @@ namespace cmd
 		if (params.size() != 0)
 			return Cmd_InvalidParams;
 
-		/*if (!g_client->send_packet(ID_RESOURCE_REFRESH_ALL))
-			return set_last_error("Refresh failed");*/
+		g_net->send(Packet(PlayerClientPID_ResourcesRefresh, ChannelID_PlayerClient));
 
 		return Cmd_Ok;
 	}

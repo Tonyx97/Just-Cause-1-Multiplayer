@@ -11,9 +11,11 @@ DEFINE_ENUM(PlayerClientPacketID, PacketID)
 	PlayerClientPID_Nick,
 	PlayerClientPID_ObjectInstanceSync,
 	PlayerClientPID_ResourceAction,
+	PlayerClientPID_ResourcesRefresh,
 	PlayerClientPID_RegisterUser,
 	PlayerClientPID_LoginUser,
 	PlayerClientPID_LogoutUser,
+	PlayerClientPID_DebugLog,
 	PlayerClientPID_Max
 };
 

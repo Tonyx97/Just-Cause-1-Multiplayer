@@ -24,10 +24,6 @@ void Script::start()
 void Script::stop()
 {
 	JC_FREE(vm);
-}
-
-void Script::restart()
-{
-	stop();
-	start();
+	
+	vm = nullptr;
 }

@@ -73,20 +73,26 @@ void PlayerClient::sync_pending_resources()
 
 	if (const auto resources_count = resources_to_sync.size(); resources_count > 0u)
 	{
-		// send resource count first
-
-		tcp->send_packet(ClientToMsPacket_ResourcesCount, resources_count);
-
 		// send sync packet per resource
-		
-		while (!resources_to_sync.empty())
+
+		g_rsrc->exec_with_resource_lock([&]()
 		{
-			std::string rsrc_name;
+			// send resource metadata list
 
-			if (!resources_to_sync.wait_and_pop(rsrc_name))
-				break;
+			{
+				serialization_ctx out;
 
-			g_rsrc->exec_with_resource_lock([&]()
+				_serialize(out, resources_to_sync.size());
+
+				resources_to_sync.for_each([&](const std::string& rsrc_name)
+				{
+					_serialize(out, rsrc_name);
+				});
+
+				tcp->send_packet(ClientToMsPacket_MetadataResourcesList, out);
+			}
+
+			resources_to_sync.for_each([&](const std::string& rsrc_name)
 			{
 				// it's possible that by the time the server is handling the resource
 				// sync of this current client, the resource doesn't exist anymore (but unlikely)
@@ -98,9 +104,9 @@ void PlayerClient::sync_pending_resources()
 
 					serialization_ctx out;
 
-					_serialize(out, resources_count);
 					_serialize(out, rsrc_name);
 					_serialize(out, rsrc->get_total_client_file_size());
+					_serialize(out, rsrc->get_total_client_files());
 
 					std::vector<ResourceFileInfo> files_info;
 
@@ -108,7 +114,7 @@ void PlayerClient::sync_pending_resources()
 					{
 						const auto file_path = resource_path + filename;
 
-						files_info.emplace_back(filename, util::fs::get_last_write_time(file_path), static_cast<size_t>(util::fs::file_size(file_path)));
+						files_info.emplace_back(filename, util::fs::get_last_write_time(file_path), static_cast<size_t>(util::fs::file_size(file_path)), ctx->script_type);
 					});
 
 					_serialize(out, files_info);
@@ -116,7 +122,9 @@ void PlayerClient::sync_pending_resources()
 					tcp->send_packet(ClientToMsPacket_SyncResource, out);
 				}
 			});
-		}
+		});
+
+		resources_to_sync.clear();
 	}
 }
 

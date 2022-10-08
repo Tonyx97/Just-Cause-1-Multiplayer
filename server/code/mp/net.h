@@ -47,6 +47,7 @@ public:
 	void send_broadcast_joined(const Packet& p) { send_broadcast_joined(nullptr, p); }
 	void send_broadcast_joined(PlayerClient* ignore_pc, const Packet& p) { send_broadcast_impl(p, ignore_pc); }
 	void sync_default_files(netcp::tcp_server_client* cl);
+	void sync_resource(const std::string& rsrc_name);
 
 	WorldRg* get_rg() const { return world_rg; }
 

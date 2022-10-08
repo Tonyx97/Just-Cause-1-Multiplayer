@@ -120,7 +120,7 @@ void UI::init()
 
 	const auto [font_data, font_size] = util::win::load_resource(GET_MODULE(), GAME_FONT, RT_FONT);
 
-	io->Fonts->AddFontFromMemoryTTF(font_data, font_size, 22.f, nullptr, io->Fonts->GetGlyphRangesDefault());
+	io->Fonts->AddFontFromMemoryTTF(font_data, font_size, 20.f, nullptr, io->Fonts->GetGlyphRangesDefault());
 
 	if (const auto splash_data = util::fs::read_bin_file(std::string(Net::DEFAULT_SERVER_FILES_PATH()) + "splash"); !splash_data.empty())
 		D3DXCreateTextureFromFileInMemory(dx_device, splash_data.data(), splash_data.size(), &splash_texture);
