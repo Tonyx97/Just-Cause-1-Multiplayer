@@ -325,7 +325,7 @@ void UI::render_players()
 	g_net->for_each_player([&](NID, Player* player)
 	{
 		if (player->is_local() || !player->is_spawned())
-			return;
+			return true;
 
 		const auto player_char = player->get_character();
 		const auto player_pos = player_char->get_position();
@@ -366,6 +366,8 @@ void UI::render_players()
 				g_ui->add_text(player->get_nick().c_str(), out.x, out.y - 10.f - 18.f * name_size_adjust, 18.f * name_size_adjust, { 1.f, 1.f, 1.f, 1.f }, true);
 			}
 		}
+
+		return true;
 	});
 }
 

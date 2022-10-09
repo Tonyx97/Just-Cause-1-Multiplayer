@@ -275,6 +275,8 @@ void Net::tick()
 		sv->totalReceivedPackets = 0;
 	});
 
+	g_rsrc->trigger_event(jc::script::event::ON_TICK);
+
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000 / config.get_info().refresh_rate));
 }
 

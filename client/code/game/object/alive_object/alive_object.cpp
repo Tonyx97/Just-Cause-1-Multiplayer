@@ -17,6 +17,10 @@ namespace jc::alive_object::hook
 		{
 			if (const auto local_char = g_world->get_localplayer_character())
 			{
+				// clamp health between reasonable limits
+				
+				hp = std::clamp(hp, NetObject::MIN_HP(), NetObject::MAX_HP());
+
 				switch (obj->get_typename_hash())
 				{
 				case Character::CLASS_ID():

@@ -153,7 +153,7 @@ void PlayerClient::startup_sync()
 	
 	player->spawn();
 
-	g_rsrc->trigger_event(jc::script::event::ON_JOIN, player);
+	g_rsrc->trigger_event(jc::script::event::ON_PLAYER_JOIN, player);
 }
 
 void PlayerClient::sync_broadcast()

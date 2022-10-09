@@ -456,7 +456,7 @@ namespace luas
 		void push_int(lua_Integer v) const { lua_pushinteger(_state, v); }
 		void push_number(lua_Number v) const { lua_pushnumber(_state, v); }
 		void push_string(const std::string& v) const { lua_pushstring(_state, v.c_str()); }
-		void push_userdata(void* v) const { lua_pushlightuserdata(_state, v); }
+		void push_userdata(void* v) const { if (v) lua_pushlightuserdata(_state, v); else lua_pushnil(_state); }
 		void push_nil() const { lua_pushnil(_state); }
 		void push_value(int i) const { lua_pushvalue(_state, i); }
 		void push_table() const { lua_newtable(_state); }
@@ -672,8 +672,12 @@ namespace luas
 				}
 				else if constexpr (!std::is_void_v<return_type>)
 				{
-					if constexpr (!detail::is_vector<return_type> && !detail::is_set<return_type> && !detail::is_map<return_type>)
-						static_assert(std::is_trivial_v<return_type>, "Return type is non-trivial");
+					if constexpr (
+						!detail::is_vector<return_type> &&
+						!detail::is_set<return_type> &&
+						!detail::is_map<return_type> &&
+						!detail::is_string<return_type>)
+						static_assert(std::is_trivial_v<return_type>, "Return type is not supported");
 
 					_s.push(ret);
 

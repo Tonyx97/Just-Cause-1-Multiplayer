@@ -8,7 +8,7 @@ class Player;
 
 using nid_net_obj_fn_t = std::function<void(NID, NetObject*)>;
 using nid_pc_fn_t = std::function<void(NID, PlayerClient*)>;
-using nid_player_fn_t = std::function<void(NID, Player*)>;
+using nid_player_fn_t = std::function<bool(NID, Player*)>;
 
 class ObjectLists
 {
@@ -50,6 +50,7 @@ public:
 	void for_each_player_client(const nid_pc_fn_t& fn);
 	void for_each_joined_player_client(const nid_pc_fn_t& fn);
 	void for_each_player(const nid_player_fn_t& fn);
+	void for_each_joined_player(const nid_player_fn_t& fn);
 
 	bool remove_player_client(PlayerClient* pc);
 	bool has_player_client(PlayerClient* pc) const;

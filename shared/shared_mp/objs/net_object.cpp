@@ -18,8 +18,8 @@
 NetObject::NetObject()
 {
 #ifdef JC_CLIENT
-	vars.transform_timer(16 * 3);
-	vars.velocity_timer(0);
+	transform_timer(16 * 3);
+	velocity_timer(0);
 #else
 	nid = enet::GET_FREE_NID();
 	rg = g_net->get_rg()->add_entity(this, static_cast<int64_t>(nid));
@@ -57,7 +57,7 @@ bool NetObject::sync()
 	const float real_hp = object_base->get_real_hp(),
 				real_max_hp = object_base->get_max_hp();
 
-	if ((real_transform.t != get_position() || real_transform.r != get_rotation()) && vars.transform_timer.ready())
+	if ((real_transform.t != get_position() || real_transform.r != get_rotation()) && transform_timer.ready())
 		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Transform, (vars.transform = real_transform).pack()).set_unreliable());
 
 	switch (get_type())
@@ -65,7 +65,7 @@ bool NetObject::sync()
 	case NetObject_Player: break;
 	default:
 	{
-		if (vars.velocity_timer.get_interval() > 0 && vars.velocity_timer.ready())
+		if (velocity_timer.get_interval() > 0 && velocity_timer.ready())
 			g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Velocity, vars.velocity = physical->get_velocity()));
 	}
 	}
@@ -88,12 +88,12 @@ bool NetObject::sync()
 
 void NetObject::set_transform_timer(int64_t v)
 {
-	vars.transform_timer(v);
+	transform_timer(v);
 }
 
 void NetObject::set_velocity_timer(int64_t v)
 {
-	vars.velocity_timer(v);
+	velocity_timer(v);
 }
 
 bool NetObject::is_owned() const
@@ -211,6 +211,8 @@ void NetObject::set_sync_type_and_owner(SyncType _sync_type, Player* _owner)
 
 void NetObject::set_transform(const TransformTR& transform)
 {
+	old_vars.transform = vars.transform;
+
 	vars.transform.t = transform.t;
 	vars.transform.r = transform.r;
 
@@ -225,6 +227,8 @@ void NetObject::set_transform(const TransformPackedTR& packed_transform)
 
 void NetObject::set_position(const vec3& v)
 {
+	old_vars.transform.t = vars.transform.t;
+
 	vars.transform.t = v;
 
 	if (spawned)
@@ -233,6 +237,8 @@ void NetObject::set_position(const vec3& v)
 
 void NetObject::set_rotation(const quat& v)
 {
+	old_vars.transform.r = vars.transform.r;
+
 	vars.transform.r = v;
 
 	if (spawned)
@@ -244,6 +250,7 @@ void NetObject::set_hp(float v)
 	if (v < MIN_HP() || v > MAX_HP())
 		return;
 
+	old_vars.hp = vars.hp;
 	vars.hp = v;
 
 	if (spawned)
@@ -255,6 +262,7 @@ void NetObject::set_max_hp(float v)
 	if (v < MIN_HP() || v > MAX_HP())
 		return;
 
+	old_vars.max_hp = vars.max_hp;
 	vars.max_hp = v;
 
 	if (spawned)
@@ -263,6 +271,7 @@ void NetObject::set_max_hp(float v)
 
 void NetObject::set_velocity(const vec3& v)
 {
+	old_vars.velocity = vars.velocity;
 	vars.velocity = v;
 
 	if (spawned)
@@ -271,6 +280,7 @@ void NetObject::set_velocity(const vec3& v)
 
 void NetObject::set_pending_velocity(const vec3& v)
 {
+	old_vars.pending_velocity = vars.pending_velocity;
 	vars.pending_velocity = v;
 }
 

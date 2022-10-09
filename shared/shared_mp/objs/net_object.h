@@ -63,9 +63,6 @@ class EntityRg;
 
 struct NetObjectVars
 {
-	TimerRaw transform_timer;
-	TimerRaw velocity_timer;
-
 	TransformTR transform {};
 
 	vec3 velocity {},
@@ -77,9 +74,15 @@ struct NetObjectVars
 
 class NetObject
 {
-private:
+protected:
 
 	NetObjectVars vars {};
+	NetObjectVars old_vars {};
+
+private:
+
+	TimerRaw transform_timer;
+	TimerRaw velocity_timer;
 
 	EntityRg* rg = nullptr;
 
@@ -102,7 +105,7 @@ public:
 	static constexpr NetObject* INVALID() { return nullptr; }
 
 	static constexpr float MIN_HP() { return -MAX_HP(); }
-	static constexpr float MAX_HP() { return static_cast<float>(1 << 16); }
+	static constexpr float MAX_HP() { return 10000.f * 10000.f; }
 
 	NetObject();
 
@@ -159,6 +162,7 @@ public:
 	bool is_spawned() const;
 	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
 	bool equal(NID _nid) const { return nid == _nid; }
+	bool was_just_killed() const { return old_vars.hp > 0.f && vars.hp <= 0.f; }
 
 	uint16_t get_object_id() const { return object_id; }
 
@@ -189,6 +193,8 @@ public:
 
 		return casted;
 	}
+
+	const NetObjectVars& get_old_vars() const { return old_vars; }
 
 	float get_hp() const { return vars.hp; }
 	float get_max_hp() const { return vars.max_hp; }

@@ -124,7 +124,7 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			player->set_nick(nick);
 
 			if (joined)
-				g_rsrc->trigger_event(jc::script::event::ON_JOIN, player);
+				g_rsrc->trigger_event(jc::script::event::ON_PLAYER_JOIN, player);
 
 			break;
 		}

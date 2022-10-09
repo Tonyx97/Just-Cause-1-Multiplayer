@@ -301,6 +301,9 @@ ResourceResult ResourceSystem::start_resource(const std::string& name)
 
 		const auto result = rsrc->start();
 
+		if (result == ResourceResult_Ok)
+			trigger_event(jc::script::event::ON_RSRC_START, rsrc);
+
 #ifdef JC_SERVER
 		// syncing a resource will start the resource so no need
 		// to sync resource start action
@@ -327,6 +330,9 @@ ResourceResult ResourceSystem::stop_resource(const std::string& name)
 			return ResourceResult_AlreadyStopped;
 
 		const auto result = rsrc->stop();
+
+		if (result == ResourceResult_Ok)
+			trigger_event(jc::script::event::ON_RSRC_STOP, rsrc);
 
 #ifdef JC_SERVER
 		// if the resource was stopped then we will notify all clients

@@ -16,6 +16,8 @@
 #include <core/keycode.h>
 #include <core/test_units.h>
 
+#include <resource_sys/resource_system.h>
+
 namespace jc::game_control
 {
 	static inline const std::set<std::string_view> default_blocked_objects =
@@ -170,6 +172,7 @@ void GameControl::on_tick()
 
 	g_net->tick();
 	g_net->update_objects();
+	g_rsrc->trigger_event(jc::script::event::ON_TICK);
 	g_task->process();
 
 	timer::dispatch();

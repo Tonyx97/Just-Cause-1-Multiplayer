@@ -6,6 +6,8 @@
 
 #include "player.h"
 
+#include <resource_sys/resource_system.h>
+
 #ifdef JC_CLIENT
 #include <game/sys/core/factory_system.h>
 #include <game/sys/world/world.h>
@@ -240,7 +242,6 @@ void Player::on_despawn()
 
 void Player::on_net_var_change(NetObjectVarType var_type)
 {
-#ifdef JC_CLIENT
 	switch (var_type)
 	{
 	case NetObjectVar_Transform:
@@ -249,6 +250,7 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 	{
 		// if player is in vehicle we don't need to update the player transform
 
+#ifdef JC_CLIENT
 		if (!vehicle)
 		{
 			if (!is_local())
@@ -259,14 +261,39 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 				correcting_position = true;
 			}
 		}
+#endif
 
 		break;
 	}
-	case NetObjectVar_Velocity: verify_exec([&](Character* c) { c->set_added_velocity(get_velocity()); }); break;
-	case NetObjectVar_Health: verify_exec([&](Character* c) { c->set_hp(get_hp()); }); break;
-	case NetObjectVar_MaxHealth: verify_exec([&](Character* c) { c->set_max_hp(get_max_hp()); }); break;
-	}
+	case NetObjectVar_Velocity:
+	{
+#ifdef JC_CLIENT
+		verify_exec([&](Character* c) { c->set_added_velocity(get_velocity()); });
 #endif
+		break;
+	}
+	case NetObjectVar_Health:
+	{
+#ifdef JC_CLIENT
+		verify_exec([&](Character* c) { c->set_hp(get_hp()); });
+#endif
+
+		// if old health was bigger than 0 but new one is 0
+		// it means we died so trigger killed event
+		
+		if (was_just_killed())
+			g_rsrc->trigger_event(jc::script::event::ON_PLAYER_KILLED, this);
+
+		break;
+	}
+	case NetObjectVar_MaxHealth:
+	{
+#ifdef JC_CLIENT
+		verify_exec([&](Character* c) { c->set_max_hp(get_max_hp()); });
+#endif
+		break;
+	}
+	}
 }
 
 void Player::respawn(const vec3& position, float rotation, int32_t skin, float hp, float max_hp)

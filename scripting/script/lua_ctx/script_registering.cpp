@@ -8,6 +8,10 @@
 #include <mp/net.h>
 
 #if defined(JC_CLIENT)
+#include <core/keycode.h>
+
+#include <mp/chat/chat.h>
+
 #include <game/sys/time/time_system.h>
 #include <game/sys/world/day_cycle.h>
 
@@ -100,7 +104,7 @@ void jc::script::register_functions(Script* script)
 
 	vm->add_function("setBuildingLightingEnabled", [](bool v)	{ g_day_cycle->set_night_time_enabled(v); });
 	vm->add_function("isBuildingLightingEnabled", []()			{ return g_day_cycle->is_night_time_enabled(); });
-
+	
 	vm->add_function("setTimescale", [](float v)	{ g_time->set_time_scale(v); });
 	vm->add_function("getTimescale", []()			{ return g_time->get_time_scale(); });
 
@@ -112,6 +116,17 @@ void jc::script::register_functions(Script* script)
 
 	vm->add_function("setPunchForce", [](float v)	{ Character::SET_GLOBAL_PUNCH_DAMAGE(true, v); });
 	vm->add_function("getPunchForce", []()			{ return Character::GET_GLOBAL_PUNCH_DAMAGE(true); });
+
+	/* UI */
+
+	vm->add_function("outputChatBox", [](const std::string& str) { g_chat->add_chat_msg(str); });
+
+	/* KEYCODE */
+
+	vm->add_function("isKeyDown", [](int key) { return g_key->is_key_down(key); });
+	vm->add_function("isKeyPressed", [](int key) { return g_key->is_key_pressed(key); });
+	vm->add_function("isKeyReleased", [](int key) { return g_key->is_key_released(key); });
+	vm->add_function("getMouseWheel", []() { return g_key->get_mouse_wheel_value(); });
 #elif defined(JC_SERVER)
 	// register server functions
 
@@ -193,7 +208,7 @@ void jc::script::register_functions(Script* script)
 		if (!player)
 			return;
 
-		auto hp = player->get_max_hp();
+		auto max_hp = player->get_max_hp();
 		auto rotation = glm::eulerAngles(player->get_rotation()).y;
 		auto skin = player->get_skin();
 
@@ -203,7 +218,7 @@ void jc::script::register_functions(Script* script)
 		case 1: rotation = va.get<float>(0); break;
 		}
 
-		player->respawn({ x, y, z }, rotation, skin, hp, hp);
+		player->respawn({ x, y, z }, rotation, skin, max_hp, max_hp);
 	});
 #endif
 
@@ -239,12 +254,57 @@ void jc::script::register_functions(Script* script)
 	{
 		std::vector<Player*> out;
 
-		g_net->for_each_player([&](NID, Player* player) { out.push_back(player); });
+		g_net->for_each_joined_player([&](NID, Player* player) { out.push_back(player); return true; });
 
 		return out;
 	});
 
 	vm->add_function("getRandomPlayer", []() { return g_net->get_random_player(); });
+	vm->add_function("getPlayerFromNID", [](NID nid) { return g_net->get_player_by_nid(nid); });
+
+	/* NET OBJECT */
+
+	vm->add_function("getObjectHealth", [](NetObject* obj) { return g_net->has_net_object(obj) ? obj->get_hp() : 0.f; });
+	vm->add_function("getObjectMaxHealth", [](NetObject* obj) { return g_net->has_net_object(obj) ? obj->get_max_hp() : 0.f; });
+	vm->add_function("getObjectNID", [](NetObject* obj) { return obj->get_nid(); });
+	vm->add_function("getObjectType", [](NetObject* obj) { return obj->get_type(); });
+	vm->add_function("getObjectPosition", [](NetObject* obj) { const auto p = obj->get_position(); return std::make_tuple(p.x, p.y, p.z); });
+	vm->add_function("getObjectRotation", [](NetObject* obj) { const auto p = glm::eulerAngles(obj->get_rotation()); return std::make_tuple(p.x, p.y, p.z); });
+
+	/* PLAYER */
+
+	vm->add_function("getPlayerName", [](Player* player) { return g_net->has_net_object(player) ? player->get_nick() : ""; });
+	vm->add_function("isPlayerDead", [](Player* player) { return g_net->has_net_object(player) ? !player->is_alive() : true; });
+
+	vm->add_function("getPlayerFromName", [](const std::string& name, luas::variadic_args va) -> Player*
+	{
+		const auto search_pred = [&](char x, char y) { return std::tolower(x) == std::tolower(y); };
+
+		Player* out = nullptr;
+
+		const auto partial_search = va.size() == 1 && va.get<bool>(0);
+		
+		g_net->for_each_joined_player([&](NID, Player* player)
+		{
+			if (auto player_name = player->get_nick(); std::equal(player_name.begin(), player_name.end(), name.begin(), name.end(), search_pred))
+			{
+				out = player;
+				return false;
+			}
+			else if (partial_search)
+			{
+				if (auto it = std::search(player_name.begin(), player_name.end(), name.begin(), name.end(), search_pred); it != player_name.end())
+				{
+					out = player;
+					return false;
+				}
+			}
+
+			return true;
+		});
+
+		return out;
+	});
 }
 
 /***********/

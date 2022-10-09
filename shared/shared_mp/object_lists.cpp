@@ -44,8 +44,21 @@ void ObjectLists::for_each_player(const nid_player_fn_t& fn)
 	std::lock_guard lock(mtx);
 #endif
 
-	for (const auto& [nid, player] : player_clients)
-		fn(nid, player->get_player());
+	for (const auto& [nid, pc] : player_clients)
+		if (!fn(nid, pc->get_player()))
+			return;
+}
+
+void ObjectLists::for_each_joined_player(const nid_player_fn_t& fn)
+{
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
+	for (const auto& [nid, pc] : player_clients)
+		if (pc->is_joined())
+			if (!fn(nid, pc->get_player()))
+				return;
 }
 
 #ifdef JC_CLIENT
@@ -304,7 +317,7 @@ Player* ObjectLists::get_random_player()
 
 	std::sample(joined_players.begin(), joined_players.end(), std::back_inserter(out), 1, std::mt19937_64(std::random_device {} ()));
 
-	return *out.begin();
+	return out.empty() ? nullptr : *out.begin();
 }
 
 PlayerClient* ObjectLists::get_player_client_by_nid(NID nid)
