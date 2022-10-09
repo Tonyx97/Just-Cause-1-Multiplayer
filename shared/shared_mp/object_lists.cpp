@@ -119,16 +119,37 @@ bool ObjectLists::has_player_client(PlayerClient* pc) const
 	return player_clients_set.contains(pc);
 }
 
+bool ObjectLists::has_net_object(NetObject* net_obj) const
+{
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
+	return net_objects_set.contains(net_obj);
+}
+
 void ObjectLists::clear_object_list()
 {
 #ifdef JC_SERVER
 	std::lock_guard lock(mtx);
 #endif
 
-	// erase Player instances in this list because PlayerClient 
+	// erase Player instances in net_objects and net_objects_set list because PlayerClient 
 	// destroys them in the dtor
 
-	std::erase_if(net_objects, [](const auto& p) { return p.second->get_type() == NetObject_Player; });
+	std::erase_if(net_objects, [this](const auto& p)
+	{
+		const auto net_obj = p.second;
+
+		if (net_obj->get_type() == NetObject_Player)
+		{
+			net_objects_set.erase(net_obj);
+
+			return true;
+		}
+
+		return false;
+	});
 
 	// destroys all player clients
 
@@ -138,9 +159,10 @@ void ObjectLists::clear_object_list()
 	{
 		const auto pc = it->second;
 
-		DESTROY_PLAYER_CLIENT(pc);
-
+		net_objects_set.erase(pc->get_player());
 		player_clients_set.erase(pc);
+
+		DESTROY_PLAYER_CLIENT(pc);
 
 		it = player_clients.erase(it);
 	}
@@ -153,6 +175,7 @@ void ObjectLists::clear_object_list()
 	for (const auto& [_, obj] : net_objects)
 		JC_FREE(obj);
 
+	net_objects_set.clear();
 	net_objects.clear();
 }
 
@@ -199,8 +222,14 @@ NetObject* ObjectLists::add_net_object(NetObject* net_obj)
 	}
 
 	net_objects.insert({ nid, net_obj });
+	net_objects_set.insert(net_obj);
 
 	return net_obj;
+}
+
+NetObject* ObjectLists::get_net_object(NetObject* net_obj)
+{
+	return has_net_object(net_obj) ? net_obj : nullptr;
 }
 
 bool ObjectLists::remove_net_object(NetObject* net_obj)
@@ -236,8 +265,14 @@ bool ObjectLists::remove_net_object(NetObject* net_obj)
 	}
 
 	net_objects.erase(nid);
+	net_objects_set.erase(net_obj);
 
 	return true;
+}
+
+Player* ObjectLists::get_player(NetObject* net_obj)
+{
+	return (has_net_object(net_obj) && net_obj->get_type() == NetObject_Player) ? net_obj->cast<Player>() : nullptr;
 }
 
 Player* ObjectLists::get_player_by_nid(NID nid)

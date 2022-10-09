@@ -28,6 +28,7 @@ protected:
 private:
 
 	std::unordered_set<PlayerClient*> player_clients_set;
+	std::unordered_set<NetObject*> net_objects_set;
 	std::unordered_map<NID, PlayerClient*> player_clients;
 	std::unordered_map<NID, NetObject*> net_objects;
 
@@ -52,6 +53,7 @@ public:
 
 	bool remove_player_client(PlayerClient* pc);
 	bool has_player_client(PlayerClient* pc) const;
+	bool has_net_object(NetObject* net_obj) const;
 
 #ifdef JC_SERVER
 	template <typename Fn>
@@ -77,9 +79,11 @@ public:
 	size_t get_net_objects_count() const { return net_objects.size(); }
 
 	NetObject* add_net_object(NetObject* net_obj);
+	NetObject* get_net_object(NetObject* net_obj);
 
 	bool remove_net_object(NetObject* net_obj);
 
+	Player* get_player(NetObject* net_obj);
 	Player* get_player_by_nid(NID nid);
 	PlayerClient* get_player_client_by_nid(NID nid);
 	PlayerClient* get_valid_player_client(PlayerClient* pc);

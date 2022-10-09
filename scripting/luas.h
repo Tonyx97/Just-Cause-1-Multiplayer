@@ -17,12 +17,21 @@
 
 #define LUA_GET_TYPENAME(i) lua_typename(_state, lua_type(_state, i))
 
+namespace luas
+{
+	struct lua_fn;
+	class variadic_args;
+	class state;
+}
+
 extern "C"
 {
 	using error_callback_t = int(*)(const char*);
+	using custom_stack_pusher_t = int(*)(const luas::state& state, const std::any& v);
 
 	inline error_callback_t fatal_error_callback = nullptr;
 	inline error_callback_t error_callback = nullptr;
+	inline custom_stack_pusher_t custom_stack_pusher = nullptr;
 };
 
 template <typename... A>
@@ -40,10 +49,6 @@ inline void check_fatal(bool condition, const char* text, A... args)
 
 namespace luas
 {
-	struct lua_fn;
-	class variadic_args;
-	class state;
-
 	template <typename T>
 	using value_ok = std::pair<T, bool>;
 
@@ -83,7 +88,10 @@ namespace luas
 		concept is_userdata = std::is_pointer_v<T>;
 
 		template <typename T>
-		concept is_vector = is_specialization<T, std::vector>::value;
+		concept is_vector = is_specialization<T, std::vector>::value && !std::is_same_v<typename T::value_type, std::any>;
+
+		template <typename T>
+		concept is_any_vector = is_specialization<T, std::vector>::value && std::is_same_v<typename T::value_type, std::any>;
 
 		template <typename T>
 		concept is_set = is_specialization<T, std::set>::value || is_specialization<T, std::unordered_set>::value;
@@ -258,7 +266,7 @@ namespace luas
 		}
 
 		template <typename Key, typename Value, typename Fn>
-		bool iterate_table(const Fn& fn, int i)
+		bool iterate_table(const Fn& fn, int i) const
 		{
 			if (!verify_table(i))
 				return true;
@@ -315,6 +323,15 @@ namespace luas
 				push(i++, v);
 				set_table(-3);
 			}
+		}
+
+		template <typename T>
+		void _push(const T& value) const requires(detail::is_any_vector<T>)
+		{
+			check_fatal(custom_stack_pusher, "Custom stack pusher used but not specified");
+
+			for (const auto& v : value)
+				custom_stack_pusher(*this, v);
 		}
 
 		template <typename T>
@@ -431,10 +448,10 @@ namespace luas
 
 		void close() { check_fatal(_state, "Invalid state"); lua_close(_state); }
 		void make_invalid() { _state = nullptr; }
-		void open_libs() { luaL_openlibs(_state); }
-		void set_global(const char* index) { lua_setglobal(_state, index); }
-		void set_table(int i) { lua_settable(_state, i); }
-		void unref(int v) { luaL_unref(_state, LUA_REGISTRYINDEX, v); }
+		void open_libs() const { luaL_openlibs(_state); }
+		void set_global(const char* index) const { lua_setglobal(_state, index); }
+		void set_table(int i) const { lua_settable(_state, i); }
+		void unref(int v) const { luaL_unref(_state, LUA_REGISTRYINDEX, v); }
 		void push_bool(bool v) const { lua_pushboolean(_state, v); }
 		void push_int(lua_Integer v) const { lua_pushinteger(_state, v); }
 		void push_number(lua_Number v) const { lua_pushnumber(_state, v); }
@@ -452,8 +469,8 @@ namespace luas
 				throw_error(lua_tostring(_state, -1));
 		}
 
-		template <typename T, typename... A, typename NT = std::remove_cvref_t<T>>
-		void push(const T& value, const A&... args) const
+		template <typename T, typename... A>
+		void push(const T& value, A&&... args) const
 		{
 			_push(value);
 			push(args...);
@@ -487,7 +504,7 @@ namespace luas
 		int ref() const { return luaL_ref(_state, LUA_REGISTRYINDEX); }
 		int get_raw(int i, int n) const { return lua_rawgeti(_state, i, n); }
 		int upvalue_index(int i) const { return lua_upvalueindex(i); }
-		int next(int i) { return lua_next(_state, i); }
+		int next(int i) const { return lua_next(_state, i); }
 
 		lua_Unsigned raw_len(int i) const { return lua_rawlen(_state, i); }
 
@@ -530,7 +547,7 @@ namespace luas
 		template <typename T>
 		value_ok<T> to_userdata(int i) const
 		{
-			if (!lua_isuserdata(_state, i))
+			if (!lua_isuserdata(_state, i) && !lua_islightuserdata(_state, i))
 				return { throw_error<std::nullptr_t>("Expected '{}' value, got '{}'", typeid(T).name(), LUA_GET_TYPENAME(i)), false };
 
 			return { static_cast<T>(lua_touserdata(_state, i)), true };
@@ -571,6 +588,13 @@ namespace luas
 			return call_protected(sizeof...(A), nreturns);
 		}
 
+		bool call_safe(int nreturns, const std::vector<std::any>& args) const
+		{
+			push(args);
+
+			return call_protected(args.size(), nreturns);
+		}
+
 		bool call_safe(int nreturns, const variadic_args& va) const;
 	};
 
@@ -595,11 +619,13 @@ namespace luas
 
 		void set_stack_offset(int v) const { stack_offset = v; }
 
-		template <typename T>
-		T get(int i) const { return vm.pop_read<T>(first + i + stack_offset); }
-
 		int begin() const { return first + stack_offset; }
 		int end() const { return last + stack_offset; }
+
+		template <typename T>
+		T get(int i) const { return vm.pop_read<T>(begin() + i); }
+
+		int get_type(int i) const { return lua_type(*vm, begin() + i); }
 
 		int size() const { return (end() - begin()) + 1; }
 

@@ -280,3 +280,31 @@ PacketResult nh::player_client::debug_log(const Packet& p)
 
 	return PacketRes_Ok;
 }
+
+PacketResult nh::player_client::trigger_remote_event(const Packet& p)
+{
+#ifdef JC_SERVER
+	const auto pc = p.get_pc();
+#endif
+
+	// code is the same for client and server
+
+	const auto event_name = p.get_str();
+	const auto args_count = p.get_u8();
+
+	std::vector<std::any> args_list(args_count);
+
+	for (uint8_t i = 0u; i < args_count; ++i)
+		switch (const auto type = p.get_u8())
+		{
+		case LUA_TUSERDATA:			check(false, "Unsupported userdata type in trigger_remote_event"); break;
+		case LUA_TLIGHTUSERDATA:	args_list[i] = p.get_net_object();		break;
+		case LUA_TSTRING:			args_list[i] = p.get_str();				break;
+		case LUA_TNUMBER:			args_list[i] = p.get<lua_Number>();		break;
+		case LUA_TBOOLEAN:			args_list[i] = p.get<bool>();			break;
+		}
+
+	g_rsrc->trigger_remote_event(event_name, args_list);
+
+	return PacketRes_Ok;
+}

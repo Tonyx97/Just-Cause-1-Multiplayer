@@ -35,6 +35,32 @@ bool ResourceSystem::init()
 {
 	util::fs::create_directory(RESOURCES_FOLDER());
 
+	// create our own stack pusher (used when triggering remote events mostly
+	// aka pushing a std::vector<std::any>)
+	
+	custom_stack_pusher = [](const luas::state& state, const std::any& v)
+	{
+		// kinda trash but it is what it is
+
+		const auto& type = v.type();
+
+		if (type == typeid(int))				state.push(std::any_cast<int>(v));
+		else if (type == typeid(double))		state.push(std::any_cast<double>(v));
+		else if (type == typeid(std::string))	state.push(std::any_cast<std::string>(v));
+		else if (type == typeid(bool))			state.push(std::any_cast<bool>(v));
+		else if (type == typeid(float))			state.push(std::any_cast<float>(v));
+		else if (type == typeid(NetObject*))	state.push(std::any_cast<NetObject*>(v));
+		else if (type == typeid(uint32_t))		state.push(std::any_cast<uint32_t>(v));
+		else if (type == typeid(uint8_t))		state.push(std::any_cast<uint8_t>(v));
+		else if (type == typeid(int8_t))		state.push(std::any_cast<int8_t>(v));
+		else if (type == typeid(uint16_t))		state.push(std::any_cast<uint16_t>(v));
+		else if (type == typeid(int16_t))		state.push(std::any_cast<int16_t>(v));
+		else if (type == typeid(uint64_t))		state.push(std::any_cast<uint64_t>(v));
+		else if (type == typeid(int64_t))		state.push(std::any_cast<int64_t>(v));
+
+		return 1;
+	};
+
 #ifdef JC_CLIENT
 #else
 	// verify and add all resources we can find
@@ -130,6 +156,17 @@ bool ResourceSystem::is_resource_valid(const std::string& rsrc_name) const
 	std::lock_guard lock(mtx);
 
 	return resources.contains(rsrc_name);
+}
+
+bool ResourceSystem::trigger_remote_event(const std::string& name, const std::vector<std::any>& va)
+{
+	if (auto it = events.find(name); it != events.end())
+		for (const auto& [rsrc, script_events] : it->second)
+			for (const auto& event_info : script_events)
+				if (event_info.allow_remote_trigger)
+					event_info.fn.call(va);
+
+	return true;
 }
 
 bool ResourceSystem::trigger_non_remote_event(const std::string& name, const luas::variadic_args& va)

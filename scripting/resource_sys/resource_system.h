@@ -58,7 +58,7 @@ public:
 	}
 
 	bool is_resource_valid(const std::string& rsrc_name) const;
-	//bool trigger_remote_event(const std::string& name, const std::vector<std::any>& va);
+	bool trigger_remote_event(const std::string& name, const std::vector<std::any>& va);
 	bool trigger_non_remote_event(const std::string& name, const luas::variadic_args& va);
 	bool add_event(const std::string& name, luas::lua_fn& fn, Script* script, bool allow_remote_trigger);
 	bool remove_event(const std::string& name, Script* script);

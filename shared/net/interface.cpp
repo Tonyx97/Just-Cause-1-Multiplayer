@@ -86,6 +86,7 @@ void enet::setup_channels()
 		case PlayerClientPID_RegisterUser:			return nh::player_client::register_user(p);
 		case PlayerClientPID_LoginUser:				return nh::player_client::login_user(p);
 		case PlayerClientPID_LogoutUser:			return nh::player_client::logout_user(p);
+		case PlayerClientPID_TriggerRemoteEvent:	return nh::player_client::trigger_remote_event(p);
 		}
 
 		return PacketRes_NotFound;
