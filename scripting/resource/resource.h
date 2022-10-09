@@ -148,7 +148,7 @@ public:
 	}
 
 #ifdef JC_CLIENT
-	Resource(const std::string& name);
+	Resource(const std::string& path, const std::string& name);
 
 	void set_up_to_date(bool v) { up_to_date = v; }
 	void set_files_downloaded(int v) { files_downloaded = v; }
@@ -204,7 +204,7 @@ public:
 	~Resource();
 
 	void destroy_scripts();
-	void create_script(const ScriptCtx& script_ctx, const std::string& path, const std::string& script_name);
+	void create_script(const ScriptCtx& script_ctx, const std::string& script_name);
 
 	bool is_stopped() const { return get_status() == ResourceStatus_Stopped; }
 	bool is_running() const { return get_status() == ResourceStatus_Running; }
@@ -214,8 +214,8 @@ public:
 	ResourceResult start();
 	ResourceResult stop();
 
-	const std::string& get_name() const { return name; }
 	const std::string& get_path() const { return path; }
+	const std::string& get_name() const { return name; }
 	const std::string& get_author() const { return author; }
 	const std::string& get_version() const { return version; }
 	const std::string& get_description() const { return description; }

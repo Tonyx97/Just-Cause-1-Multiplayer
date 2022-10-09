@@ -1,5 +1,7 @@
 #pragma once
 
+#include <luas.h>
+
 DEFINE_ENUM(ScriptType, uint32_t)
 {
 	ScriptType_Invalid	= 0u,
@@ -9,7 +11,19 @@ DEFINE_ENUM(ScriptType, uint32_t)
 	ScriptType_Shared	= util::hash::JENKINS("shared"),
 };
 
-namespace luas { class ctx; }
+class Resource;
+class Script;
+
+struct ScriptEventInfo
+{
+	std::string_view name;
+
+	Script* script;
+
+	luas::lua_fn fn;
+
+	bool allow_remote_trigger;
+};
 
 class Script
 {
@@ -18,15 +32,31 @@ private:
 	std::string path;
 	std::string name;
 
+	Resource* owner = nullptr;
+
 	luas::ctx* vm = nullptr;
 
 	ScriptType type = ScriptType_Invalid;
 
 public:
 
-	Script(const std::string& path, const std::string& name, ScriptType type);
+	Script(
+		Resource* rsrc,
+		const std::string& path,
+		const std::string& name,
+		ScriptType type);
+
 	~Script();
 
 	void start();
 	void stop();
+
+	Resource* get_owner() const { return owner; }
+
+	luas::ctx* get_vm() const { return vm; }
+
+	const std::string& get_rsrc_path() const;
+	const std::string& get_rsrc_name() const;
+	const std::string& get_path() const { return path; }
+	const std::string& get_name() const { return name; }
 };

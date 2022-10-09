@@ -2,6 +2,8 @@
 
 #include "resource.h"
 
+#include <resource_sys/resource_system.h>
+
 void Resource::clear()
 {
 #ifdef JC_SERVER
@@ -12,7 +14,7 @@ void Resource::clear()
 }
 
 #ifdef JC_CLIENT
-Resource::Resource(const std::string& name) : name(name)
+Resource::Resource(const std::string& path, const std::string& name) : path(path), name(name)
 {
 }
 #else
@@ -60,8 +62,8 @@ void Resource::build_with_verification_ctx(const ResourceVerificationCtx& ctx)
 	shared_files = ctx.shared;
 	server_files = ctx.server;
 
-	for (const auto& [script_name, script_ctx] : ctx.client.scripts) create_script(script_ctx, ctx.path, script_name);
-	for (const auto& [script_name, script_ctx] : ctx.shared.scripts) create_script(script_ctx, ctx.path, script_name);
+	for (const auto& [script_name, script_ctx] : ctx.server.scripts) create_script(script_ctx, script_name);
+	for (const auto& [script_name, script_ctx] : ctx.shared.scripts) create_script(script_ctx, script_name);
 
 	// get the total size of client files
 
@@ -84,10 +86,10 @@ void Resource::destroy_scripts()
 	scripts.clear();
 }
 
-void Resource::create_script(const ScriptCtx& script_ctx, const std::string& path, const std::string& script_name)
+void Resource::create_script(const ScriptCtx& script_ctx, const std::string& script_name)
 {
 	const auto script_path = path + script_name;
-	const auto script = JC_ALLOC(Script, script_path, script_name, script_ctx.type);
+	const auto script = JC_ALLOC(Script, this, script_path, script_name, script_ctx.type);
 
 	scripts.insert({ script_name, script });
 }
@@ -110,6 +112,8 @@ ResourceResult Resource::stop()
 		return ResourceResult_AlreadyStopped;
 
 	logt(YELLOW, "Stopping '{}'... ", name);
+
+	g_rsrc->clear_resource_events(this);
 
 	for (const auto& [script_name, script] : scripts)
 		script->stop();

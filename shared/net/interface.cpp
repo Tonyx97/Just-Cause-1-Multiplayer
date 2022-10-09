@@ -76,6 +76,7 @@ void enet::setup_channels()
 		case PlayerClientPID_ObjectInstanceSync:	return nh::player_client::object_instance_sync(p);
 		case PlayerClientPID_DebugLog:				return nh::player_client::debug_log(p);
 #else
+		case PlayerClientPID_Join:					return nh::player_client::join(p);
 		case PlayerClientPID_DebugLog:				return nh::player_client::debug_log(p);
 		case PlayerClientPID_ResourcesRefresh:		return nh::player_client::resources_refresh(p);
 #endif

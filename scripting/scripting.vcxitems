@@ -17,11 +17,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)luas.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)resource\resource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)resource_sys\resource_system.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)script\lua_ctx\script_events.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)script\lua_ctx\script_globals.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)script\lua_ctx\script_registering.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)script\script.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)resource\resource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)resource_sys\resource_system.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)script\lua_ctx\script_registering.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)script\script.cpp" />
   </ItemGroup>
 </Project>

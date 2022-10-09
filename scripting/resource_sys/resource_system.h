@@ -14,7 +14,13 @@ private:
 
 	std::unordered_map<std::string, Resource*> resources;
 
+	std::unordered_map<std::string, std::unordered_map<Resource*, std::vector<ScriptEventInfo>>> events;
+
 	mutable std::recursive_mutex mtx;
+
+	std::stack<int> cancelled_events;
+
+	int current_event_id = -1;
 
 public:
 
@@ -24,8 +30,38 @@ public:
 
 	void destroy();
 	void refresh();
+	void clear_resource_events(Resource* rsrc);
+	void cancel_event() { cancelled_events.push(current_event_id); }
+
+	template <typename... A>
+	bool trigger_engine_event(const std::string& event_name, A&&... args)
+	{
+		// set the current event id to be able to cancel it
+
+		++current_event_id;
+
+		if (auto it = events.find(event_name); it != events.end())
+			for (const auto& [rsrc, script_events] : it->second)
+				for (const auto& event_info : script_events)
+					event_info.fn.call(args...);
+
+		// check if the called event was cancelled
+
+		if (!cancelled_events.empty() && cancelled_events.top() == current_event_id--)
+		{
+			cancelled_events.pop();
+
+			return false;
+		}
+
+		return true;
+	}
 
 	bool is_resource_valid(const std::string& rsrc_name) const;
+	//bool trigger_remote_event(const std::string& name, const std::vector<std::any>& va);
+	bool trigger_non_remote_event(const std::string& name, const luas::variadic_args& va);
+	bool add_event(const std::string& name, luas::lua_fn& fn, Script* script, bool allow_remote_trigger);
+	bool remove_event(const std::string& name, Script* script);
 
 	ResourceResult start_resource(const std::string& name);
 	ResourceResult stop_resource(const std::string& name);

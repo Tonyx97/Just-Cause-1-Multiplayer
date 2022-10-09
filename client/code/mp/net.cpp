@@ -385,7 +385,7 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 			for (const auto& file_info : files_info)
 				if (file_info.script_type != ScriptType_NoScript)
-					rsrc->create_script({ .type = file_info.script_type }, rsrc_path, file_info.filename);
+					rsrc->create_script({ .type = file_info.script_type }, file_info.filename);
 
 			// start creating the request packet
 		

@@ -119,11 +119,115 @@ void ResourceSystem::refresh()
 #endif
 }
 
+void ResourceSystem::clear_resource_events(Resource* rsrc)
+{
+	for (auto& [_, rsrc_events] : events)
+		rsrc_events.erase(rsrc);
+}
+
 bool ResourceSystem::is_resource_valid(const std::string& rsrc_name) const
 {
 	std::lock_guard lock(mtx);
 
 	return resources.contains(rsrc_name);
+}
+
+bool ResourceSystem::trigger_non_remote_event(const std::string& name, const luas::variadic_args& va)
+{
+	if (auto it = events.find(name); it != events.end())
+		for (const auto& [rsrc, script_events] : it->second)
+			for (const auto& event_info : script_events)
+				event_info.fn.call(va);
+
+	return true;
+}
+
+bool ResourceSystem::add_event(const std::string& name, luas::lua_fn& fn, Script* script, bool allow_remote_trigger)
+{
+	if (!script)
+		return false;
+
+	auto rsrc_owner = script->get_owner();
+	if (!rsrc_owner)
+		return false;
+
+	ScriptEventInfo new_entry =
+	{
+		.name = name,
+		.script = script,
+		.fn = std::move(fn),
+		.allow_remote_trigger = allow_remote_trigger
+	};
+
+	// find all resources that register this event
+
+	if (auto it_event = events.find(name); it_event != events.end())
+	{
+		auto& rsrc_event_info = it_event->second;
+
+		// find the script's resource in the event resource list
+		
+		if (auto it_rsrc_event = rsrc_event_info.find(rsrc_owner); it_rsrc_event != rsrc_event_info.end())
+		{
+			auto& rsrc_script_events = it_rsrc_event->second;
+
+			// do not register the event in the same script
+			
+			for (const auto& event_info : rsrc_script_events)
+				if (event_info.script == script)
+					return false;
+
+			rsrc_script_events.push_back(std::move(new_entry));
+		}
+		else rsrc_event_info[rsrc_owner].push_back(std::move(new_entry));
+	}
+	else events[name][rsrc_owner].push_back(std::move(new_entry));
+
+	return true;
+}
+
+bool ResourceSystem::remove_event(const std::string& name, Script* script)
+{
+	if (!script)
+		return false;
+
+	auto rsrc_owner = script->get_owner();
+	if (!rsrc_owner)
+		return false;
+
+	// find all resources that register this event
+
+	if (auto it_event = events.find(name); it_event != events.end())
+	{
+		auto& rsrc_events = it_event->second;
+
+		// find the script's resource in the event resource list
+
+		if (auto it_rsrc_event = rsrc_events.find(rsrc_owner); it_rsrc_event != rsrc_events.end())
+		{
+			auto& rsrc_script_events = it_rsrc_event->second;
+
+			for (auto it = rsrc_script_events.begin(); it != rsrc_script_events.end(); ++it)
+			{
+				// make sure we remove the event from the correct script
+
+				if (it->script == script)
+				{
+					rsrc_script_events.erase(it);
+
+					if (rsrc_script_events.empty())
+						rsrc_events.erase(rsrc_owner);
+
+					if (rsrc_events.empty())
+						events.erase(name);
+
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 ResourceResult ResourceSystem::start_resource(const std::string& name)
@@ -218,7 +322,7 @@ Resource* ResourceSystem::create_resource(const std::string& name)
 	if (const auto rsrc = get_resource(name))
 		return rsrc;
 
-	const auto rsrc = JC_ALLOC(Resource, name);
+	const auto rsrc = JC_ALLOC(Resource, RESOURCES_FOLDER() + name + '\\', name);
 
 	resources.insert({ name, rsrc });
 

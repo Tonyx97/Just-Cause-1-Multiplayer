@@ -105,18 +105,20 @@ void PlayerClient::sync_pending_resources()
 					serialization_ctx out;
 
 					_serialize(out, rsrc_name);
-					_serialize(out, rsrc->get_total_client_file_size());
-					_serialize(out, rsrc->get_total_client_files());
 
 					std::vector<ResourceFileInfo> files_info;
 
 					rsrc->for_each_client_file([&](const std::string& filename, const FileCtx* ctx)
 					{
 						const auto file_path = resource_path + filename;
+						const auto file_size = static_cast<size_t>(util::fs::file_size(file_path));
 
-						files_info.emplace_back(filename, util::fs::get_last_write_time(file_path), static_cast<size_t>(util::fs::file_size(file_path)), ctx->script_type);
+						if (file_size >= 0u)
+							files_info.emplace_back(filename, util::fs::get_last_write_time(file_path), file_size, ctx->script_type);
 					});
 
+					_serialize(out, rsrc->get_total_client_file_size());
+					_serialize(out, files_info.size());
 					_serialize(out, files_info);
 
 					tcp->send_packet(ClientToMsPacket_SyncResource, out);
