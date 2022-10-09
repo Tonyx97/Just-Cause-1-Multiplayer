@@ -16,10 +16,10 @@ public:
 
 	void destroy();
 	void update();
-	void set_time_scale(float v) { timescale = v; }
-	void set_day_time(float v) { day_time = v; }
-	void set_day_time_enabled(bool v) { day_time_enabled = v; }
-	void set_punch_force(float v) { punch_force = v; }
+	void set_time_scale(float v);
+	void set_day_time(float v);
+	void set_day_time_enabled(bool v);
+	void set_punch_force(float v);
 
 	bool is_day_time_enabled() const { return day_time_enabled; }
 

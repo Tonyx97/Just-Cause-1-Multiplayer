@@ -2,6 +2,8 @@
 
 #include <luas.h>
 
+#include "lua_ctx/script_events.h"
+
 DEFINE_ENUM(ScriptType, uint32_t)
 {
 	ScriptType_Invalid	= 0u,

@@ -152,6 +152,8 @@ void PlayerClient::startup_sync()
 	// set the player as spawned
 	
 	player->spawn();
+
+	g_rsrc->trigger_event(jc::script::event::ON_JOIN, player);
 }
 
 void PlayerClient::sync_broadcast()

@@ -10,6 +10,8 @@
 #if defined(JC_CLIENT)
 #include <game/sys/time/time_system.h>
 #include <game/sys/world/day_cycle.h>
+
+#include <game/object/character/character.h>
 #elif defined(JC_SERVER)
 #include <shared_mp/player_client/player_client.h>
 #endif
@@ -96,8 +98,20 @@ void jc::script::register_functions(Script* script)
 
 	/* WORLD */
 
-	vm->add_function("setBuildingLightingEnabled", [](bool v) { g_day_cycle->set_night_time_enabled(v); });
-	vm->add_function("isBuildingLightingEnabled", []() { return g_day_cycle->is_night_time_enabled(); });
+	vm->add_function("setBuildingLightingEnabled", [](bool v)	{ g_day_cycle->set_night_time_enabled(v); });
+	vm->add_function("isBuildingLightingEnabled", []()			{ return g_day_cycle->is_night_time_enabled(); });
+
+	vm->add_function("setTimescale", [](float v)	{ g_time->set_time_scale(v); });
+	vm->add_function("getTimescale", []()			{ return g_time->get_time_scale(); });
+
+	vm->add_function("setDayTime", [](float v)	{ g_day_cycle->set_time(v); });
+	vm->add_function("getDayTime", []()			{ return g_day_cycle->get_hour(); });
+
+	vm->add_function("setDayCycleEnabled", [](bool v)	{ g_day_cycle->set_enabled(v); });
+	vm->add_function("isDayCycleEnabled", []()			{ return g_day_cycle->is_enabled(); });
+
+	vm->add_function("setPunchForce", [](float v)	{ Character::SET_GLOBAL_PUNCH_DAMAGE(true, v); });
+	vm->add_function("getPunchForce", []()			{ return Character::GET_GLOBAL_PUNCH_DAMAGE(true); });
 #elif defined(JC_SERVER)
 	// register server functions
 
@@ -157,6 +171,20 @@ void jc::script::register_functions(Script* script)
 			});
 		}
 	});
+
+	/* WORLD */
+
+	vm->add_function("setTimescale", [](float v)	{ g_net->get_settings().set_time_scale(v); });
+	vm->add_function("getTimescale", []()			{ return g_net->get_settings().get_time_scale(); });
+
+	vm->add_function("setDayTime", [](float v)	{ g_net->get_settings().set_day_time(v); });
+	vm->add_function("getDayTime", []()			{ return g_net->get_settings().get_day_time(); });
+
+	vm->add_function("setDayTimeEnabled", [](bool v)	{ g_net->get_settings().set_day_time_enabled(v); });
+	vm->add_function("isDayTimeEnabled", []()			{ return g_net->get_settings().is_day_time_enabled(); });
+
+	vm->add_function("setPunchForce", [](float v)	{ g_net->get_settings().set_punch_force(v); });
+	vm->add_function("getPunchForce", []()			{ return g_net->get_settings().get_punch_force(); });
 #endif
 
 	// resgister shared functions
@@ -194,62 +222,6 @@ void jc::script::register_functions(Script* script)
 		g_net->for_each_player([&](NID, Player* player) { out.push_back(player); });
 
 		return out;
-	});
-
-	/* WORLD */
-
-	vm->add_function("setTimescale", [](float v)
-	{
-#ifdef JC_CLIENT
-		g_time->set_time_scale(v);
-#else
-		g_net->get_settings().set_time_scale(v);
-#endif
-	});
-
-	vm->add_function("getTimescale", []()
-	{
-#ifdef JC_CLIENT
-		return g_time->get_time_scale();
-#else
-		return g_net->get_settings().get_time_scale();
-#endif
-	});
-
-	vm->add_function("setDayTime", [](float v)
-	{
-#ifdef JC_CLIENT
-		g_day_cycle->set_time(v);
-#else
-		g_net->get_settings().set_day_time(v);
-#endif
-	});
-
-	vm->add_function("getDayTime", []()
-	{
-#ifdef JC_CLIENT
-		return g_day_cycle->get_hour();
-#else
-		return g_net->get_settings().get_day_time();
-#endif
-	});
-
-	vm->add_function("setDayTimeEnabled", [](bool v)
-	{
-#ifdef JC_CLIENT
-		return g_day_cycle->set_enabled(v);
-#else
-		return g_net->get_settings().set_day_time_enabled(v);
-#endif
-	});
-
-	vm->add_function("isDayTimeEnabled", []()
-	{
-#ifdef JC_CLIENT
-		return g_day_cycle->is_enabled();
-#else
-		return g_net->get_settings().is_day_time_enabled();
-#endif
 	});
 }
 

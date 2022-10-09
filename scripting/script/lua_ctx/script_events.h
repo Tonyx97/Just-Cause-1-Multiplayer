@@ -3,8 +3,8 @@
 namespace jc::script::event
 {
 #ifdef JC_CLIENT
-	static constexpr std::string_view ON_JOIN = "onClientJoin";
+	static inline std::string ON_JOIN = "onClientPlayerJoin";
 #else
-	static constexpr std::string_view ON_JOIN = "onPlayerJoin";
+	static inline std::string ON_JOIN = "onPlayerJoin";
 #endif
 }

@@ -124,7 +124,7 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			player->set_nick(nick);
 
 			if (joined)
-				g_chat->add_chat_msg(FORMATV("{} has joined the server (NID: {:x})", nick, player->get_nid()));
+				g_rsrc->trigger_event(jc::script::event::ON_JOIN, player);
 
 			break;
 		}

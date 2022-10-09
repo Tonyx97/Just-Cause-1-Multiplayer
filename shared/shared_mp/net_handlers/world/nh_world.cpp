@@ -21,8 +21,6 @@ PacketResult nh::world::time_scale(const Packet& p)
 	g_time->set_time_scale(time_scale);
 #else
 	g_net->get_settings().set_time_scale(time_scale);
-
-	g_net->send_broadcast_joined(p);
 #endif
 
 	return PacketRes_Ok;
@@ -47,8 +45,6 @@ PacketResult nh::world::punch_force(const Packet& p)
 	Character::SET_GLOBAL_PUNCH_DAMAGE(force, true);
 #else
 	g_net->get_settings().set_punch_force(force);
-
-	g_net->send_broadcast_joined(p);
 #endif
 
 	return PacketRes_Ok;
