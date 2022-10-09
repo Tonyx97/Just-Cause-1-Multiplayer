@@ -20,7 +20,11 @@ private:
 
 	std::stack<int> cancelled_events;
 
-	int current_event_id = -1;
+	struct
+	{
+		int id = -1;
+		bool cancellable = false;
+	} curr_event;
 
 public:
 
@@ -31,23 +35,27 @@ public:
 	void destroy();
 	void refresh();
 	void clear_resource_events(Resource* rsrc);
-	void cancel_event() { cancelled_events.push(current_event_id); }
+	void cancel_event();
 
 	template <typename... A>
-	bool trigger_engine_event(const std::string& event_name, A&&... args)
+	bool trigger_event(const std::string& event_name, A&&... args)
 	{
 		// set the current event id to be able to cancel it
 
-		++current_event_id;
+		curr_event.cancellable = true;
+
+		++curr_event.id;
 
 		if (auto it = events.find(event_name); it != events.end())
 			for (const auto& [rsrc, script_events] : it->second)
 				for (const auto& event_info : script_events)
 					event_info.fn.call(args...);
 
+		curr_event.cancellable = false;
+
 		// check if the called event was cancelled
 
-		if (!cancelled_events.empty() && cancelled_events.top() == current_event_id--)
+		if (!cancelled_events.empty() && cancelled_events.top() == curr_event.id--)
 		{
 			cancelled_events.pop();
 

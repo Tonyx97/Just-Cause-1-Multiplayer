@@ -100,7 +100,7 @@ void jc::script::register_functions(Script* script)
 
 		switch (va.get_type(index))
 		{
-		case LUA_TLIGHTUSERDATA:
+		case LUA_TLIGHTUSERDATA:	// only a player specified
 		{
 			const auto userdata = va.get<void*>(index++);
 
@@ -109,7 +109,7 @@ void jc::script::register_functions(Script* script)
 
 			break;
 		}
-		case LUA_TTABLE:
+		case LUA_TTABLE:			// a table of players specified
 		{
 			const auto players_list = va.get<std::vector<void*>>(index++);
 
@@ -119,7 +119,7 @@ void jc::script::register_functions(Script* script)
 
 			break;
 		}
-		case LUA_TSTRING:
+		case LUA_TSTRING:			// if we find the event then no player specified, send to everyone
 		{
 			g_net->for_each_player_client([&](NID, PlayerClient* pc)
 			{

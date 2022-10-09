@@ -151,6 +151,12 @@ void ResourceSystem::clear_resource_events(Resource* rsrc)
 		rsrc_events.erase(rsrc);
 }
 
+void ResourceSystem::cancel_event()
+{
+	if (curr_event.cancellable)
+		cancelled_events.push(curr_event.id);
+}
+
 bool ResourceSystem::is_resource_valid(const std::string& rsrc_name) const
 {
 	std::lock_guard lock(mtx);
