@@ -206,10 +206,20 @@ void Player::destroy_object()
 void Player::on_spawn()
 {
 #ifdef JC_CLIENT
-	// create and spawn the character if it's not the localplayer
-
-	if (!is_local())
+	if (is_local())
 	{
+		// setup our localplayer when spawning for the first time
+
+		const auto character = get_character();
+
+		character->set_skin(0, false);
+		character->set_hp(500.f);
+		character->set_max_hp(500.f);
+	}
+	else
+	{
+		// create and spawn the character if it's not the localplayer
+
 		handle = g_factory->spawn_character("female1");
 
 		check(handle, "Could not create the player's character");
@@ -219,16 +229,6 @@ void Player::on_spawn()
 		blip = g_factory->create_map_icon("player_blip", get_position());
 
 		check(blip, "Could not create the player's blip");
-	}
-	else
-	{
-		// setup our localplayer when spawning for the first time
-
-		const auto character = get_character();
-
-		character->set_skin(0, false);
-		character->set_hp(500.f);
-		character->set_max_hp(500.f);
 	}
 #endif
 }
