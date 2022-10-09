@@ -285,6 +285,28 @@ Player* ObjectLists::get_player_by_nid(NID nid)
 	return pc ? pc->get_player() : nullptr;
 }
 
+Player* ObjectLists::get_random_player()
+{
+#ifdef JC_SERVER
+	std::lock_guard lock(mtx);
+#endif
+
+	if (player_clients.empty())
+		return nullptr;
+
+	std::vector<Player*> joined_players,
+						 out;
+
+	for_each_joined_player_client([&](NID, PlayerClient* pc)
+	{
+		joined_players.push_back(pc->get_player());
+	});
+
+	std::sample(joined_players.begin(), joined_players.end(), std::back_inserter(out), 1, std::mt19937_64(std::random_device {} ()));
+
+	return *out.begin();
+}
+
 PlayerClient* ObjectLists::get_player_client_by_nid(NID nid)
 {
 #ifdef JC_SERVER

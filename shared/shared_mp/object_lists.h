@@ -85,6 +85,7 @@ public:
 
 	Player* get_player(NetObject* net_obj);
 	Player* get_player_by_nid(NID nid);
+	Player* get_random_player();
 	PlayerClient* get_player_client_by_nid(NID nid);
 	PlayerClient* get_valid_player_client(PlayerClient* pc);
 
