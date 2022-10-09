@@ -14,6 +14,7 @@
 
 #include <game/sys/time/time_system.h>
 #include <game/sys/world/day_cycle.h>
+#include <game/sys/resource/physics.h>
 
 #include <game/object/character/character.h>
 #elif defined(JC_SERVER)
@@ -127,6 +128,11 @@ void jc::script::register_functions(Script* script)
 	vm->add_function("isKeyPressed", [](int key) { return g_key->is_key_pressed(key); });
 	vm->add_function("isKeyReleased", [](int key) { return g_key->is_key_released(key); });
 	vm->add_function("getMouseWheel", []() { return g_key->get_mouse_wheel_value(); });
+
+	/* PHYSICS */
+
+	vm->add_function("setGravity", [](float x, float y, float z) { g_physics->get_hk_world()->set_gravity({ x, y, z, 1.f }); });
+	vm->add_function("getGravity", []() { return g_physics->get_hk_world()->get_gravity(); });
 #elif defined(JC_SERVER)
 	// register server functions
 
