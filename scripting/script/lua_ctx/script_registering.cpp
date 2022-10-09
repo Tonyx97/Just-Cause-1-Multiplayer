@@ -8,6 +8,8 @@
 #include <mp/net.h>
 
 #if defined(JC_CLIENT)
+#include <game/sys/time/time_system.h>
+#include <game/sys/world/day_cycle.h>
 #elif defined(JC_SERVER)
 #include <shared_mp/player_client/player_client.h>
 #endif
@@ -82,6 +84,8 @@ void jc::script::register_functions(Script* script)
 #if defined(JC_CLIENT)
 	// register client functions
 
+	/* EVENTS */
+
 	vm->add_function("triggerServerEvent", [](luas::state& s, const std::string& name, luas::variadic_args va)
 	{
 		util::serialize_event(name, va, [&](const Packet& p)
@@ -89,8 +93,15 @@ void jc::script::register_functions(Script* script)
 			g_net->send(p);
 		});
 	});
+
+	/* WORLD */
+
+	vm->add_function("setBuildingLightingEnabled", [](bool v) { g_day_cycle->set_night_time_enabled(v); });
+	vm->add_function("isBuildingLightingEnabled", []() { return g_day_cycle->is_night_time_enabled(); });
 #elif defined(JC_SERVER)
 	// register server functions
+
+	/* EVENTS */
 
 	vm->add_function("triggerClientEvent", [](luas::variadic_args va)
 	{
@@ -150,6 +161,8 @@ void jc::script::register_functions(Script* script)
 
 	// resgister shared functions
 
+	/* EVENTS */
+
 	vm->add_function("cancelEvent", []() { g_rsrc->cancel_event(); });
 
 	vm->add_function("addEvent", [](luas::state& s, const std::string& event_name, luas::lua_fn& fn, luas::variadic_args va)
@@ -170,6 +183,73 @@ void jc::script::register_functions(Script* script)
 	vm->add_function("triggerEvent", [](const std::string& name, luas::variadic_args va)
 	{
 		return g_rsrc->trigger_non_remote_event(name, va);
+	});
+
+	/* OBJECTS & SPAWNING */
+
+	vm->add_function("getPlayers", []()
+	{
+		std::vector<Player*> out;
+
+		g_net->for_each_player([&](NID, Player* player) { out.push_back(player); });
+
+		return out;
+	});
+
+	/* WORLD */
+
+	vm->add_function("setTimescale", [](float v)
+	{
+#ifdef JC_CLIENT
+		g_time->set_time_scale(v);
+#else
+		g_net->get_settings().set_time_scale(v);
+#endif
+	});
+
+	vm->add_function("getTimescale", []()
+	{
+#ifdef JC_CLIENT
+		return g_time->get_time_scale();
+#else
+		return g_net->get_settings().get_time_scale();
+#endif
+	});
+
+	vm->add_function("setDayTime", [](float v)
+	{
+#ifdef JC_CLIENT
+		g_day_cycle->set_time(v);
+#else
+		g_net->get_settings().set_day_time(v);
+#endif
+	});
+
+	vm->add_function("getDayTime", []()
+	{
+#ifdef JC_CLIENT
+		return g_day_cycle->get_hour();
+#else
+		return g_net->get_settings().get_day_time();
+#endif
+	});
+
+	vm->add_function("setDayTimeEnabled", [](bool v)
+	{
+#ifdef JC_CLIENT
+		return g_day_cycle->set_enabled(v);
+#else
+		return g_net->get_settings().set_day_time_enabled(v);
+#endif
+	});
+
+	vm->add_function("isDayTimeEnabled", []()
+	{
+#ifdef JC_CLIENT
+		return g_day_cycle->is_enabled();
+#else
+		return g_net->get_settings().is_day_time_enabled();
+#endif
 	});
 }
 

@@ -21,6 +21,8 @@ public:
 	void set_day_time_enabled(bool v) { day_time_enabled = v; }
 	void set_punch_force(float v) { punch_force = v; }
 
+	bool is_day_time_enabled() const { return day_time_enabled; }
+
 	float get_time_scale() const { return timescale; }
 	float get_day_time() const { return day_time; }
 	float get_punch_force() const { return punch_force; }
