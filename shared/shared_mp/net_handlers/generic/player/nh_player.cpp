@@ -51,19 +51,26 @@ PacketResult nh::player::respawn(const Packet& p)
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
 	{
-		const auto hp = p.get_float(),
-				   max_hp = p.get_float();
+		const auto position = p.get<vec3>();
+		const auto rotation = p.get_float();
+		const auto skin = p.get_i32();
+		const auto hp = p.get_float();
+		const auto max_hp = p.get_float();
 
-		player->respawn(hp, max_hp, false);
+		player->respawn(position, rotation, skin, hp, max_hp);
 	}
+	else return PacketRes_BadArgs;
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
 
-	const auto hp = p.get_float(),
-			   max_hp = p.get_float();
+	const auto position = p.get<vec3>();
+	const auto rotation = p.get_float();
+	const auto skin = p.get_i32();
+	const auto hp = p.get_float();
+	const auto max_hp = p.get_float();
 
-	player->respawn(hp, max_hp);
+	player->respawn(position, rotation, skin, hp, max_hp);
 #endif
 
 	return PacketRes_Ok;

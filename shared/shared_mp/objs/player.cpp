@@ -45,30 +45,6 @@ void Player::verify_exec(const std::function<void(Character*)>& fn)
 		fn(character);
 }
 
-void Player::respawn(float hp, float max_hp, bool sync)
-{
-	if (!is_spawned())
-		return;
-
-	if (sync)
-	{
-		check(is_local(), "Only localplayer respawning can be synced from client");
-
-		g_net->send(Packet(PlayerPID_Respawn, ChannelID_Generic, hp, max_hp));
-	}
-	else
-	{
-		// update important information like position and health
-
-		set_hp(hp);
-		set_max_hp(max_hp);
-
-		// respawn the character of this player
-
-		get_character()->respawn();
-	}
-}
-
 void Player::dispatch_movement()
 {
 	if (move_info.right == 0.f && move_info.forward == 0.f)
@@ -161,13 +137,6 @@ Player::~Player()
 	// from the player and the objects
 
 	remove_all_ownerships();
-}
-
-void Player::respawn(float hp, float max_hp)
-{
-	Packet p(PlayerPID_Respawn, ChannelID_Generic, this, hp, max_hp);
-
-	g_net->send_broadcast(get_client(), p);
 }
 
 void Player::transfer_net_object_ownership_to(NetObject* obj, Player* new_streamer)
@@ -278,15 +247,17 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 	case NetObjectVar_Position:
 	case NetObjectVar_Rotation:
 	{
-		// we don't want to modify the transform of this player if it's local
-		// or if it's inside a vehicle
+		// if player is in vehicle we don't need to update the player transform
 
-		if (!is_local() && !vehicle)
+		if (!vehicle)
 		{
-			// when receiving a transform from a remote player, we want to correct it by interpolating
-			// the current transform with the one we just received
+			if (!is_local())
+			{
+				// when receiving a transform from a remote player, we want to correct it by interpolating
+				// the current transform with the one we just received
 
-			correcting_position = true;
+				correcting_position = true;
+			}
 		}
 
 		break;
@@ -295,6 +266,48 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 	case NetObjectVar_Health: verify_exec([&](Character* c) { c->set_hp(get_hp()); }); break;
 	case NetObjectVar_MaxHealth: verify_exec([&](Character* c) { c->set_max_hp(get_max_hp()); }); break;
 	}
+#endif
+}
+
+void Player::respawn(const vec3& position, float rotation, int32_t skin, float hp, float max_hp)
+{
+	if (!is_spawned())
+		return;
+
+#ifdef JC_CLIENT
+	const auto character = get_character();
+	if (!character)
+		return;
+	
+	// respawn the character of this player
+
+	character->respawn();
+
+	// if it's local we want to access directly to the
+	// character and set the stuff, verify_exec doesn't work
+	// with localplayer due to safety reasons so we have to access
+	// the local's character
+
+	const auto angles = glm::eulerAngleXYZ(0.f, rotation, 0.f);
+
+	if (is_local())
+	{
+		character->set_transform(Transform(position, angles));
+		character->set_skin(skin, false);
+		character->set_hp(hp);
+		character->set_max_hp(hp);
+	}
+	else
+	{
+		set_transform(TransformTR(position, angles));
+		set_skin(skin);
+		set_hp(hp);
+		set_max_hp(max_hp);
+	}
+#else
+	Packet p(PlayerPID_Respawn, ChannelID_Generic, this, position, rotation, skin, hp, max_hp);
+
+	g_net->send_broadcast(p);
 #endif
 }
 

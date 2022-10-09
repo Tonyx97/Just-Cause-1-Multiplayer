@@ -125,7 +125,6 @@ public:
 	class ObjectBase* get_object_base() const override;
 
 	void verify_exec(const std::function<void(Character*)>& fn);
-	void respawn(float hp, float max_hp, bool sync = true);
 	void dispatch_movement();
 	void correct_position();
 	void update_blip();
@@ -148,7 +147,6 @@ public:
 	Player(PlayerClient* pc);
 
 	void verify_exec(auto fn) {}
-	void respawn(float hp, float max_hp);
 	void transfer_net_object_ownership_to(NetObject* obj, Player* new_streamer);
 	void set_net_object_ownership_of(NetObject* obj);
 	void remove_net_object_ownership(NetObject* obj);
@@ -166,6 +164,7 @@ public:
 
 	// dynamic info getters/setters
 
+	void respawn(const vec3& position, float rotation, int32_t skin, float hp, float max_hp);
 	void set_nick(const std::string& v);
 	void set_skin(int32_t v);
 	void set_skin(int32_t v, int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);

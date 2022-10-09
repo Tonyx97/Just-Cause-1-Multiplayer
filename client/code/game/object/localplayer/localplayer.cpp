@@ -6,21 +6,6 @@
 
 #include <mp/net.h>
 
-void LocalPlayer::respawn()
-{
-	if (const auto character = get_character())
-	{
-		// respawn our character
-
-		character->respawn();
-
-		// send respawning packet to the server
-
-		if (const auto local = g_net->get_localplayer())
-			local->respawn(character->get_real_hp(), character->get_max_hp());
-	}
-}
-
 void LocalPlayer::reset_weapon_belt()
 {
 	jc::this_call(jc::localplayer::fn::RESET_WEAPON_BELT, this);

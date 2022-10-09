@@ -127,7 +127,6 @@ void jc::mp::logic::on_tick()
 				else if (localplayer->should_sync_angle_only() && angle_timer.ready())
 					g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_MovementAngle, util::pack::pack_pi_angle(move_angle)));
 
-
 				localplayer->set_movement_angle(move_angle, false);
 
 				// transform (we upload it every 100 ms for now to correct the position in remote players)

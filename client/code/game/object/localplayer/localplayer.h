@@ -18,7 +18,6 @@ class LocalPlayer
 private:
 public:
 
-	void respawn();
 	void reset_weapon_belt();
 	void teleport_to_closest_safehouse();
 

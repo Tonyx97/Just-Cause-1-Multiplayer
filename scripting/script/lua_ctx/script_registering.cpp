@@ -185,6 +185,26 @@ void jc::script::register_functions(Script* script)
 
 	vm->add_function("setPunchForce", [](float v)	{ g_net->get_settings().set_punch_force(v); });
 	vm->add_function("getPunchForce", []()			{ return g_net->get_settings().get_punch_force(); });
+
+	/* OBJECTS & SPAWNING */
+
+	vm->add_function("spawnPlayer", [](Player* player, float x, float y, float z, luas::variadic_args va)
+	{
+		if (!player)
+			return;
+
+		auto hp = player->get_max_hp();
+		auto rotation = glm::eulerAngles(player->get_rotation()).y;
+		auto skin = player->get_skin();
+
+		switch (va.size())
+		{
+		case 2: skin = va.get<int32_t>(1); [[fallthrough]];
+		case 1: rotation = va.get<float>(0); break;
+		}
+
+		player->respawn({ x, y, z }, rotation, skin, hp, hp);
+	});
 #endif
 
 	// resgister shared functions
@@ -223,6 +243,8 @@ void jc::script::register_functions(Script* script)
 
 		return out;
 	});
+
+	vm->add_function("getRandomPlayer", []() { return g_net->get_random_player(); });
 }
 
 /***********/

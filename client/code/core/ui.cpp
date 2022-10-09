@@ -259,13 +259,13 @@ void UI::render()
 								  ImGuiWindowFlags_NoFocusOnAppearing |
 								  ImGuiWindowFlags_NoNav;
 
-	ImGui::SetNextWindowBgAlpha(0.10f);
+	ImGui::SetNextWindowBgAlpha(0.f);
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.f, 0.f });
 
 	if (ImGui::Begin("overlay", &open_overlay, window_flags))
 	{
-		if (g_net->is_joined() && splash_texture_alpha <= 0.f)
+		if (g_net->is_joined() && splash_texture_alpha <= 0.1f)
 		{
 			net_debug();
 
@@ -467,13 +467,6 @@ void UI::render_admin_panel()
 	ImGui::Begin("Admin Panel");
 
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-
-	if (ImGui::Button("Respawn / Revive"))
-		if (local_char->get_hp() <= 0.f)
-			g_world->get_localplayer()->respawn();
-
-	if (ImGui::Button("Almost ded"))
-		g_world->get_localplayer()->get_character()->set_hp(1.f);
 
 	if (g_key->is_key_pressed(KEY_F))
 		local_char->play_idle_stance();
@@ -815,7 +808,10 @@ void UI::overlay_debug()
 
 		if (g_key->is_key_pressed(KEY_X))
 			if (auto veh = local_player_pawn->get_vehicle(); veh && veh->get_driver_seat()->get_character() == local_player_pawn)
+			{
 				veh->set_engine_state(!veh->get_engine_state());
+
+			}
 
 		ptr			   closest_hp_ptr = 0;
 		static Weapon* closest_weapon = nullptr;
@@ -1000,44 +996,52 @@ void UI::net_debug()
 		static uint64_t kbs_recv = 0ull,
 						kbs_sent = 0ull;
 
+		static float packet_loss = 0.f;
+
 		ImGui::SetCursorPos({ 10.f, io->DisplaySize.y / 2.f + 100.f });
 
-		if (stat_level > 0)
+		auto render_text = [](const std::string& text)
 		{
-			ImGui::Text(FORMATV("Ping: {}", peer->roundTripTime).c_str());
-		}
+			ImGui::SetCursorPos({ 10.f, ImGui::GetCursorPosY() });
+			ImGui::Text(text.c_str());
+		};
+
+		if (stat_level > 0)
+			render_text(FORMATV("Ping: {}", peer->roundTripTime));
 
 		if (stat_level > 1)
 		{
-			ImGui::Text(FORMATV("Upload: {:.3f} KB/s", float(kbs_sent) / 1000.f).c_str());
-			ImGui::Text(FORMATV("Download: {:.3f} KB/s", float(kbs_recv) / 1000.f).c_str());
+			render_text(FORMATV("Upload: {:.3f} KB/s", float(kbs_sent) / 1000.f).c_str());
+			render_text(FORMATV("Download: {:.3f} KB/s", float(kbs_recv) / 1000.f).c_str());
 		}
 
 		if (stat_level > 2)
 		{
-			ImGui::Text(FORMATV("Network ID: {:x}", localplayer->get_nid()).c_str());
-			ImGui::Text(FORMATV("Packet Loss: {:.2f} %%", (float(peer->packetLoss) / 65535.f) * 100.f).c_str());
-			ImGui::Text(FORMATV("Packets Lost: {}", peer->packetsLost).c_str());
+			render_text(FORMATV("Network ID: {:x}", localplayer->get_nid()).c_str());
+			render_text(FORMATV("Packet Loss: {:.2f} %%", packet_loss).c_str());
+			render_text(FORMATV("Packets Lost: {}", peer->packetsLost).c_str());
 
 			if (peer->outgoingDataTotal >= 1000.f * 1000.f)
-				ImGui::Text(FORMATV("Total Uploaded: {:.3f} MB", float(peer->outgoingDataTotal) / (1000.f * 1000.f)).c_str());
-			else ImGui::Text(FORMATV("Total Uploaded: {:.3f} KB", float(peer->outgoingDataTotal) / 1000.f).c_str());
+				render_text(FORMATV("Total Uploaded: {:.3f} MB", float(peer->outgoingDataTotal) / (1000.f * 1000.f)));
+			else render_text(FORMATV("Total Uploaded: {:.3f} KB", float(peer->outgoingDataTotal) / 1000.f));
 
 			if (peer->incomingDataTotal >= 1000.f * 1000.f)
-				ImGui::Text(FORMATV("Total Downloaded: {:.3f} MB", float(peer->incomingDataTotal) / (1000.f * 1000.f)).c_str());
-			else ImGui::Text(FORMATV("Total Downloaded: {:.3f} KB", float(peer->incomingDataTotal) / 1000.f).c_str());
+				render_text(FORMATV("Total Downloaded: {:.3f} MB", float(peer->incomingDataTotal) / (1000.f * 1000.f)));
+			else render_text(FORMATV("Total Downloaded: {:.3f} KB", float(peer->incomingDataTotal) / 1000.f));
 
-			ImGui::Text(FORMATV("Total Packets Sent: {}", peer->totalPacketsSent).c_str());
-			ImGui::Text(FORMATV("Total Packets Lost: {}", peer->totalPacketsLost).c_str());
+			render_text(FORMATV("Total Packets Sent: {}", peer->totalPacketsSent));
+			render_text(FORMATV("Total Packets Lost: {}", peer->totalPacketsLost));
 		}
 		
 		if (kbs_timer.ready())
 		{
 			kbs_recv = peer->totalDataReceived;
 			kbs_sent = peer->totalDataSent;
+			packet_loss = (float(peer->packetLoss) / 65535.f) * 100.f;
 
 			peer->totalDataReceived = 0ull;
 			peer->totalDataSent = 0ull;
+			peer->packetLoss = 0u;
 		}
 	}
 }
