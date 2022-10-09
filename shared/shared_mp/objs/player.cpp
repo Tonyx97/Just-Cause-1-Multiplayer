@@ -295,7 +295,7 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 		character->set_transform(Transform(position, angles));
 		character->set_skin(skin, false);
 		character->set_hp(hp);
-		character->set_max_hp(hp);
+		character->set_max_hp(max_hp);
 	}
 	else
 	{
