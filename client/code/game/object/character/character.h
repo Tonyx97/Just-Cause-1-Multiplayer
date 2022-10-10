@@ -70,7 +70,7 @@ namespace jc::character
 		static constexpr uint32_t PLAYER_PUNCH_DAMAGE		= 0x5A43EC;
 		static constexpr uint32_t FLYING_Y_MODIFIER			= 0xAECBB0;
 
-		static constexpr auto DEFAULT_SPAWN_LOCATION		= vec3(-39.87f, 75.81f, -547.04f);
+		static constexpr auto DEFAULT_SPAWN_LOCATION		= vec3(658.f, 100.08f, 4773.71f);
 	}
 
 	namespace hook

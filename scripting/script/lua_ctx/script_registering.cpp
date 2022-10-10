@@ -27,12 +27,6 @@
 /*********/
 /*********/
 
-/*************/
-/*************/
-/* FUNCTIONS */
-/*************/
-/*************/
-
 namespace jc::script::util
 {
 	template <typename Fn>
@@ -80,6 +74,12 @@ namespace jc::script::util
 		fn(out);
 	}
 }
+
+/*************/
+/*************/
+/* FUNCTIONS */
+/*************/
+/*************/
 
 void jc::script::register_functions(Script* script)
 {
@@ -132,7 +132,7 @@ void jc::script::register_functions(Script* script)
 	/* PHYSICS */
 
 	vm->add_function("setGravity", [](float x, float y, float z) { g_physics->get_hk_world()->set_gravity({ x, y, z, 1.f }); });
-	vm->add_function("getGravity", []() { return g_physics->get_hk_world()->get_gravity(); });
+	//vm->add_function("getGravity", []() { return g_physics->get_hk_world()->get_gravity(); });
 #elif defined(JC_SERVER)
 	// register server functions
 

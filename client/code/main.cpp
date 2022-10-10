@@ -345,10 +345,7 @@ DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filena
 	serialization_ctx savegame;
 
 	_serialize(savegame, 1.f);
-	_serialize(savegame, Transform(vec3(658.f, 100.08f, 4773.71f)).to_raw());
-	//_serialize(savegame, Transform(vec3(2891.f, 71.65f, -3438.51f)));
-	//_serialize(savegame, Transform(vec3(2857.f, 92.f, -3604.f)));
-	//_serialize(savegame, Transform(jc::character::g::DEFAULT_SPAWN_LOCATION));
+	_serialize(savegame, Transform(jc::character::g::DEFAULT_SPAWN_LOCATION).to_raw());
 	_serialize(savegame, 0);	// ammo grenades
 
 	for (int i = 0; i < 14; ++i)
