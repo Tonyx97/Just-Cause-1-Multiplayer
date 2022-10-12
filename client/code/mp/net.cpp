@@ -10,6 +10,7 @@
 #include <tcp_client.h>
 
 #include <core/ui.h>
+#include <core/keycode.h>
 
 #include <game/sys/game/game_status.h>
 
@@ -208,6 +209,10 @@ void Net::set_joined(bool v)
 		// let everyone know that we entered the world and spawned
 
 		send(Packet(PlayerClientPID_Join, ChannelID_PlayerClient));
+
+		// disable input block when we join
+		
+		g_key->block_input(false);
 	}
 }
 

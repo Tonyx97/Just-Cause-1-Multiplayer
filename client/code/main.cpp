@@ -90,7 +90,6 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		log(GREEN, "Creating mod systems...");
 
 		g_ui = JC_ALLOC(UI);
-		g_key = JC_ALLOC(Keycode);
 		g_explosion = JC_ALLOC(ExplosionManager);
 		g_net = JC_ALLOC(Net);
 		g_chat = JC_ALLOC(Chat);
@@ -108,7 +107,6 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 		log(GREEN, "Initializing mod systems...");
 
-		g_key->init();
 		g_explosion->init();
 		g_task->init();
 
@@ -289,6 +287,14 @@ DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
 
 	log(GREEN, "continuing...");
 #endif
+
+	// initialize key system here
+
+	g_key = JC_ALLOC(Keycode);
+	g_key->init();
+	g_key->block_input(true);
+
+	// dispatch hook
 
 	auto ok = init_window_context_hook(ctx);
 
