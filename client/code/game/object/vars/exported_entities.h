@@ -174,6 +174,12 @@ namespace jc::vars
 		{ 153,	"rac_bookmaker_05.ee" },
 	};
 
+	inline std::string get_ee(int32_t id)
+	{
+		auto it = exported_entities.find(id);
+		return it != exported_entities.end() ? it->second : "";
+	}
+
 	inline std::unordered_map<int32_t, std::string> exported_entities_vehicles =
 	{
 		{ 0, "lave_001_Compact_Car_1.ee" }, // Baxter Petit
@@ -289,4 +295,10 @@ namespace jc::vars
 		{ 108, "seve_022_fishing_boat.ee" }, // Fishing boat
 		{ 109, "seve_023_speedboat_special.ee" }, // Bald Eagle Persuader agency boat at Agency 2 safehouse
 	};
+
+	inline std::string get_vehicle_ee(int32_t id)
+	{
+		auto it = exported_entities_vehicles.find(id);
+		return it != exported_entities_vehicles.end() ? it->second : "";
+	}
 }

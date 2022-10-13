@@ -201,6 +201,25 @@ AssetDataInfo Archives::get_asset(uint32_t hash)
 	return {};
 }
 
+std::vector<uint8_t> Archives::get_asset_data(const std::string& name)
+{
+	const auto asset_info = get_asset(name);
+
+	if (asset_info.arc_index == -1)
+		return {};
+
+	std::vector<uint8_t> out;
+
+	if (const auto arc = jc::archives::arcs[asset_info.arc_index])
+	{
+		out.resize(asset_info.size);
+
+		arc->read(asset_info.offset, out.data(), out.size());
+	}
+
+	return out;
+}
+
 size_t Archives::get_unknown() const
 {
 	return jc::read<size_t>(this, jc::archives::UNKNOWN);

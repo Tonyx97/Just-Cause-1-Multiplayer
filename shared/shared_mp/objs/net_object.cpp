@@ -57,7 +57,7 @@ bool NetObject::sync()
 	const float real_hp = object_base->get_real_hp(),
 				real_max_hp = object_base->get_max_hp();
 
-	if ((real_transform.t != get_position() || real_transform.r != get_rotation()) && transform_timer.ready())
+	if ((glm::distance2(real_transform.t, get_position()) > 0.00025f || real_transform.r != get_rotation()) && transform_timer.ready())
 		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Transform, (vars.transform = real_transform).pack()).set_unreliable());
 
 	switch (get_type())

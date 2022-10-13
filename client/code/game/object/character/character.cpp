@@ -101,6 +101,7 @@ namespace jc::character::hook
 			case 61:	// enter vehicle roof
 			case 62:	// enter air vehicle roof
 			case 63:	// vehicle roof to driver seat
+			case 65:	// vehicle roof to diff vehicle roof
 			case 66:	// mounted gun
 			case 74:
 			case 75:
@@ -608,7 +609,11 @@ void Character::set_skin(int32_t id, bool sync)
 
 void Character::set_skin(int32_t id, int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props, bool sync)
 {
-	g_rsrc_streamer->request_agent_ee(id, [=](ExportedEntityResource* eer, const std::string&)
+	const auto ee_name = jc::vars::get_ee(id);
+	if (ee_name.empty())
+		return;
+
+	g_rsrc_streamer->request_agent_ee(ee_name, [=](ExportedEntityResource* eer, const std::string&)
 	{
 		if (object_base_map* map = nullptr; eer->get_exported_entity()->load_class_properties(map) && map)
 		{

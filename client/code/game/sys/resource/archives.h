@@ -166,6 +166,8 @@ public:
 	AssetDataInfo get_asset(const std::string& name);
 	AssetDataInfo get_asset(uint32_t hash);
 
+	std::vector<uint8_t> get_asset_data(const std::string& name);
+
 	size_t get_unknown() const;
 
 	int get_asset_type(const std::string& name) const;

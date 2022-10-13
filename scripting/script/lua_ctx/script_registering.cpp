@@ -233,6 +233,11 @@ void jc::script::register_functions(Script* script)
 
 		player->respawn(pos.obj(), rotation, skin, max_hp, max_hp);
 	});
+
+	vm->add_function("createDamageableObject", [](const svec3& pos, const std::string& lod_name, const std::string& pfx_name)
+	{
+		return g_net->spawn_net_object(SyncType_Distance, NetObject_Damageable, lod_name, pfx_name, TransformTR(pos.obj()));
+	});
 #endif
 
 	// resgister shared functions
@@ -261,7 +266,7 @@ void jc::script::register_functions(Script* script)
 		return g_rsrc->trigger_non_remote_event(name, va);
 	});
 
-	/* OBJECTS & SPAWNING */
+	/* OBJECTS */
 
 	vm->add_function("getPlayers", []()
 	{

@@ -200,6 +200,7 @@ void PlayerClient::sync_entity(NetObject* target_entity, bool create)
 	{
 		p.add(target_entity, NetObjectActionSyncType_Create);
 		p.add(target_entity->get_object_id());
+		p.add(target_entity->get_pfx_id());
 		p.add(target_entity->get_transform().pack());
 		p.add(target_entity->get_hp());
 		p.add(target_entity->get_max_hp());

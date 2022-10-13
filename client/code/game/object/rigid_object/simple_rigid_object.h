@@ -21,5 +21,5 @@ public:
 
 	static SimpleRigidObject* ALLOC();
 
-	ref<SimpleRigidObject> create(Transform* transform, const std::string& model_name, const std::string& pfx_name);
+	ref<SimpleRigidObject> create(Transform* transform, const std::string& lod_name, const std::string& pfx_name);
 };

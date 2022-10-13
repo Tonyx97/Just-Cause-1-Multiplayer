@@ -12,9 +12,9 @@ SimpleRigidObject* SimpleRigidObject::ALLOC()
 	return jc::game::malloc<SimpleRigidObject>(jc::simple_rigid_object::INSTANCE_SIZE);
 }
 
-ref<SimpleRigidObject> SimpleRigidObject::create(Transform* transform, const std::string& model_name, const std::string& pfx_name)
+ref<SimpleRigidObject> SimpleRigidObject::create(Transform* transform, const std::string& lod_name, const std::string& pfx_name)
 {
-	jc::this_call<ptr>(jc::simple_rigid_object::fn::SETUP, this, model_name.c_str(), pfx_name.c_str(), transform);
+	jc::this_call<ptr>(jc::simple_rigid_object::fn::SETUP, this, lod_name.c_str(), pfx_name.c_str(), transform);
 
 	if (const auto physical = get_physical().obj)
 	{

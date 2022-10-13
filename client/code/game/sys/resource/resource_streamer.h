@@ -47,8 +47,8 @@ public:
 	bool is_blocked() const;
 	bool can_add_resource() const;
 	bool all_queues_empty() const;
-	bool request_agent_ee(int32_t id, const ee_resource_callback_t& callback, bool now = false);
-	bool request_vehicle_ee(int32_t id, const ee_resource_callback_t& callback, bool now = false);
+	bool request_agent_ee(const std::string& name, const ee_resource_callback_t& callback, bool now = false);
+	bool request_vehicle_ee(const std::string& name, const ee_resource_callback_t& callback, bool now = false);
 
 	std::deque<void*>* get_pending_queue() const;
 	std::deque<void*>* get_loading_queue() const;

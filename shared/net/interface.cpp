@@ -128,7 +128,8 @@ void enet::setup_channels()
 		case WorldPID_SetTime:				return nh::world::day_time(p);
 		case WorldPID_SetOwnership:			return nh::world::set_ownership(p);
 #else
-		case WorldPID_SpawnObject:			return nh::world::spawn_object(p);
+		case WorldPID_SpawnObject:			return nh::world::spawn_object(p, false);
+		case WorldPID_SpawnObjectWithPFX:	return nh::world::spawn_object(p, true);
 #endif
 		case WorldPID_SetTimeScale:			return nh::world::time_scale(p);
 		case WorldPID_SetPunchForce:		return nh::world::punch_force(p);

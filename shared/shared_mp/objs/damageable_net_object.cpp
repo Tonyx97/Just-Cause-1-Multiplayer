@@ -44,7 +44,7 @@ void DamageableNetObject::destroy_object()
 void DamageableNetObject::on_spawn()
 {
 #ifdef JC_CLIENT
-	obj = g_factory->spawn_damageable_object(get_position(), "building_blocks\\general\\oil_barrel_red.lod", "models\\building_blocks\\general\\oil_barrel.pfx");
+	obj = g_factory->spawn_damageable_object(get_position(), get_object_id(), get_pfx_id());
 
 	check(obj, "Could not create damageable object");
 

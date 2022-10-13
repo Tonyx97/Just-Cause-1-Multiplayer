@@ -524,7 +524,7 @@ void Player::set_vehicle(uint8_t seat_type, VehicleNetObject* v)
 	if (v)
 		v->set_player(seat_type, this);
 
-	log(RED, "{}'s vehicle: {:x}", get_nick(), v ? v->get_nid() : INVALID_NID);
+	//log(RED, "{}'s vehicle: {:x}", get_nick(), v ? v->get_nid() : INVALID_NID);
 
 	vehicle = v;
 	vehicle_seat = seat_type;

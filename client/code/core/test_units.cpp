@@ -161,7 +161,7 @@ void jc::test_units::test_0()
 		g_texture_system->load_texture("mim.jpg");
 		g_model_system->load_rbm(model);
 
-		g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), model, "");
+		//g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), model, "");
 
 		g_model_system->unload_rbm(model);
 		g_texture_system->unload_texture("mim.dds");

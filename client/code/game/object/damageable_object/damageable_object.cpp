@@ -2,11 +2,16 @@
 
 #include <game/transform/transform.h>
 #include <game/sys/game/game_control.h>
+#include <game/sys/resource/archives.h>
 
 #include "damageable_object.h"
 
-ref<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::string& model_name, const std::string& pfx_name)
+ref<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::string& lod_name, const std::string& pfx_name)
 {
+	const auto data = g_archives->get_asset_data(R"(E:\SteamLibrary\steamapps\common\Just Cause\PC\Models\building_blocks\general\bath_boll.pfx)");
+
+	log(RED, "ayy {}", data.size());
+
 	if (auto rf = g_game_control->create_object<DamageableObject>())
 	{
 		object_base_map map {};
@@ -33,8 +38,8 @@ ref<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::
 		map.insert<object_base_map::Float>(0x71103eeb, 0.00f);
 		map.insert<object_base_map::Float>(0xe5ff4048, 0.00f);
 		map.insert<object_base_map::Float>(0xf847a592, 1.00f);
-		map.insert<object_base_map::String>(ObjectBase::Hash_LOD_Model, R"(building_blocks\general\oil_barrel_red.lod)");
-		map.insert<object_base_map::String>(ObjectBase::Hash_PFX, R"(models\building_blocks\general\oil_barrel.pfx)");
+		map.insert<object_base_map::String>(ObjectBase::Hash_LOD_Model, lod_name);
+		map.insert<object_base_map::String>(ObjectBase::Hash_PFX, pfx_name);
 		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(Damageable_Barrel)");
 		map.insert<object_base_map::String>(0xf0503757, R"(360_exp_4_1.xml)");
 		map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, transform);

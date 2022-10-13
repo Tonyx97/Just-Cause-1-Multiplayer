@@ -170,11 +170,11 @@ CharacterHandle* FactorySystem::spawn_character(const std::string& model_name, c
 	return nullptr;
 }
 
-SimpleRigidObject* FactorySystem::spawn_simple_rigid_object(const vec3& position, const std::string& model_name, const std::string& pfx_name)
+SimpleRigidObject* FactorySystem::spawn_simple_rigid_object(const vec3& position, const std::string& lod_name, const std::string& pfx_name)
 {
 	Transform transform(position);
 
-	if (auto rf = SimpleRigidObject::ALLOC()->create(&transform, model_name, pfx_name))
+	if (auto rf = SimpleRigidObject::ALLOC()->create(&transform, lod_name, pfx_name))
 	{
 		g_game_control->enable_object(rf);
 
@@ -184,11 +184,11 @@ SimpleRigidObject* FactorySystem::spawn_simple_rigid_object(const vec3& position
 	return nullptr;
 }
 
-DamageableObject* FactorySystem::spawn_damageable_object(const vec3& position, const std::string& model_name, const std::string& pfx_name)
+DamageableObject* FactorySystem::spawn_damageable_object(const vec3& position, const std::string& lod_name, const std::string& pfx_name)
 {
 	Transform transform(position);
 
-	if (auto rf = DamageableObject::CREATE(&transform, model_name, pfx_name))
+	if (auto rf = DamageableObject::CREATE(&transform, lod_name, pfx_name))
 	{
 		g_game_control->enable_object(rf);
 
@@ -198,14 +198,14 @@ DamageableObject* FactorySystem::spawn_damageable_object(const vec3& position, c
 	return nullptr;
 }
 
-Vehicle* FactorySystem::spawn_vehicle(int32_t id, const Transform& transform)
+Vehicle* FactorySystem::spawn_vehicle(const std::string& ee_name, const Transform& transform)
 {
 	Vehicle* vehicle = nullptr;
 
 	// make sure we load the ee right now, we don't want to wait
 	// for the next frame, we need the vehicle now
 
-	g_rsrc_streamer->request_vehicle_ee(id, [&](ExportedEntityResource* eer, const std::string& name)
+	g_rsrc_streamer->request_vehicle_ee(ee_name, [&](ExportedEntityResource* eer, const std::string& name)
 	{
 		const auto ee = eer->get_exported_entity();
 

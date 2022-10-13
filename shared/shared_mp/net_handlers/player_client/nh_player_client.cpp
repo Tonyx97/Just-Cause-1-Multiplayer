@@ -132,7 +132,8 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 		case NetObject_Vehicle:
 		case NetObject_Blip:
 		{
-			const auto object_id = p.get_u16();
+			const auto object_id = p.get_str();
+			const auto pfx_id = p.get_str();
 			const auto transform = p.get<TransformPackedTR>();
 			const auto hp = p.get_float();
 			const auto max_hp = p.get_float();
@@ -140,7 +141,7 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			auto object = net_obj;
 
 			if (!object)
-				object = g_net->spawn_net_object(nid, type, object_id, TransformTR(transform));
+				object = g_net->spawn_net_object(nid, type, object_id, pfx_id, TransformTR(transform));
 
 			if (!object->is_spawned())
 				object->spawn();

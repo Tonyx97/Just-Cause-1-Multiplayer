@@ -41,14 +41,8 @@ bool ResourceStreamer::all_queues_empty() const
 	return get_pending_queue()->empty() && get_loading_queue()->empty();
 }
 
-bool ResourceStreamer::request_agent_ee(int32_t id, const ee_resource_callback_t& callback, bool now)
+bool ResourceStreamer::request_agent_ee(const std::string& name, const ee_resource_callback_t& callback, bool now)
 {
-	auto it = jc::vars::exported_entities.find(id);
-	if (it == jc::vars::exported_entities.end())
-		return false;
-
-	const auto name = it->second;
-
 	jc::stl::string ee_name = name;
 
 	log(YELLOW, "[ResourceStreamer] Requesting Agent EE '{}'", ee_name.c_str());
@@ -80,14 +74,8 @@ bool ResourceStreamer::request_agent_ee(int32_t id, const ee_resource_callback_t
 	return true;
 }
 
-bool ResourceStreamer::request_vehicle_ee(int32_t id, const ee_resource_callback_t& callback, bool now)
+bool ResourceStreamer::request_vehicle_ee(const std::string& name, const ee_resource_callback_t& callback, bool now)
 {
-	auto it = jc::vars::exported_entities_vehicles.find(id);
-	if (it == jc::vars::exported_entities_vehicles.end())
-		return false;
-
-	const auto name = it->second;
-
 	jc::stl::string ee_name = name;
 
 	log(YELLOW, "[ResourceStreamer] Requesting Vehicle EE '{}'", ee_name.c_str());

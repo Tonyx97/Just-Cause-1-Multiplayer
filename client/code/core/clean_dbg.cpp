@@ -178,7 +178,7 @@ DEFINE_HOOK_THISCALL(initialize_string, jc::string::fn::INIT, int, std::string* 
 
 				std::lock_guard lock(g_string_dump_lock);
 
-				if (!g_strings_dump.contains(new_str) && !new_str.starts_with("SPEED ") && !new_str.contains('\n') && !new_str.contains('\r'))
+				if (!g_strings_dump.contains(new_str) && !new_str.starts_with("SPEED ") && new_str.find('\n') == std::string::npos && new_str.find('\r') == std::string::npos)
 				{
 					if (ENABLE_STR_DEBUG)
 						log(GREEN, "New string '{}' from {}", str, _ReturnAddress());

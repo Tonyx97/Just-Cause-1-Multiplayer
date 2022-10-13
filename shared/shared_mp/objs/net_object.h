@@ -92,7 +92,8 @@ private:
 
 	NID nid = INVALID_NID;
 
-	uint16_t object_id = 0ui16;
+	std::string object_id,
+				pfx_id;
 
 	bool spawned = false;
 
@@ -146,7 +147,8 @@ public:
 	void set_owner(Player* new_owner);
 	void set_spawned(bool v);
 	void set_sync_type(SyncType v) { sync_type = v; }
-	void set_object_id(uint16_t v) { object_id = v; }
+	void set_object_id(const std::string& v) { object_id = v; }
+	void set_pfx_id(const std::string& v) { pfx_id = v; }
 	void set_sync_type_and_owner(SyncType _sync_type, Player* _owner);
 	void set_transform(const TransformTR& transform);
 	void set_transform(const TransformPackedTR& packed_transform);
@@ -164,7 +166,8 @@ public:
 	bool equal(NID _nid) const { return nid == _nid; }
 	bool was_just_killed() const { return old_vars.hp > 0.f && vars.hp <= 0.f; }
 
-	uint16_t get_object_id() const { return object_id; }
+	const std::string& get_object_id() const { return object_id; }
+	const std::string& get_pfx_id() const { return pfx_id; }
 
 	NID get_nid() const { return nid; }
 

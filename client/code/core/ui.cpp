@@ -667,7 +667,7 @@ void UI::render_admin_panel()
 		{
 			TransformTR transform(g_world->get_localplayer_character()->get_position() + vec3(2.f, 1.f, 0.f));
 
-			g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, static_cast<uint16_t>(veh_to_spawn), transform));
+			g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, jc::vars::exported_entities_vehicles.find(veh_to_spawn)->second, transform));
 
 			log(RED, "wants to spawn {}", veh_to_spawn);
 		}

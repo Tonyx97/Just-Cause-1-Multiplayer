@@ -101,6 +101,7 @@ public:
 		SyncType sync_type,
 #endif
 		NetObjectType type,
-		uint16_t object_id,
+		const std::string& object_id,
+		const std::string& pfx_id,
 		const TransformTR& transform);
 };

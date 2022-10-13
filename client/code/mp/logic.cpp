@@ -206,14 +206,20 @@ void jc::mp::logic::on_tick()
 			{
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
-				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Damageable, 0ui16, transform));
+				g_net->send(Packet(
+					WorldPID_SpawnObjectWithPFX,
+					ChannelID_World,
+					NetObject_Damageable,
+					std::string("building_blocks\\general\\bathboll.lod"),
+					std::string("models\\building_blocks\\general\\bath_boll.pfx"),
+					transform));
 			}
 
 			if (g_key->is_key_pressed(VK_F4))
 			{
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
-				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, 51ui16, transform));
+				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, std::string("lave_043_Rally_Car.ee"), transform));
 			}
 		}
 }
