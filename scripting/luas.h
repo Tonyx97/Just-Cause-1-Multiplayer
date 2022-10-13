@@ -46,7 +46,7 @@ inline void check_fatal(bool condition, const char* text, A... args)
 	fatal_error_callback(FORMAT(text, args).c_str());
 
 	// there is no recoverable way out of this...
-
+	
 	exit(EXIT_FAILURE);
 }
 
@@ -257,6 +257,9 @@ namespace luas
 
 		template <typename T>
 		concept does_ret_type_fit_in_eax = std::is_integral_v<T> || std::is_floating_point_v<T> || std::is_pointer_v<T>;
+
+		template <typename T>
+		using aligned_storage = std::aligned_storage_t<sizeof(T), alignof(T)>;
 	}
 
 	namespace tuple
@@ -277,7 +280,7 @@ namespace luas
 
 		// reverse for each
 		//
-		template <typename T, int i = std::tuple_size_v<std::decay_t<T>> -1, typename Fn, typename... A>
+		template <typename T, int i = std::tuple_size_v<std::decay_t<T>> - 1, typename Fn, typename... A>
 		constexpr void for_each_reverse(T&& tuple, Fn&& fn, A&&... args)
 		{
 			if constexpr (i >= 0)
@@ -468,7 +471,7 @@ namespace luas
 					return _s.push(std::bit_cast<R(__thiscall*)(Tx*, A...)>(fn)(_this, args...));
 				else
 				{
-					using _R = std::aligned_storage_t<sizeof(R), alignof(R)>;
+					using _R = detail::aligned_storage<R>;
 
 					_R out;
 
@@ -527,7 +530,7 @@ namespace luas
 			return 1;
 		}
 
-		static int oop_obj_create(lua_State* L)	// todo - clean
+		static int oop_obj_create(lua_State* L)
 		{
 			state s(L);
 
@@ -536,7 +539,7 @@ namespace luas
 
 			int stack = s.get_top();
 
-			//s.push(OOP_CREATE_FN_NAME());
+			s.push(OOP_CREATE_FN_NAME());
 			s.get_raw(1);
 
 			if (s.is_function(-1))
@@ -596,7 +599,7 @@ namespace luas
 				s.pop_n();
 				return 1;
 			}
-
+			
 			s.push_value(2);
 			s.get_raw(-2);
 			s.remove(-2);
@@ -659,7 +662,7 @@ namespace luas
 		}
 
 		template <typename T = int, typename... A>
-		T throw_error(const std::string& err, A&&... args) const { _on_error(_state, FORMATV(err, args...)); return T{}; }
+		T throw_error(const std::string& err, A&&... args) const { _on_error(_state, FORMATV(err, args...)); return T {}; }
 
 		void push_fn(const std::string& fn) const
 		{
@@ -864,6 +867,7 @@ namespace luas
 			set_field(-2, "Generic");
 			pop_n();
 		}
+
 		void begin_class()
 		{
 			push_table();
@@ -1021,7 +1025,7 @@ namespace luas
 
 			// start defining the class
 
-			auto iterate_args = []<typename I, typename Ix = std::remove_cvref_t<I>, typename... IA>(const auto & self, state * s, I && v, IA&&... args)
+			auto iterate_args = []<typename I, typename Ix = std::remove_cvref_t<I>, typename... IA>(const auto& self, state* s, I && v, IA&&... args)
 			{
 				// register properties
 
@@ -1029,8 +1033,10 @@ namespace luas
 
 				if constexpr (std::derived_from<Ix, property_wrapper_base>)
 				{
-					s->add_class_variable(v.key, [](lua_State* L)	// setter
+					s->add_class_variable(v.key, [](lua_State* L)
 					{
+						// setter
+
 						state s(L);
 
 						std::string field; s.pop(field);
@@ -1039,8 +1045,10 @@ namespace luas
 							return class_fn_caller<detail::keep_member_ptr_fn_v<decltype(Ix::s)>>::call(s, field_info->write);
 
 						return s.push_nil();
-					}, [](lua_State* L)	// getter
+					}, [](lua_State* L)
 					{
+						// getter
+
 						state s(L);
 
 						std::string field; s.pop(field);
@@ -1187,7 +1195,7 @@ namespace luas
 			return i;
 		}
 
-		int push_userdata(void* v) const { if (v) lua_pushlightuserdata(_state, v); else lua_pushnil(_state); return 1; }
+		int push_userdata(void* v) const { if (v) lua_pushlightuserdata(_state, v); else push_nil(); return 1; }
 		int push_nil() const { lua_pushnil(_state); return 1; }
 		int push_value(int i) const { lua_pushvalue(_state, i); return 1; }
 		int get_top() const { return lua_gettop(_state); }
@@ -1202,6 +1210,7 @@ namespace luas
 
 		bool is_table(int i) const { return lua_istable(_state, i); }
 		bool is_function(int i) const { return lua_isfunction(_state, i); }
+		bool is_nil(int i) const { return lua_isnil(_state, i); }
 
 		value_ok<bool> to_bool(int i) const
 		{
@@ -1240,8 +1249,11 @@ namespace luas
 		template <typename T = void*>
 		T to_userdata(int i) const
 		{
+			if (is_nil(i))
+				return nullptr;
+
 			if (!lua_isuserdata(_state, i) && !lua_islightuserdata(_state, i))
-				return throw_error<std::nullptr_t>("Expected '{}' value, got '{}'", typeid(T).name(), LUA_GET_TYPENAME(i));
+				return throw_error<T>("Expected '{}' value, got '{}'", typeid(T).name(), LUA_GET_TYPENAME(i));
 
 			return reinterpret_cast<T>(lua_touserdata(_state, i));
 		}
@@ -1289,7 +1301,7 @@ namespace luas
 	{
 	private:
 
-		state vm{};
+		state vm {};
 
 		// storage for values indices
 
@@ -1365,7 +1377,7 @@ namespace luas
 
 				if constexpr (detail::is_tuple<return_type>)
 				{
-					tuple::for_each(ret, [&]<typename T>(T && item) { _s.push(item); });
+					tuple::for_each(ret, [&]<typename T>(T&& item) { _s.push(item); });
 
 					return std::tuple_size_v<return_type>;
 				}
@@ -1382,7 +1394,7 @@ namespace luas
 			using type = detail::remove_cvref_t<T>;
 
 			type value;
-
+			
 			return _impl<A...>(_s, nargs, _s.pop_read(value, i), std::forward<In>(args)..., std::forward<type>(value));
 		}
 
@@ -1406,7 +1418,7 @@ namespace luas
 
 	struct lua_fn
 	{
-		state vm{};
+		state vm {};
 
 		int ref = 0;
 
@@ -1462,12 +1474,12 @@ namespace luas
 		template <typename... T, typename... A>
 		std::tuple<T...> call(A&&... args) const
 		{
-			std::tuple<T...> out{};
+			std::tuple<T...> out {};
 
 			vm.get_raw(LUA_REGISTRYINDEX, ref);
 
 			if (vm.call_safe(sizeof...(T), args...))
-				tuple::for_each_reverse(out, [&]<typename T>(T & item) { item = vm.pop<T>(); });
+				tuple::for_each_reverse(out, [&]<typename T>(T& item) { item = vm.pop<T>(); });
 
 			return out;
 		}
@@ -1478,7 +1490,7 @@ namespace luas
 		// set the stack offset to -1 because we pushed the function before
 
 		va.set_stack_offset(-1);
-
+		
 		// push all variadic arguments & call function
 
 		return call_protected(push(va), nreturns);
@@ -1587,10 +1599,10 @@ namespace luas
 		template <typename... T, typename... A>
 		std::tuple<T...> call_safe(const std::string& fn, A&&... args)
 		{
-			std::tuple<T...> out{};
+			std::tuple<T...> out {};
 
 			if (vm->call_safe_fn(fn, sizeof...(T), args...))
-				tuple::for_each_reverse(out, [&]<typename T>(T & item) { item = vm->pop<T>(); });
+				tuple::for_each_reverse(out, [&]<typename T>(T& item) { item = vm->pop<T>(); });
 
 			return out;
 		}

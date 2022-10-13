@@ -19,6 +19,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)resource_sys\resource_system.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)script\lua_ctx\script_events.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)script\lua_ctx\script_globals.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)script\lua_ctx\script_objects.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)script\lua_ctx\script_registering.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)script\script.h" />
   </ItemGroup>

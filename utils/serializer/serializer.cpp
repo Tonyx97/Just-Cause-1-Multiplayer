@@ -4,8 +4,12 @@
 
 std::set<std::string> serialized_objects;
 
+std::mutex serialized_obj_mtx;
+
 void register_serialized_object(int t, const std::string& name)
 {
+	std::lock_guard lock(serialized_obj_mtx);
+
 	if (!serialized_objects.contains(name))
 	{
 		log(CYAN, "Serialized Object ({}): {}", t, name);

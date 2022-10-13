@@ -231,7 +231,7 @@ void iterate_members(serialization_ctx& ctx, std::conditional_t<is_const, const 
 template <typename T, typename... A>
 void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_plain_copyable_v<T>)
 {
-	ADD_SERIALIZED_OBJECT(v, 0);
+	ADD_SERIALIZED_OBJECT(T, 0);
 
 	ctx.write(v);
 
@@ -242,7 +242,7 @@ void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_pla
 template <typename T, typename... A>
 void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_vector_v<T>)
 {
-	ADD_SERIALIZED_OBJECT(v, 1);
+	ADD_SERIALIZED_OBJECT(T, 1);
 
 	ctx.write(v.size());
 
@@ -256,7 +256,7 @@ void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_vec
 template <typename T, typename... A>
 void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_string_v<T>)
 {
-	ADD_SERIALIZED_OBJECT(v, 2);
+	ADD_SERIALIZED_OBJECT(T, 2);
 
 	const auto size = ctx.write(v.size());
 
@@ -270,7 +270,7 @@ void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_str
 template <typename T, typename... A>
 void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_complex_v<T>)
 {
-	ADD_SERIALIZED_OBJECT(v, 3);
+	ADD_SERIALIZED_OBJECT(T, 3);
 
 	iterate_members<T, serialize_fn, true>(ctx, v);
 

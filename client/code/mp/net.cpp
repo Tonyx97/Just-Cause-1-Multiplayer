@@ -406,7 +406,7 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 			rsrc->set_up_to_date(false);
 			rsrc->set_files_to_download(0);
-			rsrc->set_files_to_download(0);
+			rsrc->set_files_downloaded(0);
 		
 			if (!do_complete_sync)
 			{
@@ -609,7 +609,7 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 			// if the download queue is empty it means we downloaded everything
 			// so we can end the download and load the game (if it's not loaded yet)
-			
+
 			if (tcp_ctx.rsrc.downloading_resources.empty())
 				end_download();
 		});

@@ -2,6 +2,7 @@
 
 #include "script_registering.h"
 #include "script_globals.h"
+#include "script_objects.h"
 
 #include <resource_sys/resource_system.h>
 
@@ -88,6 +89,12 @@ void jc::script::register_functions(Script* script)
 
 	const auto vm = script->get_vm();
 
+	vm->register_class<svec3, svec3(float, float, float)>(
+		"vec3",
+		luas::property("x", &svec3::set_x, &svec3::get_x),
+		luas::property("y", &svec3::set_y, &svec3::get_y),
+		luas::property("z", &svec3::set_z, &svec3::get_z));
+
 #if defined(JC_CLIENT)
 	// register client functions
 
@@ -131,8 +138,8 @@ void jc::script::register_functions(Script* script)
 
 	/* PHYSICS */
 
-	vm->add_function("setGravity", [](float x, float y, float z) { g_physics->get_hk_world()->set_gravity({ x, y, z, 1.f }); });
-	//vm->add_function("getGravity", []() { return g_physics->get_hk_world()->get_gravity(); });
+	vm->add_function("setGravity", [](const svec3& v) { g_physics->get_hk_world()->set_gravity(v.obj()); });
+	vm->add_function("getGravity", []() { return svec3(g_physics->get_hk_world()->get_gravity()); });
 #elif defined(JC_SERVER)
 	// register server functions
 
@@ -209,9 +216,9 @@ void jc::script::register_functions(Script* script)
 
 	/* OBJECTS & SPAWNING */
 
-	vm->add_function("spawnPlayer", [](Player* player, float x, float y, float z, luas::variadic_args va)
+	vm->add_function("spawnPlayer", [](Player* player, const svec3& pos, luas::variadic_args va)
 	{
-		if (!player)
+		if (!g_net->has_net_object(player))
 			return;
 
 		auto max_hp = player->get_max_hp();
@@ -224,7 +231,7 @@ void jc::script::register_functions(Script* script)
 		case 1: rotation = va.get<float>(0); break;
 		}
 
-		player->respawn({ x, y, z }, rotation, skin, max_hp, max_hp);
+		player->respawn(pos.obj(), rotation, skin, max_hp, max_hp);
 	});
 #endif
 

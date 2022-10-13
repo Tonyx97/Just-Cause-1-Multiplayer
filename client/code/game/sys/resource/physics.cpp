@@ -13,14 +13,14 @@ namespace jc::physics
 
 using namespace jc::physics;
 
-void hkWorld::set_gravity(const vec4& v)
+void hkWorld::set_gravity(const vec3& v)
 {
-	jc::write(v, this, jc::hk_world::GRAVITY);
+	jc::write(vec4(v, 1.f), this, jc::hk_world::GRAVITY);
 }
 
-vec4 hkWorld::get_gravity() const
+vec3 hkWorld::get_gravity() const
 {
-	return jc::read<vec4>(this, jc::hk_world::GRAVITY);
+	return jc::read<vec3>(this, jc::hk_world::GRAVITY);
 }
 
 void Physics::init()

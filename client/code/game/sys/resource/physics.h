@@ -44,9 +44,9 @@ struct ray_hit_info
 
 struct hkWorld
 {
-	void set_gravity(const vec4& v);
+	void set_gravity(const vec3& v);
 
-	vec4 get_gravity() const;
+	vec3 get_gravity() const;
 };
 
 class Physics
