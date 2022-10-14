@@ -157,9 +157,8 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 	}
 	case NetObjectActionSyncType_Hide:
 	{
-		check(net_obj, "Trying to hide an non-existent object");
-
-		net_obj->despawn();
+		if (net_obj)
+			net_obj->despawn();
 
 		break;
 	}

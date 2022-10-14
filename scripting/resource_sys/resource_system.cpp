@@ -329,10 +329,9 @@ ResourceResult ResourceSystem::stop_resource(const std::string& name)
 		if (rsrc->get_status() == ResourceStatus_Stopped)
 			return ResourceResult_AlreadyStopped;
 
-		const auto result = rsrc->stop();
+		trigger_event(jc::script::event::ON_RSRC_STOP, rsrc);
 
-		if (result == ResourceResult_Ok)
-			trigger_event(jc::script::event::ON_RSRC_STOP, rsrc);
+		const auto result = rsrc->stop();
 
 #ifdef JC_SERVER
 		// if the resource was stopped then we will notify all clients

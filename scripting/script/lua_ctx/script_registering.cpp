@@ -216,6 +216,8 @@ void jc::script::register_functions(Script* script)
 
 	/* OBJECTS & SPAWNING */
 
+	vm->add_function("destroyObject", [](NetObject* obj) { if (g_net->has_net_object(obj)) g_net->destroy_net_object(obj); });
+
 	vm->add_function("spawnPlayer", [](Player* player, const svec3& pos, luas::variadic_args va)
 	{
 		if (!g_net->has_net_object(player))

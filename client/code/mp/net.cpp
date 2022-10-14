@@ -33,7 +33,7 @@ bool Net::init(const std::string& ip, const std::string& pw, const std::string& 
 	check(tcp->connect(ip, netcp::CLIENT_TO_SERVER_TCP_PORT), "Could not connect to server via TCP");
 
 	log(GREEN, "TCP Connected");
-	
+
 	tcp->send_packet(ClientToMsPacket_Password, pw);
 
 	log(YELLOW, "Waiting for password ack...");
@@ -64,26 +64,29 @@ bool Net::init(const std::string& ip, const std::string& pw, const std::string& 
 	// establish connection
 
 	ENetAddress address = { 0 };
-	ENetEvent	e		= {};
+	ENetEvent	e = {};
 
 	enet_address_set_host(&address, ip.c_str());
 	address.port = netcp::CLIENT_TO_SERVER_GAME_PORT;
 
-	if (!(peer = enet_host_connect(client, &address, 255, 0)))
-		return logb(RED, "No peers available for initiating enet");
+	log(YELLOW, "Connecting...");
 
-	enet_peer_timeout(peer, 0, 0, enet::PEER_TIMEOUT);
+	if (!(peer = enet_host_connect(client, &address, ChannelID_Max, 0)))
+		return logb(RED, "No peers available for initiating enet");
 
 #ifdef JC_DBG
 	while (!connected && enet_host_service(client, &e, 1000) >= 0)
 #else
 	while (!connected && enet_host_service(client, &e, 10000) >= 0)
 #endif
+	{
 		if (e.type == ENET_EVENT_TYPE_CONNECT)
 			connected = true;
+	}
 
 	check(connected, "Error while connecting to the server");
 
+	enet_peer_timeout(peer, 0, 0, enet::PEER_TIMEOUT);
 	enet_peer_ping_interval(peer, 2000);
 
 	log(GREEN, "Connected");
