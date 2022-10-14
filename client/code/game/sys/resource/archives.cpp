@@ -90,6 +90,10 @@ void Archives::destroy()
 
 void Archives::parse_sarcs()
 {
+	log(YELLOW, "Parsing .arc files...");
+
+	TimeProfiling p("Time parsing .arc files");
+
 	const auto entries = g_archives->get_assets_entries();
 
 	std::vector<std::vector<AssetDataInfo>> arcs_assets_list(MAX_ARCHIVES);
@@ -128,20 +132,33 @@ void Archives::parse_sarcs()
 					while (arc->get_curr_pointer() < data_offset)
 					{
 						const auto file_name = arc->read_str();
-						const auto offset = base_offset + arc->read<uint32_t>();
-						const auto size = arc->read<uint32_t>();
 
-						std::lock_guard lock(metadata_mtx);
+						metadata_mtx.lock();
 
 						if (!metadata.contains(file_name))
 						{
+							struct offset_and_size
+							{
+								uint32_t offset, size;
+							} offset_n_size = arc->read<offset_and_size>();
+
+							offset_n_size.offset += base_offset;
+
 							metadata.insert({ file_name,
 							{
 								.name = file_name,
 								.arc_index = data_info.arc_index,
-								.offset = offset,
-								.size = size,
+								.offset = offset_n_size.offset,
+								.size = offset_n_size.size,
 							} });
+
+							metadata_mtx.unlock();
+						}
+						else
+						{
+							metadata_mtx.unlock();
+
+							arc->skip(sizeof(uint32_t) * 2);
 						}
 					}
 
