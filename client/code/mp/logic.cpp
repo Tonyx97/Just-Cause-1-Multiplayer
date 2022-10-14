@@ -210,8 +210,8 @@ void jc::mp::logic::on_tick()
 					WorldPID_SpawnObjectWithPFX,
 					ChannelID_World,
 					NetObject_Damageable,
-					std::string("building_blocks\\general\\bathboll.lod"),
-					std::string("models\\building_blocks\\general\\bath_boll.pfx"),
+					std::string("bathboll.lod"),
+					std::string("bath_boll.pfx"),
 					transform));
 			}
 

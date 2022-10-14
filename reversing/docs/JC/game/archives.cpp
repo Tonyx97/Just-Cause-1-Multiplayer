@@ -27,6 +27,8 @@ Archive::Archive(const std::string& filename, int index) : filename(filename), i
 	check(file && file != INVALID_HANDLE_VALUE, "Could not open game archives");
 
 	log(GREEN, "Game archive '{}': 0x{:x}", filename, ptr(file));
+
+	parse_sarcs();
 }
 
 Archive::~Archive()
@@ -38,6 +40,50 @@ void Archive::read_internal(void* data, size_t size)
 {
 	if (!ReadFile(file, data, size, nullptr, nullptr))
 		log(RED, "[{}] Error reading '{}': 0x{:x}", CURR_FN, filename, GetLastError());
+
+	read_offset += size;
+}
+
+void Archive::parse_sarcs()
+{
+	const auto entries = g_archives->get_assets_entries();
+
+	for (const auto& entry : entries)
+	{
+		const auto data_info = g_archives->get_asset_data_info(&entry);
+
+		seek(data_info.offset);
+
+		switch (read<uint32_t>())
+		{
+		case 0x4: // .ee
+		{
+			skip(8);
+
+			const auto data_begin_offset = read<uint32_t>();
+			const auto data_offset = get_curr_pointer();
+
+			while (get_curr_pointer() < data_begin_offset)
+			{
+				const auto file_name = read_str();
+				const auto size = read<uint32_t>();
+				const auto offset = data_offset + read<uint32_t>();
+
+				std::lock_guard lock(metadata_mtx);
+
+				metadata.insert({ file_name,
+				{
+					.name = file_name,
+					.data_base = data_info.offset + data_offset,
+					.offset = offset,
+					.size = size,
+				} });
+			}
+
+			break;
+		}
+		}
+	}
 }
 
 void Archive::seek(int32_t pos)
@@ -50,9 +96,9 @@ void Archive::skip(int32_t bytes)
 	SetFilePointer(file, bytes, nullptr, FILE_CURRENT);
 }
 
-uint32_t Archive::get_curr_pointer() const
+int32_t Archive::get_curr_pointer() const
 {
-	return SetFilePointer(file, 0, nullptr, FILE_CURRENT);
+	return static_cast<int32_t>(SetFilePointer(file, 0, nullptr, FILE_CURRENT));
 }
 
 std::string Archive::read_str()
@@ -67,6 +113,23 @@ std::string Archive::read_str()
 	
 	return str;
 }
+
+/*std::shared_ptr<Asset> Archive::get_named_asset(const std::string& name, AssetInfo* info)
+{
+	auto it = metadata.find(name);
+	if (it == metadata.end())
+		return {};
+
+	const auto asset_info = it->second;
+	const auto asset = JC_ALLOC(Asset, asset_info.size);
+
+	*info = asset_info;
+
+	seek(asset_info.data_base + asset_info.offset);
+	read_internal(asset->data, asset->size);
+
+	return std::shared_ptr<Asset>(asset);
+}*/
 
 void Archives::init()
 {
@@ -86,8 +149,6 @@ void Archives::init()
 
 	for (auto& f : futures)
 		f.wait();
-
-	parse_sarcs();
 }
 
 void Archives::destroy()
@@ -96,54 +157,55 @@ void Archives::destroy()
 		JC_FREE(arc);
 }
 
-void Archives::parse_sarcs()
+void Archives::dump_hashed_assets()
 {
-	const auto entries = g_archives->get_assets_entries();
+	/*const auto entries = get_assets_entries();
 
 	for (const auto& entry : entries)
 	{
-		const auto data_info = g_archives->get_asset_data_info(&entry);
+		const auto data_info = get_asset_data_info(&entry);
+
 		const auto arc = arcs[data_info.arc_index];
 
-		arc->seek(data_info.offset);
+		AssetBuffer ab {};
 
-		const auto base_offset = arc->get_curr_pointer();
+		ab.data.resize(data_info.size);
 
-		switch (arc->read<uint32_t>())
+		arc->read(data_info.offset, ab.data.data(), data_info.size);
+
+		std::string format;
+
+		switch (jc::read<uint32_t>(ab.data.data()))
 		{
-		case 0x4: // .ee
+		case 0x4:			format = ".ee"; break;
+		case 0x5:			format = ".rbm"; break;
+		case 0x4D494E41:	format = ".anim"; break;
+		case 0x20534444:	format = ".dds"; break;
+		case 0x8C4D42:		format = ".bmp"; break;
+		case 0x584650:		format = ".pfx"; break;
+		case 0xA0D2F2F:		format = ".shader"; break;
+		default:
 		{
-			arc->skip(sizeof(uint32_t) * 2);
-
-			const auto data_begin_offset = arc->read<uint32_t>();
-			const auto data_offset = base_offset + data_begin_offset;
-
-			while (arc->get_curr_pointer() < data_offset)
+			switch (jc::read<uint8_t>(ab.data.data()))
 			{
-				const auto file_name = arc->read_str();
+			case 0x3C:		format = ".xml"; break;
+			default:
+			{
+				log(BLUE, "'{}'", (char*)ab.data.data());
 
-				//std::lock_guard lock(metadata_mtx);
-
-				if (!metadata.contains(file_name))
-				{
-					const auto offset = base_offset + arc->read<uint32_t>();
-					const auto size = arc->read<uint32_t>();
-
-					metadata.insert({ file_name,
-					{
-						.name = file_name,
-						.arc_index = data_info.arc_index,
-						.offset = offset,
-						.size = size,
-					} });
-				}
-				else arc->skip(sizeof(uint32_t) * 2);
+				format = ".txt";
 			}
+			}
+		}
+		}
 
-			break;
+		if (!format.empty())
+		{
+			std::ofstream file("ExtractedAssets\\hashed\\" + util::string::hex_to_str(data_info.hash) + format, std::ios::binary);
+
+			file.write((char*)ab.data.data(), ab.data.size());
 		}
-		}
-	}
+	}*/
 }
 
 ArchiveAssetEntry* Archives::get_asset_entry(const std::string& name)
@@ -192,23 +254,19 @@ AssetDataInfo Archives::get_asset(uint32_t hash)
 
 std::vector<uint8_t> Archives::get_asset_data(const std::string& name)
 {
-	const auto it = metadata.find(name);
+	const auto asset_info = get_asset(name);
 
-	if (it == metadata.end())
+	if (asset_info.arc_index == -1)
 		return {};
-
-	const auto& info = it->second;
-
-	if (info.arc_index < 0 || info.arc_index >= MAX_ARCHIVES)
-		return {};
-
-	const auto arc = arcs[info.arc_index];
 
 	std::vector<uint8_t> out;
 
-	out.resize(info.size);
+	if (const auto arc = arcs[asset_info.arc_index])
+	{
+		out.resize(asset_info.size);
 
-	arc->read(info.offset, out.data(), out.size());
+		arc->read(asset_info.offset, out.data(), out.size());
+	}
 
 	return out;
 }

@@ -704,6 +704,9 @@
     <ClInclude Include="code\defs\client_basic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="code\game\sys\resource\resource_cache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rsrc\bug_ripper_ui.rc">

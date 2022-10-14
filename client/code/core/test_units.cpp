@@ -92,12 +92,11 @@ DEFINE_HOOK_THISCALL_S(_test3, 0x596420, bool, int _this)
 	return res;
 }
 
-DEFINE_HOOK_THISCALL_S(_test4, 0x59A560, bool, int _this)
+DEFINE_HOOK_THISCALL(_test4, 0x40B4B0, int, int _this, const char* name)
 {
-	auto res = _test4_hook(_this);
+	auto res = _test4_hook(_this, name);
 
-	if (res && _this != ptr(g_world->get_localplayer_character()))
-		log(RED, "4 {:x} {:x}", RET_ADDRESS, _this);
+	log(RED, "{}", name);
 
 	return res;
 }
@@ -106,8 +105,8 @@ void jc::test_units::init()
 {
 	//_test1_hook.hook();
 	/*_test2_hook.hook();
-	_test3_hook.hook();
-	_test4_hook.hook();*/
+	_test3_hook.hook();*/
+	//_test4_hook.hook(true);
 
 	//_set_boat_vel_hook.hook();
 	//resource_request_hook.hook();
@@ -116,6 +115,7 @@ void jc::test_units::init()
 
 void jc::test_units::destroy()
 {
+	//_test4_hook.hook(false);
 	//_test1_hook.unhook();
 	/*_test2_hook.unhook();
 	_test3_hook.unhook();

@@ -303,6 +303,7 @@
     <ClInclude Include="code\game\sys\game\game_ctx.h" />
     <ClInclude Include="code\game\sys\game\game_status.h" />
     <ClInclude Include="code\game\sys\resource\model_system.h" />
+    <ClInclude Include="code\game\sys\resource\resource_cache.h" />
     <ClInclude Include="code\game\sys\resource\texture_system.h" />
     <ClInclude Include="code\game\sys\world\player_global_info.h" />
     <ClInclude Include="code\game\sys\resource\resource_streamer.h" />

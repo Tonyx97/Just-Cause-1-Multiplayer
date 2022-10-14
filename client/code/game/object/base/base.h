@@ -26,8 +26,13 @@ namespace jc::object_base
 	}
 }
 
-struct object_base_map : public jc::map<object_base_map, uint32_t>
+struct object_base_map : public jc::stl::map<object_base_map, uint32_t>
 {
+	static constexpr auto CREATE() { return 0x5CE160; }
+	static constexpr auto DESTROY() { return 0x5CE110; }
+	static constexpr auto INSERT() { return 0x5CE300; }
+	static constexpr auto FIND_STRING() { return 0x46ADD0; }
+
 	enum ValueType
 	{
 		Int = 1,
@@ -39,11 +44,6 @@ struct object_base_map : public jc::map<object_base_map, uint32_t>
 		Mat4 = 8,
 		Unknown = 0
 	};
-
-	static constexpr auto CREATE() { return 0x5CE160; }
-	static constexpr auto DESTROY() { return 0x5CE110; }
-	static constexpr auto INSERT() { return 0x5CE300; }
-	static constexpr auto FIND_STRING() { return 0x46ADD0; }
 
 	template <ValueType TYPE, typename T>
 	void insert(uint32_t key, const T& value)

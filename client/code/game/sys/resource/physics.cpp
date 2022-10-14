@@ -49,7 +49,12 @@ bool Physics::load_pfx(const std::string& filename)
 	if (file_data.empty())
 		return false;
 
-	AssetDataHolder data_holder(file_data);
+	return load_pfx(filename, file_data);
+}
+
+bool Physics::load_pfx(const std::string& filename, const std::vector<uint8_t>& data)
+{
+	AssetDataHolder data_holder(data);
 
 	jc::stl::string name = util::fs::strip_parent_path(filename);
 

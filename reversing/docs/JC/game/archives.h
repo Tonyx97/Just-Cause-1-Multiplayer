@@ -16,13 +16,17 @@ namespace jc::archives
 	}
 }
 
+enum AssetType
+{
+	
+};
+
 struct AssetInfo
 {
 	std::string name;
 
-	int arc_index = -1;
-
-	size_t offset = 0u,
+	size_t data_base = 0u,
+		   offset = 0u,
 		   size = 0u;
 };
 
@@ -44,6 +48,60 @@ struct AssetDataInfo
 		   size = 0u;
 };
 
+struct Asset
+{
+	uint8_t* data = nullptr;
+
+	size_t size = 0u;
+
+	Asset(size_t size) : size(size)
+	{
+		data = new uint8_t[size]();
+	}
+
+	~Asset()
+	{
+		delete[] data;
+	}
+};
+
+struct AssetBuffer
+{
+	std::vector<uint8_t> data;
+
+	size_t offset = 0u;
+
+	template <typename T>
+	T read()
+	{
+		const auto value = *BITCAST(T*, data.data() + offset);
+
+		offset += sizeof(T);
+
+		return value;
+	}
+
+	std::string read_str()
+	{
+		const auto len = read<size_t>();
+
+		std::string out;
+
+		out.resize(len);
+
+		memcpy(out.data(), data.data() + offset, len);
+
+		offset += len;
+
+		return out;
+	}
+
+	void skip(size_t bytes)
+	{
+		offset += bytes;
+	}
+};
+
 class Archive
 {
 private:
@@ -54,6 +112,8 @@ private:
 
 	int index = -1;
 
+	size_t read_offset = 0u;
+
 	void read_internal(void* data, size_t size);
 
 public:
@@ -61,12 +121,14 @@ public:
 	Archive(const std::string& filename, int index);
 	~Archive();
 
+	void parse_sarcs();
+
 	// file reading methods
 
 	void seek(int32_t pos);
 	void skip(int32_t bytes);
 
-	uint32_t get_curr_pointer() const;
+	int32_t get_curr_pointer() const;
 
 	template <typename T>
 	T read()
@@ -83,6 +145,10 @@ public:
 	}
 
 	std::string read_str();
+
+	// asset methods
+
+	std::shared_ptr<Asset> get_named_asset(const std::string& name, AssetInfo* info);
 };
 
 class Archives
@@ -91,7 +157,7 @@ public:
 
 	void init();
 	void destroy();
-	void parse_sarcs();
+	void dump_hashed_assets();
 
 	ArchiveAssetEntry* get_asset_entry(const std::string& name);
 	ArchiveAssetEntry* get_asset_entry(uint32_t hash);

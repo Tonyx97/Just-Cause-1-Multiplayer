@@ -1,8 +1,12 @@
 #pragma once
 
+#include "resource_cache.h"
+
 namespace jc::model_system
 {
 	static constexpr uint32_t SINGLETON = 0xD84F50; // ModelSystem*
+
+	static constexpr uint32_t MODEL_CACHE = 0x4;
 
 	namespace fn
 	{
@@ -10,7 +14,7 @@ namespace jc::model_system
 	}
 }
 
-class ModelSystem
+class ModelSystem : public ResourceCache<jc::model_system::MODEL_CACHE>
 {
 public:
 
@@ -18,6 +22,7 @@ public:
 	void destroy();
 
 	bool load_rbm(const std::string& filename);
+	bool load_rbm(const std::string& filename, const std::vector<uint8_t>& data);
 	bool unload_rbm(const std::string& filename);
 };
 

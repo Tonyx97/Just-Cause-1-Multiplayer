@@ -26,9 +26,14 @@ bool ModelSystem::load_rbm(const std::string& filename)
 	if (file_data.empty())
 		return false;
 
+	return load_rbm(filename, file_data);
+}
+
+bool ModelSystem::load_rbm(const std::string& filename, const std::vector<uint8_t>& data)
+{
 	jc::stl::string name = util::fs::strip_parent_path(filename);
 
-	auto model = jc::this_call<AssetRBM*>(fn::LOAD_RBM_FROM_MEM, this, &name, file_data.data(), file_data.size(), 2);
+	auto model = jc::this_call<AssetRBM*>(fn::LOAD_RBM_FROM_MEM, this, &name, data.data(), data.size(), 2);
 	auto r = model->get_ref();
 
 	rbms.insert({ filename, std::move(r) });

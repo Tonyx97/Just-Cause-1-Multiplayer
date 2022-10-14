@@ -6,14 +6,22 @@
 
 #include "damageable_object.h"
 
+#include <game/sys/resource/physics.h>
+#include <game/sys/resource/model_system.h>
+
 ref<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::string& lod_name, const std::string& pfx_name)
 {
-	const auto data = g_archives->get_asset_data(R"(E:\SteamLibrary\steamapps\common\Just Cause\PC\Models\building_blocks\general\bath_boll.pfx)");
-
-	log(RED, "ayy {}", data.size());
-
 	if (auto rf = g_game_control->create_object<DamageableObject>())
 	{
+		// todojc - improve this by properly loading all dependencies such as the 
+		// textures etc
+
+		if (!g_model_system->has_resource(lod_name))
+			g_model_system->load_rbm(lod_name, g_archives->get_asset_data(lod_name));
+
+		if (!g_physics->has_resource(pfx_name))
+			g_physics->load_pfx(pfx_name, g_archives->get_asset_data(pfx_name));
+
 		object_base_map map {};
 
 		auto dummy_mat = mat4(1.f);
@@ -40,7 +48,7 @@ ref<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::
 		map.insert<object_base_map::Float>(0xf847a592, 1.00f);
 		map.insert<object_base_map::String>(ObjectBase::Hash_LOD_Model, lod_name);
 		map.insert<object_base_map::String>(ObjectBase::Hash_PFX, pfx_name);
-		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(Damageable_Barrel)");
+		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(Damageable)");
 		map.insert<object_base_map::String>(0xf0503757, R"(360_exp_4_1.xml)");
 		map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, transform);
 		map.insert<object_base_map::Mat4>(0xcab9f941, &dummy_mat);
