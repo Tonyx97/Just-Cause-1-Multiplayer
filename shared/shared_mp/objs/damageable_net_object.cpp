@@ -68,7 +68,7 @@ void DamageableNetObject::on_net_var_change(NetObjectVarType var_type)
 	{
 	case NetObjectVar_Transform:
 	case NetObjectVar_Position:
-	case NetObjectVar_Rotation: /*obj->set_transform(Transform(get_position(), get_rotation()));*/ break;
+	case NetObjectVar_Rotation: obj->set_transform(Transform(get_position(), get_rotation())); break;
 	case NetObjectVar_Velocity: obj->get_physical()->set_velocity(get_velocity()); break;
 	case NetObjectVar_Health: obj->set_hp(get_hp()); break;
 	case NetObjectVar_MaxHealth: obj->set_max_hp(get_max_hp()); break;

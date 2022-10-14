@@ -63,21 +63,15 @@ void BlipNetObject::on_despawn()
 void BlipNetObject::on_net_var_change(NetObjectVarType var_type)
 {
 #ifdef JC_CLIENT
-#else
+	if (!obj)
+		return;
+
 	switch (var_type)
 	{
-	case NetObjectVar_Position:
-	case NetObjectVar_Rotation:
 	case NetObjectVar_Transform:
-	{
-		Packet p(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Transform, get_transform());
-
-		g_net->send_broadcast_joined(p);
-
-		break;
+	case NetObjectVar_Position:
+	case NetObjectVar_Rotation:		obj->set_transform(Transform(get_position(), get_rotation())); break;
 	}
-	default:
-		break;
-	}
+#else
 #endif
 }

@@ -4,6 +4,8 @@
 
 #include <timer/timer.h>
 
+class PlayerClient;
+
 // network id of an object
 //
 using NID = uint16_t;
@@ -61,23 +63,36 @@ DEFINE_ENUM(NetObjectActionSyncType, uint8_t)
 class Player;
 class EntityRg;
 
-struct NetObjectVars
+template <typename T>
+struct NetVarInfo
 {
-	TransformTR transform {};
+	T old {},
+	  curr {};
 
-	vec3 velocity {},
-		 pending_velocity {};
+	NetVarInfo() {}
+	NetVarInfo(const T& v) { curr = v; }
 
-	float hp = jc::nums::MAXF,
-		  max_hp = jc::nums::MAXF;
+	void set(const T& v)
+	{
+		old = curr;
+		curr = v;
+	}
+
+	const T& get_old() const { return old; }
+	const T& get() const { return curr; }
 };
 
 class NetObject
 {
 protected:
+	
+	NetVarInfo<TransformTR> transform {};
 
-	NetObjectVars vars {};
-	NetObjectVars old_vars {};
+	NetVarInfo<vec3> velocity {},
+					 pending_velocity {};
+
+	NetVarInfo<float> hp = jc::nums::MAXF,
+					  max_hp = jc::nums::MAXF;
 
 private:
 
@@ -134,8 +149,29 @@ public:
 	void set_velocity_timer(int64_t v);
 
 	bool is_owned() const;
+#else
+	// the following methods are used by the server to force sync with other players
+	// and send them the latest info
+	
+	void sync_transform(bool reliable = false, PlayerClient* ignore_pc = nullptr);
+	void sync_hp(bool reliable = true, PlayerClient* ignore_pc = nullptr);
+	void sync_max_hp(bool reliable = true, PlayerClient* ignore_pc = nullptr);
+	void sync_velocity(bool reliable = false, PlayerClient* ignore_pc = nullptr);
 #endif
 
+	// shared functions to set the object vars
+	
+	void set_transform(const TransformTR& v);
+	void set_transform(const TransformPackedTR& v);
+	void set_position(const vec3& v);
+	void set_rotation(const quat& v);
+	void set_hp(float v);
+	void set_max_hp(float v);
+	void set_velocity(const vec3& v);
+	void set_pending_velocity(const vec3& v);
+
+	// net object general functions
+	
 	template <typename T>
 	void set_userdata(const T& v)
 	{
@@ -150,21 +186,14 @@ public:
 	void set_object_id(const std::string& v) { object_id = v; }
 	void set_pfx_id(const std::string& v) { pfx_id = v; }
 	void set_sync_type_and_owner(SyncType _sync_type, Player* _owner);
-	void set_transform(const TransformTR& transform);
-	void set_transform(const TransformPackedTR& packed_transform);
-	void set_position(const vec3& v);
-	void set_rotation(const quat& v);
-	void set_hp(float v);
-	void set_max_hp(float v);
-	void set_velocity(const vec3& v);
-	void set_pending_velocity(const vec3& v);
 
 	bool is_valid_type() const;
 	bool is_owned_by(Player* player) const;
 	bool is_spawned() const;
 	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
 	bool equal(NID _nid) const { return nid == _nid; }
-	bool was_just_killed() const { return old_vars.hp > 0.f && vars.hp <= 0.f; }
+	bool was_just_killed() const { return hp.get_old() > 0.f && hp.get() <= 0.f; }
+	bool is_alive() const { return get_hp() > 0.f; }
 
 	const std::string& get_object_id() const { return object_id; }
 	const std::string& get_pfx_id() const { return pfx_id; }
@@ -197,14 +226,21 @@ public:
 		return casted;
 	}
 
-	const NetObjectVars& get_old_vars() const { return old_vars; }
+	float get_hp() const { return hp.curr; }
+	float get_max_hp() const { return max_hp.curr; }
 
-	float get_hp() const { return vars.hp; }
-	float get_max_hp() const { return vars.max_hp; }
+	const vec3& get_velocity() const { return velocity.curr; }
+	const vec3& get_position() const { return transform.curr.t; }
+	const quat& get_rotation() const { return transform.curr.r; }
 
-	const vec3& get_velocity() const { return vars.velocity; }
-	const vec3& get_position() const { return vars.transform.t; }
-	const quat& get_rotation() const { return vars.transform.r; }
-
-	const TransformTR& get_transform() const { return vars.transform; }
+	const TransformTR& get_transform() const { return transform.curr; }
 };
+
+// nice macros to use while defining the scripting functions to avoid
+// code duplication
+
+#ifdef JC_CLIENT
+#define SYNC_NET_VAR(obj, name)
+#else
+#define SYNC_NET_VAR(obj, name) obj->sync_##name();
+#endif

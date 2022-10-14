@@ -284,12 +284,20 @@ void jc::script::register_functions(Script* script)
 
 	/* NET OBJECT */
 
-	vm->add_function("getObjectHealth", [](NetObject* obj) { return g_net->has_net_object(obj) ? obj->get_hp() : 0.f; });
-	vm->add_function("getObjectMaxHealth", [](NetObject* obj) { return g_net->has_net_object(obj) ? obj->get_max_hp() : 0.f; });
 	vm->add_function("getObjectNID", [](NetObject* obj) { return obj->get_nid(); });
 	vm->add_function("getObjectType", [](NetObject* obj) { return obj->get_type(); });
-	vm->add_function("getObjectPosition", [](NetObject* obj) { const auto p = obj->get_position(); return std::make_tuple(p.x, p.y, p.z); });
-	vm->add_function("getObjectRotation", [](NetObject* obj) { const auto p = glm::eulerAngles(obj->get_rotation()); return std::make_tuple(p.x, p.y, p.z); });
+
+	vm->add_function("setObjectHealth", [](NetObject* obj, float v) { obj->set_hp(v); SYNC_NET_VAR(obj, hp); });
+	vm->add_function("getObjectHealth", [](NetObject* obj) { return g_net->has_net_object(obj) ? obj->get_hp() : 0.f; });
+
+	vm->add_function("setObjectMaxHealth", [](NetObject* obj, float v) { obj->set_max_hp(v); SYNC_NET_VAR(obj, max_hp); });
+	vm->add_function("getObjectMaxHealth", [](NetObject* obj) { return g_net->has_net_object(obj) ? obj->get_max_hp() : 0.f; });
+
+	vm->add_function("setObjectPosition", [](NetObject* obj, const svec3& v) { obj->set_position(v.obj()); SYNC_NET_VAR(obj, transform); });
+	vm->add_function("getObjectPosition", [](NetObject* obj) { return svec3(obj->get_position()); });
+
+	vm->add_function("setObjectRotation", [](NetObject* obj, const svec3& v) { obj->set_rotation(quat(v.obj())); SYNC_NET_VAR(obj, transform); });
+	vm->add_function("getObjectRotation", [](NetObject* obj) { return svec3(glm::eulerAngles(obj->get_rotation())); });
 
 	/* PLAYER */
 

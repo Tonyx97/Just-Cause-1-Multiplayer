@@ -265,17 +265,19 @@ void Net::tick()
 		}
 	});
 
+	// call tick event after all packets from players are received
+
+	g_rsrc->trigger_event(jc::script::event::ON_TICK);
+
+	// debug info
+	
 	static auto packet_per_sec_printer = timer::add_timer(1000, [&]()
 	{
-		//log(RED, "Packets per second: {} | Bytes per second: {}", sv->totalReceivedPackets, sv->totalReceivedData);
-
 		SetWindowText(GetConsoleWindow(), std::format(L"JC:MP Server ({} players, {} p/s, {} b/s)", get_player_clients_count(), sv->totalReceivedPackets, sv->totalReceivedData).c_str());
 
 		sv->totalReceivedData = 0;
 		sv->totalReceivedPackets = 0;
 	});
-
-	g_rsrc->trigger_event(jc::script::event::ON_TICK);
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000 / config.get_info().refresh_rate));
 }

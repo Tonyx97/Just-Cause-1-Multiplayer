@@ -133,6 +133,12 @@ PacketResult nh::world::sync_object(const Packet& p)
 		return PacketRes_NotAllowed;
 #endif
 
+	// make sure we resend the packet to all clients
+	// because the setters won't send any packets
+
+	// packets received from clients are special and they use the reliability the
+	// client used, we are just broadcasting the var to all players
+
 	switch (const auto var_type = p.get_u8())
 	{
 	case NetObjectVar_Transform:

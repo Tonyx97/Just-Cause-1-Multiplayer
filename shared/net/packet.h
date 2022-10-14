@@ -112,6 +112,7 @@ public:
 		}
 	}
 
+	Packet& set_reliable(bool v) { return v ? set_reliable() : set_unreliable(); }
 	Packet& set_reliable() { flags = ENET_PACKET_FLAG_RELIABLE; return *this; }
 	Packet& set_unreliable() { flags = 0; return *this; }
 	Packet& set_unsequenced() { flags = ENET_PACKET_FLAG_UNSEQUENCED; return *this; }

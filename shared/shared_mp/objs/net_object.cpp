@@ -44,8 +44,6 @@ bool NetObject::sync()
 
 	// base sync
 
-	// todojc - check for actual alive objects instances
-
 	TransformTR real_transform;
 
 	const auto object_base = BITCAST(AliveObject*, get_object_base());
@@ -58,7 +56,7 @@ bool NetObject::sync()
 				real_max_hp = object_base->get_max_hp();
 
 	if ((glm::distance2(real_transform.t, get_position()) > 0.00025f || real_transform.r != get_rotation()) && transform_timer.ready())
-		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Transform, (vars.transform = real_transform).pack()).set_unreliable());
+		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Transform, (transform.curr = real_transform).pack()).set_unreliable());
 
 	switch (get_type())
 	{
@@ -66,18 +64,18 @@ bool NetObject::sync()
 	default:
 	{
 		if (velocity_timer.get_interval() > 0 && velocity_timer.ready())
-			g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Velocity, vars.velocity = physical->get_velocity()));
+			g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Velocity, velocity.curr = physical->get_velocity()));
 	}
 	}
 
-	const auto hp = get_hp(),
-			   max_hp = get_max_hp();
+	const auto _hp = get_hp(),
+			   _max_hp = get_max_hp();
 
-	if (real_hp != hp)
-		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Health, vars.hp = real_hp));
+	if (real_hp != _hp)
+		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Health, hp.curr = real_hp));
 
-	if (real_max_hp != max_hp)
-		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_MaxHealth, vars.max_hp = real_max_hp));
+	if (real_max_hp != _max_hp)
+		g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_MaxHealth, max_hp.curr = real_max_hp));
 
 	// parent object sync
 
@@ -161,7 +159,114 @@ bool NetObject::is_spawned() const
 {
 	return spawned;
 }
+
+void NetObject::sync_transform(bool reliable, PlayerClient* ignore_pc)
+{
+	g_net->send_broadcast_joined(ignore_pc, Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Transform, transform.get().pack()).set_reliable(reliable));
+}
+
+void NetObject::sync_hp(bool reliable, PlayerClient* ignore_pc)
+{
+	g_net->send_broadcast_joined(ignore_pc, Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Health, hp.get()).set_reliable(reliable));
+}
+
+void NetObject::sync_max_hp(bool reliable, PlayerClient* ignore_pc)
+{
+	g_net->send_broadcast_joined(ignore_pc, Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_MaxHealth, max_hp.get()).set_reliable(reliable));
+}
+
+void NetObject::sync_velocity(bool reliable, PlayerClient* ignore_pc)
+{
+	g_net->send_broadcast_joined(ignore_pc, Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Velocity, velocity.get()).set_reliable(reliable));
+}
 #endif
+
+void NetObject::set_transform(const TransformTR& v)
+{
+	transform.set(v);
+
+	if (spawned)
+		on_net_var_change(NetObjectVar_Transform);
+}
+
+void NetObject::set_transform(const TransformPackedTR& v)
+{
+	set_transform(TransformTR(v));
+}
+
+void NetObject::set_position(const vec3& v)
+{
+	transform.set(TransformTR(v, transform.get().r));
+
+	if (spawned)
+		on_net_var_change(NetObjectVar_Position);
+}
+
+void NetObject::set_rotation(const quat& v)
+{
+	transform.set(TransformTR(transform.get().t, v));
+
+	if (spawned)
+		on_net_var_change(NetObjectVar_Rotation);
+}
+
+void NetObject::set_hp(float v)
+{
+	if (v < MIN_HP() || v > MAX_HP())
+		return;
+
+	// if entity is already dead then ignore, we cannot restore the status of a dead entity,
+	// we need restore/respawn functions for this but not needed right now
+
+	if (!is_alive() && v > 0.f)
+		return;
+
+	// ignore if we want to set higher value than the max hp
+
+	if (v > get_max_hp())
+		return;
+
+	hp.set(v);
+
+	if (spawned)
+		on_net_var_change(NetObjectVar_Health);
+}
+
+void NetObject::set_max_hp(float v)
+{
+	if (v < MIN_HP() || v > MAX_HP())
+		return;
+
+	// we cannot set the max hp to less or equal than 0 or the
+	// entity would be dead all the time lol
+
+	if (v <= 0.f)
+		return;
+
+	// for the sake of avoiding problems in the future, do not change the max health
+	// if the entity is dead...
+
+	if (!is_alive())
+		return;
+
+	max_hp.set(v);
+
+	if (spawned)
+		on_net_var_change(NetObjectVar_MaxHealth);
+}
+
+void NetObject::set_velocity(const vec3& v)
+{
+	velocity.set(v);
+
+	if (spawned)
+		on_net_var_change(NetObjectVar_Velocity);
+}
+
+void NetObject::set_pending_velocity(const vec3& v)
+{
+	pending_velocity.set(v);
+}
 
 void NetObject::set_owner(Player* new_owner)
 {
@@ -207,81 +312,6 @@ void NetObject::set_sync_type_and_owner(SyncType _sync_type, Player* _owner)
 {
 	set_sync_type(_sync_type);
 	set_owner(_owner);
-}
-
-void NetObject::set_transform(const TransformTR& transform)
-{
-	old_vars.transform = vars.transform;
-
-	vars.transform.t = transform.t;
-	vars.transform.r = transform.r;
-
-	if (spawned)
-		on_net_var_change(NetObjectVar_Transform);
-}
-
-void NetObject::set_transform(const TransformPackedTR& packed_transform)
-{
-	set_transform(TransformTR(packed_transform));
-}
-
-void NetObject::set_position(const vec3& v)
-{
-	old_vars.transform.t = vars.transform.t;
-
-	vars.transform.t = v;
-
-	if (spawned)
-		on_net_var_change(NetObjectVar_Position);
-}
-
-void NetObject::set_rotation(const quat& v)
-{
-	old_vars.transform.r = vars.transform.r;
-
-	vars.transform.r = v;
-
-	if (spawned)
-		on_net_var_change(NetObjectVar_Rotation);
-}
-
-void NetObject::set_hp(float v)
-{
-	if (v < MIN_HP() || v > MAX_HP())
-		return;
-
-	old_vars.hp = vars.hp;
-	vars.hp = v;
-
-	if (spawned)
-		on_net_var_change(NetObjectVar_Health);
-}
-
-void NetObject::set_max_hp(float v)
-{
-	if (v < MIN_HP() || v > MAX_HP())
-		return;
-
-	old_vars.max_hp = vars.max_hp;
-	vars.max_hp = v;
-
-	if (spawned)
-		on_net_var_change(NetObjectVar_MaxHealth);
-}
-
-void NetObject::set_velocity(const vec3& v)
-{
-	old_vars.velocity = vars.velocity;
-	vars.velocity = v;
-
-	if (spawned)
-		on_net_var_change(NetObjectVar_Velocity);
-}
-
-void NetObject::set_pending_velocity(const vec3& v)
-{
-	old_vars.pending_velocity = vars.pending_velocity;
-	vars.pending_velocity = v;
 }
 
 bool NetObject::spawn()
