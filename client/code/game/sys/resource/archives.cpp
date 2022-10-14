@@ -72,8 +72,6 @@ void Archives::init()
 {
 	const auto base_path = std::string(ARCHIVES_PATH);
 
-	std::vector<std::future<void>> futures;
-
 	for (int i = 0; i < MAX_ARCHIVES; ++i)
 	{
 		const auto filename = base_path + NAME + std::to_string(i) + FORMAT;
