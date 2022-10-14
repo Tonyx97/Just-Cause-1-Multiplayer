@@ -76,16 +76,10 @@ void Archives::init()
 
 	for (int i = 0; i < MAX_ARCHIVES; ++i)
 	{
-		futures.push_back(std::async(std::launch::async, [=]()
-		{
-			const auto filename = base_path + NAME + std::to_string(i) + FORMAT;
+		const auto filename = base_path + NAME + std::to_string(i) + FORMAT;
 
-			arcs[i] = JC_ALLOC(Archive, filename, i);
-		}));
+		arcs[i] = JC_ALLOC(Archive, filename, i);
 	}
-
-	for (auto& f : futures)
-		f.wait();
 
 	parse_sarcs();
 }
@@ -100,50 +94,72 @@ void Archives::parse_sarcs()
 {
 	const auto entries = g_archives->get_assets_entries();
 
+	std::vector<std::vector<AssetDataInfo>> arcs_assets_list(MAX_ARCHIVES);
+
+	// associate asset info lists with their arc
+	
 	for (const auto& entry : entries)
+		if (auto data_info = g_archives->get_asset_data_info(&entry); data_info.arc_index >= 0 && data_info.arc_index < MAX_ARCHIVES)
+			arcs_assets_list[data_info.arc_index].push_back(std::move(data_info));
+
+	// launch an async task for each arc to get the assets metadata
+
+	std::vector<std::future<void>> futures;
+
+	for (const auto& asset_list : arcs_assets_list)
 	{
-		const auto data_info = g_archives->get_asset_data_info(&entry);
-		const auto arc = arcs[data_info.arc_index];
-
-		arc->seek(data_info.offset);
-
-		const auto base_offset = arc->get_curr_pointer();
-
-		switch (arc->read<uint32_t>())
+		futures.push_back(std::async(std::launch::async, [](const std::vector<AssetDataInfo>& asset_list)
 		{
-		case 0x4: // .ee
-		{
-			arc->skip(sizeof(uint32_t) * 2);
-
-			const auto data_begin_offset = arc->read<uint32_t>();
-			const auto data_offset = base_offset + data_begin_offset;
-
-			while (arc->get_curr_pointer() < data_offset)
+			for (const auto& data_info : asset_list)
 			{
-				const auto file_name = arc->read_str();
+				const auto arc = arcs[data_info.arc_index];
 
-				//std::lock_guard lock(metadata_mtx);
+				arc->seek(data_info.offset);
 
-				if (!metadata.contains(file_name))
+				const auto base_offset = arc->get_curr_pointer();
+
+				switch (arc->read<uint32_t>())
 				{
-					const auto offset = base_offset + arc->read<uint32_t>();
-					const auto size = arc->read<uint32_t>();
+				case 0x4: // .ee
+				{
+					arc->skip(sizeof(uint32_t) * 2);
 
-					metadata.insert({ file_name,
+					const auto data_begin_offset = arc->read<uint32_t>();
+					const auto data_offset = base_offset + data_begin_offset;
+
+					while (arc->get_curr_pointer() < data_offset)
 					{
-						.name = file_name,
-						.arc_index = data_info.arc_index,
-						.offset = offset,
-						.size = size,
-					} });
-				}
-				else arc->skip(sizeof(uint32_t) * 2);
-			}
+						const auto file_name = arc->read_str();
+						const auto offset = base_offset + arc->read<uint32_t>();
+						const auto size = arc->read<uint32_t>();
 
-			break;
-		}
-		}
+						std::lock_guard lock(metadata_mtx);
+
+						if (!metadata.contains(file_name))
+						{
+							metadata.insert({ file_name,
+							{
+								.name = file_name,
+								.arc_index = data_info.arc_index,
+								.offset = offset,
+								.size = size,
+							} });
+						}
+						else arc->skip(sizeof(uint32_t) * 2);
+					}
+
+					break;
+				}
+				}
+			}
+		}, asset_list));
 	}
+
+	// wait until all arcs are completely parsed and
+	// metadata is filled
+	
+	for (auto& f : futures)
+		f.wait();
 }
 
 ArchiveAssetEntry* Archives::get_asset_entry(const std::string& name)
