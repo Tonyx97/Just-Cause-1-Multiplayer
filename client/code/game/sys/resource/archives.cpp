@@ -143,7 +143,6 @@ void Archives::parse_sarcs()
 								.size = size,
 							} });
 						}
-						else arc->skip(sizeof(uint32_t) * 2);
 					}
 
 					break;
