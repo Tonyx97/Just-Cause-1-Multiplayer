@@ -20,7 +20,7 @@ namespace world_rg
 		const auto observer_entity = w->get_event_owner(e);
 		const auto visible_entity = w->get_event_entity(e);
 
-		if (!visible_entity || !observer_entity)
+		if (!visible_entity || !observer_entity || visible_entity == observer_entity)
 			return;
 
 		// we are going to check if observer entity started/stopped seeing the entity
@@ -31,11 +31,6 @@ namespace world_rg
 
 		if (const auto observer_player = observer_entity->cast<Player>())
 		{
-			// a player always sees themself so no need for extra work
-			
-			if (visible_entity == observer_entity)
-				return;
-
 			const auto observer_pc = observer_player->get_client();
 
 			check(observer_pc, "Player has no PlayerClient instance (observer)");

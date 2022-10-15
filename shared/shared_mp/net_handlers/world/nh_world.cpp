@@ -140,7 +140,7 @@ PacketResult nh::world::sync_object(const Packet& p)
 	{
 		const auto hp = p.get_float();
 
-		net_obj->set_hp(hp);
+		net_obj->set_hp(hp, true);
 
 		break;
 	}

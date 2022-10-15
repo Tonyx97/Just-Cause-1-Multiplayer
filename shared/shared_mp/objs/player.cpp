@@ -250,10 +250,6 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 	const auto character = get_character();
 	if (!character)
 		return;
-	
-	// respawn the character of this player
-
-	character->respawn();
 
 	// if it's local we want to access directly to the
 	// character and set the stuff, verify_exec doesn't work
@@ -275,7 +271,16 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 		set_skin(skin);
 		set_hp(hp);
 		set_max_hp(max_hp);
+		set_body_stance_id(1);
+		set_arms_stance_id(1);
 	}
+
+	// respawn the character of this player
+
+	character->respawn();
+
+	set_body_stance_id(1);
+	set_arms_stance_id(1);
 #else
 	Packet p(PlayerPID_Respawn, ChannelID_Generic, this, position, rotation, skin, hp, max_hp);
 

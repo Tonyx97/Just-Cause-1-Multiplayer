@@ -236,7 +236,7 @@ void NetObject::set_rotation(const quat& v)
 		on_net_var_change(NetObjectVar_Rotation);
 }
 
-void NetObject::set_hp(float v)
+void NetObject::set_hp(float v, bool force_set)
 {
 	if (v < MIN_HP() || v > MAX_HP())
 		return;
@@ -244,7 +244,7 @@ void NetObject::set_hp(float v)
 	// if entity is already dead then ignore, we cannot restore the status of a dead entity,
 	// we need restore/respawn functions for this but not needed right now
 
-	if (!is_alive() && v > 0.f)
+	if (!force_set && !is_alive() && v > 0.f)
 		return;
 
 	// ignore if we want to set higher value than the max hp

@@ -177,7 +177,7 @@ public:
 	void set_transform(const TransformPackedTR& v);
 	void set_position(const vec3& v);
 	void set_rotation(const quat& v);
-	void set_hp(float v);
+	void set_hp(float v, bool force_set = false);
 	void set_max_hp(float v);
 	void set_velocity(const vec3& v);
 	void set_pending_velocity(const vec3& v);
