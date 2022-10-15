@@ -20,16 +20,21 @@ namespace world_rg
 		const auto observer_entity = w->get_event_owner(e);
 		const auto visible_entity = w->get_event_entity(e);
 
-		if (!visible_entity || !observer_entity || visible_entity == observer_entity)
+		if (!visible_entity || !observer_entity)
 			return;
+
+		// we are going to check if observer entity started/stopped seeing the entity
+		// and send corresponding sync packets
+		// NOTE: this does NOT involve any ownership (only visibility, it's two different things)
 
 		// observer entity must always be a player
 
 		if (const auto observer_player = observer_entity->cast<Player>())
 		{
-			/*if (create)
-				log(RED, "Player {:x} sees entity {:x}", observer_entity->get_nid(), visible_entity->get_nid());
-			else log(YELLOW, "Player {:x} no longer sees entity {:x}", observer_entity->get_nid(), visible_entity->get_nid());*/
+			// a player always sees themself so no need for extra work
+			
+			if (visible_entity == observer_entity)
+				return;
 
 			const auto observer_pc = observer_player->get_client();
 
@@ -202,7 +207,7 @@ void Net::tick()
 
 	refresh_net_object_sync();
 
-	// sync (from the server) global objects such as players' blips etc
+	// sync net object instances creation/destruction and ownership
 
 	sync_net_objects();
 
@@ -288,6 +293,23 @@ void Net::refresh_net_object_sync()
 
 	if (refresh_timer.ready())
 	{
+		for_each_joined_player_client([&](NID nid, PlayerClient* pc)
+		{
+			const auto player = pc->get_player();
+
+			{
+				int64_t ids[64] = { 0 };
+				size_t count = 64;
+
+				librg_world_fetch_owner(get_rg()->get_world(), static_cast<int64_t>(nid), ids, &count);
+
+				for (int i = 0; i < count; ++i)
+				{
+					log(WHITE, "Player {:x} owns {:x}", nid, ids[i]);
+				}
+			}
+		});
+
 		std::vector<NetObject*> distance_objs;
 
 		for_each_net_object([&](NID nid, NetObject* obj)

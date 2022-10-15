@@ -93,7 +93,7 @@ void WorldRg::update()
 
 			// use radius 1 because it's very common to stay in the border of a chunk and, if
 			// an entity goes to the closest chunk, the distance between observer and entity will
-			// be very small yet causing the entity to disappear in the observer's view, so using 1-2 as
+			// be very small yet causing the entity to disappear in the observer's view, so using 1-N as
 			// chunk radius should fix this
 
 			result = librg_world_write(world, id, RG_WORLD_CHUNK_RADIUS, write_buffer, &size, nullptr);
