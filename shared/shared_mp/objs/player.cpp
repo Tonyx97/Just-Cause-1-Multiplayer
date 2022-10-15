@@ -92,6 +92,20 @@ void Player::set_multiple_rand_seed(uint16_t v)
 	dyn_info.use_multiple_bullet = (v != 0u);
 }
 
+void Player::respawn_character()
+{
+	if (!is_spawned())
+		return;
+
+#ifdef JC_CLIENT
+	const auto character = get_character();
+	if (!character)
+		return;
+
+	character->respawn();
+#endif
+}
+
 bool Player::is_dispatching_movement() const
 {
 	return dispatching_movement;
@@ -224,13 +238,20 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 #endif
 
 		// if old health was bigger than 0 but new one is 0
-		// it means we died so trigger killed event, if the player
-		// was just revived, make sure we respawn it properly
+		// it means we died so trigger killed event
 		
 		if (was_just_killed())
 			g_rsrc->trigger_event(jc::script::event::ON_PLAYER_KILLED, this);
 		else if (was_just_revived())
-			respawn();
+		{
+#ifdef JC_CLIENT
+			// if the player was just revived, make sure
+			// we respawn the character
+
+			respawn_character();
+#else
+#endif
+		}
 
 		break;
 	}
@@ -258,7 +279,7 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 
 	// respawn the character of this player
 
-	respawn();
+	respawn_character();
 
 	// if it's local we want to access directly to the
 	// character and set the stuff, verify_exec doesn't work
@@ -285,20 +306,6 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 	set_skin(skin);
 	set_hp(hp);
 	set_max_hp(max_hp);
-}
-
-void Player::respawn()
-{
-	if (!is_spawned())
-		return;
-
-#ifdef JC_CLIENT
-	const auto character = get_character();
-	if (!character)
-		return;
-
-	character->respawn();
-#endif
 }
 
 // info getters/setters

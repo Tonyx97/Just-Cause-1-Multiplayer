@@ -355,6 +355,10 @@ bool ObjectLists::destroy_net_object(NetObject* obj)
 
 	JC_FREE(obj);
 
+#ifdef JC_SERVER
+	g_net->sync_net_objects(true);
+#endif
+
 	return true;
 }
 

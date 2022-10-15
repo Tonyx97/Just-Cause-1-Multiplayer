@@ -129,6 +129,7 @@ public:
 	void correct_position();
 	void update_blip();
 	void set_multiple_rand_seed(uint16_t v);
+	void respawn_character();
 	void set_local() { local = true; }
 
 	bool is_dispatching_movement() const;
@@ -165,7 +166,6 @@ public:
 
 	// dynamic info getters/setters
 
-	void respawn();
 	void respawn(const vec3& position, float rotation, int32_t skin, float hp, float max_hp);
 	void set_nick(const std::string& v);
 	void set_skin(int32_t v);
