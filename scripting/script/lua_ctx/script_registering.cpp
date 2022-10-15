@@ -270,6 +270,8 @@ void jc::script::register_functions(Script* script)
 
 	/* OBJECTS */
 
+	vm->add_function("validateObject", [](NetObject* obj) { return g_net->has_net_object(obj) ? obj : nullptr; });
+
 	vm->add_function("getPlayers", []()
 	{
 		std::vector<Player*> out;
