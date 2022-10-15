@@ -46,6 +46,7 @@ namespace jc::game_control
 		"CGuiSpinner",
 		"CInfoMessage",
 		"CProvinceInfoMessage",
+		"CGuiPlayerHealth",
 
 		// rest
 

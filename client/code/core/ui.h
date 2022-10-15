@@ -96,6 +96,7 @@ private:
 	void render();
 	void loading_screen();
 	void render_players();
+	void render_default_hud();
 	void render_admin_panel();
 	void render_download_bar();
 	void overlay_debug();

@@ -273,6 +273,7 @@ void UI::render()
 				overlay_debug();
 
 			render_players();
+			render_default_hud();
 		}
 		else loading_screen();
 
@@ -344,7 +345,7 @@ void UI::render_players()
 							hp_bar_size_x = 100.f * hp_bar_size_adjust,
 							hp_border_size = 2.f;
 
-				g_ui->draw_filled_rect(
+				draw_filled_rect(
 					out.x - hp_border_size - (hp_bar_size_x / 2.f + hp_border_size / 2.f),
 					out.y - 2.f - 2.5f * hp_bar_size_adjust,
 					hp_bar_size_x + hp_border_size * 2.f,
@@ -355,7 +356,7 @@ void UI::render_players()
 
 				if (hp > 0.f)
 				{
-					g_ui->draw_filled_rect(
+					draw_filled_rect(
 						out.x - (hp_bar_size_x / 2.f + hp_border_size / 2.f),
 						out.y - 2.5f * hp_bar_size_adjust,
 						hp * 100.f,
@@ -363,12 +364,38 @@ void UI::render_players()
 						{ hp_bar_size_adjust - hp, hp, 0.f, 1.f });
 				}
 
-				g_ui->add_text(player->get_nick().c_str(), out.x, out.y - 10.f - 18.f * name_size_adjust, 18.f * name_size_adjust, { 1.f, 1.f, 1.f, 1.f }, true);
+				add_text(player->get_nick().c_str(), out.x, out.y - 10.f - 18.f * name_size_adjust, 18.f * name_size_adjust, { 1.f, 1.f, 1.f, 1.f }, true);
 			}
 		}
 
 		return true;
 	});
+}
+
+void UI::render_default_hud()
+{
+	const auto localplayer = g_net->get_localplayer();
+	if (!localplayer)
+		return;
+
+	const auto local_char = localplayer->get_character();
+	if (!local_char)
+		return;
+
+	const auto hp = local_char->get_real_hp(),
+			   max_hp = local_char->get_max_hp();
+
+	const auto normalized_hp = hp / max_hp;
+
+	constexpr float bar_x = 20.f;
+	constexpr float bar_y = 15.f;
+	constexpr float bar_width = 250.f;
+	constexpr float bar_height = 15.f;
+	constexpr float bar_border = 4.f;
+
+	draw_filled_rect(bar_x, bar_y, bar_width, bar_height, { 0.f, 0.f, 0.f, 1.f });
+	draw_filled_rect(bar_x + bar_border, bar_y + bar_border, bar_width - bar_border * 2.f, bar_height - bar_border * 2.f, { 0.25f, 0.f, 0.f, 1.f });
+	draw_filled_rect(bar_x + bar_border, bar_y + bar_border, bar_width * normalized_hp - bar_border * 2.f, bar_height - bar_border * 2.f, { 1.f, 0.f, 0.f, 1.f });
 }
 
 void UI::render_admin_panel()
