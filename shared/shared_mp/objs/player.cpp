@@ -122,8 +122,6 @@ vec3 Player::generate_bullet_rand_spread()
 #else
 #include <rg/rg.h>
 
-#define DEBUG_OWNERSHIP 1
-
 Player::Player(PlayerClient* pc) : client(pc)
 {
 	set_sync_type(SyncType_Locked);
