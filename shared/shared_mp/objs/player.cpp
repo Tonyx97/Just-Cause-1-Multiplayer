@@ -224,10 +224,13 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 #endif
 
 		// if old health was bigger than 0 but new one is 0
-		// it means we died so trigger killed event
+		// it means we died so trigger killed event, if the player
+		// was just revived, make sure we respawn it properly
 		
 		if (was_just_killed())
 			g_rsrc->trigger_event(jc::script::event::ON_PLAYER_KILLED, this);
+		else if (was_just_revived())
+			respawn();
 
 		break;
 	}
@@ -251,6 +254,10 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 	if (!character)
 		return;
 
+	// respawn the character of this player
+
+	respawn();
+
 	// if it's local we want to access directly to the
 	// character and set the stuff, verify_exec doesn't work
 	// with localplayer due to safety reasons so we have to access
@@ -271,20 +278,25 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 		set_skin(skin);
 		set_hp(hp);
 		set_max_hp(max_hp);
-		set_body_stance_id(1);
-		set_arms_stance_id(1);
 	}
-
-	// respawn the character of this player
-
-	character->respawn();
-
-	set_body_stance_id(1);
-	set_arms_stance_id(1);
 #else
 	Packet p(PlayerPID_Respawn, ChannelID_Generic, this, position, rotation, skin, hp, max_hp);
 
 	g_net->send_broadcast(p);
+#endif
+}
+
+void Player::respawn()
+{
+	if (!is_spawned())
+		return;
+
+#ifdef JC_CLIENT
+	const auto character = get_character();
+	if (!character)
+		return;
+
+	character->respawn();
 #endif
 }
 

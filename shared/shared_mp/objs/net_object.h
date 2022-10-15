@@ -201,6 +201,7 @@ public:
 	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
 	bool equal(NID _nid) const { return nid == _nid; }
 	bool was_just_killed() const { return hp.get_old() > 0.f && hp.get() <= 0.f; }
+	bool was_just_revived() const { return hp.get_old() <= 0.f && hp.get() > 0.f; }
 	bool is_alive() const { return get_hp() > 0.f; }
 
 	const std::string& get_object_id() const { return object_id; }
