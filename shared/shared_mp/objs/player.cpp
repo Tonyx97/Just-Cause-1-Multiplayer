@@ -249,6 +249,8 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 	if (!is_spawned())
 		return;
 
+	const auto angles = glm::eulerAngleXYZ(0.f, rotation, 0.f);
+
 #ifdef JC_CLIENT
 	const auto character = get_character();
 	if (!character)
@@ -263,27 +265,26 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 	// with localplayer due to safety reasons so we have to access
 	// the local's character
 
-	const auto angles = glm::eulerAngleXYZ(0.f, rotation, 0.f);
-
 	if (is_local())
 	{
 		character->set_transform(Transform(position, angles));
 		character->set_skin(skin, false);
 		character->set_hp(hp);
 		character->set_max_hp(max_hp);
-	}
-	else
-	{
-		set_transform(TransformTR(position, angles));
-		set_skin(skin);
-		set_hp(hp);
-		set_max_hp(max_hp);
+
+		return;
 	}
 #else
+
 	Packet p(PlayerPID_Respawn, ChannelID_Generic, this, position, rotation, skin, hp, max_hp);
 
 	g_net->send_broadcast(p);
 #endif
+
+	set_transform(TransformTR(position, angles));
+	set_skin(skin);
+	set_hp(hp);
+	set_max_hp(max_hp);
 }
 
 void Player::respawn()
