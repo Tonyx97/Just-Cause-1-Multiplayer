@@ -251,6 +251,30 @@ void EntityRg::update_chunk()
 #endif
 }
 
+bool EntityRg::get_owned_entities(std::vector<NID>& out)
+{
+	check(net_object->cast<Player>(), "Cannot get owned entities of a non-player object");
+
+	size_t size = (sizeof(owned_entities_buffer) / sizeof(*owned_entities_buffer));
+
+	const auto res = librg_world_fetch_owner(world->get_world(), id, owned_entities_buffer, &size);
+	
+	if (res != LIBRG_OK)
+		return false;
+
+	// the buffer will always contain the current entity (this player)
+	// so we will subtract the count by 1 to remove it from the vector
+	// we will fill next
+	
+	out.resize(size - 1ull);
+
+	for (size_t i = 0, out_i = 0; i < size; ++i)
+		if (const auto entity_id = owned_entities_buffer[i]; entity_id != id)
+			out[out_i++] = static_cast<NID>(entity_id);
+
+	return true;
+}
+
 const EntityRg* EntityRg::get_owner() const
 {
 	const auto owner_id = get_owner_id();

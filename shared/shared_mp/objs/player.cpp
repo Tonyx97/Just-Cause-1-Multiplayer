@@ -22,7 +22,6 @@
 Player::Player(PlayerClient* pc, NID nid) : client(pc)
 {
 	set_nid(nid);
-	set_sync_type(SyncType_Locked);
 }
 
 Player::~Player()
@@ -121,6 +120,8 @@ vec3 Player::generate_bullet_rand_spread()
 	};
 }
 #else
+#include <rg/rg.h>
+
 #define DEBUG_OWNERSHIP 1
 
 Player::Player(PlayerClient* pc) : client(pc)
@@ -134,70 +135,12 @@ Player::~Player()
 
 	if (vehicle)
 		vehicle->remove_player(this);
-
-	// if this player owns any net object, remove all the ownerships
-	// from the player and the objects
-
-	remove_all_ownerships();
 }
 
-void Player::transfer_net_object_ownership_to(NetObject* obj, Player* new_streamer)
+void Player::send_ownerships()
 {
-	check(obj, "Net object must be valid");
-	check(new_streamer, "New streamer must be valid");
-
-	const auto old_streamer_pc = client;
-	const auto new_streamer_pc = new_streamer->get_client();
-
-#if DEBUG_OWNERSHIP
-	log(YELLOW, "{} lost ownerships of a net object type {}", get_nick(), get_type());
-	log(GREEN, "{} now owns a net object type {}", get_nick(), get_type());
-#endif
-
-	Packet p(WorldPID_SetOwnership, ChannelID_World, true, new_streamer, obj);
-
-	p.create();
-
-	old_streamer_pc->send(p);
-	new_streamer_pc->send(p);
-}
-
-void Player::set_net_object_ownership_of(NetObject* obj)
-{
-	check(obj, "Net object must be valid");
-
-#if DEBUG_OWNERSHIP
-	log(GREEN, "{} now owns a net object type {}", get_nick(), get_type());
-#endif
-
-	Packet p(WorldPID_SetOwnership, ChannelID_World, true, this, obj);
-
-	client->send(p, true);
-}
-
-void Player::remove_net_object_ownership(NetObject* obj)
-{
-	check(obj, "Net object must be valid");
-
-#if DEBUG_OWNERSHIP
-	log(GREEN, "Player {:x} stopped streaming {:x} due to disconnect most likely", get_nid(), obj->get_nid());
-#endif
-
-	Packet p(WorldPID_SetOwnership, ChannelID_World, false, obj);
-
-	client->send(p, true);
-}
-
-void Player::remove_all_ownerships()
-{
-	g_net->for_each_net_object([&](NID, NetObject* obj)
-	{
-		if (obj->is_owned_by(this))
-		{
-			obj->set_sync_type(SyncType_Distance);
-			obj->set_owner(nullptr);
-		}
-	});
+	if (std::vector<NID> owned_entities; get_rg()->get_owned_entities(owned_entities))
+		client->send(Packet(PlayerClientPID_Ownerships, ChannelID_PlayerClient, owned_entities), true);
 }
 #endif
 

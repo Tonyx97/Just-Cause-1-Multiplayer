@@ -74,7 +74,8 @@ private:
 
 	NetObject* net_object = nullptr;
 
-	int64_t id = 0ll;
+	int64_t owned_entities_buffer[INT16_MAX] = { 0ll },
+			id = 0ll;
 
 public:
 
@@ -84,6 +85,8 @@ public:
 	void set_chunk(librg_chunk chunk);
 	void set_owner(EntityRg* owner);
 	void update_chunk();
+
+	bool get_owned_entities(std::vector<NID>& out);
 
 	NetObject* get_net_obj() const { return net_object; }
 

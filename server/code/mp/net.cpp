@@ -293,38 +293,33 @@ void Net::refresh_net_object_sync()
 
 	if (refresh_timer.ready())
 	{
-		for_each_joined_player_client([&](NID nid, PlayerClient* pc)
-		{
-			const auto player = pc->get_player();
-
-			{
-				int64_t ids[64] = { 0 };
-				size_t count = 64;
-
-				librg_world_fetch_owner(get_rg()->get_world(), static_cast<int64_t>(nid), ids, &count);
-
-				for (int i = 0; i < count; ++i)
-				{
-					log(WHITE, "Player {:x} owns {:x}", nid, ids[i]);
-				}
-			}
-		});
-
 		std::vector<NetObject*> distance_objs;
 
 		for_each_net_object([&](NID nid, NetObject* obj)
 		{
-			switch (const auto sync_type = obj->get_sync_type())
-			{
-			case SyncType_Global:
-			case SyncType_Locked: break; // todojc - ignore global and locked for now
-			case SyncType_Distance:
-			{
-				distance_objs.push_back(obj);
+			// if it's player, send all the player ownerships to them,
+			// otherwise we will decide which entity is going to be
+			// used in ownership calculation (by distance etc)
 
-				break;
+			if (const auto player = obj->cast<Player>())
+			{
+				if (const auto pc = player->get_client(); pc->is_joined())
+					player->send_ownerships();
 			}
-			default: log(RED, "Unknown sync type: {}", sync_type);
+			else
+			{
+				switch (const auto sync_type = obj->get_sync_type())
+				{
+				case SyncType_Global:
+				case SyncType_Locked: break; // todojc - ignore global and locked for now
+				case SyncType_Distance:
+				{
+					distance_objs.push_back(obj);
+
+					break;
+				}
+				default: log(RED, "Unknown sync type: {}", sync_type);
+				}
 			}
 		});
 

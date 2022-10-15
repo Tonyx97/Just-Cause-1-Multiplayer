@@ -187,6 +187,27 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 	return PacketRes_Ok;
 }
 
+PacketResult nh::player_client::ownerships(const Packet& p)
+{
+#ifdef JC_CLIENT
+	// when we receive the ownerships packet we want to clear
+	// all local ownerships and fill it again with the new
+	// ones
+
+	net_object_globals::clear_owned_entities();
+
+	const auto ownerships = p.get<std::vector<NID>>();
+
+	for (auto nid : ownerships)
+		if (const auto net_obj = g_net->get_net_object_by_nid(nid))
+			net_obj->set_as_owned();
+
+	return PacketRes_Ok;
+#endif
+
+	return PacketRes_NotSupported;
+}
+
 PacketResult nh::player_client::resource_action(const Packet& p)
 {
 #ifdef JC_CLIENT

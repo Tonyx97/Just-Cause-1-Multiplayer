@@ -147,10 +147,11 @@ public:
 	Player(PlayerClient* pc);
 
 	void verify_exec(auto fn) {}
-	void transfer_net_object_ownership_to(NetObject* obj, Player* new_streamer);
-	void set_net_object_ownership_of(NetObject* obj);
-	void remove_net_object_ownership(NetObject* obj);
-	void remove_all_ownerships();
+
+	/**
+	* sends all ownerships of the client
+	*/
+	void send_ownerships();
 #endif
 
 	~Player();

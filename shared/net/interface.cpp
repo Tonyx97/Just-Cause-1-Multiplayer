@@ -75,6 +75,7 @@ void enet::setup_channels()
 #ifdef JC_CLIENT
 		case PlayerClientPID_ObjectInstanceSync:	return nh::player_client::object_instance_sync(p);
 		case PlayerClientPID_DebugLog:				return nh::player_client::debug_log(p);
+		case PlayerClientPID_Ownerships:			return nh::player_client::ownerships(p);
 #else
 		case PlayerClientPID_Join:					return nh::player_client::join(p);
 		case PlayerClientPID_DebugLog:				return nh::player_client::debug_log(p);
@@ -126,7 +127,6 @@ void enet::setup_channels()
 		{
 #ifdef JC_CLIENT
 		case WorldPID_SetTime:				return nh::world::day_time(p);
-		case WorldPID_SetOwnership:			return nh::world::set_ownership(p);
 #else
 		case WorldPID_SpawnObject:			return nh::world::spawn_object(p, false);
 		case WorldPID_SpawnObjectWithPFX:	return nh::world::spawn_object(p, true);

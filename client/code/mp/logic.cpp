@@ -277,7 +277,7 @@ void jc::mp::logic::on_update_objects()
 			{
 				if (const auto seat = char_vehicle->get_seat_by_type(seat_type))
 				{
-					log(PURPLE, "trying to klick player from vehicle");
+					log(PURPLE, "trying to kick player from vehicle");
 
 					seat->instant_exit();
 				}

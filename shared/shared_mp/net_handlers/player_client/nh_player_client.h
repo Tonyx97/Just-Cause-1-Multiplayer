@@ -6,6 +6,7 @@ namespace nh::player_client
 	PacketResult join(const Packet& p);
 	PacketResult nick(const Packet& p);
 	PacketResult object_instance_sync(const Packet& p);
+	PacketResult ownerships(const Packet& p);
 	PacketResult resource_action(const Packet& p);
 	PacketResult resources_refresh(const Packet& p);
 	PacketResult register_user(const Packet& p);

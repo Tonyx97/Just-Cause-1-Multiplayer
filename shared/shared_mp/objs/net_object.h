@@ -12,7 +12,12 @@ using NID = uint16_t;
 
 static constexpr NID INVALID_NID = 0ui16;
 
-#ifdef JC_SERVER
+#ifdef JC_CLIENT
+namespace net_object_globals
+{
+	void clear_owned_entities();
+}
+#else
 namespace enet
 {
 	void INIT_NIDS_POOL();
@@ -110,9 +115,7 @@ private:
 
 	bool spawned = false;
 
-#ifdef JC_CLIENT
-	bool owned = false;
-#else
+#ifdef JC_SERVER
 	EntityRg* rg = nullptr;
 #endif
 
@@ -147,16 +150,23 @@ public:
 	void set_nid(NID v) { nid = v; }
 	void set_transform_timer(int64_t v);
 	void set_velocity_timer(int64_t v);
+	void set_as_owned();
 
-	bool is_owned() const;
+	bool is_owned();
 #else
+	void set_sync_type(SyncType v) { sync_type = v; }
+	void set_owner(Player* new_owner);
+	void set_sync_type_and_owner(SyncType _sync_type, Player* _owner);
+
 	// the following methods are used by the server to force sync with other players
 	// and send them the latest info
-	
+
 	void sync_transform(bool reliable = false, PlayerClient* ignore_pc = nullptr);
 	void sync_hp(bool reliable = true, PlayerClient* ignore_pc = nullptr);
 	void sync_max_hp(bool reliable = true, PlayerClient* ignore_pc = nullptr);
 	void sync_velocity(bool reliable = false, PlayerClient* ignore_pc = nullptr);
+
+	bool is_owned_by(Player* player) const;
 
 	EntityRg* get_rg() const { return rg; }
 #endif
@@ -182,15 +192,11 @@ public:
 		else userdata = &v;
 	}
 
-	void set_owner(Player* new_owner);
 	void set_spawned(bool v);
-	void set_sync_type(SyncType v) { sync_type = v; }
 	void set_object_id(const std::string& v) { object_id = v; }
 	void set_pfx_id(const std::string& v) { pfx_id = v; }
-	void set_sync_type_and_owner(SyncType _sync_type, Player* _owner);
 
 	bool is_valid_type() const;
-	bool is_owned_by(Player* player) const;
 	bool is_spawned() const;
 	bool equal(NetObject* net_obj) const { return nid == net_obj->nid; }
 	bool equal(NID _nid) const { return nid == _nid; }

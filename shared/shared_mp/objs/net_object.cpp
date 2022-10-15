@@ -37,6 +37,16 @@ NetObject::~NetObject()
 }
 
 #ifdef JC_CLIENT
+namespace net_object_globals
+{
+	std::unordered_set<NetObject*> owned_entities;
+
+	void clear_owned_entities()
+	{
+		owned_entities.clear();
+	}
+}
+
 bool NetObject::sync()
 {
 	if (!is_owned())
@@ -94,9 +104,14 @@ void NetObject::set_velocity_timer(int64_t v)
 	velocity_timer(v);
 }
 
-bool NetObject::is_owned() const
+void NetObject::set_as_owned()
 {
-	return owned;
+	net_object_globals::owned_entities.insert(this);
+}
+
+bool NetObject::is_owned()
+{
+	return net_object_globals::owned_entities.contains(this);
 }
 
 bool NetObject::is_spawned() const
@@ -139,6 +154,17 @@ namespace enet
 		used_nids.erase(it);
 		free_nids.insert(nid);
 	}
+}
+
+void NetObject::set_owner(Player* new_owner)
+{
+	rg->set_owner(new_owner ? new_owner->get_rg() : nullptr);
+}
+
+void NetObject::set_sync_type_and_owner(SyncType _sync_type, Player* _owner)
+{
+	set_sync_type(_sync_type);
+	set_owner(_owner);
 }
 
 bool NetObject::sync()
@@ -268,35 +294,6 @@ void NetObject::set_pending_velocity(const vec3& v)
 	pending_velocity.set(v);
 }
 
-void NetObject::set_owner(Player* new_owner)
-{
-#ifdef JC_CLIENT
-	owned = g_net->get_localplayer() == new_owner;
-#else
-	const auto curr_owner_rg = rg->get_owner();
-	const auto curr_owner_player = curr_owner_rg ? curr_owner_rg->get_net_obj()->cast<Player>() : nullptr;
-
-	if (curr_owner_player && new_owner != curr_owner_player)
-	{
-		// if the object has a streamer, then we want to know if we have to transfer it to another
-		// player or simply remove any ownership
-
-		if (new_owner)
-			curr_owner_player->transfer_net_object_ownership_to(this, new_owner);
-		else curr_owner_player->remove_net_object_ownership(this);
-	}
-	else if (!curr_owner_player && new_owner)
-	{
-		// if the object had no streamer but we want to set one then simply
-		// set the object's ownership to the player
-
-		new_owner->set_net_object_ownership_of(this);
-	}
-
-	rg->set_owner(new_owner ? new_owner->get_rg() : nullptr);
-#endif
-}
-
 void NetObject::set_spawned(bool v)
 {
 	spawned = v;
@@ -306,12 +303,6 @@ void NetObject::set_spawned(bool v)
 
 	if (spawned)
 		on_net_var_change(NetObjectVar_Transform);
-}
-
-void NetObject::set_sync_type_and_owner(SyncType _sync_type, Player* _owner)
-{
-	set_sync_type(_sync_type);
-	set_owner(_owner);
 }
 
 bool NetObject::spawn()

@@ -89,34 +89,6 @@ PacketResult nh::world::destroy_object(const Packet& p)
 	return PacketRes_Ok;
 }
 
-PacketResult nh::world::set_ownership(const Packet& p)
-{
-#ifdef JC_CLIENT
-	Player* new_streamer = nullptr;
-
-	if (const auto acquire_ownership = p.get_bool())
-		new_streamer = p.get_net_object<Player>();
-
-	const auto net_obj = p.get_net_object();
-
-	log_nl(YELLOW, "Trying to set ownership of net object to player {:x}... ", new_streamer ? new_streamer->get_nid() : INVALID_NID);
-
-	if (!net_obj)
-	{
-		log(RED, "FAILED");
-		return PacketRes_BadArgs;
-	}
-
-	log(GREEN, "OK");
-
-	net_obj->set_owner(new_streamer);
-
-	return PacketRes_Ok;
-#endif
-
-	return PacketRes_NotSupported;
-}
-
 PacketResult nh::world::sync_object(const Packet& p)
 {
 	const auto net_obj = p.get_net_object();
