@@ -121,7 +121,7 @@ vec3 Player::generate_bullet_rand_spread()
 	};
 }
 #else
-#define DEBUG_OWNERSHIP 0
+#define DEBUG_OWNERSHIP 1
 
 Player::Player(PlayerClient* pc) : client(pc)
 {
@@ -178,6 +178,10 @@ void Player::set_net_object_ownership_of(NetObject* obj)
 void Player::remove_net_object_ownership(NetObject* obj)
 {
 	check(obj, "Net object must be valid");
+
+#if DEBUG_OWNERSHIP
+	log(GREEN, "Player {:x} stopped streaming {:x} due to disconnect most likely", get_nid(), obj->get_nid());
+#endif
 
 	Packet p(WorldPID_SetOwnership, ChannelID_World, false, obj);
 

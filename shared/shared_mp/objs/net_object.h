@@ -99,8 +99,6 @@ private:
 	TimerRaw transform_timer;
 	TimerRaw velocity_timer;
 
-	EntityRg* rg = nullptr;
-
 	void* userdata = nullptr;
 
 	SyncType sync_type = SyncType_None;
@@ -114,6 +112,8 @@ private:
 
 #ifdef JC_CLIENT
 	bool owned = false;
+#else
+	EntityRg* rg = nullptr;
 #endif
 
 public:
@@ -157,6 +157,8 @@ public:
 	void sync_hp(bool reliable = true, PlayerClient* ignore_pc = nullptr);
 	void sync_max_hp(bool reliable = true, PlayerClient* ignore_pc = nullptr);
 	void sync_velocity(bool reliable = false, PlayerClient* ignore_pc = nullptr);
+
+	EntityRg* get_rg() const { return rg; }
 #endif
 
 	// shared functions to set the object vars
@@ -201,8 +203,6 @@ public:
 	NID get_nid() const { return nid; }
 
 	SyncType get_sync_type() const { return sync_type; }
-
-	EntityRg* get_rg() const { return rg; }
 
 	template <typename T>
 	T* get_userdata() const { return BITCAST(T*, userdata); }

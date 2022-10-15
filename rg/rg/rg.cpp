@@ -6,7 +6,7 @@
 #include "rg.h"
 
 #define DEBUG_RG 0
-#define DEBUG_RG_OWNERSHIP 1
+#define DEBUG_RG_OWNERSHIP 0
 
 namespace world_rg
 {

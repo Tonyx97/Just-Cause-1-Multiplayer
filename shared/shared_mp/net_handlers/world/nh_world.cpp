@@ -99,8 +99,15 @@ PacketResult nh::world::set_ownership(const Packet& p)
 
 	const auto net_obj = p.get_net_object();
 
+	log_nl(YELLOW, "Trying to set ownership of net object to player {:x}... ", new_streamer ? new_streamer->get_nid() : INVALID_NID);
+
 	if (!net_obj)
+	{
+		log(RED, "FAILED");
 		return PacketRes_BadArgs;
+	}
+
+	log(GREEN, "OK");
 
 	net_obj->set_owner(new_streamer);
 

@@ -378,7 +378,7 @@ PacketResult nh::player::enter_exit_vehicle(const Packet& p)
 		return PacketRes_BadArgs;
 #endif
 
-	log(GREEN, "vehicle seat type: {}", seat_type);
+	//log(GREEN, "vehicle seat type: {}", seat_type);
 
 	switch (command)
 	{
