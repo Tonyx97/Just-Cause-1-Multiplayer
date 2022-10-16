@@ -112,7 +112,7 @@ namespace luas
 		concept is_map = is_specialization<T, std::map>::value || is_specialization<T, std::unordered_map>::value;
 
 		template <typename T>
-		struct fn_return_type { using type = T; };
+		struct fn_return_type { using type = void; };
 
 		template <typename R, typename... A>
 		struct fn_return_type<R(*)(A...)> { using type = R; };

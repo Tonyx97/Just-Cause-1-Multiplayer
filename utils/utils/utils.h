@@ -20,6 +20,42 @@ namespace util
 		{
 			static constexpr bool value = true;
 		};
+
+		template <typename T>
+		struct fn_return_type { using type = void; };
+
+		template <typename R, typename... A>
+		struct fn_return_type<R(*)(A...)> { using type = R; };
+
+		template <typename R, typename... A>
+		struct fn_return_type<R(__thiscall*)(A...)> { using type = R; };
+
+		template <typename T>
+		using fn_return_type_v = fn_return_type<T>::type;
+
+		template <typename T>
+		struct remove_member_ptr_fn { using type = void; };
+
+		template <typename T, typename R, typename... A>
+		struct remove_member_ptr_fn<R(T::*)(A...)> { typedef R type(A...); };
+
+		template <typename T, typename R, typename... A>
+		struct remove_member_ptr_fn<R(T::*)(A...) const> { typedef R type(A...); };
+
+		template <typename T, typename R, typename... A>
+		struct remove_member_ptr_fn<R(T::*)(A...) volatile> { typedef R type(A...); };
+
+		template <typename T, typename R, typename... A>
+		struct remove_member_ptr_fn<R(T::*)(A...) const volatile> { typedef R type(A...); };
+
+		template <typename T>
+		using remove_member_ptr_fn_v = remove_member_ptr_fn<T>::type;
+
+		template <typename T>
+		struct function_type { using type = std::decay<typename remove_member_ptr_fn<decltype(&std::decay_t<T>::operator())>::type>::type; };
+
+		template <typename T>
+		using function_type_v = function_type<T>::type;
 	}
 
 	namespace string

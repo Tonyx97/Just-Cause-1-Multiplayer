@@ -24,6 +24,12 @@
 #include <shared_mp/player_client/player_client.h>
 #endif
 
+#define NET_OBJ_CHECK(obj)								if (!g_net->has_net_object(obj)) return
+#define NET_OBJ_CHECK_DO(obj, action, ...)				if (g_net->has_net_object(obj)) obj->action(__VA_ARGS__); else return
+#define NET_OBJ_CHECK_RET(obj, on_true, on_false)		return g_net->has_net_object(obj) ? obj->on_true() : on_false
+#define NET_OBJ_CHECK_RET_V(obj, on_true, on_false)		return g_net->has_net_object(obj) ? on_true : on_false
+#define NET_OBJ_CHECK_RET_EXP(obj, on_true, on_false)	g_net->has_net_object(obj) ? obj->on_true() : on_false
+
 /*********/
 /*********/
 /* UTILS */
@@ -90,12 +96,6 @@ void jc::script::register_functions(Script* script)
 	using namespace jc::script::util;
 
 	const auto vm = script->get_vm();
-
-	vm->register_class<svec3, svec3(float, float, float)>(
-		"vec3",
-		luas::property("x", &svec3::set_x, &svec3::get_x),
-		luas::property("y", &svec3::set_y, &svec3::get_y),
-		luas::property("z", &svec3::set_z, &svec3::get_z));
 
 #if defined(JC_CLIENT)
 	// register client functions
@@ -218,12 +218,11 @@ void jc::script::register_functions(Script* script)
 
 	/* OBJECTS & SPAWNING */
 
-	vm->add_function("destroyObject", [](NetObject* obj) { if (g_net->has_net_object(obj)) g_net->destroy_net_object(obj); });
+	vm->add_function("destroyObject", [](NetObject* obj) { NET_OBJ_CHECK(obj); g_net->destroy_net_object(obj); });
 
 	vm->add_function("spawnPlayer", [](Player* player, const svec3& pos, luas::variadic_args va)
 	{
-		if (!g_net->has_net_object(player))
-			return;
+		NET_OBJ_CHECK(player);
 
 		auto max_hp = player->get_max_hp();
 		auto rotation = glm::eulerAngles(player->get_rotation()).y;
@@ -245,6 +244,26 @@ void jc::script::register_functions(Script* script)
 #endif
 
 	// resgister shared functions
+
+	/* CLASSES */
+
+	vm->register_class<svec2, svec2(float, float)>(
+		"vec2",
+		luas::property("x", &svec2::set_x, &svec2::get_x),
+		luas::property("y", &svec2::set_y, &svec2::get_y));
+
+	vm->register_class<svec3, svec3(float, float, float)>(
+		"vec3",
+		luas::property("x", &svec3::set_x, &svec3::get_x),
+		luas::property("y", &svec3::set_y, &svec3::get_y),
+		luas::property("z", &svec3::set_z, &svec3::get_z));
+
+	vm->register_class<svec4, svec4(float, float, float, float)>(
+		"vec4",
+		luas::property("x", &svec4::set_x, &svec4::get_x),
+		luas::property("y", &svec4::set_y, &svec4::get_y),
+		luas::property("z", &svec4::set_z, &svec4::get_z),
+		luas::property("w", &svec4::set_w, &svec4::get_w));
 
 	/* EVENTS */
 
@@ -272,7 +291,7 @@ void jc::script::register_functions(Script* script)
 
 	/* OBJECTS */
 
-	vm->add_function("validateObject", [](NetObject* obj) { return g_net->has_net_object(obj) ? obj : nullptr; });
+	vm->add_function("validateObject", [](NetObject* obj) { NET_OBJ_CHECK_RET_V(obj, obj, nullptr); });
 	
 	vm->add_function("getPlayers", []()
 	{
@@ -287,29 +306,29 @@ void jc::script::register_functions(Script* script)
 	vm->add_function("getPlayerFromNID", [](NID nid) { return g_net->get_player_by_nid(nid); });
 
 	/* NET OBJECT */
+	
+	vm->add_function("getObjectNID", [](NetObject* obj) { NET_OBJ_CHECK_RET(obj, get_nid, INVALID_NID); });
+	vm->add_function("getObjectType", [](NetObject* obj) { NET_OBJ_CHECK_RET(obj, get_type, NetObject_Invalid); });
 
-	vm->add_function("getObjectNID", [](NetObject* obj) { return obj->get_nid(); });
-	vm->add_function("getObjectType", [](NetObject* obj) { return obj->get_type(); });
+	vm->add_function("setObjectPosition", [](NetObject* obj, const svec3& v) { NET_OBJ_CHECK_DO(obj, set_position, v.obj()); SYNC_NET_VAR(obj, transform, true); });
+	vm->add_function("getObjectPosition", [](NetObject* obj) { return svec3(NET_OBJ_CHECK_RET_EXP(obj, get_position, vec3{})); });
 
-	vm->add_function("setObjectHealth", [](NetObject* obj, float v) { obj->set_hp(v); SYNC_NET_VAR(obj, hp, true); });
-	vm->add_function("getObjectHealth", [](NetObject* obj) { return g_net->has_net_object(obj) ? obj->get_hp() : 0.f; });
+	vm->add_function("setObjectRotation", [](NetObject* obj, const svec3& v) { NET_OBJ_CHECK_DO(obj, set_rotation, quat(v.obj())); SYNC_NET_VAR(obj, transform, true); });
+	vm->add_function("getObjectRotation", [](NetObject* obj) { return svec3(glm::eulerAngles(NET_OBJ_CHECK_RET_EXP(obj, get_rotation, jc::qua::IDENTITY))); });
 
-	vm->add_function("setObjectMaxHealth", [](NetObject* obj, float v) { obj->set_max_hp(v); SYNC_NET_VAR(obj, max_hp, true); });
-	vm->add_function("getObjectMaxHealth", [](NetObject* obj) { return g_net->has_net_object(obj) ? obj->get_max_hp() : 0.f; });
+	vm->add_function("setObjectHealth", [](NetObject* obj, float v) { NET_OBJ_CHECK_DO(obj, set_hp, v); SYNC_NET_VAR(obj, hp, true); });
+	vm->add_function("getObjectHealth", [](NetObject* obj) { NET_OBJ_CHECK_RET(obj, get_hp, 0); });
 
-	vm->add_function("setObjectPosition", [](NetObject* obj, const svec3& v) { obj->set_position(v.obj()); SYNC_NET_VAR(obj, transform, true); });
-	vm->add_function("getObjectPosition", [](NetObject* obj) { return svec3(obj->get_position()); });
+	vm->add_function("setObjectMaxHealth", [](NetObject* obj, float v) { NET_OBJ_CHECK_DO(obj, set_max_hp, v); SYNC_NET_VAR(obj, max_hp, true); });
+	vm->add_function("getObjectMaxHealth", [](NetObject* obj) { NET_OBJ_CHECK_RET(obj, get_max_hp, 0); });
 
-	vm->add_function("setObjectRotation", [](NetObject* obj, const svec3& v) { obj->set_rotation(quat(v.obj())); SYNC_NET_VAR(obj, transform, true); });
-	vm->add_function("getObjectRotation", [](NetObject* obj) { return svec3(glm::eulerAngles(obj->get_rotation())); });
-
-	vm->add_function("setObjectVelocity", [](NetObject* obj, const svec3& v) { obj->set_velocity(v.obj()); SYNC_NET_VAR(obj, velocity, true); });
-	vm->add_function("getObjectVelocity", [](NetObject* obj) { return svec3(obj->get_velocity()); });
+	vm->add_function("setObjectVelocity", [](NetObject* obj, const svec3& v) { NET_OBJ_CHECK_DO(obj, set_velocity, v.obj()); SYNC_NET_VAR(obj, velocity, true); });
+	vm->add_function("getObjectVelocity", [](NetObject* obj) { return svec3(NET_OBJ_CHECK_RET_EXP(obj, get_velocity, vec3 {})); });
 
 	/* PLAYER */
 
-	vm->add_function("getPlayerName", [](Player* player) { return g_net->has_net_object(player) ? player->get_nick() : ""; });
-	vm->add_function("isPlayerDead", [](Player* player) { return g_net->has_net_object(player) ? !player->is_alive() : true; });
+	vm->add_function("getPlayerName", [](Player* player) { NET_OBJ_CHECK_RET(player, get_nick, ""); });
+	vm->add_function("isPlayerDead", [](Player* player) { return !NET_OBJ_CHECK_RET_EXP(player, is_alive, false); });
 
 	vm->add_function("getPlayerFromName", [](const std::string& name, luas::variadic_args va) -> Player*
 	{
