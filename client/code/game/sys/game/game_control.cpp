@@ -173,6 +173,11 @@ void GameControl::on_tick()
 
 	g_net->tick();
 	g_net->update_objects();
+
+	// update resource system things
+
+	g_rsrc->update();
+
 	g_rsrc->trigger_event(jc::script::event::ON_TICK);
 	g_task->process();
 

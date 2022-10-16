@@ -395,7 +395,9 @@ void UI::render_default_hud()
 
 	draw_filled_rect(bar_x, bar_y, bar_width, bar_height, { 0.f, 0.f, 0.f, 1.f });
 	draw_filled_rect(bar_x + bar_border, bar_y + bar_border, bar_width - bar_border * 2.f, bar_height - bar_border * 2.f, { 0.25f, 0.f, 0.f, 1.f });
-	draw_filled_rect(bar_x + bar_border, bar_y + bar_border, bar_width * normalized_hp - bar_border * 2.f, bar_height - bar_border * 2.f, { 1.f, 0.f, 0.f, 1.f });
+
+	if (hp > 0.f)
+		draw_filled_rect(bar_x + bar_border, bar_y + bar_border, bar_width * normalized_hp - bar_border * 2.f, bar_height - bar_border * 2.f, { 1.f, 0.f, 0.f, 1.f });
 }
 
 void UI::render_admin_panel()

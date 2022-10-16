@@ -335,6 +335,20 @@ void jc::script::register_functions(Script* script)
 
 		return out;
 	});
+
+	/* UTILS */
+
+	vm->add_function("setTimer", [](luas::state& s, luas::lua_fn& fn, int interval, int times, const luas::variadic_args& va)
+	{
+		auto args = va.push_to_any_vector();
+
+		return g_rsrc->add_timer(fn, s.get_global_var<Resource*>(jc::script::globals::RESOURCE), args, interval, times);
+	});
+
+	vm->add_function("killTimer", [](luas::state& s, ScriptTimer* timer)
+	{
+		return g_rsrc->kill_timer(timer, s.get_global_var<Resource*>(jc::script::globals::RESOURCE));
+	});
 }
 
 /***********/
@@ -358,6 +372,7 @@ void jc::script::register_globals(Script* script)
 	// register shared globals
 
 	vm->add_global(jc::script::globals::SCRIPT_INSTANCE, script);
+	vm->add_global(jc::script::globals::RESOURCE, script->get_owner());
 	vm->add_global(jc::script::globals::RSRC_PATH, script->get_rsrc_path());
 	vm->add_global(jc::script::globals::RSRC_NAME, script->get_rsrc_name());
 }

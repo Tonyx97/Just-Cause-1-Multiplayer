@@ -8,13 +8,23 @@ namespace resource_system
 	void destroy_resource_system();
 }
 
+class ScriptTimer;
+
 class ResourceSystem
 {
 private:
 
+	// resources list
+	//
 	std::unordered_map<std::string, Resource*> resources;
 
+	// events list
+	//
 	std::unordered_map<std::string, std::unordered_map<Resource*, std::vector<ScriptEventInfo>>> events;
+
+	// timers list
+	//
+	std::unordered_map<Resource*, std::unordered_set<ScriptTimer*>> timers;
 
 	mutable std::recursive_mutex mtx;
 
@@ -36,6 +46,7 @@ public:
 	void refresh();
 	void clear_resource_events(Resource* rsrc);
 	void cancel_event();
+	void update();
 
 	template <typename... A>
 	bool trigger_event(const std::string& event_name, A&&... args)
@@ -70,6 +81,10 @@ public:
 	bool trigger_non_remote_event(const std::string& name, const luas::variadic_args& va);
 	bool add_event(const std::string& name, luas::lua_fn& fn, Script* script, bool allow_remote_trigger);
 	bool remove_event(const std::string& name, Script* script);
+
+	ScriptTimer* add_timer(luas::lua_fn& fn, Resource* rsrc, std::vector<std::any>& args, int interval, int times);
+	bool remove_timer(ScriptTimer* timer, Resource* rsrc);
+	bool kill_timer(ScriptTimer* timer, Resource* rsrc);
 
 	ResourceResult start_resource(const std::string& name);
 	ResourceResult stop_resource(const std::string& name);

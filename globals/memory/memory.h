@@ -136,9 +136,9 @@ namespace jc
 	namespace mem
 	{
 		template <typename T, typename... A>
-		T* alloc(const std::source_location& src, const A&... args)
+		T* alloc(const std::source_location& src, A&&... args)
 		{
-			auto instance = new (std::nothrow) T(std::forward<const A&>(args)...);
+			auto instance = new (std::nothrow) T(std::forward<A>(args)...);
 
 			// todojc - when needed
 

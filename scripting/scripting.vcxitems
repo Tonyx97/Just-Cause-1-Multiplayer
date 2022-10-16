@@ -22,11 +22,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)script\lua_ctx\script_objects.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)script\lua_ctx\script_registering.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)script\script.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)script\util\script_timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)resource\resource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)resource_sys\resource_system.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)script\lua_ctx\script_registering.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)script\script.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)script\util\script_timer.cpp" />
   </ItemGroup>
 </Project>

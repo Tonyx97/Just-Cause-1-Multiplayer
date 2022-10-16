@@ -18,8 +18,6 @@ class Script;
 
 struct ScriptEventInfo
 {
-	std::string_view name;
-
 	Script* script;
 
 	luas::lua_fn fn;

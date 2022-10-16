@@ -13,6 +13,7 @@ namespace jc::script::globals
 	// shared globals
 
 	static constexpr auto SCRIPT_INSTANCE = "SCRIPT_INSTANCE";
+	static constexpr auto RESOURCE = "RESOURCE";
 	static constexpr auto RSRC_PATH = "RESOURCE_PATH";
 	static constexpr auto RSRC_NAME = "RESOURCE_NAME";
 }

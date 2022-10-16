@@ -29,10 +29,12 @@ extern "C"
 {
 	using error_callback_t = int(*)(const char*);
 	using custom_stack_pusher_t = int(*)(const luas::state& state, const std::any& v);
+	using custom_va_getter_t = int(*)(const luas::state& state, const luas::variadic_args& va, int i, std::any& out_value);
 
 	inline error_callback_t fatal_error_callback = nullptr;
 	inline error_callback_t error_callback = nullptr;
 	inline custom_stack_pusher_t custom_stack_pusher = nullptr;
+	inline custom_va_getter_t custom_va_getter = nullptr;
 };
 
 #define TYPEINFO(x) const_cast<std::type_info*>(&typeid(x))
@@ -719,8 +721,8 @@ namespace luas
 			return 1;
 		}
 
-		template <typename T>
-		int _push(T&& value) const requires(detail::is_any_vector<T>)
+		template <typename T, typename DT = detail::remove_cvref_t<T>>
+		int _push(T&& value) const requires(detail::is_any_vector<DT>)
 		{
 			check_fatal(custom_stack_pusher, "Custom stack pusher used but not specified");
 
@@ -732,8 +734,8 @@ namespace luas
 			return c;
 		}
 
-		template <typename T>
-		int _push(T&& value) const requires(detail::is_map<T>)
+		template <typename T, typename DT = detail::remove_cvref_t<T>>
+		int _push(T&& value) const requires(detail::is_map<DT>)
 		{
 			push_table();
 
@@ -1343,6 +1345,24 @@ namespace luas
 				c += vm.push_value(_begin);
 
 			return c;
+		}
+
+		std::vector<std::any> push_to_any_vector() const
+		{
+			std::vector<std::any> out;
+
+			const auto s = *vm;
+
+			for (int i = 0; i < size(); ++i)
+			{
+				std::any value;
+
+				custom_va_getter(s, *this, i, value);
+
+				out.push_back(std::move(value));
+			}
+
+			return out;
 		}
 	};
 

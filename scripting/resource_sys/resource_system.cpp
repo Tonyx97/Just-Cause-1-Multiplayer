@@ -5,11 +5,7 @@
 
 #include <mp/net.h>
 
-#include <resource/resource.h>
-
-#include <luas.h>
-
-#include <mp/net.h>
+#include <script/util/script_timer.h>
 
 namespace resource_system
 {
@@ -59,6 +55,28 @@ bool ResourceSystem::init()
 		else if (type == typeid(int64_t))		state.push(std::any_cast<int64_t>(v));
 
 		return 1;
+	};
+
+	custom_va_getter = [](const luas::state& state, const luas::variadic_args& va, int i, std::any& out_value)
+	{
+		switch (const auto type = va.get_type(i))
+		{
+		case LUA_TBOOLEAN: out_value = va.get<bool>(i); break;
+		case LUA_TNUMBER: out_value = va.get<lua_Number>(i); break;
+		case LUA_TSTRING: out_value = va.get<std::string>(i); break;
+		case LUA_TLIGHTUSERDATA:
+		{
+			 const auto ud = va.get<void*>(i);
+
+			 if (const auto net_obj = g_net->get_net_object(BITCAST(NetObject*, ud)))
+				 out_value = net_obj;
+
+			break;
+		}
+		default: check(false, "Cannot get custom variadic argument of type: {}", type);
+		}
+
+		return 0;
 	};
 
 #ifdef JC_CLIENT
@@ -147,14 +165,55 @@ void ResourceSystem::refresh()
 
 void ResourceSystem::clear_resource_events(Resource* rsrc)
 {
+	// clear events
+
 	for (auto& [_, rsrc_events] : events)
 		rsrc_events.erase(rsrc);
+
+	// clear timers
+
+	if (auto it = timers.find(rsrc); it != timers.end())
+	{
+		for (auto timer : it->second)
+			JC_FREE(timer);
+
+		timers.erase(it);
+	}
 }
 
 void ResourceSystem::cancel_event()
 {
 	if (curr_event.cancellable)
 		cancelled_events.push(curr_event.id);
+}
+
+void ResourceSystem::update()
+{
+	// update script timers
+
+	for (auto& [rsrc, timer_list] : timers)
+	{
+		// update all timers of rsrc and if it was executed all times then
+		// set pending to kill
+		
+		for (auto timer : timer_list)
+			if (timer->update())
+				timer->set_pending_kill();
+
+		// remove timers that are pending to kill
+		
+		util::container::for_each_safe(timer_list, [](ScriptTimer* timer)
+		{
+			if (timer->is_pending_kill())
+			{
+				JC_FREE(timer);
+
+				return false;
+			}
+
+			return true;
+		});
+	}
 }
 
 bool ResourceSystem::is_resource_valid(const std::string& rsrc_name) const
@@ -196,7 +255,6 @@ bool ResourceSystem::add_event(const std::string& name, luas::lua_fn& fn, Script
 
 	ScriptEventInfo new_entry =
 	{
-		.name = name,
 		.script = script,
 		.fn = std::move(fn),
 		.allow_remote_trigger = allow_remote_trigger
@@ -268,6 +326,46 @@ bool ResourceSystem::remove_event(const std::string& name, Script* script)
 				}
 			}
 		}
+	}
+
+	return false;
+}
+
+ScriptTimer* ResourceSystem::add_timer(luas::lua_fn& fn, Resource* rsrc, std::vector<std::any>& args, int interval, int times)
+{
+	if (!rsrc)
+		return nullptr;
+
+	auto& rsrc_timers = timers[rsrc];
+
+	const auto timer = JC_ALLOC(ScriptTimer, fn, args, interval, times);
+
+	rsrc_timers.insert(timer);
+
+	return timer;
+}
+
+bool ResourceSystem::remove_timer(ScriptTimer* timer, Resource* rsrc)
+{
+	if (!rsrc)
+		return false;
+
+	if (const auto it = timers.find(rsrc); it != timers.end())
+		return it->second.erase(timer) == 1;
+
+	return false;
+}
+
+bool ResourceSystem::kill_timer(ScriptTimer* timer, Resource* rsrc)
+{
+	if (!rsrc)
+		return false;
+
+	if (const auto it = timers.find(rsrc); it != timers.end())
+	{
+		timer->set_pending_kill();
+		
+		return true;
 	}
 
 	return false;

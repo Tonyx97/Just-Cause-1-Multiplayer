@@ -265,6 +265,10 @@ void Net::tick()
 		}
 	});
 
+	// update resource system things
+
+	g_rsrc->update();
+
 	// call tick event after all packets from players are received
 
 	g_rsrc->trigger_event(jc::script::event::ON_TICK);
