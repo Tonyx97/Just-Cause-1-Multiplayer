@@ -43,6 +43,7 @@ public:
 	ref<Weapon> get_weapon_from_slot(int32_t slot);
 
 	int16_t get_current_weapon_slot_id() const;
+	int16_t get_draw_weapon_slot_id() const;
 
 	int32_t get_weapon_slot(Weapon* weapon) const;
 	int32_t get_weapon_slot(int32_t type) const;

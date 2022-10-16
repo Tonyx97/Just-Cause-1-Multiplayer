@@ -44,21 +44,23 @@ namespace jc::stl
 	template <typename M, typename K, typename T>
 	struct unordered_map
 	{
-	private:
+	public:
 
 		struct Node
 		{
 			Node* left,
-				* parent,
-				* right;
+				* right,
+				* parent;
 
 			K key;
 
 			T value;
 
 			bool unk2,
-				is_leaf;
+				 is_leaf;
 		};
+
+	private:
 
 		void* base;
 

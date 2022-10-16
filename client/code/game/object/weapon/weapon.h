@@ -80,6 +80,8 @@ public:
 	float get_bullet_force2() const;
 	float get_accuracy(bool ai) const;
 
+	std::tuple<vec2, vec2> get_icon_uvs() const;
+
 	vec3 get_muzzle_offset();
 
 	const char* get_type_name();

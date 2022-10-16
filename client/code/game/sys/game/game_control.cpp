@@ -47,6 +47,8 @@ namespace jc::game_control
 		"CInfoMessage",
 		"CProvinceInfoMessage",
 		"CGuiPlayerHealth",
+		"CGuiRelations",
+		"CGuiListObject",
 
 		// rest
 

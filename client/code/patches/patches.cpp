@@ -18,6 +18,7 @@
 #include <mp/net.h>
 
 #define FORCE_WINDOWED_SMALL 0
+#define FULL_WINDOW 0
 
 namespace jc::patches
 {
@@ -267,6 +268,17 @@ void jc::patches::apply_initial_patches()
 
 	jc::nop(0x4F330E, 6);
 
+	// patch the weapon HUD
+
+	jc::nop(0x615714, 6);
+	jc::nop(0x615760, 6);
+	jc::write(0.f, 0x61578B);
+
+	// make weapon draw instant with no delay
+
+	//jc::nop(0x61857D, 6);
+	//jc::write(10.f, 0x616660 + 6);
+
 	// patch the loading screen lines (it's just ugly)
 	// and the text tips
 
@@ -285,7 +297,15 @@ void jc::patches::apply_initial_patches()
 	jc::write(0xEBui8, 0x46DEA5);
 
 #if defined(JC_DBG) || FORCE_WINDOWED_SMALL
-	g_game_ctx->set_window_resolution(1600, 1200);
+#if FULL_WINDOW
+	int screen_x = 2560,
+		screen_y = 1440;
+#else
+	int screen_x = 1600,
+		screen_y = 1200;
+#endif
+
+	g_game_ctx->set_window_resolution(screen_x, screen_y);
 	g_game_ctx->set_fullscreen(false);
 #else
 	int32_t sx, sy;

@@ -112,6 +112,19 @@ float WeaponInfo::get_accuracy(bool ai) const
 				jc::read<float>(this, jc::weapon_info::ACCURACY_PLAYER);
 }
 
+std::tuple<vec2, vec2> WeaponInfo::get_icon_uvs() const
+{
+	const auto icon = get_icon_id();
+
+	float grid_x = static_cast<float>(icon % 8),
+		  grid_y = static_cast<float>(icon / 8);
+
+	const auto uv0 = vec2(grid_x * 0.125f, grid_y * 0.25f);
+	const auto uv1 = vec2(uv0.x + 0.125f, uv0.y + 0.25f);
+
+	return { uv0, uv1 };
+}
+
 vec3 WeaponInfo::get_muzzle_offset()
 {
 	return jc::read<vec3>(this, jc::weapon_info::MUZZLE_OFFSET);

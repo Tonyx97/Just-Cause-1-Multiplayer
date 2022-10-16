@@ -112,9 +112,12 @@ public:
 	void begin_window(const char* name, const ImVec2& pos, const ImVec2& size, const ImVec4& color);
 	void end_window();
 	void draw_filled_rect(float x, float y, float w, float h, const ImVec4& color);
+	void draw_image(IDirect3DTexture9* texture, const vec2& pos, const vec2& size, const vec2& uv0 = { 0.f, 0.f }, const vec2& uv1 = { 1.f, 1.f }, const vec4& color = { 1.f, 1.f, 1.f, 1.f });
 
 	float add_text(const char* text, float x, float y, float s, const ImVec4& color, bool center, int shadow = -1, float wrap = 0.f);
 	float add_text(const wchar_t* text, float x, float y, float s, const ImVec4& color, bool center, int shadow = -1, float wrap = 0.f);
+
+	float get_aspect_ratio() const { return io->DisplaySize.y / io->DisplaySize.x; }
 
 	HWND get_window() const { return jc_hwnd; }
 

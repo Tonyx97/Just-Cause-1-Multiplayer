@@ -797,7 +797,7 @@ void Character::clear_weapon_belt()
 void Character::set_weapon(uint8_t id, bool is_remote_player)
 {
 	if (id == 0u)
-		return save_current_weapon();
+		return hide_current_weapon();
 
 	if (const auto weapon_belt = get_weapon_belt())
 	{
@@ -827,7 +827,7 @@ void Character::set_weapon(uint8_t id, bool is_remote_player)
 				{
 					// clear our hands
 
-					save_current_weapon();
+					hide_current_weapon();
 
 					// remove the weapon before adding the new one to avoid weapon drop and bugs
 					
@@ -871,7 +871,7 @@ void Character::set_draw_weapon(ref<Weapon>& weapon)
 	}
 }
 
-void Character::save_current_weapon()
+void Character::hide_current_weapon()
 {
 	set_draw_weapon(1);
 	apply_weapon_switch();

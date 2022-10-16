@@ -86,6 +86,9 @@ void __declspec(naked) neutral_hook2(void)
 	}
 }
 
+float image_x = 1.f,
+	  image_y = 1.f;
+
 void UI::init()
 {
 	// initialize ImGui interface and win api.
@@ -188,6 +191,11 @@ void UI::end_window()
 void UI::draw_filled_rect(float x, float y, float w, float h, const ImVec4& color)
 {
 	ImGui::GetWindowDrawList()->AddQuadFilled({ x, y }, { x, y + h }, { x + w, y + h }, { x + w, y }, ImGui::ColorConvertFloat4ToU32(color));
+}
+
+void UI::draw_image(IDirect3DTexture9* texture, const vec2& pos, const vec2& size, const vec2& uv0, const vec2& uv1, const vec4& color)
+{
+	ImGui::GetWindowDrawList()->AddImage(texture, ImVec2 { pos.x, pos.y }, ImVec2 { pos.x + size.x, pos.y + size.y }, { uv0.x, uv0.y }, { uv1.x, uv1.y }, ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }));
 }
 
 float UI::add_text(const char* text, float x, float y, float s, const ImVec4& color, bool center, int shadow, float wrap)
@@ -382,6 +390,8 @@ void UI::render_default_hud()
 	if (!local_char)
 		return;
 
+	// render health bar
+	
 	const auto hp = local_char->get_real_hp(),
 			   max_hp = local_char->get_max_hp();
 
@@ -398,6 +408,45 @@ void UI::render_default_hud()
 
 	if (hp > 0.f)
 		draw_filled_rect(bar_x + bar_border, bar_y + bar_border, bar_width * normalized_hp, bar_height - bar_border * 2.f, { 1.f, 0.f, 0.f, 1.f });
+
+	// render current weapon
+	
+	const auto list = g_texture_system->get_cache();
+
+	if (const auto n = list->find("new_equip_weapons_1"))
+	{
+		const auto aa = *(void**)(ptr(n) + 0x28);
+		const auto texture = jc::read<IDirect3DTexture9*>(aa, 0x44);
+
+		D3DSURFACE_DESC desc;
+
+		texture->GetLevelDesc(0, &desc);
+
+		if (const auto belt = local_char->get_weapon_belt())
+		{
+
+			if (g_key->is_key_pressed(KEY_K))
+			{
+				jc::write<int16_t>(3, belt, 0xF4);
+				jc::this_call(0x59F8E0, local_char);
+			}
+
+			const auto curr_slot = belt->get_current_weapon_slot_id();
+			const auto draw_slot = belt->get_draw_weapon_slot_id();
+
+			if (const auto current_weapon = belt->get_weapon_from_slot(curr_slot))
+			{
+				const auto [uv0, uv1] = current_weapon->get_info()->get_icon_uvs();
+				const auto color = curr_slot == draw_slot ? vec4(1.f, 1.f, 1.f, 1.f) : vec4(0.5f, 0.5f, 0.5f, 1.f);
+
+				float width = 150.f;
+				float height = width * get_aspect_ratio() * 0.8f;
+
+				draw_image(texture, { 52.f, 52.f }, { width, height }, uv0, uv1, { 0.f, 0.f, 0.f, 1.f });
+				draw_image(texture, { 50.f, 50.f }, { width, height }, uv0, uv1, color);
+			}
+		}
+	}
 }
 
 void UI::render_admin_panel()
@@ -698,6 +747,14 @@ void UI::render_admin_panel()
 
 			log(RED, "wants to spawn {}", veh_to_spawn);
 		}
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Debug Stuff"))
+	{
+		ImGui::SliderFloat("Image X", &image_x, 0.f, 1.f);
+		ImGui::SliderFloat("Image Y", &image_y, 0.f, 1.f);
 
 		ImGui::TreePop();
 	}

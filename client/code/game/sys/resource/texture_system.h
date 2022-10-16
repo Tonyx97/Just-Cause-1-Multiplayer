@@ -1,8 +1,12 @@
 #pragma once
 
+#include "resource_cache.h"
+
 namespace jc::texture_system
 {
 	static constexpr uint32_t SINGLETON = 0xAF2410; // TextureSystem*
+
+	static constexpr uint32_t TEXTURE_CACHE = 0x10;
 
 	namespace vt
 	{
@@ -10,7 +14,7 @@ namespace jc::texture_system
 	}
 }
 
-class TextureSystem
+class TextureSystem : public ResourceCache<jc::texture_system::TEXTURE_CACHE>
 {
 public:
 

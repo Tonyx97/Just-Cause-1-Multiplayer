@@ -39,6 +39,11 @@ int16_t WeaponBelt::get_current_weapon_slot_id() const
 	return jc::read<int16_t>(this, jc::weapon_belt::CURRENT_WEAPON_SLOT_ID);
 }
 
+int16_t WeaponBelt::get_draw_weapon_slot_id() const
+{
+	return jc::read<int16_t>(this, jc::weapon_belt::DRAW_WEAPON_ID);
+}
+
 int32_t WeaponBelt::get_weapon_slot(Weapon* weapon) const
 {
 	return get_weapon_slot(weapon->get_info()->get_type_id());
