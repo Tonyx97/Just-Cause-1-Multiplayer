@@ -247,7 +247,7 @@ public:
 // code duplication
 
 #ifdef JC_CLIENT
-#define SYNC_NET_VAR(obj, name)
+#define SYNC_NET_VAR(obj, name, reliable)
 #else
-#define SYNC_NET_VAR(obj, name) obj->sync_##name();
+#define SYNC_NET_VAR(obj, name, reliable) obj->sync_##name(reliable);
 #endif
