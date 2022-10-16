@@ -6,7 +6,8 @@ namespace jc::g
 	{
 		namespace fn
 		{
-			static constexpr uint32_t MALLOC = 0x4058E0;
+			static constexpr uint32_t MALLOC	= 0x4058E0;
+			static constexpr uint32_t FREE		= 0x405610;
 		}
 	}
 
@@ -32,11 +33,19 @@ namespace jc::g
 namespace jc::game
 {
 	void* malloc_internal(int size);
+	void free_internal(void* ptr);
 
 	template <typename T = void>
 	inline T* malloc(int size)
 	{
 		return BITCAST(T*, malloc_internal(size));
+	}
+
+	template <typename T>
+	inline void free(T ptr)
+	{
+		if (ptr)
+			free_internal(ptr);
 	}
 
 	inline float decode_float(uint16_t v)

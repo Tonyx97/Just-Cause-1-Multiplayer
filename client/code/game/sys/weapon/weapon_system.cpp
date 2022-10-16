@@ -1,6 +1,40 @@
 #include <defs/standard.h>
 
+#include <game/object/base/base.h>
+
 #include "weapon_system.h"
+
+WeaponTemplate* WeaponTemplate::CREATE()
+{
+	const auto instance = jc::game::malloc<WeaponTemplate>(jc::weapon_system::weapon_template::INSTANCE_SIZE);
+
+	check(instance, "Could not create custom WeaponTemplate");
+
+	jc::this_call(jc::weapon_system::weapon_template::fn::SETUP, instance);
+
+	return instance;
+}
+
+void WeaponTemplate::destroy()
+{
+	// call dtor
+	
+	jc::this_call(jc::weapon_system::weapon_template::fn::DTOR, this);
+
+	// free memory
+
+	jc::game::free(this);
+}
+
+void WeaponTemplate::init_from_map(object_base_map* map)
+{
+	jc::this_call(jc::weapon_system::weapon_template::fn::INIT_FROM_MAP, this, map);
+}
+
+void WeaponTemplate::set_ammo_max_range(float v)
+{
+	jc::write(v, this, jc::weapon_system::weapon_template::AMMO_MAX_RANGE);
+}
 
 uint32_t WeaponTemplate::get_id() const
 {
@@ -10,6 +44,11 @@ uint32_t WeaponTemplate::get_id() const
 uint32_t WeaponTemplate::get_slot() const
 {
 	return jc::read<uint32_t>(this, jc::weapon_system::weapon_template::SLOT);
+}
+
+float WeaponTemplate::get_ammo_max_range() const
+{
+	return jc::read<float>(this, jc::weapon_system::weapon_template::AMMO_MAX_RANGE);
 }
 
 std::string WeaponTemplate::get_model() const
@@ -29,6 +68,12 @@ std::string WeaponTemplate::get_name() const
 
 void WeaponSystem::init()
 {
+	// increase all weapon's max range by 100 times
+	
+	for_each_weapon_template([](int, WeaponTemplate* weapon_template)
+	{
+		weapon_template->set_ammo_max_range(weapon_template->get_ammo_max_range() * 100.f);
+	});
 }
 
 void WeaponSystem::destroy()
@@ -109,9 +154,46 @@ void WeaponSystem::dump()
 	log(RED, "}};");
 }
 
+void WeaponSystem::insert_weapon_template(WeaponTemplate* weapon_template)
+{
+	jc::this_call(jc::weapon_system::fn::INSERT_WEAPON_TEMPLATE, get_template_list(), &weapon_template);
+}
+
+void WeaponSystem::remove_weapon_template(WeaponTemplate* weapon_template)
+{
+	const auto template_list = get_template_list();
+
+	if (const auto it = template_list->find(weapon_template); it != template_list->end())
+	{
+		template_list->erase(it);
+
+		weapon_template->destroy();
+	}
+}
+
+void WeaponSystem::remove_weapon_template(uint32_t id)
+{
+	if (const auto weapon_template = get_weapon_template_from_id(id))
+		remove_weapon_template(weapon_template);
+}
+
+WeaponTemplate* WeaponSystem::create_weapon_template(object_base_map* map)
+{
+	if (const auto weapon_template = WeaponTemplate::CREATE())
+	{
+		weapon_template->init_from_map(map);
+
+		insert_weapon_template(weapon_template);
+
+		return weapon_template;
+	}
+
+	return nullptr;
+}
+
 int WeaponSystem::for_each_weapon_template(const weapon_template_iteration_t& fn)
 {
-	const auto template_list = REF(std::vector<WeaponTemplate*>*, this, jc::weapon_system::TEMPLATE_LIST);
+	const auto template_list = get_template_list();
 
 	int32_t count = 0;
 
@@ -125,6 +207,22 @@ int32_t WeaponSystem::get_weapon_type(uint8_t id) const
 {
 	auto it = jc::vars::weapons_id_to_type.find(id);
 	return it != jc::vars::weapons_id_to_type.end() ? it->second : -1;
+}
+
+jc::stl::vector_ptr<WeaponTemplate*>* WeaponSystem::get_template_list() const
+{
+	return REF(jc::stl::vector_ptr<WeaponTemplate*>*, this, jc::weapon_system::TEMPLATE_LIST);
+}
+
+WeaponTemplate* WeaponSystem::get_weapon_template_from_id(uint32_t id) const
+{
+	const auto template_list = get_template_list();
+
+	for (auto weapon_template : *template_list)
+		if (weapon_template->get_id() == id)
+			return weapon_template;
+
+	return nullptr;
 }
 
 std::string WeaponSystem::get_weapon_typename(uint8_t id)

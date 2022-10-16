@@ -38,8 +38,8 @@ namespace jc::weapon_info
 	static constexpr uint32_t BULLETS_TO_FIRE	= 0x44; // int
 	static constexpr uint32_t ACCURACY_AI		= 0x48; // float
 	static constexpr uint32_t ACCURACY_PLAYER	= 0x4C; // float
-	static constexpr uint32_t TYPE_NAME			= 0x54; // char[28]
-	static constexpr uint32_t NAME				= 0x54; // char[28]
+	static constexpr uint32_t TYPE_NAME			= 0x50; // std::string
+	static constexpr uint32_t NAME				= 0x6C; // std::string
 	static constexpr uint32_t MUZZLE_OFFSET		= 0xA4; // vec3
 	static constexpr uint32_t FIRE_SOUND_ID		= 0x118; // int
 	static constexpr uint32_t BULLET_FORCE1		= 0x130; // float
@@ -113,6 +113,7 @@ public:
 	WeaponInfo* get_info() const;
 	Character*	get_owner() const;
 
+	vec3 get_muzzle_position();
 	vec3 get_aim_target();
 
 	Transform* get_grip_transform();

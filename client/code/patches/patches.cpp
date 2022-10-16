@@ -169,7 +169,9 @@ void __fastcall hk_head_rotation_patch(Skeleton* skeleton, ptr _)
 void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muzzle_transform)
 {
 	if (const auto owner = weapon->get_owner())
+	{
 		if (const auto player = g_net->get_player_by_character(owner))
+		{
 			if (const auto weapon_info = weapon->get_info())
 			{
 				// hand guns first
@@ -198,6 +200,8 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 					}
 
 					*final_muzzle_transform = Transform::look_at(muzzle, muzzle + direction);
+
+					return;
 				}
 				else
 				{
@@ -220,8 +224,16 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 								*final_muzzle_transform = Transform::look_at(fire_info->base.muzzle, fire_info->base.muzzle + fire_info->base.direction);
 						}
 					}
+
+					return;
 				}
 			}
+		}
+	}
+
+	const auto muzzle = weapon->get_muzzle_position();
+
+	*final_muzzle_transform = Transform::look_at(muzzle, muzzle + weapon->get_aim_target());
 }
 
 void jc::patches::apply_initial_patches()
@@ -310,6 +322,11 @@ void jc::patches::apply()
 	jc::nop(0x61E529, 0xF);
 	jc::nop(0x56908E, 0xF);
 	jc::nop(0x61F4CB, 0x12);
+
+	// grenade bullet drop patch (for better customization, this removes drop for all bullets)
+
+	jc::nop(0x705256, 0xF);		// grenade bullet update call patch
+	jc::write(0.f, 0xA5B4EC);	// gravity itself
 
 	// avoid automatic destruction of vehicles after 8 seconds
 

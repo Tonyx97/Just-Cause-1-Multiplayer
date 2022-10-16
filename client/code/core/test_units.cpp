@@ -92,23 +92,26 @@ DEFINE_HOOK_THISCALL_S(_test3, 0x596420, bool, int _this)
 	return res;
 }
 
-DEFINE_HOOK_THISCALL(_test4, 0x40B4B0, int, int _this, const char* name)
+DEFINE_HOOK_THISCALL(_test4, 0x568FE0, Bullet*, int _this, Weapon* weapon, Transform* direction, int* a1, jc::stl::vector_ptr<int*> a4, int* a5)
 {
-	auto res = _test4_hook(_this, name);
+	auto res = _test4_hook(_this, weapon, direction, a1, a4, a5);
 
-	log(RED, "{}", name);
+	log(RED, "{:x} {:x} {:x} {:x} {:x}", _this, ptr(weapon), ptr(direction), ptr(a1), ptr(a5));
+
+	while (!GetAsyncKeyState(VK_F3))
+		Sleep(100);
 
 	return res;
 }
 
 void jc::test_units::init()
 {
+	//_test4_hook.hook(true);
+
 	//_test1_hook.hook();
 	/*_test2_hook.hook();
 	_test3_hook.hook();*/
-	//_test4_hook.hook(true);
 
-	//_set_boat_vel_hook.hook();
 	//resource_request_hook.hook();
 	//_test_hook.hook();
 }
@@ -116,12 +119,12 @@ void jc::test_units::init()
 void jc::test_units::destroy()
 {
 	//_test4_hook.hook(false);
+
 	//_test1_hook.unhook();
 	/*_test2_hook.unhook();
 	_test3_hook.unhook();
 	_test4_hook.unhook();*/
 
-	//_set_boat_vel_hook.unhook();
 	//resource_request_hook.unhook();
 	//_test_hook.unhook();
 }
@@ -139,9 +142,11 @@ void jc::test_units::test_0()
 	Transform local_t(local_pos);
 
 	static std::vector<ref<Vehicle>> vehs;
+	static std::vector<ref<Weapon>> temp_weapons;
 
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
+		g_weapon->remove_weapon_template(Weapon_Silenced_Pistol);
 
 		//jc::this_call(0x74DE20, *seat, true);
 
@@ -152,6 +157,18 @@ void jc::test_units::test_0()
 		//g_archives->dump_hashed_assets();
 		/*const auto asset = g_archives->get_asset(R"(PROP_ponytailgrey.lod)");
 		log(GREEN, "{} {:x} {:x} {:x}", asset.arc_index, asset.hash, asset.offset, asset.size);*/
+	}
+
+	for (const auto& w : temp_weapons)
+	{
+		//w->set_transform(local_t);
+		//w->set_last_shot_time(jc::nums::MAXF);
+		w->set_last_muzzle_transform(local_t);
+		//w->set_muzzle_position(local_pos);
+		//w->set_aim_target(vec3(0.f, 0.f, 1.f));
+		w->force_fire();
+		w->set_enabled(true);
+		w->update();
 	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))

@@ -8,6 +8,7 @@
 #include <game/object/vehicle/comps/vehicle_seat.h>
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/physics/pfx_collision.h>
+#include <game/object/weapon/bullet.h>
 
 void jc::hooks::init()
 {
@@ -69,4 +70,5 @@ void jc::hooks::hook_game_fns(bool enable)
 	interactable::hook::enable(enable);
 	vehicle_seat::hook::enable(enable);
 	vehicle::hook::enable(enable);
+	bullet::hook::enable(enable);
 }

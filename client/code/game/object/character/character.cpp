@@ -31,8 +31,6 @@
 
 namespace jc::character::hook
 {
-	static void* test = nullptr;
-
 	DEFINE_HOOK_THISCALL(update, 0x58FC80, void, Character* character, float delta)
 	{
 		/*const auto position = character->get_stomach_bone_position();

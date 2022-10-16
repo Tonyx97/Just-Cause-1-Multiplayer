@@ -70,6 +70,7 @@ public:
 	hkWorld* get_hk_world() const;
 
 	vec3 get_world_position() const;
+	vec3 get_gravity() const;
 };
 
 inline Singleton<Physics, jc::physics::SINGLETON> g_physics;

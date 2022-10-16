@@ -419,12 +419,10 @@ void UI::render_admin_panel()
 
 	// init stuff
 
-	static void* mem = 0;
+	static WeaponTemplate* templeit = 0;
 
-	if (!mem)	// create new weapon :o
+	if (!templeit)	// create new weapon :o
 	{
-		mem = jc::game::malloc(0x17C);
-
 		std::string model = "m488.rbm";
 
 		object_base_map map{};
@@ -459,7 +457,7 @@ void UI::render_admin_panel()
 		map.insert<object_base_map::Float>(0x88bbee10, 1.20f); // float
 		map.insert<object_base_map::Float>(0x8dccf8a, 200.00f); // float
 		map.insert<object_base_map::Float>(0x9db0dcdf, 130.00f); // float
-		map.insert<object_base_map::Float>(0xb27fbdf, 9000.00f); // float
+		map.insert<object_base_map::Float>(0xb27fbdf, 9000.00f); // float - ammo max range
 		map.insert<object_base_map::Float>(0xc5a583e4, 7.00f); // float
 		map.insert<object_base_map::Float>(0xc9dae566, 1.00f); // float
 		map.insert<object_base_map::Float>(0xe775a5da, 2.00f); // float
@@ -473,12 +471,12 @@ void UI::render_admin_panel()
 		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(Rocket Launcher)"); // string
 		map.insert<object_base_map::String>(ObjectBase::Hash_Model, model); // string
 
+		templeit = g_weapon->create_weapon_template(&map);
+
 		g_texture_system->load_texture("dummy_black.dds");
 		g_model_system->load_rbm(model);
 
-		jc::this_call(0x713D00, mem);
-		jc::this_call(0x7142B0, mem, &map);
-		jc::this_call(0x57ED80, ptr(g_weapon.get()) + 0x4, &mem);
+		log(RED, "{:x}", jc::game::hash_str("ammo_max_range"));
 
 		/*g_texture_system->unload_texture("dummy_black.dds");
 		g_model_system->unload_rbm(model);*/

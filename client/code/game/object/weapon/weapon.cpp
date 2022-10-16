@@ -217,6 +217,11 @@ Character* Weapon::get_owner() const
 	return jc::read<Character*>(this, jc::weapon::CHARACTER_OWNER);
 }
 
+vec3 Weapon::get_muzzle_position()
+{
+	return get_muzzle_transform()->get_position();
+}
+
 vec3 Weapon::get_aim_target()
 {
 	return jc::read<vec3>(this, jc::weapon::AIM_TARGET);

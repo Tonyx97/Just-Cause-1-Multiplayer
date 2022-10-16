@@ -111,3 +111,9 @@ vec3 Physics::get_world_position() const
 {
 	return jc::read<vec3>(this, WORLD_POSITION);
 }
+
+vec3 Physics::get_gravity() const
+{
+	const auto world = get_hk_world();
+	return world ? world->get_gravity() : vec3 {};
+}
