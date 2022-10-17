@@ -113,6 +113,13 @@ namespace jc::nums
 
 namespace jc::math
 {
+	inline float delta_angle(float current, float target) // range (-pi, pi]
+	{
+		float delta = std::remainder((target - current), 2 * nums::PI);
+
+		return delta > nums::PI ? delta - 2.f * nums::PI : delta;
+	};
+
 	inline i16vec4 pack_quat(const quat& q)
 	{
 		const auto _q = glm::normalize(q);

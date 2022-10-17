@@ -268,12 +268,6 @@ void jc::patches::apply_initial_patches()
 
 	jc::nop(0x4F330E, 6);
 
-	// patch the weapon HUD
-
-	jc::nop(0x615714, 6);
-	jc::nop(0x615760, 6);
-	jc::write(0.f, 0x61578B);
-
 	// make weapon draw instant with no delay
 
 	//jc::nop(0x61857D, 6);

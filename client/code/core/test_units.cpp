@@ -397,7 +397,7 @@ void jc::test_units::test_0()
 			if (auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_2H_SMG)) // Weapon_1H_SMG - Weapon_Grenade_Launcher
 			{
 				info.character->set_draw_weapon(weapon);
-				info.character->apply_weapon_switch();
+				info.character->draw_weapon_now();
 			}*/
 		}
 		else

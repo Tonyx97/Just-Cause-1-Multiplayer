@@ -8,6 +8,7 @@ namespace jc::bullet
 	static constexpr uint32_t LAST_POSITION = 0x70; // vec3
 	static constexpr uint32_t MAX_RANGE		= 0x94; // float
 	static constexpr uint32_t VELOCITY		= 0x9A; // float
+	static constexpr uint32_t TYPE			= 0x9C; // uint16
 	static constexpr uint32_t IS_ALIVE		= 0x9E; // bool
 
 	namespace vt
@@ -31,6 +32,8 @@ public:
 	void set_direction(const vec3& v);
 
 	bool is_alive();
+
+	uint16_t get_type();
 
 	float get_damage();
 	float get_max_range();

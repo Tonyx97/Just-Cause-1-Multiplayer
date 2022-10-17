@@ -17,18 +17,16 @@ namespace jc::ammo_manager
 
 using bullet_iteration_t = std::function<void(int, class Bullet*)>;
 
-enum WeaponSlot;
-
 class AmmoManager
 {
 public:
 	void init();
 	void destroy();
-	void set_max_ammo_for_slot(WeaponSlot slot, int32_t v);
+	void set_max_ammo_for_slot(uint8_t slot, int32_t v);
 
 	int for_each_bullet(const bullet_iteration_t& fn);
 
-	int32_t get_max_ammo_for_slot(WeaponSlot slot);
+	int32_t get_max_ammo_for_slot(uint8_t slot);
 };
 
 inline Singleton<AmmoManager, jc::ammo_manager::SINGLETON> g_ammo;

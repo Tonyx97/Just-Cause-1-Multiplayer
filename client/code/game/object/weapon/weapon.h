@@ -54,6 +54,11 @@ class Transform;
 class WeaponInfo
 {
 public:
+
+	static std::tuple<vec2, vec2> CALCULATE_ICON_UVS(uint8_t icon);
+
+	static constexpr uint8_t HAND_ICON() { return 18; }
+
 	void set_max_mag_ammo(int32_t v);
 	void set_bullets_to_fire(int32_t v);
 	void set_muzzle_offset(const vec3& v);
@@ -66,6 +71,7 @@ public:
 
 	bool can_create_shells() const;
 	bool is_vehicle_weapon() const;
+	bool has_infinite_ammo() const;
 
 	uint8_t get_id() const;
 
@@ -84,13 +90,14 @@ public:
 
 	vec3 get_muzzle_offset();
 
-	const char* get_type_name();
-	const char* get_name();
+	jc::stl::string* get_type_name();
+	jc::stl::string* get_name();
 };
 
 class Weapon : public ObjectBase
 {
 public:
+
 	void set_ammo(int32_t v);
 	void set_last_shot_time(float v);
 	void set_muzzle_position(const vec3& v);

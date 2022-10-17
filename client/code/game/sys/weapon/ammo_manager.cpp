@@ -15,9 +15,9 @@ void AmmoManager::destroy()
 {
 }
 
-void AmmoManager::set_max_ammo_for_slot(WeaponSlot slot, int32_t v)
+void AmmoManager::set_max_ammo_for_slot(uint8_t slot, int32_t v)
 {
-	if (slot >= WeaponSlot_A && slot <= WeaponSlot_H)
+	if (slot >= WeaponSlot_A && slot < WeaponSlot_Max)
 		return jc::write<int32_t>(v, this, jc::ammo_manager::MAX_AMMO_SLOTA + (slot * 0x4));
 }
 
@@ -33,9 +33,9 @@ int AmmoManager::for_each_bullet(const bullet_iteration_t& fn)
 	return i;
 }
 
-int32_t AmmoManager::get_max_ammo_for_slot(WeaponSlot slot)
+int32_t AmmoManager::get_max_ammo_for_slot(uint8_t slot)
 {
-	if (slot >= WeaponSlot_A && slot <= WeaponSlot_H)
+	if (slot >= WeaponSlot_A && slot < WeaponSlot_Max)
 		return jc::read<int32_t>(this, jc::ammo_manager::MAX_AMMO_SLOTA + (slot * 0x4));
 
 	return -1;

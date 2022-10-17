@@ -1,4 +1,4 @@
-#include <defs/standard.h>
+﻿#include <defs/standard.h>
 
 #include "keycode.h"
 #include "ui.h"
@@ -169,6 +169,8 @@ void UI::toggle_admin_panel()
 {
 	show_admin_panel = !show_admin_panel;
 
+	io->MouseDrawCursor = show_admin_panel;
+
 	g_key->block_input(show_admin_panel);
 }
 
@@ -193,12 +195,27 @@ void UI::draw_filled_rect(float x, float y, float w, float h, const ImVec4& colo
 	ImGui::GetWindowDrawList()->AddQuadFilled({ x, y }, { x, y + h }, { x + w, y + h }, { x + w, y }, ImGui::ColorConvertFloat4ToU32(color));
 }
 
+void UI::draw_filled_circle(const vec2& center, float radius, int segs, const vec4& color)
+{
+	ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2 { center.x, center.y }, radius, ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }), segs);
+}
+
+void UI::draw_circle(const vec2& center, float radius, float thickness, int segs, const vec4& color)
+{
+	ImGui::GetWindowDrawList()->AddCircle(ImVec2{ center.x, center.y }, radius, ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }), segs, thickness);
+}
+
+void UI::draw_line(const vec2& p0, const vec2& p1, float thickness, const vec4& color)
+{
+	ImGui::GetWindowDrawList()->AddLine(ImVec2(p0.x, p0.y), ImVec2(p1.x, p1.y), ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }), thickness);
+}
+
 void UI::draw_image(IDirect3DTexture9* texture, const vec2& pos, const vec2& size, const vec2& uv0, const vec2& uv1, const vec4& color)
 {
 	ImGui::GetWindowDrawList()->AddImage(texture, ImVec2 { pos.x, pos.y }, ImVec2 { pos.x + size.x, pos.y + size.y }, { uv0.x, uv0.y }, { uv1.x, uv1.y }, ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }));
 }
 
-float UI::add_text(const char* text, float x, float y, float s, const ImVec4& color, bool center, int shadow, float wrap)
+float UI::add_text(const char* text, float x, float y, float s, const ImVec4& color, bool center, float shadow, float wrap)
 {
 	auto dl = ImGui::GetWindowDrawList();
 
@@ -209,10 +226,10 @@ float UI::add_text(const char* text, float x, float y, float s, const ImVec4& co
 
 	const auto position = (center ? ImVec2 { x - size.x / 2.f, y - size.y / 2.f } : ImVec2 { x, y });
 
-	if (shadow != -1)
+	if (shadow > 0.f && shadow <= 3.14159f * 2.f)
 	{
-		float shadow_cos = std::cosf(float(shadow)),
-			  shadow_sin = std::sinf(float(shadow));
+		float shadow_cos = std::cosf(shadow) * 2.f,
+			  shadow_sin = std::sinf(shadow) * 2.f;
 
 		dl->AddText(nullptr, s, ImVec2(position.x + shadow_cos, position.y + shadow_sin), outline_color, text, 0, wrap);
 	}
@@ -222,7 +239,7 @@ float UI::add_text(const char* text, float x, float y, float s, const ImVec4& co
 	return y + size.y;
 }
 
-float UI::add_text(const wchar_t* text, float x, float y, float s, const ImVec4& color, bool center, int shadow, float wrap)
+float UI::add_text(const wchar_t* text, float x, float y, float s, const ImVec4& color, bool center, float shadow, float wrap)
 {
 	auto str_length = std::wcslen(text) * 2;
 	auto utf8_text = std::unique_ptr<char, std::function<void(char*)>>(new char[str_length](), [](char* data) { delete[] data; });
@@ -243,8 +260,6 @@ void UI::begin()
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-
-	ImGui::GetIO().MouseDrawCursor = show_admin_panel;
 }
 
 void UI::render()
@@ -390,6 +405,8 @@ void UI::render_default_hud()
 	if (!local_char)
 		return;
 
+	const auto& [sx, sy] = io->DisplaySize;
+
 	// render health bar
 	
 	const auto hp = local_char->get_real_hp(),
@@ -410,40 +427,223 @@ void UI::render_default_hud()
 		draw_filled_rect(bar_x + bar_border, bar_y + bar_border, bar_width * normalized_hp, bar_height - bar_border * 2.f, { 1.f, 0.f, 0.f, 1.f });
 
 	// render current weapon
+
+	const auto grenades_count = local_char->get_grenades_ammo();
 	
 	const auto list = g_texture_system->get_cache();
 
 	if (const auto n = list->find("new_equip_weapons_1"))
 	{
-		const auto aa = *(void**)(ptr(n) + 0x28);
+		const auto aa = *(void**)(ptr(n) + 0x28);	// todojc - debug, get it properly
 		const auto texture = jc::read<IDirect3DTexture9*>(aa, 0x44);
 
-		D3DSURFACE_DESC desc;
-
-		texture->GetLevelDesc(0, &desc);
+		const auto n2 = list->find("hud_grenade_icon");
+		const auto aa2 = *(void**)(ptr(n2) + 0x28);	// todojc - debug, get it properly
+		const auto grenade_texture = jc::read<IDirect3DTexture9*>(aa2, 0x44);
 
 		if (const auto belt = local_char->get_weapon_belt())
 		{
-
-			if (g_key->is_key_pressed(KEY_K))
-			{
-				jc::write<int16_t>(3, belt, 0xF4);
-				jc::this_call(0x59F8E0, local_char);
-			}
-
 			const auto curr_slot = belt->get_current_weapon_slot_id();
 			const auto draw_slot = belt->get_draw_weapon_slot_id();
 
+			{
+				// render grenades (a line of grenades if we have less than 9)
+				// and a simply multiplier when we have more
+
+				const auto width = 30.f;
+				const auto height = width * get_aspect_ratio() * 1.5f;
+
+				if (grenades_count <= 8)
+				{
+					for (int i = 0; i < 8; ++i)
+					{
+						const bool grenade_available = (i + 1) <= grenades_count;
+
+						draw_image(grenade_texture, vec2(25.f + i * width + 2.f, 50.f + 2.f), { width, height }, vec2(0.f), vec2(1.f), vec4(0.f, 0.f, 0.f, 1.f));
+						draw_image(grenade_texture, vec2(25.f + i * width, 50.f), { width, height }, vec2(0.f), vec2(1.f), grenade_available ? vec4(1.f) : vec4(0.3f, 0.3f, 0.3f, 1.f));
+					}
+				}
+				else
+				{
+					draw_image(grenade_texture, vec2(25.f + 2.f, 50.f + 2.f), { width, height }, vec2(0.f), vec2(1.f), vec4(0.f, 0.f, 0.f, 1.f));
+					draw_image(grenade_texture, vec2(25.f, 50.f), { width, height }, vec2(0.f), vec2(1.f), vec4(1.f));
+
+					add_text(FORMATV("x {}", grenades_count).c_str(), 25.f + 40.f, 50.f, 26.f, { 1.f, 1.f, 1.f, 1.f }, false, jc::nums::QUARTER_PI);
+				}
+			}
+
 			if (const auto current_weapon = belt->get_weapon_from_slot(curr_slot))
 			{
-				const auto [uv0, uv1] = current_weapon->get_info()->get_icon_uvs();
+				const auto weapon_info = current_weapon->get_info();
+				const auto [uv0, uv1] = weapon_info->get_icon_uvs();
 				const auto color = curr_slot == draw_slot ? vec4(1.f, 1.f, 1.f, 1.f) : vec4(0.5f, 0.5f, 0.5f, 1.f);
+				const auto width = 150.f;
+				const auto height = width * get_aspect_ratio() * 0.8f;
+				const auto ammo = current_weapon->get_ammo();
+				const auto total_ammo = belt->get_weapon_ammo(weapon_info->get_bullet_type());
 
-				float width = 150.f;
-				float height = width * get_aspect_ratio() * 0.8f;
+				const auto item_pos = vec2(25.f, 100.f);
 
-				draw_image(texture, { 52.f, 52.f }, { width, height }, uv0, uv1, { 0.f, 0.f, 0.f, 1.f });
-				draw_image(texture, { 50.f, 50.f }, { width, height }, uv0, uv1, color);
+				draw_image(texture, item_pos + vec2(2.f), { width, height }, uv0, uv1, { 0.f, 0.f, 0.f, 1.f });
+				draw_image(texture, item_pos, { width, height }, uv0, uv1, color);
+
+				if (!weapon_info->has_infinite_ammo())
+				{
+					const auto separator_pos = item_pos + vec2(width + 40.f, height / 2.f);
+
+					add_text(FORMATV("{}", ammo).c_str(), separator_pos.x, separator_pos.y - 20.f, 26.f, { 1.f, 1.f, 1.f, 1.f }, true);
+					add_text(FORMATV("{}", total_ammo).c_str(), separator_pos.x, separator_pos.y + 20.f, 26.f, { 1.f, 1.f, 1.f, 1.f }, true);
+
+					draw_line(separator_pos - vec2(20.f, 0.f), separator_pos + vec2(20.f, 0.f), 4.f, vec4(1.f));
+				}
+			}
+
+			// render weapon radial wheel
+
+			static vec2 weapon_cursor_direction = {};
+			static vec2 weapon_cursor_start_pos = {};
+			static WeaponType selected_type = WeaponType_Invalid;
+			static float weapon_wheel_alpha = 0.f;
+			static bool weapon_wheel_open = false;
+
+			if (g_key->is_key_down(KEY_TAB))
+			{
+				const auto center = vec2(sx / 2.f, sy / 2.f);
+
+				const auto item_distance_from_center = 250.f;
+				const auto center_distance_to_inner = 175.f;
+				const auto center_distance_to_outer = 325.f;
+
+				draw_circle(center, item_distance_from_center, 150.f, 100, { 0.2f, 0.3f, 0.3f, 0.6f });
+				draw_circle(center, center_distance_to_inner, 2.f, 100, { 0.f, 0.f, 0.f, 0.6f });
+				draw_circle(center, center_distance_to_outer, 2.f, 100, { 0.f, 0.f, 0.f, 0.6f });
+
+				const auto start_angle = jc::nums::PI * 3.f / 2.f;
+				const auto end_angle = start_angle + jc::nums::DOUBLE_PI;
+				const auto step_angle = jc::nums::DOUBLE_PI / float(WeaponType_Max - 1);
+
+				float curr_angle = start_angle;
+
+				static std::unordered_map<WeaponType, float> type_angles;
+
+				g_weapon->for_each_weapon_type([&](WeaponType type)
+				{
+					if (type == WeaponType_Signature || type == WeaponType_Special)
+						return;
+
+					vec2 uv0, uv1;
+					
+					const auto weapon = belt->get_weapon_from_type(type);
+
+					if (weapon)
+						std::tie(uv0, uv1) = weapon->get_info()->get_icon_uvs();
+					else std::tie(uv0, uv1) = WeaponInfo::CALCULATE_ICON_UVS(WeaponInfo::HAND_ICON());
+
+					if (weapon || type == WeaponType_None)
+					{
+						if (auto it = type_angles.find(type); it == type_angles.end())
+							type_angles.insert({ type, curr_angle });
+
+						const bool hovered = selected_type == type;
+
+						const auto angle_begin = vec2(std::cos(curr_angle - step_angle / 2.f), std::sin(curr_angle - step_angle / 2.f));
+						const auto angle_end = vec2(std::cos(curr_angle + step_angle / 2.f), std::sin(curr_angle + step_angle / 2.f));
+						const auto line1_base = center + angle_begin * center_distance_to_inner;
+						const auto line2_base = center + angle_end * center_distance_to_inner;
+						const auto line1_target = center + angle_begin * center_distance_to_outer;
+						const auto line2_target = center + angle_end * center_distance_to_outer;
+
+						draw_line(line1_base, line1_target, 2.f, { 0.f, 0.f, 0.f, weapon_wheel_alpha });
+						draw_line(line2_base, line2_target, 2.f, { 0.f, 0.f, 0.f, weapon_wheel_alpha });
+						
+						const auto color = hovered ? vec4(0.8f, 0.7f, 0.2f, weapon_wheel_alpha) : vec4(0.3f, 0.3f, 0.3f, weapon_wheel_alpha);
+						const auto item_center_pos = center + vec2(std::cos(curr_angle), std::sin(curr_angle)) * item_distance_from_center;
+
+						if (hovered)
+							draw_circle(item_center_pos, 52.f, 5.f, 30, color);
+
+						draw_filled_circle(item_center_pos, 50.f, 30, vec4(0.3f, 0.4f, 0.4f, weapon_wheel_alpha * 0.5f));
+
+						const auto width = 75.f;
+						const auto height = width * get_aspect_ratio() * 0.8f;
+
+						const auto item_pos = item_center_pos - vec2(width / 2.f, height / 2.f);
+
+						draw_image(texture, item_pos + vec2(2.f), { width, height }, uv0, uv1, { 0.f, 0.f, 0.f, weapon_wheel_alpha });
+						draw_image(texture, item_pos, { width, height }, uv0, uv1, { 1.f, 1.f, 1.f, weapon_wheel_alpha });
+
+						std::string weapon_name;
+
+						if (weapon)
+						{
+							const auto weapon_info = weapon->get_info();
+							const auto ammo = weapon->get_ammo();
+							const auto total_ammo = belt->get_weapon_ammo(weapon_info->get_bullet_type());
+
+							if (hovered)
+								weapon_name = weapon_info->get_name()->c_str();
+
+							std::string text;
+
+							if (weapon_info->has_infinite_ammo())
+								text = "Infinite";
+							else text = FORMATV("{} / {}", ammo, total_ammo);
+
+							add_text(text.c_str(), item_center_pos.x, item_center_pos.y + 30.f, 16.f, { 1.f, 1.f, 1.f, weapon_wheel_alpha }, true, jc::nums::QUARTER_PI);
+						}
+
+						if (!weapon_name.empty())
+							add_text(weapon_name.c_str(), center.x, center.y - 30.f, 22.f, { 1.f, 1.f, 1.f, weapon_wheel_alpha }, true, jc::nums::QUARTER_PI);
+					}
+
+					curr_angle += step_angle;
+				});
+
+				if (!weapon_wheel_open)
+				{
+					weapon_cursor_start_pos = get_cursor_pos();
+					
+					g_key->block_input(weapon_wheel_open = true);
+				}
+				else
+				{
+					const auto curr_cursor_pos = get_cursor_pos();
+					const auto delta = glm::normalize(curr_cursor_pos - weapon_cursor_start_pos);
+
+					selected_type = WeaponType_Invalid;
+
+					for (const auto& [type, angle] : type_angles)
+					{
+						const auto diff = std::fabsf(jc::math::delta_angle(std::atan2(delta.y, delta.x), angle));
+
+						if (diff < step_angle / 2.f)
+						{
+							selected_type = type;
+							break;
+						}
+					}
+
+					if (weapon_wheel_alpha < 1.f)
+						weapon_wheel_alpha += g_time->get_delta() * 5.f;
+				}
+			}
+			else if (weapon_wheel_open)
+			{
+				if (weapon_wheel_alpha > 0.f)
+					weapon_wheel_alpha -= g_time->get_delta() * 5.f;
+				else
+				{
+					if (selected_type != WeaponType_Invalid && selected_type != WeaponType_None)
+					{
+						local_char->set_draw_weapon(belt->get_weapon_slot(selected_type));
+						local_char->draw_weapon_now();
+					}
+					else local_char->hide_current_weapon();
+
+					selected_type = WeaponType_Invalid;
+
+					g_key->block_input(weapon_wheel_open = false);
+				}
 			}
 		}
 	}
@@ -541,6 +741,8 @@ void UI::render_admin_panel()
 	if (!show_admin_panel)
 		return;
 
+	io->MouseDrawCursor = true;
+
 	ImGui::SetNextWindowSize({ 700.f, 700.f }, ImGuiCond_Once);
 	ImGui::Begin("Admin Panel");
 
@@ -627,10 +829,10 @@ void UI::render_admin_panel()
 			Weapon_Assault_Rifle_heavy,
 			Weapon_Assault_Rifle_high_tech,
 			Weapon_Shotgun_automatic,
-			/*Weapon_Grapplinghook,
+			Weapon_Grapplinghook,
 			Weapon_Timed_Explosive,
 			Weapon_Triggered_Explosive,
-			Weapon_Remote_Trigger,*/
+			Weapon_Remote_Trigger,
 		};
 
 		ImGui::Text("Selected Weapon Name: %s", jc::vars::weapons_id_to_type_name.find(weapon_ids[weapon_to_give])->second.c_str());
@@ -641,6 +843,23 @@ void UI::render_admin_panel()
 
 		if (ImGui::Button("Give New Weapon :O##ap.weap.givnew"))
 			local_char->set_weapon(100, false);
+
+		if (ImGui::Button("Give Grenade :O##ap.weap.givnade"))
+			local_char->set_grenades_ammo(local_char->get_grenades_ammo() + 1);
+
+		if (ImGui::Button("Give Debug List##ap.weap.givdl"))
+		{
+			local_char->set_weapon(Weapon_Pistol, false);
+			local_char->set_weapon(Weapon_Assault_Rifle, false);
+			local_char->set_weapon(Weapon_1H_SMG, false);
+			local_char->set_weapon(Weapon_Grapplinghook, false);
+			local_char->set_weapon(Weapon_Timed_Explosive, false);
+			local_char->set_weapon(Weapon_Triggered_Explosive, false);
+			local_char->set_weapon(Weapon_Remote_Trigger, false);
+
+			for (int i = 0; i < WeaponSlot_Max; ++i)
+				local_char->get_weapon_belt()->set_weapon_ammo(i, 60);
+		}
 
 		ImGui::TreePop();
 	}
@@ -846,8 +1065,8 @@ void UI::overlay_debug()
 					ImGui::Text("------------------");
 					ImGui::Text("Ptr: 0x%x", *weapon);
 					ImGui::Text("ID: %i", weapon_info->get_type_id());
-					ImGui::Text("Slot: %i", weapon_belt->get_weapon_slot(*weapon));
-					ImGui::Text("Weapon from slot: 0x%x", *weapon_belt->get_weapon_from_slot(weapon_belt->get_weapon_slot(*weapon)));
+					//ImGui::Text("Slot: %i", weapon_belt->get_weapon_slot(*weapon));
+					//ImGui::Text("Weapon from slot: 0x%x", *weapon_belt->get_weapon_from_slot(weapon_belt->get_weapon_slot(*weapon)));
 				}
 
 				if (show_grip)

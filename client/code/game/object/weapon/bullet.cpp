@@ -2,6 +2,8 @@
 
 #include "bullet.h"
 
+#include <game/object/vars/weapons.h>
+
 #include <game/sys/resource/physics.h>
 
 namespace jc::bullet::hook
@@ -10,21 +12,38 @@ namespace jc::bullet::hook
 	{
 		step_hook(bullet, delta);
 
-		// custom bullet drop calculation
-		
-		const auto gravity = g_physics->get_gravity();
-		const auto direction = bullet->get_direction();
-		const auto velocity = bullet->get_velocity();
+		// custom bullet drop calculation for bullets
+		// and overall, bullets that are usually affected
+		// by gravity
 
-		vec3 new_direction =
+		switch (bullet->get_type())
 		{
-			(direction.x * velocity) + gravity.x * 2.f * delta,
-			(direction.y * velocity) + gravity.y * 2.f * delta,
-			(direction.z * velocity) + gravity.z * 2.f * delta
-		};
+		case BulletType_Small:
+		case BulletType_Medium:
+		case BulletType_Large:
+		case BulletType_ShotgunOrMG:
+		case BulletType_Grenade:
+		case BulletType_Hook:
+		{
+			const auto gravity = g_physics->get_gravity();
+			const auto direction = bullet->get_direction();
+			const auto velocity = bullet->get_velocity();
 
-		bullet->set_velocity(glm::length(new_direction));
-		bullet->set_direction(new_direction);
+			const auto gravity_modifier = 2.5f;
+
+			vec3 new_direction =
+			{
+				(direction.x * velocity) + gravity.x * gravity_modifier * delta,
+				(direction.y * velocity) + gravity.y * gravity_modifier * delta,
+				(direction.z * velocity) + gravity.z * gravity_modifier * delta
+			};
+
+			bullet->set_velocity(glm::length(new_direction));
+			bullet->set_direction(new_direction);
+
+			break;
+		}
+		}
 	}
 }
 
@@ -56,6 +75,11 @@ void Bullet::set_direction(const vec3& v)
 bool Bullet::is_alive()
 {
 	return jc::read<bool>(this, jc::bullet::IS_ALIVE);
+}
+
+uint16_t Bullet::get_type()
+{
+	return jc::read<uint16_t>(this, jc::bullet::TYPE);
 }
 
 float Bullet::get_damage()

@@ -821,7 +821,7 @@ void Character::set_weapon(uint8_t id, bool is_remote_player)
 				{
 					set_draw_weapon(rf);
 
-					return apply_weapon_switch();
+					return draw_weapon_now();
 				}
 				else if (slot == weapon_belt->get_weapon_slot(target_weapon_type))
 				{
@@ -851,7 +851,7 @@ void Character::set_weapon(uint8_t id, bool is_remote_player)
 		// draw the weapon
 
 		set_draw_weapon(rf);
-		apply_weapon_switch();
+		draw_weapon_now();
 	}
 }
 
@@ -874,10 +874,10 @@ void Character::set_draw_weapon(ref<Weapon>& weapon)
 void Character::hide_current_weapon()
 {
 	set_draw_weapon(1);
-	apply_weapon_switch();
+	draw_weapon_now();
 }
 
-void Character::apply_weapon_switch()
+void Character::draw_weapon_now()
 {
 	jc::this_call(jc::character::fn::DRAW_WEAPON_NOW, this);
 }

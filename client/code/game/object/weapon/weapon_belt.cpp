@@ -5,10 +5,9 @@
 
 #include <game/sys/weapon/weapon_system.h>
 
-void WeaponBelt::set_slot_ammo(int32_t slot, int32_t v)
+void WeaponBelt::set_weapon_ammo(int32_t bullet_type, int32_t v)
 {
-	if (slot >= WeaponSlot_A && slot <= WeaponSlot_J)
-		jc::write(v, this, jc::weapon_belt::AMMO_SLOTA + (slot * 0x4));
+	jc::write(v, this, jc::weapon_belt::AMMO_BEGIN + (bullet_type * 0x4));
 }
 
 void WeaponBelt::remove_weapon(int32_t slot)
@@ -34,6 +33,16 @@ ref<Weapon> WeaponBelt::get_weapon_from_slot(int32_t slot)
 	return {};
 }
 
+ref<Weapon> WeaponBelt::get_weapon_from_type(uint8_t type)
+{
+	const auto slot = get_weapon_slot(type);
+
+	if (auto weapon = get_weapon_from_slot(slot))
+		return weapon;
+
+	return {};
+}
+
 int16_t WeaponBelt::get_current_weapon_slot_id() const
 {
 	return jc::read<int16_t>(this, jc::weapon_belt::CURRENT_WEAPON_SLOT_ID);
@@ -54,12 +63,9 @@ int32_t WeaponBelt::get_weapon_slot(int32_t type) const
 	return static_cast<int32_t>(jc::this_call<int16_t>(jc::weapon_belt::fn::GET_SLOT_BY_TYPE_ID, this, type));
 }
 
-int32_t WeaponBelt::get_slot_ammo(int32_t slot) const
+int32_t WeaponBelt::get_weapon_ammo(int32_t slot) const
 {
-	if (slot >= WeaponSlot_A && slot <= WeaponSlot_J)
-		return jc::read<int32_t>(this, jc::weapon_belt::AMMO_SLOTA + (slot * 0x4));
-
-	return -1;
+	return jc::read<int32_t>(this, jc::weapon_belt::AMMO_BEGIN + (slot * 0x4));
 }
 
 ref<Weapon> WeaponBelt::get_current_weapon()

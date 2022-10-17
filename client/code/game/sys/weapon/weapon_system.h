@@ -88,6 +88,13 @@ public:
 
 	ref<Weapon> create_weapon_instance(const std::string& name);
 	ref<Weapon> create_weapon_instance(uint8_t id);
+
+	template <typename Fn>
+	void for_each_weapon_type(const Fn& fn)
+	{
+		for (auto type : jc::vars::weapon_types)
+			fn(type);
+	}
 };
 
 inline Singleton<WeaponSystem, jc::weapon_system::SINGLETON> g_weapon;

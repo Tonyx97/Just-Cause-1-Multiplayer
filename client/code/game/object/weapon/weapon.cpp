@@ -4,6 +4,17 @@
 
 #include <game/transform/transform.h>
 
+std::tuple<vec2, vec2> WeaponInfo::CALCULATE_ICON_UVS(uint8_t icon)
+{
+	float grid_x = static_cast<float>(icon % 8),
+		  grid_y = static_cast<float>(icon / 8);
+
+	const auto uv0 = vec2(grid_x * 0.125f, grid_y * 0.25f);
+	const auto uv1 = vec2(uv0.x + 0.125f, uv0.y + 0.25f);
+
+	return { uv0, uv1 };
+}
+
 void WeaponInfo::set_max_mag_ammo(int32_t v)
 {
 	jc::write(v, this, jc::weapon_info::MAX_MAG_AMMO);
@@ -61,6 +72,11 @@ bool WeaponInfo::is_vehicle_weapon() const
 	return get_icon_id() == 0;
 }
 
+bool WeaponInfo::has_infinite_ammo() const
+{
+	return jc::read<bool>(this, jc::weapon_info::INFINITE_AMMO);
+}
+
 uint8_t WeaponInfo::get_id() const
 {
 	return static_cast<uint8_t>(jc::read<int32_t>(this, jc::weapon_info::ID));
@@ -116,13 +132,7 @@ std::tuple<vec2, vec2> WeaponInfo::get_icon_uvs() const
 {
 	const auto icon = get_icon_id();
 
-	float grid_x = static_cast<float>(icon % 8),
-		  grid_y = static_cast<float>(icon / 8);
-
-	const auto uv0 = vec2(grid_x * 0.125f, grid_y * 0.25f);
-	const auto uv1 = vec2(uv0.x + 0.125f, uv0.y + 0.25f);
-
-	return { uv0, uv1 };
+	return CALCULATE_ICON_UVS(icon);
 }
 
 vec3 WeaponInfo::get_muzzle_offset()
@@ -130,14 +140,14 @@ vec3 WeaponInfo::get_muzzle_offset()
 	return jc::read<vec3>(this, jc::weapon_info::MUZZLE_OFFSET);
 }
 
-const char* WeaponInfo::get_type_name()
+jc::stl::string* WeaponInfo::get_type_name()
 {
-	return REF(const char*, this, jc::weapon_info::TYPE_NAME);
+	return REF(jc::stl::string*, this, jc::weapon_info::TYPE_NAME);
 }
 
-const char* WeaponInfo::get_name()
+jc::stl::string* WeaponInfo::get_name()
 {
-	return REF(const char*, this, jc::weapon_info::NAME);
+	return REF(jc::stl::string*, this, jc::weapon_info::NAME);
 }
 
 void Weapon::set_ammo(int32_t v)

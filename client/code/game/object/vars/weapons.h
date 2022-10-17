@@ -1,8 +1,6 @@
 #pragma once
 
-using WeaponID = uint8_t;
-
-enum WeaponSlot
+DEFINE_ENUM(WeaponSlot, uint8_t)
 {
 	WeaponSlot_A,
 	WeaponSlot_B,
@@ -14,9 +12,41 @@ enum WeaponSlot
 	WeaponSlot_H,
 	WeaponSlot_I,
 	WeaponSlot_J,
+	WeaponSlot_Max,
 };
 
-enum WeaponID_ : WeaponID
+DEFINE_ENUM(WeaponType, uint8_t)
+{
+	WeaponType_Small = 0,
+	WeaponType_Medium = 1,
+	WeaponType_Large = 2,
+	WeaponType_Signature = 3,
+	WeaponType_Special = 4,	// weapons not carried by the player aka vehicle weapons
+	WeaponType_TimedExplosive = 6,
+	WeaponType_TriggeredExplosive = 7,
+	WeaponType_RemoteTrigger = 8,
+	WeaponType_GrapplingHook = 9,
+	WeaponType_Max = 9,
+	WeaponType_Invalid = WeaponType_Max + 1,
+	WeaponType_None,
+};
+
+DEFINE_ENUM(BulletType, uint8_t)
+{
+	BulletType_Small = 1,
+	BulletType_Medium = 2,
+	BulletType_Unknown = 3,
+	BulletType_ShotgunOrMG = 4,
+	BulletType_Grenade = 6,
+	BulletType_Rocket = 7,
+	BulletType_Large = 8,
+	BulletType_Hook = 10,
+	BulletType_TimedExplosive = 11,
+	BulletType_TriggeredExplosive = 12,
+	BulletType_RemoteTrigger = 13,
+};
+
+DEFINE_ENUM(WeaponID, uint8_t)
 {
 	Weapon_None,
 	Weapon_Pistol = 1, // MORETTI P-94 | Pistol
@@ -138,6 +168,20 @@ namespace jc::vars
 		{ Weapon_Timed_Explosive, R"(weapons\weap_040.lod)" },
 		{ Weapon_Triggered_Explosive, R"(weapons\weap_041.lod)" },
 		{ Weapon_Remote_Trigger, R"(Weapons\WEAP_042.rbm)" },
+	};
+
+	inline const std::vector<WeaponType> weapon_types =
+	{
+		WeaponType_None,
+		WeaponType_Small,
+		WeaponType_Medium,
+		WeaponType_Large,
+		WeaponType_Signature,
+		WeaponType_Special,
+		WeaponType_TimedExplosive,
+		WeaponType_TriggeredExplosive,
+		WeaponType_RemoteTrigger,
+		WeaponType_GrapplingHook
 	};
 
 	inline const std::unordered_map<WeaponID, int32_t> weapons_id_to_type =

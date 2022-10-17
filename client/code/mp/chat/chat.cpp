@@ -7,6 +7,7 @@
 #include <mp/cmd/cmd.h>
 
 #include <game/sys/game/game_status.h>
+#include <game/sys/time/time_system.h>
 
 #include "chat.h"
 
@@ -186,6 +187,8 @@ void Chat::add_chat_msg(const std::string& msg)
 	std::lock_guard lock(chat_list_mtx);
 
 	chat_list.push_back(msg);
+
+	interaction_time = 0.f;
 }
 
 void Chat::scroll_up()
@@ -212,6 +215,12 @@ void Chat::update()
 		return;
 
 	if (!g_game_status->is_in_game())
+		return;
+
+	if (typing)
+		interaction_time = 0.f;
+
+	if (interaction_time >= 7.5f)
 		return;
 
 	g_ui->begin_window("##chat_wnd", { 5.f, 300.f }, { max_sx + 5.f, 300.f }, { 0.f, 0.f, 0.f, 0.5f });
@@ -250,4 +259,6 @@ void Chat::update()
 		if (!curr_msg.empty())
 			g_ui->add_text(curr_msg.c_str(), 10.f, 630.f, text_size, { 1.f, 1.f, 1.f, 1.f }, false, -1, max_sx);
 	}
+
+	interaction_time += g_time->get_delta();
 }

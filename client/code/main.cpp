@@ -141,7 +141,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		log(GREEN, "Initializing NET...");
 
 #ifdef _DEBUG
-		const bool conn_ok = g_net->init("192.168.0.14", {}, nick);
+		const bool conn_ok = g_net->init("192.168.0.15", {}, nick);
 #else
 		const bool conn_ok = g_net->init(g_registry.get_string("ip"), g_registry.get_string("password"), nick);
 #endif
@@ -316,6 +316,12 @@ DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
 	g_settings->set_int(SettingType_SceneComplexity, 2);
 	g_settings->set_int(SettingType_WaterQuality, 2);
 	g_settings->set_int(SettingType_PostFX, 1);
+
+	// disable the game's HUD to use our own
+	
+	g_settings->set_int(SettingType_ShowHpBar, 2);
+	g_settings->set_int(SettingType_ShowWeaponSelector, 2);
+	g_settings->set_int(SettingType_ShowObjectiveInfo, 2);
 
 	return ok;
 }
