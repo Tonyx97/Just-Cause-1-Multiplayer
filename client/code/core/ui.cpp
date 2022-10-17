@@ -103,6 +103,12 @@ void UI::dispatch()
 	end();
 }
 
+void UI::set_cursor_pos(const vec2& v)
+{
+	io->WantSetMousePos = true;
+	io->MousePos = ImVec2(v.x, v.y);
+}
+
 void UI::toggle_admin_panel()
 {
 	show_admin_panel = !show_admin_panel;
@@ -437,8 +443,6 @@ void UI::render_default_hud()
 			// render weapon radial wheel
 
 			static std::unordered_map<WeaponType, float> item_angles;
-			static vec2 weapon_cursor_direction = {};
-			static vec2 weapon_cursor_start_pos = {};
 			static WeaponType selected_type = WeaponType_Invalid;
 			static float weapon_wheel_alpha = 0.f;
 			static bool weapon_wheel_open = false;
@@ -552,20 +556,21 @@ void UI::render_default_hud()
 
 				if (!weapon_wheel_open)
 				{
-					weapon_cursor_start_pos = get_cursor_pos();
-					
+					set_cursor_pos(center);
+
 					g_key->block_input(weapon_wheel_open = true);
 				}
 				else
 				{
 					const auto curr_cursor_pos = get_cursor_pos();
-					const auto delta = glm::normalize(curr_cursor_pos - weapon_cursor_start_pos);
+					const auto delta = curr_cursor_pos - center;
+					const auto norm_delta = glm::normalize(delta);
 
 					selected_type = WeaponType_Invalid;
 
 					for (const auto& [type, angle] : item_angles)
 					{
-						const auto diff = std::fabsf(jc::math::delta_angle(std::atan2(delta.y, delta.x), angle));
+						const auto diff = std::fabsf(jc::math::delta_angle(std::atan2(norm_delta.y, norm_delta.x), angle));
 
 						if (diff < step_angle / 2.f)
 						{
@@ -574,15 +579,22 @@ void UI::render_default_hud()
 						}
 					}
 
+					// for better control, let's clamp the max cursor radius to "center_distance_to_inner" units
+					// so in case the player moved the cursor very far, they don't need to
+					// move it equally far to the other side to choose other weapons (sexy fix hehe)
+					
+					if (glm::length(delta) > center_distance_to_inner)
+						set_cursor_pos(center + vec2(norm_delta.x, norm_delta.y) * center_distance_to_inner);
+
 					if (weapon_wheel_alpha < 1.f)
 						weapon_wheel_alpha += g_time->get_delta() * 5.f;
 				}
 			}
-			else if (weapon_wheel_open)
+			else if (weapon_wheel_alpha > 0.f)
 			{
-				if (weapon_wheel_alpha > 0.f)
-					weapon_wheel_alpha -= g_time->get_delta() * 5.f;
-				else
+				// when we stop holding the key, we will apply the changes no matter what
+				
+				if (weapon_wheel_open)
 				{
 					if (selected_type != WeaponType_Invalid && selected_type != WeaponType_None)
 					{
@@ -595,6 +607,8 @@ void UI::render_default_hud()
 
 					g_key->block_input(weapon_wheel_open = false);
 				}
+
+				weapon_wheel_alpha -= g_time->get_delta() * 5.f;
 			}
 		}
 	}
@@ -675,8 +689,6 @@ void UI::render_admin_panel()
 
 		g_texture_system->load_texture("dummy_black.dds");
 		g_model_system->load_rbm(model);
-
-		log(RED, "{:x}", jc::game::hash_str("ammo_max_range"));
 
 		/*g_texture_system->unload_texture("dummy_black.dds");
 		g_model_system->unload_rbm(model);*/

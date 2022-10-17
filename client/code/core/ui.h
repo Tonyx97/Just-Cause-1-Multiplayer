@@ -108,6 +108,7 @@ public:
 	void init();
 	void destroy();
 	void dispatch();
+	void set_cursor_pos(const vec2& v);
 	void toggle_admin_panel();
 	void begin_window(const char* name, const ImVec2& pos, const ImVec2& size, const ImVec4& color);
 	void end_window();

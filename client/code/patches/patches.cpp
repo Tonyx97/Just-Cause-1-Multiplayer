@@ -107,6 +107,10 @@ namespace jc::patches
 	// removes existing character's bone distance culling check
 	// 
 	patch bone_culling_distance_patch(0x590B96);
+
+	// removes the weapon selector using the mouse wheel
+	//
+	patch wheel_weapon_selector_patch(0x4C436B);
 }
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
@@ -495,10 +499,15 @@ void jc::patches::apply()
 	// apply bone distance culling check path
 
 	bone_culling_distance_patch.jump(0x590D81);
+
+	// patch mouse wheel weapon selector
+
+	wheel_weapon_selector_patch.jump(0x4C43AD);
 }
 
 void jc::patches::undo()
 {
+	wheel_weapon_selector_patch._undo();
 	bone_culling_distance_patch._undo();
 	game_freeze_patch._undo();
 	heartbeat_sound_patch._undo();
