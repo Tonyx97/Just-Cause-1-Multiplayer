@@ -1,5 +1,7 @@
 #pragma once
 
+#include <game/object/asset/asset_texture.h>
+
 #include "resource_cache.h"
 
 namespace jc::texture_system
@@ -14,7 +16,7 @@ namespace jc::texture_system
 	}
 }
 
-class TextureSystem : public ResourceCache<jc::texture_system::TEXTURE_CACHE>
+class TextureSystem : public ResourceCache<AssetTexture, jc::texture_system::TEXTURE_CACHE>
 {
 public:
 

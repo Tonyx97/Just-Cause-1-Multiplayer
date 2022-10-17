@@ -1,0 +1,62 @@
+
+uintptr_t original_functions[43];
+uintptr_t return_address;
+uintptr_t first_argument;
+uintptr_t second_argument;
+uintptr_t third_argument;
+uintptr_t fourth_argument;
+uintptr_t original_function;
+uint32_t  function_index;
+void __declspec(naked) neutral_hook2(void)
+{
+	__asm {
+		push 0xDEADBEEF
+		push ebp
+		mov ebp, esp
+		push eax
+		push ecx
+		push edx
+
+		mov first_argument, ecx
+			// mov second_argument, edx
+
+		mov eax, [ebp + 0x8]
+		mov return_address, eax
+		mov eax, [ebp + 0xC]
+		mov second_argument, eax
+		mov eax, [ebp + 0x10]
+		mov third_argument, eax
+		mov eax, [ebp + 0x14]
+		mov fourth_argument, eax
+
+		mov eax, [ebp+8]
+		mov eax, [eax-4]
+		mov ecx, eax
+		shr eax, 2
+		shr ecx, 18h
+		cmp eax, 2Bh
+		jbe done
+		mov eax, ecx
+		xor ecx, ecx
+		shr eax, 2
+		cmp eax, 2Bh
+		cmova eax, ecx
+
+		done:
+		mov function_index, eax
+		mov eax, original_functions[eax*4]
+		mov original_function, eax
+		mov [esp + 0x10], eax
+	}
+
+	log(GREEN, "Called from: {:x} (index: {} at: {:x})\n\targ1: {:x}\n\targ2: {:x} ({:.1f})\n\targ3: {:x} ({:.1f})\n\targ4: {:x} ({:.1f})\n", return_address, function_index, original_function, first_argument, second_argument, (float)second_argument, third_argument, (float)third_argument, fourth_argument, float(fourth_argument));
+
+	__asm {
+		pop edx
+		pop ecx
+		pop eax
+		pop ebp
+
+		ret
+	}
+}

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <game/object/asset/asset_rbm.h>
+
 #include "resource_cache.h"
 
 namespace jc::model_system
@@ -14,7 +16,7 @@ namespace jc::model_system
 	}
 }
 
-class ModelSystem : public ResourceCache<jc::model_system::MODEL_CACHE>
+class ModelSystem : public ResourceCache<AssetRBM, jc::model_system::MODEL_CACHE>
 {
 public:
 

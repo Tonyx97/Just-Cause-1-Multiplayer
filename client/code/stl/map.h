@@ -83,13 +83,13 @@ namespace jc::stl
 		{
 			T out;
 
-			const auto node = *jc::this_call<Node**>(M::FIND(), this, &out, &key);
+			auto node = *jc::this_call<Node**>(M::FIND(), this, &out, &key);
 
 			return node != root ? node : nullptr;
 		}
 
-		Node* get_root() const { return root; }
+		Node* get_root() { return root; }
 
-		int get_size() const { return size; }
+		int get_size() { return size; }
 	};
 }

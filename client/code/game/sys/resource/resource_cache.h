@@ -7,15 +7,23 @@ namespace jc::resource_cache
 	}
 }
 
-struct resource_cache_map : public jc::stl::unordered_map<resource_cache_map, jc::stl::string, ref<ptr>>
-{
-	static constexpr auto FIND() { return 0x659FF0; }
-};
-
-template <ptr cache_offset>
+template <typename T, ptr cache_offset>
 struct ResourceCache
 {
-	resource_cache_map* get_cache() const { return REF(resource_cache_map*, this, cache_offset); }
+	struct cache_map : public jc::stl::unordered_map<cache_map, jc::stl::string, ref<T>>
+	{
+		static constexpr auto FIND() { return 0x659FF0; }
+	};
 
-	bool has_resource(const std::string& name) const { return !!get_cache()->find(name); }
+	cache_map* get_cache() { return REF(cache_map*, this, cache_offset); }
+
+	ref<T> get_cache_item(const jc::stl::string& name)
+	{
+		if (auto node = get_cache()->find(name))
+			return ref<T>(&node->value);
+
+		return {};
+	}
+
+	bool has_resource(const std::string& name) { return !!get_cache()->find(name); }
 };

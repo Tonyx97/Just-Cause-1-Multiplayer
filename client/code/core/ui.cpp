@@ -24,68 +24,6 @@
 #include <mp/chat/chat.h>
 #include <mp/net.h>
 
-uintptr_t original_functions[43];
-uintptr_t return_address;
-uintptr_t first_argument;
-uintptr_t second_argument;
-uintptr_t third_argument;
-uintptr_t fourth_argument;
-uintptr_t original_function;
-uint32_t  function_index;
-void __declspec(naked) neutral_hook2(void)
-{
-	__asm {
-		push 0xDEADBEEF
-		push ebp
-		mov ebp, esp
-		push eax
-		push ecx
-		push edx
-
-		mov first_argument, ecx
-			// mov second_argument, edx
-
-		mov eax, [ebp + 0x8]
-		mov return_address, eax
-		mov eax, [ebp + 0xC]
-		mov second_argument, eax
-		mov eax, [ebp + 0x10]
-		mov third_argument, eax
-		mov eax, [ebp + 0x14]
-		mov fourth_argument, eax
-
-		mov eax, [ebp+8]
-		mov eax, [eax-4]
-		mov ecx, eax
-		shr eax, 2
-		shr ecx, 18h
-		cmp eax, 2Bh
-		jbe done
-		mov eax, ecx
-		xor ecx, ecx
-		shr eax, 2
-		cmp eax, 2Bh
-		cmova eax, ecx
-
-		done:
-		mov function_index, eax
-		mov eax, original_functions[eax*4]
-		mov original_function, eax
-		mov [esp + 0x10], eax
-	}
-
-	log(GREEN, "Called from: {:x} (index: {} at: {:x})\n\targ1: {:x}\n\targ2: {:x} ({:.1f})\n\targ3: {:x} ({:.1f})\n\targ4: {:x} ({:.1f})\n", return_address, function_index, original_function, first_argument, second_argument, (float)second_argument, third_argument, (float)third_argument, fourth_argument, float(fourth_argument));
-
-	__asm {
-		pop edx
-		pop ecx
-		pop eax
-		pop ebp
-
-		ret
-	}
-}
-
 float image_x = 1.f,
 	  image_y = 1.f;
 
@@ -428,18 +366,13 @@ void UI::render_default_hud()
 
 	// render current weapon
 
-	const auto grenades_count = local_char->get_grenades_ammo();
-	
-	const auto list = g_texture_system->get_cache();
+	const auto weapons_sprite_item = g_texture_system->get_cache_item("new_equip_weapons_1");
+	const auto grenade_icon_item = g_texture_system->get_cache_item("hud_grenade_icon");
 
-	if (const auto n = list->find("new_equip_weapons_1"))
+	if (weapons_sprite_item && grenade_icon_item)
 	{
-		const auto aa = *(void**)(ptr(n) + 0x28);	// todojc - debug, get it properly
-		const auto texture = jc::read<IDirect3DTexture9*>(aa, 0x44);
-
-		const auto n2 = list->find("hud_grenade_icon");
-		const auto aa2 = *(void**)(ptr(n2) + 0x28);	// todojc - debug, get it properly
-		const auto grenade_texture = jc::read<IDirect3DTexture9*>(aa2, 0x44);
+		const auto weapons_sprite = weapons_sprite_item->get_texture();
+		const auto grenade_icon = grenade_icon_item->get_texture();
 
 		if (const auto belt = local_char->get_weapon_belt())
 		{
@@ -451,45 +384,48 @@ void UI::render_default_hud()
 				// and a simply multiplier when we have more
 
 				const auto width = 30.f;
-				const auto height = width * get_aspect_ratio() * 1.5f;
+				const auto size = vec2(width, width * get_aspect_ratio() * 1.5f);
+				const auto item_pos = vec2(25.f, 50.f);
 
-				if (grenades_count <= 8)
+				if (const auto grenades_count = local_char->get_grenades_ammo(); grenades_count <= 8)
 				{
 					for (int i = 0; i < 8; ++i)
 					{
 						const bool grenade_available = (i + 1) <= grenades_count;
 
-						draw_image(grenade_texture, vec2(25.f + i * width + 2.f, 50.f + 2.f), { width, height }, vec2(0.f), vec2(1.f), vec4(0.f, 0.f, 0.f, 1.f));
-						draw_image(grenade_texture, vec2(25.f + i * width, 50.f), { width, height }, vec2(0.f), vec2(1.f), grenade_available ? vec4(1.f) : vec4(0.3f, 0.3f, 0.3f, 1.f));
+						draw_image(grenade_icon, item_pos + vec2(i * width + 2.f, 2.f), size, vec2(0.f), vec2(1.f), vec4(0.f, 0.f, 0.f, 1.f));
+						draw_image(grenade_icon, item_pos + vec2(i * width, 0.f), size, vec2(0.f), vec2(1.f), grenade_available ? vec4(1.f) : vec4(0.3f, 0.3f, 0.3f, 1.f));
 					}
 				}
 				else
 				{
-					draw_image(grenade_texture, vec2(25.f + 2.f, 50.f + 2.f), { width, height }, vec2(0.f), vec2(1.f), vec4(0.f, 0.f, 0.f, 1.f));
-					draw_image(grenade_texture, vec2(25.f, 50.f), { width, height }, vec2(0.f), vec2(1.f), vec4(1.f));
+					draw_image(grenade_icon, item_pos + vec2(2.f), size, vec2(0.f), vec2(1.f), vec4(0.f, 0.f, 0.f, 1.f));
+					draw_image(grenade_icon, item_pos, size, vec2(0.f), vec2(1.f), vec4(1.f));
 
 					add_text(FORMATV("x {}", grenades_count).c_str(), 25.f + 40.f, 50.f, 26.f, { 1.f, 1.f, 1.f, 1.f }, false, jc::nums::QUARTER_PI);
 				}
 			}
 
+			// render current weapon icon and info
+			
 			if (const auto current_weapon = belt->get_weapon_from_slot(curr_slot))
 			{
 				const auto weapon_info = current_weapon->get_info();
 				const auto [uv0, uv1] = weapon_info->get_icon_uvs();
-				const auto color = curr_slot == draw_slot ? vec4(1.f, 1.f, 1.f, 1.f) : vec4(0.5f, 0.5f, 0.5f, 1.f);
+				const auto color = curr_slot == draw_slot ? vec4(1.f) : vec4(0.5f, 0.5f, 0.5f, 1.f);
 				const auto width = 150.f;
-				const auto height = width * get_aspect_ratio() * 0.8f;
+				const auto size = vec2(width, width * get_aspect_ratio() * 0.8f);
 				const auto ammo = current_weapon->get_ammo();
 				const auto total_ammo = belt->get_weapon_ammo(weapon_info->get_bullet_type());
 
 				const auto item_pos = vec2(25.f, 100.f);
 
-				draw_image(texture, item_pos + vec2(2.f), { width, height }, uv0, uv1, { 0.f, 0.f, 0.f, 1.f });
-				draw_image(texture, item_pos, { width, height }, uv0, uv1, color);
+				draw_image(weapons_sprite, item_pos + vec2(2.f), size, uv0, uv1, { 0.f, 0.f, 0.f, 1.f });
+				draw_image(weapons_sprite, item_pos, size, uv0, uv1, color);
 
 				if (!weapon_info->has_infinite_ammo())
 				{
-					const auto separator_pos = item_pos + vec2(width + 40.f, height / 2.f);
+					const auto separator_pos = item_pos + vec2(size.x + 40.f, size.y / 2.f);
 
 					add_text(FORMATV("{}", ammo).c_str(), separator_pos.x, separator_pos.y - 20.f, 26.f, { 1.f, 1.f, 1.f, 1.f }, true);
 					add_text(FORMATV("{}", total_ammo).c_str(), separator_pos.x, separator_pos.y + 20.f, 26.f, { 1.f, 1.f, 1.f, 1.f }, true);
@@ -500,6 +436,7 @@ void UI::render_default_hud()
 
 			// render weapon radial wheel
 
+			static std::unordered_map<WeaponType, float> item_angles;
 			static vec2 weapon_cursor_direction = {};
 			static vec2 weapon_cursor_start_pos = {};
 			static WeaponType selected_type = WeaponType_Invalid;
@@ -514,17 +451,32 @@ void UI::render_default_hud()
 				const auto center_distance_to_inner = 175.f;
 				const auto center_distance_to_outer = 325.f;
 
-				draw_circle(center, item_distance_from_center, 150.f, 100, { 0.2f, 0.3f, 0.3f, 0.6f });
-				draw_circle(center, center_distance_to_inner, 2.f, 100, { 0.f, 0.f, 0.f, 0.6f });
-				draw_circle(center, center_distance_to_outer, 2.f, 100, { 0.f, 0.f, 0.f, 0.6f });
+				draw_circle(center, item_distance_from_center, 150.f, 100, { 0.231f, 0.271f, 0.024f, 0.6f });	// main wheel
+				draw_circle(center, center_distance_to_inner, 2.f, 100, { 0.f, 0.f, 0.f, 0.6f });				// inner border
+				draw_circle(center, center_distance_to_outer, 2.f, 100, { 0.f, 0.f, 0.f, 0.6f });				// outer border
 
 				const auto start_angle = jc::nums::PI * 3.f / 2.f;
 				const auto end_angle = start_angle + jc::nums::DOUBLE_PI;
-				const auto step_angle = jc::nums::DOUBLE_PI / float(WeaponType_Max - 1);
+				const auto step_angle = jc::nums::DOUBLE_PI / static_cast<float>(WeaponType_Max - 1);
+
+				// initialize item angles lookup map
+				
+				if (item_angles.empty())
+				{
+					float angle = start_angle;
+
+					g_weapon->for_each_weapon_type([&](WeaponType type)
+					{
+						if (type == WeaponType_Signature || type == WeaponType_Special)
+							return;
+
+						item_angles.insert({ type, angle });
+
+						angle += step_angle;
+					});
+				}
 
 				float curr_angle = start_angle;
-
-				static std::unordered_map<WeaponType, float> type_angles;
 
 				g_weapon->for_each_weapon_type([&](WeaponType type)
 				{
@@ -541,36 +493,35 @@ void UI::render_default_hud()
 
 					if (weapon || type == WeaponType_None)
 					{
-						if (auto it = type_angles.find(type); it == type_angles.end())
-							type_angles.insert({ type, curr_angle });
+						float prev_angle = curr_angle - step_angle / 2.f,
+							  next_angle = curr_angle + step_angle / 2.f;
+
+						const auto angle_begin = vec2(std::cos(prev_angle), std::sin(prev_angle));
+						const auto angle_end = vec2(std::cos(next_angle), std::sin(next_angle));
+						const auto inner1 = center + angle_begin * center_distance_to_inner;
+						const auto inner2 = center + angle_end * center_distance_to_inner;
+						const auto outer1 = center + angle_begin * center_distance_to_outer;
+						const auto outer2 = center + angle_end * center_distance_to_outer;
+
+						draw_line(inner1, outer1, 2.f, { 0.f, 0.f, 0.f, weapon_wheel_alpha });
+						draw_line(inner2, outer2, 2.f, { 0.f, 0.f, 0.f, weapon_wheel_alpha });
 
 						const bool hovered = selected_type == type;
-
-						const auto angle_begin = vec2(std::cos(curr_angle - step_angle / 2.f), std::sin(curr_angle - step_angle / 2.f));
-						const auto angle_end = vec2(std::cos(curr_angle + step_angle / 2.f), std::sin(curr_angle + step_angle / 2.f));
-						const auto line1_base = center + angle_begin * center_distance_to_inner;
-						const auto line2_base = center + angle_end * center_distance_to_inner;
-						const auto line1_target = center + angle_begin * center_distance_to_outer;
-						const auto line2_target = center + angle_end * center_distance_to_outer;
-
-						draw_line(line1_base, line1_target, 2.f, { 0.f, 0.f, 0.f, weapon_wheel_alpha });
-						draw_line(line2_base, line2_target, 2.f, { 0.f, 0.f, 0.f, weapon_wheel_alpha });
 						
 						const auto color = hovered ? vec4(0.8f, 0.7f, 0.2f, weapon_wheel_alpha) : vec4(0.3f, 0.3f, 0.3f, weapon_wheel_alpha);
 						const auto item_center_pos = center + vec2(std::cos(curr_angle), std::sin(curr_angle)) * item_distance_from_center;
 
 						if (hovered)
-							draw_circle(item_center_pos, 52.f, 5.f, 30, color);
+							draw_circle(item_center_pos, 52.f, 5.f, 30, color);	// weapon selection circle
 
-						draw_filled_circle(item_center_pos, 50.f, 30, vec4(0.3f, 0.4f, 0.4f, weapon_wheel_alpha * 0.5f));
+						draw_filled_circle(item_center_pos, 50.f, 30, vec4(0.5f, 0.5f, 0.5f, weapon_wheel_alpha * 0.5f));	// weapon circle
 
 						const auto width = 75.f;
-						const auto height = width * get_aspect_ratio() * 0.8f;
+						const auto size = vec2(width, width * get_aspect_ratio() * 0.8f);
+						const auto item_pos = item_center_pos - vec2(size.x / 2.f, size.y / 2.f);
 
-						const auto item_pos = item_center_pos - vec2(width / 2.f, height / 2.f);
-
-						draw_image(texture, item_pos + vec2(2.f), { width, height }, uv0, uv1, { 0.f, 0.f, 0.f, weapon_wheel_alpha });
-						draw_image(texture, item_pos, { width, height }, uv0, uv1, { 1.f, 1.f, 1.f, weapon_wheel_alpha });
+						draw_image(weapons_sprite, item_pos + vec2(2.f), size, uv0, uv1, { 0.f, 0.f, 0.f, weapon_wheel_alpha });
+						draw_image(weapons_sprite, item_pos, size, uv0, uv1, { 1.f, 1.f, 1.f, weapon_wheel_alpha });
 
 						std::string weapon_name;
 
@@ -612,7 +563,7 @@ void UI::render_default_hud()
 
 					selected_type = WeaponType_Invalid;
 
-					for (const auto& [type, angle] : type_angles)
+					for (const auto& [type, angle] : item_angles)
 					{
 						const auto diff = std::fabsf(jc::math::delta_angle(std::atan2(delta.y, delta.x), angle));
 

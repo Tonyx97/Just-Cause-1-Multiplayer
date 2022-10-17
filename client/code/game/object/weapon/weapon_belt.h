@@ -25,7 +25,7 @@ public:
 
 	static constexpr auto MAX_SLOTS() { return 10; }
 
-	void set_weapon_ammo(int32_t slot, int32_t v);
+	void set_weapon_ammo(int32_t bullet_type, int32_t v);
 	void remove_weapon(int32_t slot);
 	void clear();
 
@@ -39,7 +39,7 @@ public:
 
 	int32_t get_weapon_slot(Weapon* weapon) const;
 	int32_t get_weapon_slot(int32_t type) const;
-	int32_t get_weapon_ammo(int32_t slot) const;
+	int32_t get_weapon_ammo(int32_t bullet_type) const;
 
 	ref<Weapon> get_current_weapon();
 	ref<Weapon> add_weapon(ref<Weapon>& weapon);
