@@ -224,6 +224,7 @@ Vehicle* FactorySystem::spawn_vehicle(const std::string& ee_name, const Transfor
 			vehicle = *r;
 
 			r->enable(true);
+			r->set_color(0xFFFFFFFF);
 
 			g_game_control->enable_object(r);
 

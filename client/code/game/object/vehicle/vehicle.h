@@ -14,7 +14,10 @@ namespace jc::vehicle
 	static constexpr uint32_t SPECIAL_SEAT			= 0xAC;
 	static constexpr uint32_t LEFT_DOOR_STATE		= 0xB8;
 	static constexpr uint32_t RIGHT_DOOR_STATE		= 0xC8;
+	static constexpr uint32_t COLOR_UNK				= 0xD8;
+	static constexpr uint32_t COLOR_BODY			= 0xDC;
 	static constexpr uint32_t ENGINE_STATE			= 0x231;
+	static constexpr uint32_t FACTION				= 0x240;
 	static constexpr uint32_t CURRENT_WEAPON_TYPE	= 0x220;
 	static constexpr uint32_t CURRENT_WEAPON_INDEX	= 0x224;
 	static constexpr uint32_t WEAPONS				= 0x29C;
@@ -28,6 +31,7 @@ namespace jc::vehicle
 		static constexpr uint32_t IS_LEFT_DOOR_VALID	= 0x62CDF0;
 		static constexpr uint32_t IS_LEFT_DOOR_CLOSING	= 0x62CE30;
 		static constexpr uint32_t SET_DRIVER			= 0x62B570;
+		static constexpr uint32_t SET_FACTION			= 0x854A00;
 	}
 
 	namespace vt
@@ -40,6 +44,7 @@ namespace jc::vehicle
 		static constexpr uint32_t GET_DRIVER_SEAT		= 53;
 		static constexpr uint32_t GET_PASSENGER_SEAT	= 54;
 		static constexpr uint32_t GET_SPECIAL_SEAT		= 55;
+		static constexpr uint32_t SET_FACTION			= 56;
 		static constexpr uint32_t UNK0					= 57;
 		static constexpr uint32_t UNK1					= 58;
 		static constexpr uint32_t HONK					= 76;
@@ -70,7 +75,7 @@ public:
 	Vehicle* get_vehicle() const { return jc::read<Vehicle*>(this, 0x1F8); }
 };
 
-enum VehicleFaction
+DEFINE_ENUM(VehicleFaction, int)
 {
 	VehFaction_None,
 	VehFaction_Agency = 2,
@@ -79,7 +84,8 @@ enum VehicleFaction
 	VehFaction_Guerrilla,
 	VehFaction_BlackHand,
 	VehFaction_Montano,
-	VehFaction_Rioja
+	VehFaction_Rioja,
+	VehFaction_Race = 14
 };
 
 DEFINE_ENUM(VehicleTypeID, uint8_t)
@@ -128,6 +134,8 @@ public:
 
 	IMPL_OBJECT_TYPE_ID("CVehicle");
 
+	void set_faction(VehicleFaction v, bool unk = true);
+	void set_color(uint32_t v);
 	void set_velocity(const vec3& v);
 	void honk();
 	void set_engine_state(bool v, bool sync = true);
@@ -150,6 +158,8 @@ public:
 
 	uint32_t get_current_weapon_index() const;
 	uint32_t get_current_weapon_type() const;
+
+	u8vec4 get_color() const;
 
 	vec3 get_velocity() const;
 

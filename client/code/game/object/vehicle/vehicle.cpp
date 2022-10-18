@@ -310,6 +310,20 @@ void Vehicle::start_engine_sound(bool v)
 	else jc::v_call(this, jc::vehicle::vt::STOP_ENGINE_SOUND);
 }
 
+void Vehicle::set_faction(VehicleFaction v, bool unk)
+{
+	jc::v_call(this, jc::vehicle::vt::SET_FACTION, v, unk);
+}
+
+void Vehicle::set_color(uint32_t v)
+{
+	jc::write(v, this, jc::vehicle::COLOR_BODY);
+
+	// apply changes
+	
+	set_faction(VehFaction_None);
+}
+
 void Vehicle::set_velocity(const vec3& v)
 {
 	jc::v_call(this, jc::vehicle::vt::SET_VELOCITY, &v);
@@ -465,6 +479,11 @@ uint32_t Vehicle::get_current_weapon_index() const
 uint32_t Vehicle::get_current_weapon_type() const
 {
 	return jc::read<uint32_t>(this, jc::vehicle::CURRENT_WEAPON_TYPE);
+}
+
+u8vec4 Vehicle::get_color() const
+{
+	return jc::read<u8vec4>(this, jc::vehicle::COLOR_BODY);
 }
 
 vec3 Vehicle::get_velocity() const

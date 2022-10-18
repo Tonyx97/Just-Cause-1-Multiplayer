@@ -92,14 +92,18 @@ DEFINE_HOOK_THISCALL_S(_test3, 0x596420, bool, int _this)
 	return res;
 }
 
-DEFINE_HOOK_THISCALL(_test4, 0x568FE0, Bullet*, int _this, Weapon* weapon, Transform* direction, int* a1, jc::stl::vector_ptr<int*> a4, int* a5)
+std::set<ptr> ay;
+
+DEFINE_HOOK_CCALL(_test4, 0x996FDD, int)
 {
-	auto res = _test4_hook(_this, weapon, direction, a1, a4, a5);
+	auto res = _test4_hook();
 
-	log(RED, "{:x} {:x} {:x} {:x} {:x}", _this, ptr(weapon), ptr(direction), ptr(a1), ptr(a5));
+	if (!ay.contains(RET_ADDRESS))
+	{
+		ay.insert(RET_ADDRESS);
 
-	while (!GetAsyncKeyState(VK_F3))
-		Sleep(100);
+		log(PURPLE, "{} {:x}", res, RET_ADDRESS);
+	}
 
 	return res;
 }
@@ -143,6 +147,12 @@ void jc::test_units::test_0()
 
 	static std::vector<ref<Vehicle>> vehs;
 	static std::vector<ref<Weapon>> temp_weapons;
+
+	if (g_global_ptr)
+	{
+		//jc::write(0xFF0000FF, g_global_ptr, 0xDC);
+		//jc::this_call(0x854A00, g_global_ptr, 2, true);
+	}
 
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
