@@ -2,6 +2,7 @@
 
 #include "hooks.h"
 
+#include <game/object/localplayer/localplayer.h>
 #include <game/object/character/character.h>
 #include <game/object/item/item_pickup.h>
 #include <game/object/interactable/interactable.h>
@@ -63,6 +64,7 @@ void jc::hooks::unhook_queued()
 
 void jc::hooks::hook_game_fns(bool enable)
 {
+	localplayer::hook::enable(enable);
 	character::hook::enable(enable);
 	alive_object::hook::enable(enable);
 	item_pickup::hook::enable(enable);

@@ -45,11 +45,11 @@ namespace jc::bullet::hook
 		}
 		}
 	}
-}
 
-void jc::bullet::hook::enable(bool apply)
-{
-	step_hook.hook(apply);
+	void enable(bool apply)
+	{
+		step_hook.hook(apply);
+	}
 }
 
 void Bullet::calculate_drop(float delta)
