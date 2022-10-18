@@ -21,6 +21,8 @@
 #include <game/object/vars/exported_entities.h>
 #include <game/object/vehicle/vehicle.h>
 
+#include <shared_mp/objs/all.h>
+
 #include <mp/chat/chat.h>
 #include <mp/net.h>
 
@@ -612,6 +614,15 @@ void UI::render_default_hud()
 			}
 		}
 	}
+
+	// render speedometer
+
+	if (g_key->is_key_pressed(KEY_X)) // todojc - debug shit
+		if (auto veh = local_char->get_vehicle(); veh && veh->get_driver_seat()->get_character() == local_char)
+			if (auto vehicle_net = g_net->get_net_object_by_game_object(veh)->cast<VehicleNetObject>())
+				vehicle_net->set_engine_state(!vehicle_net->get_engine_state());
+
+
 }
 
 void UI::render_admin_panel()
@@ -933,6 +944,56 @@ void UI::render_admin_panel()
 		ImGui::TreePop();
 	}
 
+	if (ImGui::TreeNode("Current Vehicle"))
+	{
+		const auto lp = g_world->get_localplayer_character();
+
+		if (auto veh = lp->get_vehicle(); veh && veh->get_driver_seat()->get_character() == lp)
+		{
+			if (const auto vehicle_net = g_net->get_net_object_by_game_object(veh)->cast<VehicleNetObject>())
+			{
+				auto color_value = vehicle_net->get_color();
+
+				float color[4] =
+				{
+					float((color_value & 0xFF)) / 255.f,
+					float((color_value & 0xFF00) >> 8) / 255.f,
+					float((color_value & 0xFF0000) >> 16) / 255.f,
+					float((color_value & 0xFF000000) >> 24) / 255.f,
+				};
+
+				if (ImGui::ColorPicker4("Vehicle Color##cv.clr", color))
+				{
+					auto r = uint32_t(color[0] * 255.f);
+					auto g = uint32_t(color[1] * 255.f) << 8;
+					auto b = uint32_t(color[2] * 255.f) << 16;
+					auto a = uint32_t(color[3] * 255.f) << 24;
+					
+					vehicle_net->set_color(r | g | b | a, true);
+				}
+
+				static int faction_to_set = 0;
+
+				static int32_t factions[] =
+				{
+					VehFaction_Agency,
+					VehFaction_Military,
+					VehFaction_Police,
+					VehFaction_Guerrilla,
+					VehFaction_BlackHand,
+					VehFaction_Montano,
+					VehFaction_Rioja,
+					VehFaction_Race,
+				};
+
+				if (ImGui::SliderInt("Faction Paintjob##cv.fac", &faction_to_set, 0, 8))
+					vehicle_net->set_faction(faction_to_set, true);
+			}
+		}
+
+		ImGui::TreePop();
+	}
+
 	if (ImGui::TreeNode("Debug Stuff"))
 	{
 		ImGui::SliderFloat("Image X", &image_x, 0.f, 1.f);
@@ -1073,13 +1134,6 @@ void UI::overlay_debug()
 				}
 			}
 		}
-
-		if (g_key->is_key_pressed(KEY_X))
-			if (auto veh = local_player_pawn->get_vehicle(); veh && veh->get_driver_seat()->get_character() == local_player_pawn)
-			{
-				veh->set_engine_state(!veh->get_engine_state());
-
-			}
 
 		ptr			   closest_hp_ptr = 0;
 		static Weapon* closest_weapon = nullptr;

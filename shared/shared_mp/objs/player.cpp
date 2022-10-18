@@ -32,6 +32,14 @@ Player::~Player()
 	destroy_object();
 }
 
+Character* Player::get_character() const
+{
+	if (is_local())
+		return g_world->get_localplayer_character();
+
+	return handle ? handle->get_character() : nullptr;
+}
+
 ObjectBase* Player::get_object_base() const
 {
 	return get_character();
@@ -109,14 +117,6 @@ void Player::respawn_character()
 bool Player::is_dispatching_movement() const
 {
 	return dispatching_movement;
-}
-
-Character* Player::get_character() const
-{
-	if (is_local())
-		return g_world->get_localplayer_character();
-
-	return handle ? handle->get_character() : nullptr;
 }
 
 CharacterHandle* Player::get_character_handle() const
@@ -226,16 +226,12 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 	}
 	case NetObjectVar_Velocity:
 	{
-#ifdef JC_CLIENT
-		verify_exec([&](Character* c) { c->set_added_velocity(get_velocity()); });
-#endif
+		IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_added_velocity(get_velocity()); });
 		break;
 	}
 	case NetObjectVar_Health:
 	{
-#ifdef JC_CLIENT
-		verify_exec([&](Character* c) { c->set_hp(get_hp()); });
-#endif
+		IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_hp(get_hp()); });
 
 		// if old health was bigger than 0 but new one is 0
 		// it means we died so trigger killed event
@@ -257,9 +253,7 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 	}
 	case NetObjectVar_MaxHealth:
 	{
-#ifdef JC_CLIENT
-		verify_exec([&](Character* c) { c->set_max_hp(get_max_hp()); });
-#endif
+		IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_max_hp(get_max_hp()); });
 		break;
 	}
 	}
@@ -319,9 +313,7 @@ void Player::set_skin(int32_t v)
 {
 	dyn_info.skin = v;
 
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_skin(v, false); });
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_skin(v, false); });
 }
 
 void Player::set_skin(int32_t v, int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props)
@@ -329,9 +321,7 @@ void Player::set_skin(int32_t v, int32_t cloth_skin, int32_t head_skin, int32_t 
 	set_skin(v);
 	set_skin_info(cloth_skin, head_skin, cloth_color, props);
 
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_skin(v, cloth_skin, head_skin, cloth_color, props, false); });
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_skin(v, cloth_skin, head_skin, cloth_color, props, false); });
 }
 
 void Player::set_walking_set_and_skin(int32_t walking_set_id, int32_t skin_id)
@@ -339,21 +329,14 @@ void Player::set_walking_set_and_skin(int32_t walking_set_id, int32_t skin_id)
 	dyn_info.walking_set = walking_set_id;
 	dyn_info.skin = skin_id;
 
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_walking_anim_set(walking_set_id, skin_id, false); });
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_walking_anim_set(walking_set_id, skin_id, false); });
 }
 
 void Player::set_velocity(const vec3& v)
 {
 	dyn_info.velocity = v;
 
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c)
-	{
-		c->set_proxy_velocity(v);
-	});
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_proxy_velocity(v); });
 }
 
 void Player::set_movement_angle(float angle, bool send_angle_only_next_tick)
@@ -379,18 +362,14 @@ void Player::set_body_stance_id(uint32_t id)
 {
 	dyn_info.body_stance_id = id;
 
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_body_stance(id); });
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_body_stance(id); });
 }
 
 void Player::set_arms_stance_id(uint32_t id)
 {
 	dyn_info.arms_stance_id = id;
 
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_arms_stance(id); });
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_arms_stance(id); });
 }
 
 void Player::set_head_rotation(const vec3& v, float interpolation)
@@ -398,30 +377,26 @@ void Player::set_head_rotation(const vec3& v, float interpolation)
 	dyn_info.head_rotation = v;
 	dyn_info.head_interpolation = interpolation;
 
-#ifdef JC_CLIENT
-	if (!is_hip_aiming() && !is_full_aiming())
-		verify_exec([&](Character* c)
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c)
+	{
+		if (!is_hip_aiming() && !is_full_aiming())
 		{
 			const auto skeleton = c->get_skeleton();
 
 			skeleton->set_head_euler_rotation(v);
 			skeleton->set_head_interpolation(interpolation);
-		});
-#endif
+		}
+	});
 }
 
 void Player::do_punch()
 {
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->setup_punch(); });
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->setup_punch(); });
 }
 
 void Player::force_launch(const vec3& vel, const vec3& dir, float f1, float f2)
 {
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->force_launch(vel, dir, f1, f2); });
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->force_launch(vel, dir, f1, f2); });
 }
 
 void Player::set_weapon_id(int32_t id)
@@ -431,9 +406,7 @@ void Player::set_weapon_id(int32_t id)
 	
 	dyn_info.weapon_id = id;
 
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_weapon(id); });
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_weapon(id); });
 }
 
 void Player::set_aim_info(bool hip, bool full, const vec3& target)
@@ -454,16 +427,12 @@ void Player::fire_current_weapon(int32_t weapon_id, const vec3& muzzle, const ve
 {
 	set_bullet_direction(muzzle, dir);
 
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->fire_current_weapon(weapon_id, muzzle, dyn_info.aim_target); });
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->fire_current_weapon(weapon_id, muzzle, dyn_info.aim_target); });
 }
 
 void Player::reload()
 {
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->reload_current_weapon(); });
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->reload_current_weapon(); });
 }
 
 void Player::set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props)
@@ -473,9 +442,7 @@ void Player::set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_
 	skin_info.cloth_color = cloth_color;
 	skin_info.props = props;
 
-#ifdef JC_CLIENT
-	verify_exec([&](Character* c) { c->set_npc_variant(cloth_skin, head_skin, cloth_color, props, false); });
-#endif
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_npc_variant(cloth_skin, head_skin, cloth_color, props, false); });
 }
 
 void Player::set_vehicle(uint8_t seat_type, VehicleNetObject* v)

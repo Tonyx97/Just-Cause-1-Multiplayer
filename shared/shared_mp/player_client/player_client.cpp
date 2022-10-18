@@ -204,6 +204,11 @@ void PlayerClient::sync_entity(NetObject* target_entity, bool create)
 		p.add(target_entity->get_transform().pack());
 		p.add(target_entity->get_hp());
 		p.add(target_entity->get_max_hp());
+
+		// serialize into the packet the data from the derived
+		// NetObject class, for example, VehicleNetObject etc
+
+		target_entity->serialize_derived(&p);
 	}
 	else
 	{

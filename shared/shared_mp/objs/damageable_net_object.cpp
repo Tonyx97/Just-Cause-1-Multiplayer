@@ -35,10 +35,7 @@ DamageableNetObject::~DamageableNetObject()
 
 void DamageableNetObject::destroy_object()
 {
-#ifdef JC_CLIENT
-	if (obj)
-		g_factory->destroy_damageable_object(std::exchange(obj, nullptr));
-#endif
+	IF_CLIENT_AND_VALID_OBJ_DO([&]() { g_factory->destroy_damageable_object(std::exchange(obj, nullptr)); });
 }
 
 void DamageableNetObject::on_spawn()
@@ -64,14 +61,17 @@ void DamageableNetObject::on_sync()
 void DamageableNetObject::on_net_var_change(NetObjectVarType var_type)
 {
 #ifdef JC_CLIENT
-	switch (var_type)
+	IF_CLIENT_AND_VALID_OBJ_DO([&]()
 	{
-	case NetObjectVar_Transform:
-	case NetObjectVar_Position:
-	case NetObjectVar_Rotation: obj->set_transform(Transform(get_position(), get_rotation())); break;
-	case NetObjectVar_Velocity: obj->get_physical()->set_velocity(get_velocity()); break;
-	case NetObjectVar_Health: obj->set_hp(get_hp()); break;
-	case NetObjectVar_MaxHealth: obj->set_max_hp(get_max_hp()); break;
-	}
+		switch (var_type)
+		{
+		case NetObjectVar_Transform:
+		case NetObjectVar_Position:
+		case NetObjectVar_Rotation: obj->set_transform(Transform(get_position(), get_rotation())); break;
+		case NetObjectVar_Velocity: obj->get_physical()->set_velocity(get_velocity()); break;
+		case NetObjectVar_Health: obj->set_hp(get_hp()); break;
+		case NetObjectVar_MaxHealth: obj->set_max_hp(get_max_hp()); break;
+		}
+	});
 #endif
 }

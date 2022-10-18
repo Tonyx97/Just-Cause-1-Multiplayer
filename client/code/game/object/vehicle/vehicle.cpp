@@ -379,7 +379,7 @@ void Vehicle::set_engine_state(bool v, bool sync)
 
 	if (sync)
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(this)->cast<VehicleNetObject>())
-			g_net->send(Packet(PlayerPID_VehicleEngineState, ChannelID_Generic, vehicle_net, v));
+			g_net->send(Packet(PlayerPID_VehicleDynamicInfo, ChannelID_Generic, vehicle_net, VehicleDynInfo_EngineState, v));
 }
 
 void Vehicle::set_current_weapon_index(uint32_t v)

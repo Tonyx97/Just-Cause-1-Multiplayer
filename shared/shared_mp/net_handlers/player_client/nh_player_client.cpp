@@ -149,6 +149,10 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			object->set_hp(hp);
 			object->set_max_hp(max_hp);
 
+			// deserialize derived object from NetObject
+			
+			object->deserialize_derived(&p);
+
 			break;
 		}
 		}

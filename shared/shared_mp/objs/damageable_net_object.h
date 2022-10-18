@@ -31,6 +31,8 @@ public:
 	void on_despawn() override;
 	void on_sync() override;
 	void on_net_var_change(NetObjectVarType var_type) override;
+	void serialize_derived(const Packet* p) override {}
+	void deserialize_derived(const Packet* p) override {}
 };
 
 #define CREATE_DAMAGEABLE_NET_OBJECT(...)	JC_ALLOC(DamageableNetObject, __VA_ARGS__)

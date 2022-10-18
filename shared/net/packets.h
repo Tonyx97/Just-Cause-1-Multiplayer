@@ -53,9 +53,9 @@ DEFINE_ENUM(PlayerPacketID, PacketID)
 	PlayerPID_EnterExitVehicle,						// sync vehicle entering and exiting
 	PlayerPID_VehicleControl,						// sync vehicle controls
 	PlayerPID_VehicleHonk,							// sync vehicle honking
-	PlayerPID_VehicleEngineState,					// sync vehicle engine state
 	PlayerPID_VehicleFire,							// sync vehicle firing
 	PlayerPID_VehicleMountedGunFire,				// sync vehicle mounted gun firing
+	PlayerPID_VehicleDynamicInfo,					// syncs vehicle dynamic info
 	PlayerPID_Max
 };
 

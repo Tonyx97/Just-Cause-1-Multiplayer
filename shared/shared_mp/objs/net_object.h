@@ -13,6 +13,25 @@ using NID = uint16_t;
 static constexpr NID INVALID_NID = 0ui16;
 
 #ifdef JC_CLIENT
+#define IF_CLIENT_AND_VALID_OBJ_DO(fn)			if (get_object_base()) \
+													fn(); \
+
+#define IF_CLIENT_AND_VALID_CHARACTER_DO(fn)	verify_exec(fn); \
+
+#define SYNC_PARAM							, bool do_sync
+#define SYNC_PARAM_DECL						, bool do_sync = false
+#define SYNC_IF_TRUE(...)					if (do_sync) { g_net->send(Packet(__VA_ARGS__)); }
+#else
+#define IF_CLIENT_AND_VALID_OBJ_DO(fn)			
+
+#define IF_CLIENT_AND_VALID_CHARACTER_DO(fn)	
+
+#define SYNC_PARAM							, bool do_sync, PlayerClient* ignore_pc
+#define SYNC_PARAM_DECL						, bool do_sync = false, PlayerClient* ignore_pc = nullptr
+#define SYNC_IF_TRUE(...)					if (do_sync) { g_net->send_broadcast_joined(ignore_pc, Packet(__VA_ARGS__)); }
+#endif
+
+#ifdef JC_CLIENT
 namespace net_object_globals
 {
 	void clear_owned_entities();
@@ -67,6 +86,7 @@ DEFINE_ENUM(NetObjectActionSyncType, uint8_t)
 
 class Player;
 class EntityRg;
+class Packet;
 
 template <typename T>
 struct NetVarInfo
@@ -134,6 +154,8 @@ public:
 	virtual void on_spawn() = 0;
 	virtual void on_despawn() = 0;
 	virtual void on_sync() = 0;
+	virtual void serialize_derived(const Packet* p) = 0;
+	virtual void deserialize_derived(const Packet* p) = 0;
 
 #ifdef JC_CLIENT
 	virtual class ObjectBase* get_object_base() const = 0;

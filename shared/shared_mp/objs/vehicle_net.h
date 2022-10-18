@@ -13,6 +13,13 @@ DEFINE_ENUM(VehicleEnterExitCommand, uint8_t)
 	VehicleEnterExit_DriverToRoof,
 };
 
+DEFINE_ENUM(VehicleDynamicInfoID, uint8_t)
+{
+	VehicleDynInfo_EngineState,
+	VehicleDynInfo_Color,
+	VehicleDynInfo_Faction,
+};
+
 class Weapon;
 
 class VehicleNetObject : public NetObject
@@ -94,8 +101,14 @@ private:
 
 	FireInfoBase mounted_gun_fire_info {};
 
+	uint32_t color = 0xFFFFFFFF;
+
+	int32_t faction = 0;
+
 	uint32_t weapon_index = 0u,
 			 weapon_type = 0u;
+
+	bool engine_state = false;
 
 public:
 
@@ -129,11 +142,17 @@ public:
 	void on_despawn() override;
 	void on_sync() override;
 	void on_net_var_change(NetObjectVarType var_type) override;
+	void serialize_derived(const Packet* p) override;
+	void deserialize_derived(const Packet* p) override;
+
 	void set_control_info(float c0, float c1, float c2, float c3, bool braking = false);
 	void set_control_info(const ControlInfo& v);
 	void set_weapon_info(uint32_t index, uint32_t type);
 	void set_fire_info(const std::vector<FireInfo>& v);
 	void set_mounted_gun_fire_info(const FireInfoBase& v);
+	void set_engine_state(bool v SYNC_PARAM_DECL);
+	void set_color(uint32_t v SYNC_PARAM_DECL);
+	void set_faction(int32_t v SYNC_PARAM_DECL);
 
 	template <typename Fn>
 	void for_each_player(const Fn& fn)
@@ -157,8 +176,13 @@ public:
 	*/
 	void remove_player(Player* player);
 
+	bool get_engine_state() const { return engine_state; }
+
+	int32_t get_faction() const { return faction; }
+
 	uint32_t get_weapon_index() const { return weapon_index; }
 	uint32_t get_weapon_type() const { return weapon_type; }
+	uint32_t get_color() const { return color; }
 
 	size_t get_players_count() const { return players.size(); }
 

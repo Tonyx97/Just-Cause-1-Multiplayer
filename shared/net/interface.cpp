@@ -160,11 +160,11 @@ void enet::setup_channels()
 		case PlayerPID_SetWeapon:				return nh::player::set_weapon(p);
 		case PlayerPID_SetVehicle:				return nh::player::set_vehicle(p);
 		case PlayerPID_EnterExitVehicle:		return nh::player::enter_exit_vehicle(p);
-		case PlayerPID_VehicleControl:			return nh::vehicle::vehicle_control(p);
-		case PlayerPID_VehicleHonk:				return nh::vehicle::vehicle_honk(p);
-		case PlayerPID_VehicleEngineState:		return nh::vehicle::vehicle_engine_state(p);
-		case PlayerPID_VehicleFire:				return nh::vehicle::vehicle_fire(p);
-		case PlayerPID_VehicleMountedGunFire:	return nh::vehicle::vehicle_mounted_gun_fire(p);
+		case PlayerPID_VehicleControl:			return nh::vehicle::control(p);
+		case PlayerPID_VehicleHonk:				return nh::vehicle::honk(p);
+		case PlayerPID_VehicleFire:				return nh::vehicle::fire(p);
+		case PlayerPID_VehicleMountedGunFire:	return nh::vehicle::mounted_gun_fire(p);
+		case PlayerPID_VehicleDynamicInfo:		return nh::vehicle::dynamic_info(p);
 		}
 
 		return PacketRes_NotFound;

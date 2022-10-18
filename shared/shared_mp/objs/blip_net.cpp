@@ -34,10 +34,7 @@ BlipNetObject::~BlipNetObject()
 
 void BlipNetObject::destroy_object()
 {
-#ifdef JC_CLIENT
-	if (obj)
-		g_factory->destroy_map_icon(std::exchange(obj, nullptr));
-#endif
+	IF_CLIENT_AND_VALID_OBJ_DO([&]() { g_factory->destroy_map_icon(std::exchange(obj, nullptr)); });
 }
 
 void BlipNetObject::on_sync()
@@ -63,15 +60,15 @@ void BlipNetObject::on_despawn()
 void BlipNetObject::on_net_var_change(NetObjectVarType var_type)
 {
 #ifdef JC_CLIENT
-	if (!obj)
-		return;
-
-	switch (var_type)
+	IF_CLIENT_AND_VALID_OBJ_DO([&]()
 	{
-	case NetObjectVar_Transform:
-	case NetObjectVar_Position:
-	case NetObjectVar_Rotation:		obj->set_transform(Transform(get_position(), get_rotation())); break;
-	}
+		switch (var_type)
+		{
+		case NetObjectVar_Transform:
+		case NetObjectVar_Position:
+		case NetObjectVar_Rotation:		obj->set_transform(Transform(get_position(), get_rotation())); break;
+		}
+	});
 #else
 #endif
 }

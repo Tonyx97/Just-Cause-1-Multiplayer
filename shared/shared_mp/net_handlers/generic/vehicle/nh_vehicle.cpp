@@ -12,7 +12,7 @@
 #include <game/object/vehicle/vehicle.h>
 #endif
 
-PacketResult nh::vehicle::vehicle_control(const Packet& p)
+PacketResult nh::vehicle::control(const Packet& p)
 {
 #ifdef JC_CLIENT
 	const auto player = p.get_net_object<Player>();
@@ -50,7 +50,7 @@ PacketResult nh::vehicle::vehicle_control(const Packet& p)
 	return PacketRes_Ok;
 }
 
-PacketResult nh::vehicle::vehicle_honk(const Packet& p)
+PacketResult nh::vehicle::honk(const Packet& p)
 {
 #ifdef JC_CLIENT
 #else
@@ -79,40 +79,7 @@ PacketResult nh::vehicle::vehicle_honk(const Packet& p)
 	return PacketRes_Ok;
 }
 
-PacketResult nh::vehicle::vehicle_engine_state(const Packet& p)
-{
-#ifdef JC_CLIENT
-#else
-	const auto pc = p.get_pc();
-	const auto player = pc->get_player();
-#endif
-
-	const auto vehicle_net = p.get_net_object<VehicleNetObject>();
-
-	if (!vehicle_net)
-		return PacketRes_BadArgs;
-
-#ifdef JC_SERVER
-	if (!vehicle_net->is_owned_by(player))
-		return PacketRes_NotAllowed;
-#endif
-
-	const bool state = p.get_bool();
-
-#ifdef JC_CLIENT
-	const auto vehicle = vehicle_net->get_object();
-
-	vehicle->set_engine_state(state);
-#endif
-
-#ifdef JC_SERVER
-	g_net->send_broadcast(pc, p);
-#endif
-
-	return PacketRes_Ok;
-}
-
-PacketResult nh::vehicle::vehicle_fire(const Packet& p)
+PacketResult nh::vehicle::fire(const Packet& p)
 {
 #ifdef JC_CLIENT
 #else
@@ -148,7 +115,7 @@ PacketResult nh::vehicle::vehicle_fire(const Packet& p)
 	return PacketRes_Ok;
 }
 
-PacketResult nh::vehicle::vehicle_mounted_gun_fire(const Packet& p)
+PacketResult nh::vehicle::mounted_gun_fire(const Packet& p)
 {
 #ifdef JC_CLIENT
 #else
@@ -168,6 +135,46 @@ PacketResult nh::vehicle::vehicle_mounted_gun_fire(const Packet& p)
 #ifdef JC_CLIENT
 	vehicle_net->fire_mounted_gun();
 #endif
+
+#ifdef JC_SERVER
+	g_net->send_broadcast(pc, p);
+#endif
+
+	return PacketRes_Ok;
+}
+
+PacketResult nh::vehicle::dynamic_info(const Packet& p)
+{
+#ifdef JC_CLIENT
+#else
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+#endif
+
+	const auto vehicle_net = p.get_net_object<VehicleNetObject>();
+
+	if (!vehicle_net)
+		return PacketRes_BadArgs;
+
+	switch (const auto type = p.get_u8())
+	{
+	case VehicleDynInfo_EngineState:
+	{
+		vehicle_net->set_engine_state(p.get_bool());
+		break;
+	}
+	case VehicleDynInfo_Color:
+	{
+		vehicle_net->set_color(p.get_u32());
+		break;
+	}
+	case VehicleDynInfo_Faction:
+	{
+		vehicle_net->set_faction(p.get_i32());
+		break;
+	}
+	default: log(RED, "Unknown vehicle dynamic info: {}", type);
+	}
 
 #ifdef JC_SERVER
 	g_net->send_broadcast(pc, p);

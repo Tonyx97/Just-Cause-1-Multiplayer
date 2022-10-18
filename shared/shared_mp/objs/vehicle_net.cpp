@@ -112,10 +112,7 @@ VehicleNetObject::~VehicleNetObject()
 
 void VehicleNetObject::destroy_object()
 {
-#ifdef JC_CLIENT
-	if (obj)
-		g_factory->destroy_vehicle(std::exchange(obj, nullptr));
-#endif
+	IF_CLIENT_AND_VALID_OBJ_DO([&]() { g_factory->destroy_vehicle(std::exchange(obj, nullptr)); });
 }
 
 void VehicleNetObject::on_spawn()
@@ -141,18 +138,18 @@ void VehicleNetObject::on_sync()
 void VehicleNetObject::on_net_var_change(NetObjectVarType var_type)
 {
 #ifdef JC_CLIENT
-	if (!obj)
-		return;
-
-	switch (var_type)
+	IF_CLIENT_AND_VALID_OBJ_DO([&]()
 	{
-	case NetObjectVar_Transform:
-	case NetObjectVar_Position:
-	case NetObjectVar_Rotation:		obj->set_transform(Transform(get_position(), get_rotation())); break;
-	case NetObjectVar_Velocity:		obj->get_physical()->set_velocity(get_velocity()); break;
-	case NetObjectVar_Health:		obj->set_hp(get_hp()); break;
-	case NetObjectVar_MaxHealth:	obj->set_max_hp(get_max_hp()); break;
-	}
+		switch (var_type)
+		{
+		case NetObjectVar_Transform:
+		case NetObjectVar_Position:
+		case NetObjectVar_Rotation:		obj->set_transform(Transform(get_position(), get_rotation())); break;
+		case NetObjectVar_Velocity:		obj->get_physical()->set_velocity(get_velocity()); break;
+		case NetObjectVar_Health:		obj->set_hp(get_hp()); break;
+		case NetObjectVar_MaxHealth:	obj->set_max_hp(get_max_hp()); break;
+		}
+	});
 #else
 	switch (var_type)
 	{
@@ -171,6 +168,32 @@ void VehicleNetObject::on_net_var_change(NetObjectVarType var_type)
 		break;
 	}
 	}
+#endif
+}
+
+void VehicleNetObject::serialize_derived(const Packet* p)
+{
+#ifdef JC_CLIENT
+#else
+	p->add(engine_state);
+	p->add(color);
+	p->add(faction);
+#endif
+}
+
+void VehicleNetObject::deserialize_derived(const Packet* p)
+{
+#ifdef JC_CLIENT
+	const auto _engine_state = p->get_bool();
+	const auto _color = p->get_u32();
+	const auto _faction = p->get_i32();
+
+	log(GREEN, "{} {:x} {}", _engine_state, _color, _faction);
+
+	set_engine_state(_engine_state);
+	set_color(_color);
+	set_faction(_faction);
+#else
 #endif
 }
 
@@ -203,13 +226,11 @@ void VehicleNetObject::set_weapon_info(uint32_t index, uint32_t type)
 	weapon_index = index;
 	weapon_type = type;
 
-#ifdef JC_CLIENT
-	if (!obj)
-		return;
-
-	obj->set_current_weapon_index(index);
-	obj->set_current_weapon_type(type);
-#endif
+	IF_CLIENT_AND_VALID_OBJ_DO([&]()
+	{
+		obj->set_current_weapon_index(index);
+		obj->set_current_weapon_type(type);
+	});
 }
 
 void VehicleNetObject::set_fire_info(const std::vector<FireInfo>& v)
@@ -220,6 +241,30 @@ void VehicleNetObject::set_fire_info(const std::vector<FireInfo>& v)
 void VehicleNetObject::set_mounted_gun_fire_info(const FireInfoBase& v)
 {
 	mounted_gun_fire_info = v;
+}
+
+void VehicleNetObject::set_engine_state(bool v SYNC_PARAM)
+{
+	engine_state = v;
+
+	SYNC_IF_TRUE(PlayerPID_VehicleDynamicInfo, ChannelID_Generic, this, VehicleDynInfo_EngineState, v);
+	IF_CLIENT_AND_VALID_OBJ_DO([&]() { obj->set_engine_state(v); });
+}
+
+void VehicleNetObject::set_color(uint32_t v SYNC_PARAM)
+{
+	color = v;
+
+	SYNC_IF_TRUE(PlayerPID_VehicleDynamicInfo, ChannelID_Generic, this, VehicleDynInfo_Color, v);
+	IF_CLIENT_AND_VALID_OBJ_DO([&]() { obj->set_color(v); });
+}
+
+void VehicleNetObject::set_faction(int32_t v SYNC_PARAM)
+{
+	faction = v;
+
+	SYNC_IF_TRUE(PlayerPID_VehicleDynamicInfo, ChannelID_Generic, this, VehicleDynInfo_Faction, v);
+	IF_CLIENT_AND_VALID_OBJ_DO([&]() { obj->set_faction(v); });
 }
 
 void VehicleNetObject::set_player(uint8_t seat_type, Player* player)

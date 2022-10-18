@@ -122,6 +122,8 @@ public:
 #ifdef JC_CLIENT
 	Player(PlayerClient* pc, NID nid);
 
+	Character* get_character() const;
+
 	class ObjectBase* get_object_base() const override;
 
 	void verify_exec(const std::function<void(Character*)>& fn);
@@ -136,8 +138,6 @@ public:
 	bool is_local() const { return local; }
 
 	uint16_t should_use_multiple_rand_seed() const { return dyn_info.use_multiple_bullet; }
-
-	Character* get_character() const;
 
 	CharacterHandle* get_character_handle() const;
 
@@ -161,6 +161,8 @@ public:
 	void on_despawn() override;
 	void on_sync() override {}
 	void on_net_var_change(NetObjectVarType var_type) override;
+	void serialize_derived(const Packet* p) override {}
+	void deserialize_derived(const Packet* p) override {}
 
 	PlayerClient* get_client() const { return client; }
 
