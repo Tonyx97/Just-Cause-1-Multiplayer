@@ -343,8 +343,6 @@ PacketResult nh::player_client::trigger_remote_event(const Packet& p)
 		default: log(RED, "Unknown value type type {} in {}", type, CURR_FN);
 		}
 
-	log(RED, "wtf {}", args_count);
-
 	g_rsrc->trigger_remote_event(event_name, args_list);
 
 	return PacketRes_Ok;
