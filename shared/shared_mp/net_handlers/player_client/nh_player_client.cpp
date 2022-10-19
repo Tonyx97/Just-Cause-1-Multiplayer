@@ -328,9 +328,9 @@ PacketResult nh::player_client::trigger_remote_event(const Packet& p)
 		{
 			switch (const auto ud_type = p.get<ScriptClassType>())
 			{
-			case ScriptClassType_Vec2: args_list[i] = p.get<vec2>(); break;
-			case ScriptClassType_Vec3: args_list[i] = p.get<vec3>(); break;
-			case ScriptClassType_Vec4: args_list[i] = p.get<vec4>(); break;
+			case ScriptClassType_Vec2: args_list[i] = svec2(p.get<vec2>()); break;
+			case ScriptClassType_Vec3: args_list[i] = svec3(p.get<vec3>()); break;
+			case ScriptClassType_Vec4: args_list[i] = svec4(p.get<vec4>()); break;
 			default: log(RED, "Unknown userdata type {} in {}", ud_type, CURR_FN);
 			}
 
