@@ -5,6 +5,8 @@
 #include <shared_mp/player_client/player_client.h>
 #include <shared_mp/objs/all.h>
 
+#include <resource_sys/resource_system.h>
+
 #include <mp/net.h>
 
 void ObjectLists::for_each_net_object(const nid_net_obj_fn_t& fn)
@@ -114,9 +116,13 @@ bool ObjectLists::remove_player_client(PlayerClient* pc)
 	std::lock_guard lock(mtx);
 #endif
 
-	check(pc, "Invalid player client at '{}'", CURR_FN);
+	check(pc, "Invalid player client in '{}'", CURR_FN);
 
-	remove_net_object(pc->get_player());
+	const auto player = pc->get_player();
+
+	g_rsrc->trigger_event(script::event::ON_PLAYER_QUIT, player);
+
+	remove_net_object(player);
 
 	DESTROY_PLAYER_CLIENT(pc);
 

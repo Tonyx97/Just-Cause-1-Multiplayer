@@ -60,7 +60,7 @@ public:
 		if (auto it = events.find(event_name); it != events.end())
 			for (const auto& [rsrc, script_events] : it->second)
 				for (const auto& event_info : script_events)
-					event_info.fn.call(args...);
+					event_info.fn.call(std::forward<A>(args)...);
 
 		curr_event.cancellable = false;
 

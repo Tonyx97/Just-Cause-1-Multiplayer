@@ -15,10 +15,9 @@
 
 #include <mp/chat/chat.h>
 
-#include <game/sys/time/time_system.h>
-#include <game/sys/world/day_cycle.h>
-#include <game/sys/resource/physics.h>
+#include <game/sys/all.h>
 
+#include <game/object/camera/camera.h>
 #include <game/object/character/character.h>
 #elif defined(JC_SERVER)
 #include <shared_mp/player_client/player_client.h>
@@ -36,7 +35,7 @@
 /*********/
 /*********/
 
-namespace jc::script::util
+namespace script::util
 {
 	template <typename Fn>
 	void serialize_event(const std::string& event_name, const luas::variadic_args& va, const Fn& fn)
@@ -64,7 +63,16 @@ namespace jc::script::util
 
 			switch (type)
 			{
-			case LUA_TUSERDATA: check(false, "Unsupported userdata type in {}", CURR_FN); break;
+			case LUA_TUSERDATA:
+			{
+				if (const auto ud = va.get<svec3*>(i))
+				{
+					out.add(ud->type);
+					out.add(ud->obj());
+				}
+				
+				break;
+			}
 			case LUA_TLIGHTUSERDATA:
 			{
 				const auto userdata = va.get<void*>(i);
@@ -90,11 +98,8 @@ namespace jc::script::util
 /*************/
 /*************/
 
-void jc::script::register_functions(Script* script)
+void script::register_functions(Script* script)
 {
-	using namespace jc::script;
-	using namespace jc::script::util;
-
 	const auto vm = script->get_vm();
 
 #if defined(JC_CLIENT)
@@ -104,7 +109,7 @@ void jc::script::register_functions(Script* script)
 
 	vm->add_function("triggerServerEvent", [](luas::state& s, const std::string& name, luas::variadic_args va)
 	{
-		util::serialize_event(name, va, [&](const Packet& p)
+		script::util::serialize_event(name, va, [&](const Packet& p)
 		{
 			g_net->send(p);
 		});
@@ -130,6 +135,7 @@ void jc::script::register_functions(Script* script)
 	/* UI */
 
 	vm->add_function("outputChatBox", [](const std::string& str) { g_chat->add_chat_msg(str); });
+	vm->add_function("worldToScreen", [](const svec3& v) { vec2 out; g_camera->get_main_camera()->w2s(v.obj(), out); return svec2(out); });
 
 	/* KEYCODE */
 
@@ -271,7 +277,7 @@ void jc::script::register_functions(Script* script)
 
 	vm->add_function("addEvent", [](luas::state& s, const std::string& event_name, luas::lua_fn& fn, luas::variadic_args va)
 	{
-		const auto script = s.get_global_var<Script*>(jc::script::globals::SCRIPT_INSTANCE);
+		const auto script = s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE);
 		const bool allow_remote_trigger = va.size() == 1 ? va.get<bool>(0) : false;
 
 		return g_rsrc->add_event(event_name, fn, script, allow_remote_trigger);
@@ -279,7 +285,7 @@ void jc::script::register_functions(Script* script)
 
 	vm->add_function("removeEvent", [](luas::state& s, const std::string& event_name)
 	{
-		const auto script = s.get_global_var<Script*>(jc::script::globals::SCRIPT_INSTANCE);
+		const auto script = s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE);
 
 		return g_rsrc->remove_event(event_name, script);
 	});
@@ -366,12 +372,12 @@ void jc::script::register_functions(Script* script)
 	{
 		auto args = va.push_to_any_vector();
 
-		return g_rsrc->add_timer(fn, s.get_global_var<Resource*>(jc::script::globals::RESOURCE), args, interval, times);
+		return g_rsrc->add_timer(fn, s.get_global_var<Resource*>(script::globals::RESOURCE), args, interval, times);
 	});
 
 	vm->add_function("killTimer", [](luas::state& s, ScriptTimer* v)
 	{
-		return g_rsrc->kill_timer(v, s.get_global_var<Resource*>(jc::script::globals::RESOURCE));
+		return g_rsrc->kill_timer(v, s.get_global_var<Resource*>(script::globals::RESOURCE));
 	});
 
 	vm->add_function("resetTimer", [](ScriptTimer* v) { v->reset(); });
@@ -388,22 +394,22 @@ void jc::script::register_functions(Script* script)
 /***********/
 /***********/
 
-void jc::script::register_globals(Script* script)
+void script::register_globals(Script* script)
 {
 	const auto vm = script->get_vm();
 
 #if defined(JC_CLIENT)
 	// register client globals
 
-	vm->add_global(jc::script::globals::LOCALPLAYER, g_net->get_localplayer());
+	vm->add_global(script::globals::LOCALPLAYER, g_net->get_localplayer());
 #elif defined(JC_SERVER)
 	// reigster server globals
 #endif
 
 	// register shared globals
 
-	vm->add_global(jc::script::globals::SCRIPT_INSTANCE, script);
-	vm->add_global(jc::script::globals::RESOURCE, script->get_owner());
-	vm->add_global(jc::script::globals::RSRC_PATH, script->get_rsrc_path());
-	vm->add_global(jc::script::globals::RSRC_NAME, script->get_rsrc_name());
+	vm->add_global(script::globals::SCRIPT_INSTANCE, script);
+	vm->add_global(script::globals::RESOURCE, script->get_owner());
+	vm->add_global(script::globals::RSRC_PATH, script->get_rsrc_path());
+	vm->add_global(script::globals::RSRC_NAME, script->get_rsrc_name());
 }

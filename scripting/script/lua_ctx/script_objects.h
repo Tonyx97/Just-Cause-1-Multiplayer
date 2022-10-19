@@ -1,11 +1,21 @@
 #pragma once
 
-template <typename T>
+DEFINE_ENUM(ScriptClassType, uint8_t)
+{
+	ScriptClassType_Invalid,
+	ScriptClassType_Vec2,
+	ScriptClassType_Vec3,
+	ScriptClassType_Vec4,
+};
+
+template <typename T, ScriptClassType TYPE = ScriptClassType_Invalid>
 struct script_object
 {
 	using base_object_type = T;
 
 	base_object_type c_obj {};
+
+	ScriptClassType type = TYPE;
 
 	script_object() {}
 
@@ -14,7 +24,7 @@ struct script_object
 	virtual const base_object_type& obj() const = 0;
 };
 
-struct svec2 : public script_object<vec2>
+struct svec2 : public script_object<vec2, ScriptClassType_Vec2>
 {
 	svec2() {}
 	svec2(const base_object_type& v) { c_obj = v; }
@@ -33,7 +43,7 @@ struct svec2 : public script_object<vec2>
 	inline float get_y() const { return c_obj.y; }
 };
 
-struct svec3 : public script_object<vec3>
+struct svec3 : public script_object<vec3, ScriptClassType_Vec3>
 {
 	svec3() {}
 	svec3(const base_object_type& v) { c_obj = v; }
@@ -54,7 +64,7 @@ struct svec3 : public script_object<vec3>
 	inline float get_z() const { return c_obj.z; }
 };
 
-struct svec4 : public script_object<vec4>
+struct svec4 : public script_object<vec4, ScriptClassType_Vec4>
 {
 	svec4() {}
 	svec4(const base_object_type& v) { c_obj = v; }

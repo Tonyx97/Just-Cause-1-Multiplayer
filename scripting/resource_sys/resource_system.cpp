@@ -6,6 +6,7 @@
 #include <mp/net.h>
 
 #include <script/util/script_timer.h>
+#include <script/lua_ctx/script_objects.h>
 
 namespace resource_system
 {
@@ -46,6 +47,9 @@ bool ResourceSystem::init()
 		else if (type == typeid(bool))			state.push(std::any_cast<bool>(v));
 		else if (type == typeid(float))			state.push(std::any_cast<float>(v));
 		else if (type == typeid(NetObject*))	state.push(std::any_cast<NetObject*>(v));
+		else if (type == typeid(svec2))			state.push(std::any_cast<svec2>(v));
+		else if (type == typeid(svec3))			state.push(std::any_cast<svec3>(v));
+		else if (type == typeid(svec4))			state.push(std::any_cast<svec4>(v));
 		else if (type == typeid(uint32_t))		state.push(std::any_cast<uint32_t>(v));
 		else if (type == typeid(uint8_t))		state.push(std::any_cast<uint8_t>(v));
 		else if (type == typeid(int8_t))		state.push(std::any_cast<int8_t>(v));
@@ -400,7 +404,7 @@ ResourceResult ResourceSystem::start_resource(const std::string& name)
 		const auto result = rsrc->start();
 
 		if (result == ResourceResult_Ok)
-			trigger_event(jc::script::event::ON_RSRC_START, rsrc);
+			trigger_event(script::event::ON_RSRC_START, rsrc);
 
 #ifdef JC_SERVER
 		// syncing a resource will start the resource so no need
@@ -427,7 +431,7 @@ ResourceResult ResourceSystem::stop_resource(const std::string& name)
 		if (rsrc->get_status() == ResourceStatus_Stopped)
 			return ResourceResult_AlreadyStopped;
 
-		trigger_event(jc::script::event::ON_RSRC_STOP, rsrc);
+		trigger_event(script::event::ON_RSRC_STOP, rsrc);
 
 		const auto result = rsrc->stop();
 

@@ -23,6 +23,8 @@
 
 #include <shared_mp/objs/all.h>
 
+#include <resource_sys/resource_system.h>
+
 #include <mp/chat/chat.h>
 #include <mp/net.h>
 
@@ -243,6 +245,8 @@ void UI::render()
 
 			render_players();
 			render_default_hud();
+
+			g_rsrc->trigger_event(script::event::ON_RENDER);
 		}
 		else loading_screen();
 
@@ -622,18 +626,20 @@ void UI::render_default_hud()
 		if (auto vehicle_net = g_net->get_net_object_by_game_object(veh)->cast<VehicleNetObject>())
 		{
 			if (g_key->is_key_pressed(KEY_X)) // todojc - debug shit
-				vehicle_net->set_engine_state(!vehicle_net->get_engine_state());
+				vehicle_net->set_engine_state(!vehicle_net->get_engine_state(), true);
 
-			vec2 center = vec2(300.f, sy - 200.f);
+			vec2 center = vec2(sx - 250.f, sy - 50.f);
 
+			const auto counters = 13;
 			const auto start_angle = -jc::nums::PI;
-			const auto step_angle = jc::nums::PI / static_cast<float>(12);
+			const auto step_angle = jc::nums::PI / static_cast<float>(counters - 1);
+			const auto needle_length = 150.f;
 
 			float angle = start_angle;
 
-			for (int i = 0; i < 13; ++i)
+			for (int i = 0; i < counters; ++i)
 			{
-				const auto stage_pos = center + vec2(std::cos(angle), std::sin(angle)) * 150.f;
+				const auto stage_pos = center + vec2(std::cos(angle), std::sin(angle)) * (needle_length + 10.f);
 
 				add_text(FORMATV("{}", float(i * 20.f)).c_str(), stage_pos.x, stage_pos.y, 20.f, { 1.f, 1.f, 1.f, 1.f }, true, jc::nums::QUARTER_PI);
 
@@ -646,11 +652,11 @@ void UI::render_default_hud()
 
 			smooth_velocity = std::lerp(smooth_velocity, velocity, g_time->get_delta() * 10.f);
 
-			const auto curr_velocity_pos = center + vec2(-std::cos(smooth_velocity), -std::sin(smooth_velocity)) * 100.f;
+			const auto curr_velocity_pos = center + vec2(-std::cos(smooth_velocity), -std::sin(smooth_velocity)) * needle_length;
 
 			draw_line(center, curr_velocity_pos, 2.f, { 1.f, 1.f, 1.f, 1.f });
 
-			add_text(FORMATV("{:.1f} km/h", (glm::length(veh->get_velocity()) * 3.6f)).c_str(), center.x, center.y + 50.f, 22.f, { 1.f, 1.f, 1.f, 1.f }, true, jc::nums::QUARTER_PI);
+			add_text(FORMATV("{:.1f} km/h", (glm::length(veh->get_velocity()) * 3.6f)).c_str(), center.x, center.y + 30.f, 22.f, { 1.f, 1.f, 1.f, 1.f }, true, jc::nums::QUARTER_PI);
 		}
 	}
 }

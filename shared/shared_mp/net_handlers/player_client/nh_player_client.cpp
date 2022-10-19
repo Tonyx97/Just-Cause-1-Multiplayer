@@ -8,6 +8,8 @@
 
 #include <resource_sys/resource_system.h>
 
+#include <script/lua_ctx/script_objects.h>
+
 #ifdef JC_CLIENT
 #include <mp/chat/chat.h>
 #endif
@@ -124,7 +126,7 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			player->set_nick(nick);
 
 			if (joined)
-				g_rsrc->trigger_event(jc::script::event::ON_PLAYER_JOIN, player);
+				g_rsrc->trigger_event(script::event::ON_PLAYER_JOIN, player);
 
 			break;
 		}
@@ -322,12 +324,26 @@ PacketResult nh::player_client::trigger_remote_event(const Packet& p)
 	for (uint8_t i = 0u; i < args_count; ++i)
 		switch (const auto type = p.get_u8())
 		{
-		case LUA_TUSERDATA:			check(false, "Unsupported userdata type in trigger_remote_event"); break;
+		case LUA_TUSERDATA:
+		{
+			switch (const auto ud_type = p.get<ScriptClassType>())
+			{
+			case ScriptClassType_Vec2: args_list[i] = p.get<vec2>(); break;
+			case ScriptClassType_Vec3: args_list[i] = p.get<vec3>(); break;
+			case ScriptClassType_Vec4: args_list[i] = p.get<vec4>(); break;
+			default: log(RED, "Unknown userdata type {} in {}", ud_type, CURR_FN);
+			}
+
+			break;
+		}
 		case LUA_TLIGHTUSERDATA:	args_list[i] = p.get_net_object();		break;
 		case LUA_TSTRING:			args_list[i] = p.get_str();				break;
 		case LUA_TNUMBER:			args_list[i] = p.get<lua_Number>();		break;
 		case LUA_TBOOLEAN:			args_list[i] = p.get<bool>();			break;
+		default: log(RED, "Unknown value type type {} in {}", type, CURR_FN);
 		}
+
+	log(RED, "wtf {}", args_count);
 
 	g_rsrc->trigger_remote_event(event_name, args_list);
 

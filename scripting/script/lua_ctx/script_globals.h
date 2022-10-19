@@ -1,6 +1,6 @@
 #pragma once
 
-namespace jc::script::globals
+namespace script::globals
 {
 #ifdef JC_CLIENT
 	// client globals

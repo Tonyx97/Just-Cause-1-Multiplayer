@@ -237,7 +237,7 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 		// it means we died so trigger killed event
 		
 		if (was_just_killed())
-			g_rsrc->trigger_event(jc::script::event::ON_PLAYER_KILLED, this);
+			g_rsrc->trigger_event(script::event::ON_PLAYER_KILLED, this);
 		else if (was_just_revived())
 		{
 #ifdef JC_CLIENT
@@ -275,10 +275,9 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 
 	respawn_character();
 
-	// if it's local we want to access directly to the
-	// character and set the stuff, verify_exec doesn't work
-	// with localplayer due to safety reasons so we have to access
-	// the local's character
+	// if this is the localplayer, we will update the 
+	// info from the character itself and then set 
+	// the net vars so it can call the notify event
 
 	if (is_local())
 	{
@@ -286,11 +285,8 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 		character->set_skin(skin, false);
 		character->set_hp(hp);
 		character->set_max_hp(max_hp);
-
-		return;
 	}
 #else
-
 	Packet p(PlayerPID_Respawn, ChannelID_Generic, this, position, rotation, skin, hp, max_hp);
 
 	g_net->send_broadcast(p);
@@ -298,7 +294,7 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 
 	set_transform(TransformTR(position, angles));
 	set_skin(skin);
-	set_hp(hp);
+	set_hp(hp, true);
 	set_max_hp(max_hp);
 }
 

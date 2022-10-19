@@ -7,6 +7,8 @@
 
 #include <mp/net.h>
 
+#include <resource_sys/resource_system.h>
+
 #include <game/object/character/character.h>
 #include <game/object/localplayer/localplayer.h>
 #include <game/object/character_handle/character_handle.h>
@@ -15,8 +17,6 @@
 #include <core/task_system/task_system.h>
 #include <core/keycode.h>
 #include <core/test_units.h>
-
-#include <resource_sys/resource_system.h>
 
 namespace jc::game_control
 {
@@ -180,7 +180,6 @@ void GameControl::on_tick()
 
 	g_rsrc->update();
 
-	g_rsrc->trigger_event(jc::script::event::ON_TICK);
 	g_task->process();
 
 	timer::dispatch();

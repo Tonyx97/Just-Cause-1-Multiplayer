@@ -30,8 +30,8 @@ void Script::start()
 	{
 		// register functions and globals first
 
-		jc::script::register_functions(this);
-		jc::script::register_globals(this);
+		script::register_functions(this);
+		script::register_globals(this);
 
 		// execute the script
 		

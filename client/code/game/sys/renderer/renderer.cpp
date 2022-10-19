@@ -9,6 +9,8 @@
 
 #include <core/test_units.h>
 
+#include <resource_sys/resource_system.h>
+
 // dbg
 
 #include <timer/timer.h>
@@ -18,6 +20,13 @@
 #include <game/object/character/character.h>
 #include <game/object/localplayer/localplayer.h>
 #include <game/object/character_handle/character_handle.h>
+
+DEFINE_HOOK_FASTCALL(game_draw_scene, 0x412230, int, void* _this)
+{
+	g_rsrc->trigger_event(script::event::ON_PRE_RENDER);
+
+	return game_draw_scene_hook(_this);
+}
 
 DEFINE_HOOK_FASTCALL(game_present, 0x40FB70, int, void* _this)
 {
@@ -43,10 +52,12 @@ void Renderer::destroy()
 void Renderer::hook_present()
 {
 	game_present_hook.hook();
+	game_draw_scene_hook.hook();
 }
 
 void Renderer::unhook_present()
 {
+	game_draw_scene_hook.unhook();
 	game_present_hook.unhook();
 }
 
