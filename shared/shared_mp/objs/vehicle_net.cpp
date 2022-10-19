@@ -184,15 +184,9 @@ void VehicleNetObject::serialize_derived(const Packet* p)
 void VehicleNetObject::deserialize_derived(const Packet* p)
 {
 #ifdef JC_CLIENT
-	const auto _engine_state = p->get_bool();
-	const auto _color = p->get_u32();
-	const auto _faction = p->get_i32();
-
-	log(GREEN, "{} {:x} {}", _engine_state, _color, _faction);
-
-	set_engine_state(_engine_state);
-	set_color(_color);
-	set_faction(_faction);
+	set_engine_state(p->get_bool());
+	set_color(p->get_u32());
+	set_faction(p->get_i32());
 #else
 #endif
 }

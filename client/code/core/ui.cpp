@@ -617,12 +617,42 @@ void UI::render_default_hud()
 
 	// render speedometer
 
-	if (g_key->is_key_pressed(KEY_X)) // todojc - debug shit
-		if (auto veh = local_char->get_vehicle(); veh && veh->get_driver_seat()->get_character() == local_char)
-			if (auto vehicle_net = g_net->get_net_object_by_game_object(veh)->cast<VehicleNetObject>())
+	if (auto veh = local_char->get_vehicle(); veh && veh->get_driver_seat()->get_character() == local_char)
+	{
+		if (auto vehicle_net = g_net->get_net_object_by_game_object(veh)->cast<VehicleNetObject>())
+		{
+			if (g_key->is_key_pressed(KEY_X)) // todojc - debug shit
 				vehicle_net->set_engine_state(!vehicle_net->get_engine_state());
 
+			vec2 center = vec2(300.f, sy - 200.f);
 
+			const auto start_angle = -jc::nums::PI;
+			const auto step_angle = jc::nums::PI / static_cast<float>(12);
+
+			float angle = start_angle;
+
+			for (int i = 0; i < 13; ++i)
+			{
+				const auto stage_pos = center + vec2(std::cos(angle), std::sin(angle)) * 150.f;
+
+				add_text(FORMATV("{}", float(i * 20.f)).c_str(), stage_pos.x, stage_pos.y, 20.f, { 1.f, 1.f, 1.f, 1.f }, true, jc::nums::QUARTER_PI);
+
+				angle += step_angle;
+			}
+
+			static float smooth_velocity = 0.f;
+
+			const auto velocity = (glm::length(veh->get_velocity()) * 3.6f) * (jc::nums::PI / 240.f);
+
+			smooth_velocity = std::lerp(smooth_velocity, velocity, g_time->get_delta() * 10.f);
+
+			const auto curr_velocity_pos = center + vec2(-std::cos(smooth_velocity), -std::sin(smooth_velocity)) * 100.f;
+
+			draw_line(center, curr_velocity_pos, 2.f, { 1.f, 1.f, 1.f, 1.f });
+
+			add_text(FORMATV("{:.1f} km/h", (glm::length(veh->get_velocity()) * 3.6f)).c_str(), center.x, center.y + 50.f, 22.f, { 1.f, 1.f, 1.f, 1.f }, true, jc::nums::QUARTER_PI);
+		}
+	}
 }
 
 void UI::render_admin_panel()
