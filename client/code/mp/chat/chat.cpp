@@ -254,10 +254,10 @@ void Chat::update()
 	{
 		auto sy = g_ui->calc_text_size(!curr_msg.empty() ? curr_msg.c_str() : " ", text_size, max_sx).y;
 
-		g_ui->draw_filled_rect(5.f, 630.f, max_sx + 5.f, sy + 5.f, { 0.f, 0.f, 0.f, 0.5f });
+		g_ui->draw_filled_rect(vec2(5.f, 630.f), vec2(max_sx + 5.f, sy + 5.f), { 0.f, 0.f, 0.f, 0.5f });
 
 		if (!curr_msg.empty())
-			g_ui->add_text(curr_msg.c_str(), 10.f, 630.f, text_size, { 1.f, 1.f, 1.f, 1.f }, false, -1, max_sx);
+			g_ui->draw_text(curr_msg.c_str(), vec2(10.f, 630.f), text_size, { 1.f, 1.f, 1.f, 1.f }, false, -1, max_sx);
 	}
 
 	interaction_time += g_time->get_delta();

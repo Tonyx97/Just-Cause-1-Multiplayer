@@ -11,6 +11,7 @@
 #include "../util/script_timer.h"
 
 #if defined(JC_CLIENT)
+#include <core/ui.h>
 #include <core/keycode.h>
 
 #include <mp/chat/chat.h>
@@ -136,6 +137,17 @@ void script::register_functions(Script* script)
 
 	vm->add_function("outputChatBox", [](const std::string& str) { g_chat->add_chat_msg(str); });
 	vm->add_function("worldToScreen", [](const svec3& v) { vec2 out; g_camera->get_main_camera()->w2s(v.obj(), out); return svec2(out); });
+	vm->add_function("dxDrawLine", [](const svec2& p0, const svec2& p1, const svec4& color, float thickness) { g_ui->draw_line(p0.obj(), p1.obj(), thickness, color.obj()); });
+	vm->add_function("dxDrawTriangle", [](const svec2& p0, const svec2& p1, const svec2& p2, const svec4& color) { g_ui->draw_triangle(p0.obj(), p1.obj(), p2.obj(), color.obj()); });
+	vm->add_function("dxDrawFilledTriangle", [](const svec2& p0, const svec2& p1, const svec2& p2, const svec4& color) { g_ui->draw_filled_triangle(p0.obj(), p1.obj(), p2.obj(), color.obj()); });
+	vm->add_function("dxDrawRect", [](const svec2& pos, const svec2& size, const svec4& color) { g_ui->draw_rect(pos.obj(), size.obj(), color.obj()); });
+	vm->add_function("dxDrawFilledRect", [](const svec2& pos, const svec2& size, const svec4& color) { g_ui->draw_filled_rect(pos.obj(), size.obj(), color.obj()); });
+	vm->add_function("dxDrawCircle", [](const svec2& pos, float r, float thickness, int segs, const svec4& color) { g_ui->draw_circle(pos.obj(), r, thickness, segs, color.obj()); });
+	vm->add_function("dxDrawFilledCircle", [](const svec2& pos, float r, int segs, const svec4& color) { g_ui->draw_filled_circle(pos.obj(), r, segs, color.obj()); });
+	vm->add_function("dxDrawText", [](const svec2& pos, const std::string& text, float s, const svec4& color, bool center, float shadow, float wrap)
+	{
+		g_ui->draw_text(text.c_str(), pos.obj(), s, color.obj(), center, shadow, wrap);
+	});
 
 	/* KEYCODE */
 

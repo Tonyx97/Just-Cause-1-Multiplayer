@@ -339,6 +339,9 @@
     <ClCompile Include="code\game\object\interactable\interactable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\core\dbg_ui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\game\sys\renderer\renderer.h">
@@ -705,6 +708,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\sys\resource\resource_cache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\core\dbg_ui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

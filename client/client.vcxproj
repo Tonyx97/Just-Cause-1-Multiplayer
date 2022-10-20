@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="code\core\clean_dbg.cpp" />
+    <ClCompile Include="code\core\dbg_ui.cpp" />
     <ClCompile Include="code\core\task_system\task.cpp" />
     <ClCompile Include="code\core\task_system\task_system.cpp" />
     <ClCompile Include="code\core\test_units.cpp" />
@@ -241,6 +242,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\core\clean_dbg.h" />
+    <ClInclude Include="code\core\dbg_ui.h" />
     <ClInclude Include="code\core\patching.h" />
     <ClInclude Include="code\core\task_system\task.h" />
     <ClInclude Include="code\core\task_system\task_system.h" />
