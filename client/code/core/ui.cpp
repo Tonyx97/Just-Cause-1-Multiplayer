@@ -209,9 +209,11 @@ void UI::draw_text(const wchar_t* text, const vec2& p, float s, const vec4& colo
 	return draw_text(utf8_text.get(), p, s, color, center, shadow, wrap);
 }
 
-ImVec2 UI::calc_text_size(const char* text, float size, float wrap)
+vec2 UI::calc_text_size(const char* text, float size, float wrap)
 {
-	return ImGui::GetWindowDrawList()->_Data->Font->CalcTextSizeA(size, FLT_MAX, wrap, text);
+	const auto res = ImGui::GetWindowDrawList()->_Data->Font->CalcTextSizeA(size, FLT_MAX, wrap, text);
+
+	return vec2(res.x, res.y);
 }
 
 void UI::begin()

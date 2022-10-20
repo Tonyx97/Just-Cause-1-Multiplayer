@@ -156,7 +156,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD9))
 	{
-		g_weapon->remove_weapon_template(Weapon_Silenced_Pistol);
+		g_factory->spawn_general_item_pickup(local_pos + vec3(2.f, 0.f, 0.f), ItemType_Health, "medipack.lod");
 
 		//jc::this_call(0x74DE20, *seat, true);
 

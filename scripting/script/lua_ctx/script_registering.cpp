@@ -135,8 +135,9 @@ void script::register_functions(Script* script)
 
 	/* UI */
 
-	vm->add_function("outputChatBox", [](const std::string& str) { g_chat->add_chat_msg(str); });
 	vm->add_function("worldToScreen", [](const svec3& v) { vec2 out; g_camera->get_main_camera()->w2s(v.obj(), out); return svec2(out); });
+	vm->add_function("dxGetScreenSize", []() { return svec2(g_ui->get_screen_size()); });
+	vm->add_function("outputChatBox", [](const std::string& str) { g_chat->add_chat_msg(str); });
 	vm->add_function("dxDrawLine", [](const svec2& p0, const svec2& p1, const svec4& color, float thickness) { g_ui->draw_line(p0.obj(), p1.obj(), thickness, color.obj()); });
 	vm->add_function("dxDrawTriangle", [](const svec2& p0, const svec2& p1, const svec2& p2, const svec4& color) { g_ui->draw_triangle(p0.obj(), p1.obj(), p2.obj(), color.obj()); });
 	vm->add_function("dxDrawFilledTriangle", [](const svec2& p0, const svec2& p1, const svec2& p2, const svec4& color) { g_ui->draw_filled_triangle(p0.obj(), p1.obj(), p2.obj(), color.obj()); });
@@ -249,7 +250,7 @@ void script::register_functions(Script* script)
 		switch (va.size())
 		{
 		case 2: skin = va.get<int32_t>(1); [[fallthrough]];
-		case 1: rotation = va.get<float>(0); break;
+		case 1: rotation = glm::radians(va.get<float>(0)); break;
 		}
 
 		player->respawn(pos.obj(), rotation, skin, max_hp, max_hp);
@@ -331,8 +332,8 @@ void script::register_functions(Script* script)
 	vm->add_function("setObjectPosition", [](NetObject* obj, const svec3& v) { NET_OBJ_CHECK_DO(obj, set_position, v.obj()); SYNC_NET_VAR(obj, transform, true); });
 	vm->add_function("getObjectPosition", [](NetObject* obj) { return svec3(NET_OBJ_CHECK_RET_EXP(obj, get_position, vec3{})); });
 
-	vm->add_function("setObjectRotation", [](NetObject* obj, const svec3& v) { NET_OBJ_CHECK_DO(obj, set_rotation, quat(v.obj())); SYNC_NET_VAR(obj, transform, true); });
-	vm->add_function("getObjectRotation", [](NetObject* obj) { return svec3(glm::eulerAngles(NET_OBJ_CHECK_RET_EXP(obj, get_rotation, jc::qua::IDENTITY))); });
+	vm->add_function("setObjectRotation", [](NetObject* obj, const svec3& v) { NET_OBJ_CHECK_DO(obj, set_rotation, quat(glm::radians(v.obj()))); SYNC_NET_VAR(obj, transform, true); });
+	vm->add_function("getObjectRotation", [](NetObject* obj) { return svec3(glm::degrees(glm::eulerAngles(NET_OBJ_CHECK_RET_EXP(obj, get_rotation, jc::qua::IDENTITY)))); });
 
 	vm->add_function("setObjectHealth", [](NetObject* obj, float v) { NET_OBJ_CHECK_DO(obj, set_hp, v); SYNC_NET_VAR(obj, hp, true); });
 	vm->add_function("getObjectHealth", [](NetObject* obj) { NET_OBJ_CHECK_RET(obj, get_hp, 0); });

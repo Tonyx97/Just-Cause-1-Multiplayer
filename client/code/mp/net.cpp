@@ -209,6 +209,10 @@ void Net::set_joined(bool v)
 
 		localplayer->spawn();
 
+		// mark the localplayer as joined
+		
+		local->set_joined(true);
+
 		// let everyone know that we entered the world and spawned
 
 		send(Packet(PlayerClientPID_Join, ChannelID_PlayerClient));

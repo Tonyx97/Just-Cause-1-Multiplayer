@@ -839,10 +839,13 @@ namespace luas
 			if (const auto state_info = get_info())
 				if (const auto class_info = state_info->get_class(TYPEINFO(T)))
 				{
-					value = *to_userdata<T*>(i++);
+					if (const auto ud = to_userdata<T*>(i++))
+					{
+						value = *ud;
 
-					get_class(class_info->name);
-					set_metatable(-2);
+						get_class(class_info->name);
+						set_metatable(-2);
+					}
 				}
 		}
 

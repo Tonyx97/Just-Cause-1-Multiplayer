@@ -104,8 +104,8 @@ public:
 
 	ImGuiIO* get_io() const { return io; }
 
-	ImVec2 calc_text_size(const char* text, float size, float wrap);
-	ImVec2 get_screen_size() { return io->DisplaySize; }
+	vec2 calc_text_size(const char* text, float size, float wrap);
+	vec2 get_screen_size() { return vec2(io->DisplaySize.x, io->DisplaySize.y); }
 
 	vec2 get_cursor_pos() const { return { io->MousePos.x, io->MousePos.y }; }
 
