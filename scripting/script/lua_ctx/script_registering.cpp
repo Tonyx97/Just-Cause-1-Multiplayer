@@ -256,9 +256,19 @@ void script::register_functions(Script* script)
 		player->respawn(pos.obj(), rotation, skin, max_hp, max_hp);
 	});
 
-	vm->add_function("createDamageableObject", [](const svec3& pos, const std::string& lod_name, const std::string& pfx_name)
+	vm->add_function("createDamageable", [](const svec3& pos, const std::string& lod, const std::string& pfx)
 	{
-		return g_net->spawn_net_object(SyncType_Distance, NetObject_Damageable, lod_name, pfx_name, TransformTR(pos.obj()));
+		return g_net->spawn_damageable(SyncType_Distance, NetObject_Damageable, TransformTR(pos.obj()), lod, pfx);
+	});
+
+	vm->add_function("createVehicle", [](const svec3& pos, const std::string& ee_name)
+	{
+		return g_net->spawn_vehicle(SyncType_Distance, NetObject_Damageable, TransformTR(pos.obj()), ee_name);
+	});
+
+	vm->add_function("createPickup", [](const svec3& pos, uint32_t type, const std::string& lod)
+	{
+		return g_net->spawn_pickup(SyncType_Distance, NetObject_Pickup, TransformTR(pos.obj()), type, lod);
 	});
 #endif
 

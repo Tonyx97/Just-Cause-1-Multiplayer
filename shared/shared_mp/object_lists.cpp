@@ -210,6 +210,9 @@ NetObject* ObjectLists::get_net_object_by_nid_impl(NID nid)
 
 NetObject* ObjectLists::add_net_object(NetObject* net_obj)
 {
+	if (!net_obj)
+		return nullptr;
+
 #ifdef JC_SERVER
 	std::lock_guard lock(mtx);
 #endif
@@ -375,40 +378,154 @@ NetObject* ObjectLists::spawn_net_object(
 	SyncType sync_type,
 #endif
 	NetObjectType type,
-	const std::string& object_id,
-	const std::string& pfx_id,
-	const TransformTR& transform)
+	const TransformTR& transform,
+	const Packet* p)
 {
 	NetObject* object = nullptr;
 
 	switch (type)
 	{
 #ifdef JC_CLIENT
-	case NetObject_Damageable: object = CREATE_DAMAGEABLE_NET_OBJECT(nid, transform); break;
-	case NetObject_Blip: object = CREATE_BLIP_NET_OBJECT(nid, transform); break;
-	case NetObject_Vehicle: object = CREATE_VEHICLE_NET_OBJECT(nid, transform); break;
+	case NetObject_Damageable:	object = CREATE_DAMAGEABLE_NET_OBJECT(nid, transform); break;
+	case NetObject_Blip:		object = CREATE_BLIP_NET_OBJECT(nid, transform); break;
+	case NetObject_Vehicle:		object = CREATE_VEHICLE_NET_OBJECT(nid, transform); break;
+	case NetObject_Pickup:		object = CREATE_PICKUP_NET_OBJECT(nid, transform); break;
 #else
-	case NetObject_Damageable: object = CREATE_DAMAGEABLE_NET_OBJECT(sync_type, transform); break;
-	case NetObject_Blip: object = CREATE_BLIP_NET_OBJECT(sync_type, transform); break;
-	case NetObject_Vehicle: object = CREATE_VEHICLE_NET_OBJECT(sync_type, transform); break;
+	case NetObject_Damageable:	object = CREATE_DAMAGEABLE_NET_OBJECT(sync_type, transform); break;
+	case NetObject_Blip:		object = CREATE_BLIP_NET_OBJECT(sync_type, transform); break;
+	case NetObject_Vehicle:		object = CREATE_VEHICLE_NET_OBJECT(sync_type, transform); break;
+	case NetObject_Pickup:		object = CREATE_PICKUP_NET_OBJECT(sync_type, transform); break;
 #endif
 	default: log(RED, "Invalid net object type to spawn: {}", type);
 	}
 
-	check(object, "Could not create a net object");
+	check(add_net_object(object), "Could not create a net object");
 
-	if (object)
-	{
-		check(add_net_object(object), "Could not add a net object");
+	// deserialize from packet the basic info required to create the object
+		
+	object->deserialize_derived_create(p);
 
-		object->set_object_id(object_id);
-		object->set_pfx_id(pfx_id);
-		object->spawn();
+	// spawn the object
+		
+	object->spawn();
 
 #ifdef JC_SERVER
-		g_net->sync_net_objects(true);
+	g_net->sync_net_objects(true);
 #endif
-	}
+
+	return object;
+}
+
+NetObject* ObjectLists::spawn_damageable(
+#ifdef JC_CLIENT
+	NID nid,
+#else
+	SyncType sync_type,
+#endif
+	NetObjectType type,
+	const TransformTR& transform,
+	const std::string& lod,
+	const std::string& pfx)
+{
+#ifdef JC_CLIENT
+	const auto object = CREATE_DAMAGEABLE_NET_OBJECT(nid, transform);
+#else
+	const auto object = CREATE_DAMAGEABLE_NET_OBJECT(sync_type, transform);
+#endif
+
+	check(add_net_object(object), "Could not create a damageable");
+
+	object->set_lod(lod);
+	object->set_pfx(pfx);
+	object->spawn();
+
+#ifdef JC_SERVER
+	g_net->sync_net_objects(true);
+#endif
+
+	return object;
+}
+
+NetObject* ObjectLists::spawn_blip(
+#ifdef JC_CLIENT
+	NID nid,
+#else
+	SyncType sync_type,
+#endif
+	NetObjectType type,
+	const TransformTR& transform)
+{
+#ifdef JC_CLIENT
+	const auto object = CREATE_BLIP_NET_OBJECT(nid, transform);
+#else
+	const auto object = CREATE_BLIP_NET_OBJECT(sync_type, transform);
+#endif
+
+	check(add_net_object(object), "Could create a blip");
+
+	object->spawn();
+
+#ifdef JC_SERVER
+	g_net->sync_net_objects(true);
+#endif
+
+	return object;
+}
+
+NetObject* ObjectLists::spawn_vehicle(
+#ifdef JC_CLIENT
+	NID nid,
+#else
+	SyncType sync_type,
+#endif
+	NetObjectType type,
+	const TransformTR& transform,
+	const std::string& ee_name)
+{
+#ifdef JC_CLIENT
+	const auto object = CREATE_VEHICLE_NET_OBJECT(nid, transform);
+#else
+	const auto object = CREATE_VEHICLE_NET_OBJECT(sync_type, transform);
+#endif
+
+	check(add_net_object(object), "Could not create a vehicle");
+
+	object->set_ee(ee_name);
+	object->spawn();
+
+#ifdef JC_SERVER
+	g_net->sync_net_objects(true);
+#endif
+
+	return object;
+}
+
+NetObject* ObjectLists::spawn_pickup(
+#ifdef JC_CLIENT
+	NID nid,
+#else
+	SyncType sync_type,
+#endif
+	NetObjectType type,
+	const TransformTR& transform,
+	uint32_t pickup_type,
+	const std::string& lod)
+{
+#ifdef JC_CLIENT
+	const auto object = CREATE_PICKUP_NET_OBJECT(nid, transform);
+#else
+	const auto object = CREATE_PICKUP_NET_OBJECT(sync_type, transform);
+#endif
+
+	check(add_net_object(object), "Could not create a pickup");
+
+	object->set_item_type(pickup_type);
+	object->set_lod(lod);
+	object->spawn();
+
+#ifdef JC_SERVER
+	g_net->sync_net_objects(true);
+#endif
 
 	return object;
 }

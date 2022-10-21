@@ -126,6 +126,11 @@ void FactorySystem::destroy_vehicle_spawn_point(VehicleSpawnPoint* v)
 	vehicle_spawns.erase(v);
 }
 
+void FactorySystem::destroy_item_pickup(ItemPickup* v)
+{
+	item_pickups.erase(v);
+}
+
 void FactorySystem::destroy_map_icon(UIMapIcon* v)
 {
 	ui_map_icons.erase(v);

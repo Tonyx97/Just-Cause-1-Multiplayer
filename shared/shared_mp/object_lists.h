@@ -93,7 +93,7 @@ public:
 	// spawning
 
 	bool destroy_net_object(NetObject* obj);
-	
+
 	NetObject* spawn_net_object(
 #ifdef JC_CLIENT
 		NID nid,
@@ -101,7 +101,47 @@ public:
 		SyncType sync_type,
 #endif
 		NetObjectType type,
-		const std::string& object_id,
-		const std::string& pfx_id,
+		const TransformTR& transform,
+		const Packet* p);
+	
+	NetObject* spawn_damageable(
+#ifdef JC_CLIENT
+		NID nid,
+#else
+		SyncType sync_type,
+#endif
+		NetObjectType type,
+		const TransformTR& transform,
+		const std::string& lod,
+		const std::string& pfx);
+
+	NetObject* spawn_blip(
+#ifdef JC_CLIENT
+		NID nid,
+#else
+		SyncType sync_type,
+#endif
+		NetObjectType type,
 		const TransformTR& transform);
+
+	NetObject* spawn_vehicle(
+#ifdef JC_CLIENT
+		NID nid,
+#else
+		SyncType sync_type,
+#endif
+		NetObjectType type,
+		const TransformTR& transform,
+		const std::string& ee_name);
+
+	NetObject* spawn_pickup(
+#ifdef JC_CLIENT
+		NID nid,
+#else
+		SyncType sync_type,
+#endif
+		NetObjectType type,
+		const TransformTR& transform,
+		uint32_t pickup_type,
+		const std::string& lod);
 };

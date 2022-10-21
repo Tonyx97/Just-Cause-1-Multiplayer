@@ -118,7 +118,7 @@ void VehicleNetObject::destroy_object()
 void VehicleNetObject::on_spawn()
 {
 #ifdef JC_CLIENT
-	obj = g_factory->spawn_vehicle(get_object_id(), get_position());
+	obj = g_factory->spawn_vehicle(get_ee(), get_position());
 
 	check(obj, "Could not create vehicle");
 
@@ -173,22 +173,26 @@ void VehicleNetObject::on_net_var_change(NetObjectVarType var_type)
 
 void VehicleNetObject::serialize_derived(const Packet* p)
 {
-#ifdef JC_CLIENT
-#else
 	p->add(engine_state);
 	p->add(color);
 	p->add(faction);
-#endif
 }
 
 void VehicleNetObject::deserialize_derived(const Packet* p)
 {
-#ifdef JC_CLIENT
 	set_engine_state(p->get_bool());
 	set_color(p->get_u32());
 	set_faction(p->get_i32());
-#else
-#endif
+}
+
+void VehicleNetObject::serialize_derived_create(const Packet* p)
+{
+	p->add(ee_name);
+}
+
+void VehicleNetObject::deserialize_derived_create(const Packet* p)
+{
+	set_ee(p->get_str());
 }
 
 void VehicleNetObject::set_control_info(float c0, float c1, float c2, float c3, bool braking)

@@ -54,6 +54,7 @@ DEFINE_ENUM(NetObjectType, uint8_t)
 	NetObject_Damageable,
 	NetObject_Blip,
 	NetObject_Vehicle,
+	NetObject_Pickup,
 	NetObject_Max,
 };
 
@@ -130,9 +131,6 @@ private:
 
 	NID nid = INVALID_NID;
 
-	std::string object_id,
-				pfx_id;
-
 	bool spawned = false;
 
 #ifdef JC_SERVER
@@ -156,6 +154,8 @@ public:
 	virtual void on_sync() = 0;
 	virtual void serialize_derived(const Packet* p) = 0;
 	virtual void deserialize_derived(const Packet* p) = 0;
+	virtual void serialize_derived_create(const Packet* p) = 0;
+	virtual void deserialize_derived_create(const Packet* p) = 0;
 
 #ifdef JC_CLIENT
 	virtual class ObjectBase* get_object_base() const = 0;
@@ -215,8 +215,6 @@ public:
 	}
 
 	void set_spawned(bool v);
-	void set_object_id(const std::string& v) { object_id = v; }
-	void set_pfx_id(const std::string& v) { pfx_id = v; }
 
 	bool is_valid_type() const;
 	bool is_spawned() const;
@@ -225,9 +223,6 @@ public:
 	bool was_just_killed() const { return hp.get_old() > 0.f && hp.get() <= 0.f; }
 	bool was_just_revived() const { return hp.get_old() <= 0.f && hp.get() > 0.f; }
 	bool is_alive() const { return get_hp() > 0.f; }
-
-	const std::string& get_object_id() const { return object_id; }
-	const std::string& get_pfx_id() const { return pfx_id; }
 
 	NID get_nid() const { return nid; }
 

@@ -207,19 +207,19 @@ void jc::mp::logic::on_tick()
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
 				g_net->send(Packet(
-					WorldPID_SpawnObjectWithPFX,
+					WorldPID_SpawnObject,
 					ChannelID_World,
 					NetObject_Damageable,
+					transform,
 					std::string("bathboll.lod"),
-					std::string("bath_boll.pfx"),
-					transform));
+					std::string("bath_boll.pfx")));
 			}
 
 			if (g_key->is_key_pressed(VK_F4))
 			{
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
 
-				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, std::string("lave_043_Rally_Car.ee"), transform));
+				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, transform, std::string("lave_043_Rally_Car.ee")));
 			}
 		}
 }
@@ -336,6 +336,7 @@ void jc::mp::logic::on_update_objects()
 			break;
 		}
 		case NetObject_Vehicle:
+		case NetObject_Pickup:
 		{
 			if (!obj->sync())
 			{

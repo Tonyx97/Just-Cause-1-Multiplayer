@@ -163,6 +163,8 @@ public:
 	void on_net_var_change(NetObjectVarType var_type) override;
 	void serialize_derived(const Packet* p) override {}
 	void deserialize_derived(const Packet* p) override {}
+	void serialize_derived_create(const Packet* p) override {}
+	void deserialize_derived_create(const Packet* p) override {}
 
 	PlayerClient* get_client() const { return client; }
 

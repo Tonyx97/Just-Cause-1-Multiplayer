@@ -50,22 +50,15 @@ PacketResult nh::world::punch_force(const Packet& p)
 	return PacketRes_Ok;
 }
 
-PacketResult nh::world::spawn_object(const Packet& p, bool with_pfx)
+PacketResult nh::world::spawn_object(const Packet& p)
 {
 #ifdef JC_SERVER
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
 	const auto net_type = p.get<NetObjectType>();
-	const auto object_id = p.get_str();
-
-	std::string pfx_id;
-
-	if (with_pfx)
-		pfx_id = p.get_str();
-
 	const auto transform = p.get<TransformTR>();
 
-	g_net->spawn_net_object(SyncType_Distance, net_type, object_id, pfx_id, transform);
+	g_net->spawn_net_object(SyncType_Distance, net_type, transform, &p);
 #endif
 
 	return PacketRes_Ok;

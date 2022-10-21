@@ -65,7 +65,6 @@ DEFINE_ENUM(WorldPacketID, PacketID)
 	WorldPID_SetTimeScale,						// syncs the time scale
 	WorldPID_SetPunchForce,						// syncs punch force
 	WorldPID_SpawnObject,						// ask and spawn an object in the server and remote players
-	WorldPID_SpawnObjectWithPFX,				// ask and spawn an object with a pfx specified in the server and remote players
 	WorldPID_DestroyObject,						// used by the client and server to sync destruction of an object
 	WorldPID_SyncObject,						// used to sync info about net objects that are not players
 	WorldPID_Max

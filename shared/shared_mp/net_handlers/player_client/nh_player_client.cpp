@@ -131,19 +131,22 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			break;
 		}
 		case NetObject_Damageable:
-		case NetObject_Vehicle:
 		case NetObject_Blip:
+		case NetObject_Vehicle:
+		case NetObject_Pickup:
 		{
-			const auto object_id = p.get_str();
-			const auto pfx_id = p.get_str();
 			const auto transform = p.get<TransformPackedTR>();
 			const auto hp = p.get_float();
 			const auto max_hp = p.get_float();
 
 			auto object = net_obj;
 
+			// if object is invalid then create it and we will also
+			// deserialize the basic info needed to create the object in
+			// ObjectLists::spawn_net_object...
+
 			if (!object)
-				object = g_net->spawn_net_object(nid, type, object_id, pfx_id, TransformTR(transform));
+				object = g_net->spawn_net_object(nid, type, TransformTR(transform), &p);
 
 			if (!object->is_spawned())
 				object->spawn();

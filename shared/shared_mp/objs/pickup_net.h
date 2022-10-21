@@ -2,33 +2,34 @@
 
 #include <shared_mp/objs/net_object.h>
 
-class DamageableNetObject : public NetObject
+class PickupNetObject : public NetObject
 {
 private:
 
-	std::string lod,
-				pfx;
+	std::string lod;
+
+	uint32_t item_type;
 
 #ifdef JC_CLIENT
-	class DamageableObject* obj = nullptr;
+	class ItemPickup* obj = nullptr;
 #endif
 
 	void destroy_object();
 
 public:
 
-	static constexpr NetObjectType TYPE() { return NetObject_Damageable; }
+	static constexpr NetObjectType TYPE() { return NetObject_Pickup; }
 
 	NetObjectType get_type() const override { return TYPE(); }
 
 #ifdef JC_CLIENT
-	DamageableNetObject(NID nid, const TransformTR& transform);
+	PickupNetObject(NID nid, const TransformTR& transform);
 
 	class ObjectBase* get_object_base() const override;
 #else
-	DamageableNetObject(SyncType sync_type, const TransformTR& transform);
+	PickupNetObject(SyncType sync_type, const TransformTR& transform);
 #endif
-	~DamageableNetObject();
+	~PickupNetObject();
 
 	void on_spawn() override;
 	void on_despawn() override;
@@ -39,11 +40,12 @@ public:
 	void serialize_derived_create(const Packet* p) override;
 	void deserialize_derived_create(const Packet* p) override;
 
+	void set_item_type(uint32_t v) { item_type = v; }
 	void set_lod(const std::string& v) { lod = v; }
-	void set_pfx(const std::string& v) { pfx = v; }
+
+	uint32_t get_item_type() const { return item_type; }
 
 	const std::string& get_lod() const { return lod; }
-	const std::string& get_pfx() const { return pfx; }
 };
 
-#define CREATE_DAMAGEABLE_NET_OBJECT(...)	JC_ALLOC(DamageableNetObject, __VA_ARGS__)
+#define CREATE_PICKUP_NET_OBJECT(...)	JC_ALLOC(PickupNetObject, __VA_ARGS__)

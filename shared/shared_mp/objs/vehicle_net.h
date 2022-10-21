@@ -87,6 +87,8 @@ public:
 
 private:
 
+	std::string ee_name;
+
 #ifdef JC_CLIENT
 	class Vehicle* obj = nullptr;
 
@@ -144,7 +146,10 @@ public:
 	void on_net_var_change(NetObjectVarType var_type) override;
 	void serialize_derived(const Packet* p) override;
 	void deserialize_derived(const Packet* p) override;
+	void serialize_derived_create(const Packet* p) override;
+	void deserialize_derived_create(const Packet* p) override;
 
+	void set_ee(const std::string& v) { ee_name = v; }
 	void set_control_info(float c0, float c1, float c2, float c3, bool braking = false);
 	void set_control_info(const ControlInfo& v);
 	void set_weapon_info(uint32_t index, uint32_t type);
@@ -189,6 +194,8 @@ public:
 	Player* get_player_from_seat(uint8_t seat_type) const;
 
 	const ControlInfo& get_control_info() const { return control_info; }
+
+	const std::string& get_ee() const { return ee_name; }
 
 	bool has_players() const { return !players.empty(); }
 };

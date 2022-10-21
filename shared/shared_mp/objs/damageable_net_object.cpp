@@ -41,7 +41,7 @@ void DamageableNetObject::destroy_object()
 void DamageableNetObject::on_spawn()
 {
 #ifdef JC_CLIENT
-	obj = g_factory->spawn_damageable_object(get_position(), get_object_id(), get_pfx_id());
+	obj = g_factory->spawn_damageable_object(get_position(), get_lod(), get_pfx());
 
 	check(obj, "Could not create damageable object");
 
@@ -74,4 +74,16 @@ void DamageableNetObject::on_net_var_change(NetObjectVarType var_type)
 		}
 	});
 #endif
+}
+
+void DamageableNetObject::serialize_derived_create(const Packet* p)
+{
+	p->add(get_lod());
+	p->add(get_pfx());
+}
+
+void DamageableNetObject::deserialize_derived_create(const Packet* p)
+{
+	set_lod(p->get_str());
+	set_pfx(p->get_str());
 }

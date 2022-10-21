@@ -128,8 +128,7 @@ void enet::setup_channels()
 #ifdef JC_CLIENT
 		case WorldPID_SetTime:				return nh::world::day_time(p);
 #else
-		case WorldPID_SpawnObject:			return nh::world::spawn_object(p, false);
-		case WorldPID_SpawnObjectWithPFX:	return nh::world::spawn_object(p, true);
+		case WorldPID_SpawnObject:			return nh::world::spawn_object(p);
 #endif
 		case WorldPID_SetTimeScale:			return nh::world::time_scale(p);
 		case WorldPID_SetPunchForce:		return nh::world::punch_force(p);
