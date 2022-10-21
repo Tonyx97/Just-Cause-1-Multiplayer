@@ -159,8 +159,8 @@ void script::register_functions(Script* script)
 
 	/* PHYSICS */
 
-	vm->add_function("setGravity", [](const svec3& v) { g_physics->get_hk_world()->set_gravity(v.obj()); });
-	vm->add_function("getGravity", []() { return svec3(g_physics->get_hk_world()->get_gravity()); });
+	vm->add_function("setGravity", [](const svec3& v) { g_physics->set_gravity(v.obj()); });
+	vm->add_function("getGravity", []() { return svec3(g_physics->get_gravity()); });
 #elif defined(JC_SERVER)
 	// register server functions
 
