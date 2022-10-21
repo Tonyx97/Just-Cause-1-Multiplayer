@@ -42,6 +42,12 @@ void Physics::create_force_pulse(const vec3& position, float radius, float force
 	pulse.activate();
 }
 
+void Physics::set_gravity(const vec3& v)
+{
+	if (const auto world = get_hk_world())
+		world->set_gravity(v);
+}
+
 bool Physics::load_pfx(const std::string& filename)
 {
 	const auto file_data = util::fs::read_bin_file(filename);

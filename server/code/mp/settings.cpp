@@ -33,14 +33,14 @@ void Settings::set_time_scale(float v)
 {
 	timescale = v;
 
-	g_net->send_broadcast(Packet(WorldPID_SetTimeScale, ChannelID_World, timescale));
+	g_net->send_broadcast(Packet(WorldPID_SetTimeScale, ChannelID_World, v));
 }
 
 void Settings::set_day_time(float v)
 {
 	day_time = v;
 
-	g_net->send_broadcast(Packet(WorldPID_SetTime, ChannelID_World, day_time_enabled, day_time));
+	g_net->send_broadcast(Packet(WorldPID_SetTime, ChannelID_World, day_time_enabled, v));
 }
 
 void Settings::set_day_time_enabled(bool v)
@@ -54,5 +54,12 @@ void Settings::set_punch_force(float v)
 {
 	punch_force = v;
 
-	g_net->send_broadcast(Packet(WorldPID_SetPunchForce, ChannelID_World, punch_force));
+	g_net->send_broadcast(Packet(WorldPID_SetPunchForce, ChannelID_World, v));
+}
+
+void Settings::set_gravity(const vec3& v)
+{
+	gravity = v;
+
+	g_net->send_broadcast(Packet(WorldPID_SetGravity, ChannelID_World, v));
 }

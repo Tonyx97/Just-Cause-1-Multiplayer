@@ -270,6 +270,11 @@ void script::register_functions(Script* script)
 	{
 		return g_net->spawn_pickup(SyncType_Distance, NetObject_Pickup, TransformTR(pos.obj()), type, lod);
 	});
+
+	/* PHYSICS */
+
+	vm->add_function("setGravity", [](const svec3& v) { g_net->get_settings().set_gravity(v.obj()); });
+	vm->add_function("getGravity", []() { return svec3(g_net->get_settings().get_gravity()); });
 #endif
 
 	// resgister shared functions

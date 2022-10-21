@@ -63,6 +63,7 @@ public:
 	void destroy();
 
 	void create_force_pulse(const vec3& position, float radius, float force, float damage_multiplier = 0.f);
+	void set_gravity(const vec3& v);
 
 	bool load_pfx(const std::string& filename);
 	bool load_pfx(const std::string& filename, const std::vector<uint8_t>& data);

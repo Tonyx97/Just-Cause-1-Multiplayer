@@ -11,6 +11,7 @@
 
 #include <game/sys/world/day_cycle.h>
 #include <game/sys/time/time_system.h>
+#include <game/sys/resource/physics.h>
 #endif
 
 PacketResult nh::world::time_scale(const Packet& p)
@@ -45,6 +46,17 @@ PacketResult nh::world::punch_force(const Packet& p)
 	Character::SET_GLOBAL_PUNCH_DAMAGE(force, true);
 #else
 	g_net->get_settings().set_punch_force(force);
+#endif
+
+	return PacketRes_Ok;
+}
+
+PacketResult nh::world::gravity(const Packet& p)
+{
+	const auto gravity_value = p.get<vec3>();
+
+#ifdef JC_CLIENT
+	g_physics->set_gravity(gravity_value);
 #endif
 
 	return PacketRes_Ok;
