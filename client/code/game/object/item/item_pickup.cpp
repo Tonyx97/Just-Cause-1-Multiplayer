@@ -2,12 +2,23 @@
 
 #include "item_pickup.h"
 
+#include <mp/net.h>
+
 #include <game/sys/weapon/weapon_system.h>
+
+#include <resource_sys/resource_system.h>
 
 namespace jc::item_pickup::hook
 {
+	DEFINE_INLINE_HOOK_IMPL(item_pickup_hit, 0x77A02C)
+	{
+		if (const auto item = ihp->read_ebp<ItemPickup*>(0x478))
+			g_rsrc->trigger_event(script::event::ON_PICKUP_HIT, g_net->get_localplayer(), item);
+	}
+
 	void enable(bool apply)
 	{
+		item_pickup_hit_hook.hook(apply);
 	}
 }
 

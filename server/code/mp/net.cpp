@@ -358,10 +358,25 @@ void Net::refresh_net_object_sync()
 
 		for_each_net_object([&](NID nid, NetObject* obj)
 		{
-			if (obj->get_type() != NetObject_Player && obj->get_hp() <= 0.f)
-				entities_to_destroy.push_back(obj);
-			else if (obj->get_type() == NetObject_Vehicle)
+			switch (obj->get_type())
+			{
+			case NetObject_Vehicle:
+			{
 				log(RED, "Players in vehicle {:x}: {}", nid, BITCAST(VehicleNetObject*, obj)->get_players_count());
+
+				if (obj->get_hp() > 0.f)
+					break;
+
+				[[fallthrough]];
+			}
+			case NetObject_Damageable:
+			{
+				if (obj->get_hp() <= 0.f)
+					entities_to_destroy.push_back(obj);
+
+				break;
+			}
+			}
 		});
 
 		for (auto object : entities_to_destroy)
