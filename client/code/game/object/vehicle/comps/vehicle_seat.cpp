@@ -186,6 +186,9 @@ namespace jc::vehicle_seat::hook
 
 void VehicleSeat::warp_character(Character* character, bool warp)	// 76578B
 {
+	if (!character)
+		return;
+
 	const auto current_character = get_character();
 
 	if (current_character == character || current_character)
@@ -310,6 +313,9 @@ void VehicleSeat::set_flags2(uint32_t flags)
 
 void VehicleSeat::dispatch_entry(Character* character, bool unk)
 {
+	if (!character)
+		return;
+
 	// we need this because we place hooks on the virtual functions
 
 	switch (get_type())

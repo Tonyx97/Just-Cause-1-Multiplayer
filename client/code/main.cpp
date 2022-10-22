@@ -158,6 +158,8 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 		initialized = true;
 		was_initialized = true;
+
+		SetUnhandledExceptionFilter(nullptr);
 	}
 	else if (unload_mod)
 	{
@@ -409,7 +411,6 @@ void dll_thread()
 
 	util::init();
 	jc::hooks::init();
-	jc::bug_ripper::reroute_exception_handler(true);
 	jc::clean_dbg::init();
 
 	init_window_context_hook.hook();
@@ -451,7 +452,6 @@ void dll_thread()
 	init_window_context_hook.unhook();
 
 	jc::clean_dbg::destroy();
-	jc::bug_ripper::reroute_exception_handler(false);
 	jc::hooks::unhook_queued();
 	jc::hooks::destroy();
 	jc::bug_ripper::destroy();

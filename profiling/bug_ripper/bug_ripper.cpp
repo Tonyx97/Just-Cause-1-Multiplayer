@@ -40,15 +40,6 @@ namespace jc::bug_ripper
 	Module game_mod {},
 		   mod_mod {};
 
-#ifdef JC_CLIENT
-	DEFINE_HOOK_STDCALL(game_unhandled_exception_filter, 0x99974C, LONG, _EXCEPTION_POINTERS* ep)
-	{
-		// re-route the exception handling to ours
-
-		return global_veh(ep);
-	}
-#endif
-
 	bool init(void* mod_base)
 	{
 		game_mod.base = ptr(GetModuleHandle(nullptr));
@@ -277,17 +268,6 @@ namespace jc::bug_ripper
 
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
-
-	bool reroute_exception_handler(bool place)
-	{
-#if defined(JC_CLIENT) && ENABLE_EXCEPTION_REROUTING
-		if (place)
-			game_unhandled_exception_filter_hook.hook();
-		else  game_unhandled_exception_filter_hook.unhook();
-#endif
-
-		return true;
-	}
 }
 
 INT_PTR __stdcall crash_wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
@@ -311,8 +291,8 @@ INT_PTR __stdcall crash_wnd_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_p
 
 long __stdcall global_veh(_EXCEPTION_POINTERS* ep)
 {
-	if (!jc::bug_ripper::exception_catch_enabled)
-		return EXCEPTION_CONTINUE_SEARCH;
+	if (jc::bug_ripper::about_to_throw_error)
+		return EXCEPTION_CONTINUE_EXECUTION;
 
 	return jc::bug_ripper::show_and_dump_crash(ep);
 }

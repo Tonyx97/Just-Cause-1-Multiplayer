@@ -194,7 +194,7 @@ namespace jc::prof
 	bool error_internal(const std::string& text, int type)
 	{
 #ifdef JC_CLIENT
-		jc::bug_ripper::exception_catch_enabled = false;
+		jc::bug_ripper::about_to_throw_error = true;
 #endif
 
 		if (type == 0)
