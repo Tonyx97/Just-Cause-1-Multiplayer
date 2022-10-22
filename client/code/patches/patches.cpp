@@ -358,6 +358,10 @@ void jc::patches::apply()
 
 	jc::nop(0x5A3D83, 18);
 
+	// patch item pickup condition check so we can make up our own
+
+	jc::nop(0x77A016, 22);
+
 	// avoid weird 2d sounds
 
 	play_ambience_2d_sounds_hook.hook();

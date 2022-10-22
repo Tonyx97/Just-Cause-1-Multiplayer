@@ -17,6 +17,7 @@ DEFINE_ENUM(PlayerClientPacketID, PacketID)
 	PlayerClientPID_LoginUser,
 	PlayerClientPID_LogoutUser,
 	PlayerClientPID_DebugLog,
+	PlayerClientPID_DebugEnableAdminPanel,
 	PlayerClientPID_TriggerRemoteEvent,
 	PlayerClientPID_Max
 };

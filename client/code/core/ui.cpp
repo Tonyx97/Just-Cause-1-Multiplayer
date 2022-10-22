@@ -316,6 +316,11 @@ void UI::render_players()
 		if (player->is_local() || !player->is_spawned())
 			return true;
 
+		// if tag is disabled then we won't render the player name or health
+		
+		if (!player->is_tag_enabled())
+			return true;
+
 		const auto player_char = player->get_character();
 		const auto player_pos = player_char->get_position();
 
@@ -334,8 +339,10 @@ void UI::render_players()
 							hp_border_size = 2.f;
 
 				draw_filled_rect(
-					out - vec2(hp_border_size - (hp_bar_size_x / 2.f + hp_border_size / 2.f), 2.f - 2.5f * hp_bar_size_adjust),
-					vec2(hp_bar_size_x + hp_border_size * 2.f, 2.5f * hp_bar_size_adjust + hp_border_size * 2.f),
+					vec2(out.x - hp_border_size - (hp_bar_size_x / 2.f + hp_border_size / 2.f),
+					out.y - 2.f - 2.5f * hp_bar_size_adjust),
+					vec2(hp_bar_size_x + hp_border_size * 2.f,
+					2.5f * hp_bar_size_adjust + hp_border_size * 2.f),
 					{ 0.f, 0.f, 0.f, 1.f });
 
 				// don't try to draw this bar if the health is 0 lmao
@@ -343,12 +350,14 @@ void UI::render_players()
 				if (hp > 0.f)
 				{
 					draw_filled_rect(
-						out - vec2(hp_bar_size_x / 2.f + hp_border_size / 2.f, 2.5f * hp_bar_size_adjust),
-						vec2(hp * 100.f, 2.5f * hp_bar_size_adjust),
+						vec2(out.x - (hp_bar_size_x / 2.f + hp_border_size / 2.f),
+						out.y - 2.5f * hp_bar_size_adjust),
+						vec2(hp * 100.f,
+						2.5f * hp_bar_size_adjust),
 						{ hp_bar_size_adjust - hp, hp, 0.f, 1.f });
 				}
 
-				draw_text(player->get_nick().c_str(), out - vec2(0.f, 10.f - 18.f * name_size_adjust), 18.f * name_size_adjust, vec4(1.f), true);
+				draw_text(player->get_nick().c_str(), vec2(out.x, out.y - 10.f - 18.f * name_size_adjust), 18.f * name_size_adjust, { 1.f, 1.f, 1.f, 1.f }, true);
 			}
 		}
 

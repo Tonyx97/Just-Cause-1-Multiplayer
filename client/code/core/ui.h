@@ -98,6 +98,8 @@ public:
 	void draw_text(const char* text, const vec2& p, float s, const vec4& color, bool center, float shadow = 0.f, float wrap = 0.f);
 	void draw_text(const wchar_t* text, const vec2& p, float s, const vec4& color, bool center, float shadow = 0.f, float wrap = 0.f);
 
+	void enable_admin_panel(bool v) { dbg->set_admin_panel_available(v); }
+
 	float get_aspect_ratio() const { return io->DisplaySize.y / io->DisplaySize.x; }
 
 	HWND get_window() const { return jc_hwnd; }

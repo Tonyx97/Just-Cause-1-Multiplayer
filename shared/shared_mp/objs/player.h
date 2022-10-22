@@ -99,6 +99,8 @@ private:
 
 	uint8_t vehicle_seat = VehicleSeat_None;
 
+	bool tag_enabled = true;
+
 	PlayerClient* client = nullptr;
 
 #ifdef JC_CLIENT
@@ -171,6 +173,7 @@ public:
 	// dynamic info getters/setters
 
 	void respawn(const vec3& position, float rotation, int32_t skin, float hp, float max_hp);
+	void set_tag_enabled(bool v);
 	void set_nick(const std::string& v);
 	void set_skin(int32_t v);
 	void set_skin(int32_t v, int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);
@@ -191,6 +194,7 @@ public:
 	void set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);
 	void set_vehicle(uint8_t seat_type, VehicleNetObject* v);
 
+	bool is_tag_enabled() const { return tag_enabled; }
 	bool is_alive() const { return get_hp() > 0.f; }
 	bool is_hip_aiming() const { return dyn_info.hip_aim; }
 	bool is_full_aiming() const { return dyn_info.full_aim; }

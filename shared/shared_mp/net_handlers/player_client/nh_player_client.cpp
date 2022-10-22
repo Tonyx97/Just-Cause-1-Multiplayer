@@ -12,6 +12,8 @@
 
 #ifdef JC_CLIENT
 #include <mp/chat/chat.h>
+
+#include <core/ui.h>
 #endif
 
 PacketResult nh::player_client::init(const Packet& p)
@@ -306,6 +308,17 @@ PacketResult nh::player_client::debug_log(const Packet& p)
 	g_chat->add_chat_msg(p.get_str());
 
 	// todojc - add the message to the debug box
+#endif
+
+	return PacketRes_Ok;
+}
+
+PacketResult nh::player_client::debug_enable_admin_panel(const Packet& p)
+{
+#ifdef JC_CLIENT
+	g_ui->enable_admin_panel(p.get_bool());
+#else
+	g_net->send_broadcast(p);
 #endif
 
 	return PacketRes_Ok;

@@ -13,5 +13,6 @@ namespace nh::player_client
 	PacketResult login_user(const Packet& p);
 	PacketResult logout_user(const Packet& p);
 	PacketResult debug_log(const Packet& p);
+	PacketResult debug_enable_admin_panel(const Packet& p);
 	PacketResult trigger_remote_event(const Packet& p);
 }

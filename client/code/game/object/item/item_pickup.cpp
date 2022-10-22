@@ -10,15 +10,25 @@
 
 namespace jc::item_pickup::hook
 {
-	DEFINE_INLINE_HOOK_IMPL(item_pickup_hit, 0x77A02C)
+	DEFINE_HOOK_THISCALL_S(is_localplayer_close, 0x7796F0, bool, ItemPickup* item)
 	{
-		if (const auto item = ihp->read_ebp<ItemPickup*>(0x478))
-			g_rsrc->trigger_event(script::event::ON_PICKUP_HIT, g_net->get_localplayer(), item);
+		if (const auto localplayer = g_net->get_localplayer(); localplayer && localplayer->is_alive())
+		{
+			if (is_localplayer_close_hook(item))
+			{
+				if (jc::this_call<bool>(0x779790, item))
+				{
+					return g_rsrc->trigger_event(script::event::ON_PICKUP_HIT, g_net->get_localplayer(), item);
+				}
+			}
+		}
+
+		return false;
 	}
 
 	void enable(bool apply)
 	{
-		item_pickup_hit_hook.hook(apply);
+		is_localplayer_close_hook.hook(apply);
 	}
 }
 
@@ -89,6 +99,7 @@ bool ItemPickup::setup(const Transform& transform, uint32_t type, uint32_t weapo
 
 	init_from_map(&map);
 	set_respawn_time_left(0.f);
+	set_respawn_time(FLT_MAX);
 
 	return true;
 }

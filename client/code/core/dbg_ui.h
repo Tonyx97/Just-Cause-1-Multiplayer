@@ -8,6 +8,12 @@ private:
 	bool show_admin_panel = false;
 
 #ifdef JC_DBG
+	bool admin_panel_available = true;
+#else
+	bool admin_panel_available = false;
+#endif
+
+#ifdef JC_DBG
 	bool show_skeleton			= true,
 #else
 	bool show_skeleton			= false,
@@ -35,4 +41,5 @@ public:
 	void render_net();
 	void render_overlay();
 	void toggle_admin_panel();
+	void set_admin_panel_available(bool v) { admin_panel_available = v; }
 };

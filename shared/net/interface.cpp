@@ -84,6 +84,7 @@ void enet::setup_channels()
 		case PlayerClientPID_Init:					return nh::player_client::init(p);
 		case PlayerClientPID_Nick:					return nh::player_client::nick(p);
 		case PlayerClientPID_ResourceAction:		return nh::player_client::resource_action(p);
+		case PlayerClientPID_DebugEnableAdminPanel:	return nh::player_client::debug_enable_admin_panel(p);
 		case PlayerClientPID_RegisterUser:			return nh::player_client::register_user(p);
 		case PlayerClientPID_LoginUser:				return nh::player_client::login_user(p);
 		case PlayerClientPID_LogoutUser:			return nh::player_client::logout_user(p);

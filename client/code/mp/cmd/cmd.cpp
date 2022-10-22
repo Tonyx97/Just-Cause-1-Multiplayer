@@ -39,6 +39,16 @@ namespace cmd
 
 		return Cmd_Ok;
 	}
+	
+	CmdExecRes enable_admin_panel(cmd_params params)
+	{
+		if (params.size() != 1)
+			return Cmd_InvalidParams;
+
+		g_net->send(Packet(PlayerClientPID_DebugEnableAdminPanel, ChannelID_PlayerClient, params[0] == "1" ? true : false));
+
+		return Cmd_Ok;
+	}
 
 	CmdExecRes register_user(cmd_params params)
 	{
@@ -160,6 +170,7 @@ namespace cmd
 
 		// player commands
 
+		g_cmds.insert({ "enable_admin_panel", enable_admin_panel });
 		g_cmds.insert({ "register", register_user });
 		g_cmds.insert({ "login", login });
 		g_cmds.insert({ "logout", logout });

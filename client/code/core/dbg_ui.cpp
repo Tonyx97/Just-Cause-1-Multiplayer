@@ -33,6 +33,9 @@ float image_x = 1.f,
 
 void DebugUI::toggle_admin_panel()
 {
+	if (!admin_panel_available)
+		return;
+
 	show_admin_panel = !show_admin_panel;
 
 	g_ui->get_io()->MouseDrawCursor = show_admin_panel;

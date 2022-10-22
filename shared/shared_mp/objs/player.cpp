@@ -298,6 +298,15 @@ void Player::respawn(const vec3& position, float rotation, int32_t skin, float h
 	set_max_hp(max_hp);
 }
 
+void Player::set_tag_enabled(bool v)
+{
+#ifdef JC_CLIENT
+	tag_enabled = v;
+#else
+	// todojc
+#endif
+}
+
 // info getters/setters
 
 void Player::set_nick(const std::string& v)
