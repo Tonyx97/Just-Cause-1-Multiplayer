@@ -62,11 +62,14 @@ bool VehicleNetObject::warp_to_seat(Player* player, uint8_t seat_type)
 	if (!obj)
 		return false;
 
-	const auto seat = obj->get_seat_by_type(seat_type);
+	if (const auto seat = obj->get_seat_by_type(seat_type))
+	{
+		seat->warp_character(player->get_character(), true);
 
-	seat->warp_character(player->get_character(), true);
+		return true;
+	}
 
-	return true;
+	return false;
 }
 
 bool VehicleNetObject::kick_player(uint8_t seat_type)

@@ -267,7 +267,7 @@ void jc::mp::logic::on_update_objects()
 			// NOTE: i don't know if this is safe because it was causing
 			// crashes before but with the stance checks it should work fine
 
-			if (vehicle && char_vehicle != vehicle)
+			if (vehicle && char_vehicle != vehicle && vehicle->is_alive())
 			{
 				log(PURPLE, "trying to warp player to vehicle, {:x} {:x}", ptr(char_vehicle), ptr(vehicle));
 
