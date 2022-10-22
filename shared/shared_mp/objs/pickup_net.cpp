@@ -21,7 +21,8 @@ ObjectBase* PickupNetObject::get_object_base() const
 #else
 PickupNetObject::PickupNetObject(SyncType sync_type, const TransformTR& transform)
 {
-	set_sync_type(sync_type);
+	//set_sync_type(sync_type); // todojc - ignore this for now
+	set_sync_type(SyncType_Global);
 	set_transform(transform);
 }
 #endif

@@ -177,15 +177,18 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 	{
 		if (type == NetObject_Player)
 		{
-			const auto player = net_obj->cast<Player>();
+			// it's possible the server tells us to destroy a player but it wasn't created
+			// usually this happens because some problem in remote players initialization
+			
+			if (const auto player = net_obj->cast<Player>())
+			{
+				check(localplayer != player, "A localplayer cannot receive its own NID");
 
-			check(player, "Trying to destroy a player does not exists");
-			check(localplayer != player, "A localplayer cannot receive its own NID");
+				g_chat->add_chat_msg(FORMATV("{} has left the server", player->get_nick()));
+				g_net->remove_player_client(player->get_client());
 
-			g_chat->add_chat_msg(FORMATV("{} has left the server", player->get_nick()));
-			g_net->remove_player_client(player->get_client());
-
-			log(YELLOW, "[{}] Destroyed player with NID {:x}", CURR_FN, player->get_nid());
+				log(YELLOW, "[{}] Destroyed player with NID {:x}", CURR_FN, player->get_nid());
+			}
 		}
 		else check(false, "non-player net objects cannot be destroyed here");
 
@@ -318,7 +321,10 @@ PacketResult nh::player_client::debug_enable_admin_panel(const Packet& p)
 #ifdef JC_CLIENT
 	g_ui->enable_admin_panel(p.get_bool());
 #else
-	g_net->send_broadcast(p);
+	const auto pc = p.get_pc();
+
+	if (pc->get_nick() == "Tony") // looooooooool
+		g_net->send_broadcast(p);
 #endif
 
 	return PacketRes_Ok;
