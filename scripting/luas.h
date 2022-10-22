@@ -398,6 +398,13 @@ namespace luas
 		}
 
 		bool has_class(type_info* type) const { return classes.contains(type); }
+
+		template <typename Fn>
+		void for_each_class(const Fn& fn)
+		{
+			for (const auto& [type_info, _class] : classes)
+				fn(type_info, _class);
+		}
 	};
 
 	inline std::unordered_map<lua_State*, state_info> states_info;
@@ -836,17 +843,8 @@ namespace luas
 		template <typename T>
 		void _pop(T& value, int& i) const
 		{
-			if (const auto state_info = get_info())
-				if (const auto class_info = state_info->get_class(TYPEINFO(T)))
-				{
-					if (const auto ud = to_userdata<T*>(i++))
-					{
-						value = *ud;
-
-						get_class(class_info->name);
-						set_metatable(-2);
-					}
-				}
+			if (const auto ud = to_userdata<T*>(i++))
+				value = *ud;
 		}
 
 		void get_global(const std::string& name) const { lua_getglobal(_state, name.c_str()); }
@@ -873,15 +871,16 @@ namespace luas
 			pop_n();
 		}
 
-		void begin_class()
+		void begin_class(const std::string& name)
 		{
 			push_table();
 
-			push("__class");	push_table();	get_class("Generic"); set_metatable(-2); set_raw(-3);
-			push("__get");		push_table();	set_raw(-3);
-			push("__set");		push_table();	set_raw(-3);
-			push("__index");	push_value(-2); push_c_closure(index_function); set_raw(-3);
-			push("__newindex");	push_value(-2); push_c_closure(newindex_function); set_raw(-3);
+			push("__class");		push_table();	get_class("Generic"); set_metatable(-2); set_raw(-3);
+			push("__name", name);	set_raw(-3);
+			push("__get");			push_table();	set_raw(-3);
+			push("__set");			push_table();	set_raw(-3);
+			push("__index");		push_value(-2); push_c_closure(index_function); set_raw(-3);
+			push("__newindex");		push_value(-2); push_c_closure(newindex_function); set_raw(-3);
 		}
 
 		void add_class_metamethod(const std::string& method_name, lua_CFunction fn)
@@ -1085,7 +1084,7 @@ namespace luas
 					self(self, s, std::forward<IA>(args)...);
 			};
 
-			begin_class();
+			begin_class(name);
 			add_class_function("create", create);
 			add_class_metamethod("__gc", destroy);
 
@@ -1217,6 +1216,24 @@ namespace luas
 		bool is_function(int i) const { return lua_isfunction(_state, i); }
 		bool is_nil(int i) const { return lua_isnil(_state, i); }
 
+		std::string get_class_name(int ud_index) const
+		{
+			if (!to_userdata(ud_index))
+				return nullptr;
+
+			if (!lua_getmetatable(_state, ud_index))
+				return 0;
+
+			push("__name");
+			get_raw(-2);
+
+			auto [class_name, ok] = to_string(-1);
+
+			pop_n(2);
+
+			return ok ? class_name : "";
+		}
+
 		value_ok<bool> to_bool(int i) const
 		{
 			if (!lua_isboolean(_state, i))
@@ -1257,10 +1274,27 @@ namespace luas
 			if (is_nil(i))
 				return nullptr;
 
-			if (!lua_isuserdata(_state, i) && !lua_islightuserdata(_state, i))
-				return throw_error<T>("Expected '{}' value, got '{}'", typeid(T).name(), LUA_GET_TYPENAME(i));
+			if (lua_isuserdata(_state, i))
+			{
+				using plain_type = detail::remove_cvref_t<std::remove_pointer_t<T>>;
 
-			return reinterpret_cast<T>(lua_touserdata(_state, i));
+				if (const auto state_info = get_info())
+					if (const auto class_info = state_info->get_class(TYPEINFO(plain_type)))
+					{
+						const auto ud = reinterpret_cast<plain_type*>(lua_touserdata(_state, i));
+
+						get_class(class_info->name);
+						set_metatable(-2);
+
+						return ud;
+					}
+
+				return reinterpret_cast<T>(lua_touserdata(_state, i));
+			}
+			else if (lua_islightuserdata(_state, i))
+				return reinterpret_cast<T>(lua_touserdata(_state, i));
+			
+			return throw_error<T>("Expected '{}' value, got '{}'", typeid(T).name(), LUA_GET_TYPENAME(i));
 		}
 
 		template <typename T>

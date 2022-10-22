@@ -65,6 +65,17 @@ bool ResourceSystem::init()
 	{
 		switch (const auto type = va.get_type(i))
 		{
+		case LUA_TUSERDATA:
+		{
+			switch (util::hash::JENKINS(state.get_class_name(va.begin() + i)))
+			{
+			case util::hash::JENKINS("vec2"): out_value = *va.get<svec2*>(i); break;
+			case util::hash::JENKINS("vec3"): out_value = *va.get<svec3*>(i); break;
+			case util::hash::JENKINS("vec4"): out_value = *va.get<svec4*>(i); break;
+			}
+			
+			break;
+		}
 		case LUA_TBOOLEAN: out_value = va.get<bool>(i); break;
 		case LUA_TNUMBER: out_value = va.get<lua_Number>(i); break;
 		case LUA_TSTRING: out_value = va.get<std::string>(i); break;
