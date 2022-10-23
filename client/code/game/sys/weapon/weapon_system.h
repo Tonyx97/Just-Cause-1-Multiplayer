@@ -86,8 +86,8 @@ public:
 	std::string get_weapon_typename(uint8_t id);
 	std::string get_weapon_model(uint8_t id);
 
-	ref<Weapon> create_weapon_instance(const std::string& name);
-	ref<Weapon> create_weapon_instance(uint8_t id);
+	shared_ptr<Weapon> create_weapon_instance(const std::string& name);
+	shared_ptr<Weapon> create_weapon_instance(uint8_t id);
 
 	template <typename Fn>
 	void for_each_weapon_type(const Fn& fn)

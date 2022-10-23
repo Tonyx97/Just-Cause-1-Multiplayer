@@ -237,18 +237,18 @@ std::string WeaponSystem::get_weapon_model(uint8_t id)
 	return it != jc::vars::weapons_id_to_model_name.end() ? it->second : "";
 }
 
-ref<Weapon> WeaponSystem::create_weapon_instance(const std::string& name)
+shared_ptr<Weapon> WeaponSystem::create_weapon_instance(const std::string& name)
 {
-	ref<Weapon> p;
+	shared_ptr<Weapon> p;
 
 	jc::this_call(jc::weapon_system::fn::ALLOC_WEAPON_BY_NAME, this, &p, &name);
 
 	return p;
 }
 
-ref<Weapon> WeaponSystem::create_weapon_instance(uint8_t id)
+shared_ptr<Weapon> WeaponSystem::create_weapon_instance(uint8_t id)
 {
-	ref<Weapon> p;
+	shared_ptr<Weapon> p;
 
 	jc::this_call(jc::weapon_system::fn::ALLOC_WEAPON_BY_ID, this, &p, static_cast<int32_t>(id));
 

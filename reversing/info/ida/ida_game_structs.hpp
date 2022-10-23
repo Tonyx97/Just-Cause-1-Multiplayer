@@ -2,6 +2,28 @@
 
 #include "ida_base_structs.hpp"
 
+struct ray
+{
+	vec3 origin,
+		 direction;
+
+	ray(const vec3& origin, const vec3& direction)
+		: origin(origin)
+		, direction(glm::normalize(direction))
+	{
+	}
+};
+
+struct ray_hit_info
+{
+	void* object = nullptr,
+		* unk = nullptr;
+
+	vec3 normal;
+
+	float distance_factor;
+};
+
 class Weapon;
 
 class _AmmoManager

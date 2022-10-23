@@ -40,6 +40,11 @@
 #endif
 
 #ifdef JC_CLIENT
+#include <boost/shared_ptr.hpp>
+
+template <typename T>
+using shared_ptr = boost::shared_ptr<T>;
+
 #include "main.h"
 
 #include <d3dx9math.h>

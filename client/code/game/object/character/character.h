@@ -146,7 +146,7 @@ public:
 	void clear_weapon_belt();
 	void set_weapon(uint8_t id, bool is_remote_player = true);
 	void set_draw_weapon(int32_t slot);
-	void set_draw_weapon(ref<Weapon>& weapon);
+	void set_draw_weapon(shared_ptr<Weapon>& weapon);
 	void hide_current_weapon();
 	void draw_weapon_now();
 	void set_aim_target(const vec3& v);

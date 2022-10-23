@@ -22,18 +22,19 @@ void WeaponBelt::clear()
 
 bool WeaponBelt::has_weapon(int32_t id)
 {
+	check(false, "todo");
     return false;
 }
 
-ref<Weapon> WeaponBelt::get_weapon_from_slot(int32_t slot)
+shared_ptr<Weapon> WeaponBelt::get_weapon_from_slot(int32_t slot)
 {
-	if (const auto entry = jc::read<ptr>(this, jc::weapon_belt::WEAPON_LIST + 0x4 + slot * 0x10))
-		return ref<Weapon>(entry);
+	if (const auto ptr = jc::read<shared_ptr<Weapon>*>(this, jc::weapon_belt::WEAPON_LIST + 0x4 + slot * 0x10))
+		return *ptr;
 
 	return {};
 }
 
-ref<Weapon> WeaponBelt::get_weapon_from_type(uint8_t type)
+shared_ptr<Weapon> WeaponBelt::get_weapon_from_type(uint8_t type)
 {
 	const auto slot = get_weapon_slot(type);
 
@@ -53,7 +54,7 @@ int16_t WeaponBelt::get_draw_weapon_slot_id() const
 	return jc::read<int16_t>(this, jc::weapon_belt::DRAW_WEAPON_ID);
 }
 
-int32_t WeaponBelt::get_weapon_slot(Weapon* weapon) const
+int32_t WeaponBelt::get_weapon_slot(const shared_ptr<Weapon>& weapon) const
 {
 	return get_weapon_slot(weapon->get_info()->get_type_id());
 }
@@ -68,30 +69,26 @@ int32_t WeaponBelt::get_weapon_ammo(int32_t slot) const
 	return jc::read<int32_t>(this, jc::weapon_belt::AMMO_BEGIN + (slot * 0x4));
 }
 
-ref<Weapon> WeaponBelt::get_current_weapon()
+shared_ptr<Weapon> WeaponBelt::get_current_weapon()
 {
-	ref<Weapon> r;
+	shared_ptr<Weapon> r;
 
 	jc::this_call(jc::weapon_belt::fn::GET_CURRENT_WEAPON, this, &r);
 
 	return r;
 }
 
-ref<Weapon> WeaponBelt::add_weapon(ref<Weapon>& r)
+shared_ptr<Weapon> WeaponBelt::add_weapon(shared_ptr<Weapon>& r)
 {
-	jc::this_call(jc::weapon_belt::fn::ADD_WEAPON, this, r.obj, r.counter);
+	jc::this_call(jc::weapon_belt::fn::ADD_WEAPON, this, r);
 
-	return std::move(r);
+	return r;
 }
 
-ref<Weapon> WeaponBelt::add_weapon(uint8_t weapon_id)
+shared_ptr<Weapon> WeaponBelt::add_weapon(uint8_t weapon_id)
 {
 	if (auto r = g_weapon->create_weapon_instance(weapon_id))
-	{
-		r.inc_ref();
-
 		return add_weapon(r);
-	}
 
 	return {};
 }

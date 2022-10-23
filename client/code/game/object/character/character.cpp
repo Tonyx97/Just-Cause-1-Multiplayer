@@ -806,7 +806,7 @@ void Character::set_weapon(uint8_t id, bool is_remote_player)
 		// if we have it and we are already holding it then 
 		// do nothing
 
-		if (curr_weapon->get_id() == id)
+		if (curr_weapon && curr_weapon->get_id() == id)
 			return;
 
 		const auto target_weapon_type = g_weapon->get_weapon_type(id);
@@ -815,11 +815,11 @@ void Character::set_weapon(uint8_t id, bool is_remote_player)
 		// in hands
 
 		for (int slot = 0; slot < WeaponBelt::MAX_SLOTS(); ++slot)
-			if (auto rf = weapon_belt->get_weapon_from_slot(slot))
+			if (auto weapon = weapon_belt->get_weapon_from_slot(slot))
 			{
-				if (rf->get_id() == id)
+				if (weapon->get_id() == id)
 				{
-					set_draw_weapon(rf);
+					set_draw_weapon(weapon);
 
 					return draw_weapon_now();
 				}
@@ -840,17 +840,17 @@ void Character::set_weapon(uint8_t id, bool is_remote_player)
 		// this character does not have the weapon we want to set so
 		// we create and add it to the weapon belt
 
-		auto rf = weapon_belt->add_weapon(id);
+		auto weapon = weapon_belt->add_weapon(id);
 
 		// do a few adjustments to the weapon if it's owned by a remote player
 
 		if (is_remote_player)
-			if (const auto weapon_info = rf->get_info())
+			if (const auto weapon_info = weapon->get_info())
 				weapon_info->set_infinite_ammo(true);
 
 		// draw the weapon
 
-		set_draw_weapon(rf);
+		set_draw_weapon(weapon);
 		draw_weapon_now();
 	}
 }
@@ -860,11 +860,11 @@ void Character::set_draw_weapon(int32_t slot)
 	jc::this_call(jc::character::fn::SET_DRAW_WEAPON, this, slot);
 }
 
-void Character::set_draw_weapon(ref<Weapon>& weapon)
+void Character::set_draw_weapon(shared_ptr<Weapon>& weapon)
 {
 	if (const auto weapon_belt = get_weapon_belt())
 	{
-		const auto slot = weapon_belt->get_weapon_slot(*weapon);
+		const auto slot = weapon_belt->get_weapon_slot(weapon);
 		const auto is_local = this == g_world->get_localplayer_character();
 
 		set_draw_weapon(slot);

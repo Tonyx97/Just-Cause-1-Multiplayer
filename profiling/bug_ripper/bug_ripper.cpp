@@ -8,7 +8,6 @@
 #endif
 
 #define FORCE_ENABLE_BUG_RIPPER 0
-#define ENABLE_EXCEPTION_REROUTING 1
 
 #define IDD_CRASH_DIALOG            114
 #define IDC_SEND_DESC				9701
