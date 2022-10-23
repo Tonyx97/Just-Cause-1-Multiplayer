@@ -50,6 +50,16 @@ namespace jc::factory_system
 		ref_map<Objective>							objectives;
 		ref_map<TrafficLight>						traffic_lights;
 		ref_map<SoundGameObject>					sounds;
+
+		template <typename T, typename V>
+		auto add_to_ref_map(T& t, V& v)
+		{
+			const auto value = v.get();
+
+			t.insert({ v.get(), v });
+
+			return value;
+		}
 	}
 }
 
@@ -179,11 +189,11 @@ SimpleRigidObject* FactorySystem::spawn_simple_rigid_object(const vec3& position
 {
 	Transform transform(position);
 
-	if (auto rf = SimpleRigidObject::ALLOC()->create(&transform, lod_name, pfx_name))
+	if (auto obj = SimpleRigidObject::ALLOC()->create(&transform, lod_name, pfx_name))
 	{
-		g_game_control->enable_object(rf);
+		g_game_control->add_object_to_world(obj);
 
-		return rf.move_to_map(simple_rigid_objects);
+		return add_to_ref_map(simple_rigid_objects, obj);
 	}
 
 	return nullptr;
@@ -193,19 +203,19 @@ DamageableObject* FactorySystem::spawn_damageable_object(const vec3& position, c
 {
 	Transform transform(position);
 
-	if (auto rf = DamageableObject::CREATE(&transform, lod_name, pfx_name))
+	if (auto obj = DamageableObject::CREATE(&transform, lod_name, pfx_name))
 	{
-		g_game_control->enable_object(rf);
+		g_game_control->add_object_to_world(obj);
 
-		return rf.move_to_map(damageables);
+		return add_to_ref_map(damageables, obj);
 	}
 
 	return nullptr;
 }
 
-Vehicle* FactorySystem::spawn_vehicle(const std::string& ee_name, const Transform& transform)
+shared_ptr<Vehicle> FactorySystem::spawn_vehicle(const std::string& ee_name, const Transform& transform)
 {
-	Vehicle* vehicle = nullptr;
+	shared_ptr<Vehicle> vehicle;
 
 	// make sure we load the ee right now, we don't want to wait
 	// for the next frame, we need the vehicle now
@@ -224,27 +234,22 @@ Vehicle* FactorySystem::spawn_vehicle(const std::string& ee_name, const Transfor
 
 			vehicle_type->load(class_name, name, _map);
 
-			auto r = vehicle_type->create_vehicle(transform);
+			vehicle = vehicle_type->create_vehicle(transform);
+			vehicle->enable(true);
+			vehicle->set_color(0xFFFFFFFF);
 
-			vehicle = *r;
+			g_game_control->add_object_to_world(vehicle);
 
-			r->enable(true);
-			r->set_color(0xFFFFFFFF);
-
-			g_game_control->enable_object(r);
-
-			r.move_to_map(vehicles);
+			//add_to_ref_map(vehicles, vehicle);
 		}
 	}, true);
-
-	g_global_ptr = BITCAST(ptr, vehicle);
 
 	return vehicle;
 }
 
 AgentSpawnPoint* FactorySystem::create_agent_spawn_point(const vec3& position)
 {
-	if (auto rf = g_game_control->create_object<AgentSpawnPoint>())
+	if (auto obj = g_game_control->create_object<AgentSpawnPoint>())
 	{
 		object_base_map map {};
 
@@ -271,10 +276,10 @@ AgentSpawnPoint* FactorySystem::create_agent_spawn_point(const vec3& position)
 		map.insert<object_base_map::String>(0x7c5e1eae, R"(liberation_start)");
 		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(Beach Girl)");
 
-		rf->init_from_map(&map);
-		rf->set_position(position);
+		obj->init_from_map(&map);
+		obj->set_position(position);
 
-		return rf.move_to_map(agent_spawns);
+		return add_to_ref_map(agent_spawns, obj);
 	}
 
 	return nullptr;
@@ -282,7 +287,7 @@ AgentSpawnPoint* FactorySystem::create_agent_spawn_point(const vec3& position)
 
 VehicleSpawnPoint* FactorySystem::create_vehicle_spawn_point(const vec3& position, int32_t id, int32_t faction)
 {
-	if (auto rf = g_game_control->create_object<VehicleSpawnPoint>())
+	if (auto obj = g_game_control->create_object<VehicleSpawnPoint>())
 	{
 		object_base_map map {};
 
@@ -307,13 +312,11 @@ VehicleSpawnPoint* FactorySystem::create_vehicle_spawn_point(const vec3& positio
 		map.insert<object_base_map::String>(0x8eb5aff2, jc::vars::exported_entities_vehicles[id]);
 		// map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, {});
 
-		log(RED, "VehicleSpawnPoint: {:x}", ptr(*rf));
+		obj->init_from_map(&map);
+		obj->set_position(position);
+		obj->set_faction(faction);
 
-		rf->init_from_map(&map);
-		rf->set_position(position);
-		rf->set_faction(faction);
-
-		return rf.move_to_map(vehicle_spawns);
+		return add_to_ref_map(vehicle_spawns, obj);
 	}
 
 	return nullptr;
@@ -321,7 +324,7 @@ VehicleSpawnPoint* FactorySystem::create_vehicle_spawn_point(const vec3& positio
 
 MountedGun* FactorySystem::spawn_mounted_gun(const vec3& position)
 {
-	if (auto rf = g_game_control->create_object<MountedGun>())
+	if (auto obj = g_game_control->create_object<MountedGun>())
 	{
 		Transform transform(position);
 
@@ -346,9 +349,9 @@ MountedGun* FactorySystem::spawn_mounted_gun(const vec3& position)
 		//map.insert<object_base_map::Mat4>(0x316ec15e, .); // put your matrix here
 		//map.insert<object_base_map::Mat4>(0xb5be7095, .); // put your matrix here
 
-		rf->init_from_map(&map);
+		obj->init_from_map(&map);
 
-		return rf.move_to_map(mounted_guns);
+		return add_to_ref_map(mounted_guns, obj);
 	}
 
 	return nullptr;
@@ -356,7 +359,7 @@ MountedGun* FactorySystem::spawn_mounted_gun(const vec3& position)
 
 Ladder* FactorySystem::spawn_ladder(const vec3& position, const std::string& model, float length)
 {
-	if (auto rf = g_game_control->create_object<Ladder>())
+	if (auto obj = g_game_control->create_object<Ladder>())
 	{
 		object_base_map map {};
 
@@ -383,9 +386,9 @@ Ladder* FactorySystem::spawn_ladder(const vec3& position, const std::string& mod
 		map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, &transform.get_matrix());
 		map.insert<object_base_map::Mat4>(0x526d67dc, &info);
 
-		rf->init_from_map(&map);
+		obj->init_from_map(&map);
 
-		return rf.move_to_map(ladders);
+		return add_to_ref_map(ladders, obj);
 	}
 
 	return nullptr;
@@ -393,12 +396,12 @@ Ladder* FactorySystem::spawn_ladder(const vec3& position, const std::string& mod
 
 ItemPickup* FactorySystem::spawn_general_item_pickup(const vec3& position, uint32_t type, const std::string& model, const std::string& description)
 {
-	if (auto rf = g_game_control->create_object<ItemPickup>())
+	if (auto obj = g_game_control->create_object<ItemPickup>())
 	{
-		if (!rf->setup(position, type, Weapon_None, model, description))
+		if (!obj->setup(position, type, Weapon_None, model, description))
 			return nullptr;
 
-		return rf.move_to_map(item_pickups);
+		return add_to_ref_map(item_pickups, obj);
 	}
 
 	return nullptr;
@@ -406,12 +409,12 @@ ItemPickup* FactorySystem::spawn_general_item_pickup(const vec3& position, uint3
 
 ItemPickup* FactorySystem::spawn_weapon_item_pickup(const vec3& position, uint32_t weapon_id, const std::string& description)
 {
-	if (auto rf = g_game_control->create_object<ItemPickup>())
+	if (auto obj = g_game_control->create_object<ItemPickup>())
 	{
-		if (!rf->setup(position, ItemType_Weapon, weapon_id, {}, description))
+		if (!obj->setup(position, ItemType_Weapon, weapon_id, {}, description))
 			return nullptr;
 
-		return rf.move_to_map(item_pickups);
+		return add_to_ref_map(item_pickups, obj);
 	}
 
 	return nullptr;
@@ -419,7 +422,7 @@ ItemPickup* FactorySystem::spawn_weapon_item_pickup(const vec3& position, uint32
 
 AnimatedRigidObject* FactorySystem::spawn_animated_rigid_object(const vec3& position, const std::string& model, const std::string& pfx_name)
 {
-	if (auto rf = g_game_control->create_object<AnimatedRigidObject>())
+	if (auto obj = g_game_control->create_object<AnimatedRigidObject>())
 	{
 		object_base_map map {};
 
@@ -453,9 +456,9 @@ AnimatedRigidObject* FactorySystem::spawn_animated_rigid_object(const vec3& posi
 		map.insert<object_base_map::Mat4>(0x72f35d2, &m0); // mat4
 		map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, &transform); // mat4
 
-		rf->init_from_map(&map);
+		obj->init_from_map(&map);
 
-		return rf.move_to_map(animated_rigid_objects);
+		return add_to_ref_map(animated_rigid_objects, obj);
 	}
 
 	return nullptr;
@@ -463,12 +466,12 @@ AnimatedRigidObject* FactorySystem::spawn_animated_rigid_object(const vec3& posi
 
 UIMapIcon* FactorySystem::create_map_icon(const std::string& name, const vec3& position)
 {
-	if (auto rf = g_game_control->create_object<UIMapIcon>(false))
+	if (auto obj = g_game_control->create_object<UIMapIcon>(false))
 	{
-		if (!rf->setup(name, position))
+		if (!obj->setup(name, position))
 			return nullptr;
 
-		return rf.move_to_map(ui_map_icons);
+		return add_to_ref_map(ui_map_icons, obj);
 	}
 
 	return nullptr;
@@ -476,12 +479,12 @@ UIMapIcon* FactorySystem::create_map_icon(const std::string& name, const vec3& p
 
 UIMapIconType* FactorySystem::create_map_icon_type(const std::string& name, const std::string& texture, const vec2& scale)
 {
-	if (auto rf = g_game_control->create_object<UIMapIconType>(false))
+	if (auto obj = g_game_control->create_object<UIMapIconType>(false))
 	{
-		if (!rf->setup(name, texture, scale))
+		if (!obj->setup(name, texture, scale))
 			return nullptr;
 
-		return rf.move_to_map(ui_map_icon_types);
+		return add_to_ref_map(ui_map_icon_types, obj);
 	}
 
 	return nullptr;
@@ -489,12 +492,12 @@ UIMapIconType* FactorySystem::create_map_icon_type(const std::string& name, cons
 
 Objective* FactorySystem::create_objective(const vec3& position, const u8vec4& color)
 {
-	if (auto rf = g_game_control->create_object<Objective>(false))
+	if (auto obj = g_game_control->create_object<Objective>(false))
 	{
-		if (!rf->setup(position, color))
+		if (!obj->setup(position, color))
 			return nullptr;
 
-		return rf.move_to_map(objectives);
+		return add_to_ref_map(objectives, obj);
 	}
 
 	return nullptr;
@@ -502,12 +505,12 @@ Objective* FactorySystem::create_objective(const vec3& position, const u8vec4& c
 
 TrafficLight* FactorySystem::create_traffic_light(const vec3& position)
 {
-	if (auto rf = g_game_control->create_object<TrafficLight>(false))
+	if (auto obj = g_game_control->create_object<TrafficLight>(false))
 	{
-		if (!rf->setup(position))
+		if (!obj->setup(position))
 			return nullptr;
 
-		return rf.move_to_map(traffic_lights);
+		return add_to_ref_map(traffic_lights, obj);
 	}
 
 	return nullptr;
@@ -515,12 +518,12 @@ TrafficLight* FactorySystem::create_traffic_light(const vec3& position)
 
 SoundGameObject* FactorySystem::create_sound(const vec3& position, const std::string& bank_name, uint32_t sound_id)
 {
-	if (auto rf = g_game_control->create_object<SoundGameObject>())
+	if (auto obj = g_game_control->create_object<SoundGameObject>())
 	{
-		if (!rf->setup(position, bank_name, sound_id))
+		if (!obj->setup(position, bank_name, sound_id))
 			return nullptr;
 
-		return rf.move_to_map(sounds);
+		return add_to_ref_map(sounds, obj);
 	}
 
 	return nullptr;

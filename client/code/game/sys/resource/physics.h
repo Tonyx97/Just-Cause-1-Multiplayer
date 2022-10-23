@@ -1,6 +1,6 @@
 #pragma once
 
-#include <game/object/asset/asset_pfx.h>
+#include <game/object/physics/pfx_instance.h>
 
 #include "resource_cache.h"
 
@@ -55,7 +55,7 @@ struct hkWorld
 	vec3 get_gravity() const;
 };
 
-class Physics : public ResourceCache<AssetPFX, jc::physics::PFX_CACHE>
+class Physics : public ResourceCache<PfxInstance, jc::physics::PFX_CACHE>
 {
 public:
 

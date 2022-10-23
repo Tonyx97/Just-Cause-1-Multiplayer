@@ -332,7 +332,7 @@ DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
 // bypasses input and visibility of GuiLoadSave object by setting 
 // a few bools to true and the action type to 6
 //
-DEFINE_HOOK_STDCALL(load_save, 0x66D7F0, void*, ref<void*>* r)
+DEFINE_HOOK_STDCALL(load_save, 0x66D7F0, void*, shared_ptr<void*>* r)
 {
 	static void* main_load_save = nullptr;
 
@@ -340,7 +340,7 @@ DEFINE_HOOK_STDCALL(load_save, 0x66D7F0, void*, ref<void*>* r)
 
 	if (!main_load_save && res)
 	{
-		main_load_save = r->obj;
+		main_load_save = r->get();
 
 		jc::write<int>(6, main_load_save, 0x34);
 		jc::write(true, main_load_save, 0x285);

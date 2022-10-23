@@ -16,5 +16,5 @@ public:
 
 	AssetRBM() {}
 
-	ref<AssetRBM> get_ref();
+	shared_ptr<AssetRBM> get_ref();
 };

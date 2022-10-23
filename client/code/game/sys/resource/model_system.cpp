@@ -6,7 +6,7 @@
 
 namespace jc::model_system
 {
-	std::unordered_map<std::string, ref<AssetRBM>> rbms;
+	std::unordered_map<std::string, shared_ptr<AssetRBM>> rbms;
 }
 
 using namespace jc::model_system;
@@ -34,9 +34,8 @@ bool ModelSystem::load_rbm(const std::string& filename, const std::vector<uint8_
 	jc::stl::string name = util::fs::strip_parent_path(filename);
 
 	auto model = jc::this_call<AssetRBM*>(fn::LOAD_RBM_FROM_MEM, this, &name, data.data(), data.size(), 2);
-	auto r = model->get_ref();
 
-	rbms.insert({ filename, std::move(r) });
+	rbms.insert({ filename, model->get_ref() });
 
 	// i don't know about this but the engine does this lol
 

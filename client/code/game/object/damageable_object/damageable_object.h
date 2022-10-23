@@ -18,5 +18,5 @@ public:
 
 	IMPL_OBJECT_TYPE_ID("CDamageableObject");
 
-	static ref<DamageableObject> CREATE(Transform* transform, const std::string& lod_name, const std::string& pfx_name);
+	static shared_ptr<DamageableObject> CREATE(Transform* transform, const std::string& lod_name, const std::string& pfx_name);
 };

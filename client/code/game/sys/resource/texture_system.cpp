@@ -6,7 +6,7 @@
 
 namespace jc::texture_system
 {
-	std::unordered_map<std::string, ref<AssetTexture>> textures;
+	std::unordered_map<std::string, shared_ptr<AssetTexture>> textures;
 }
 
 using namespace jc::texture_system;
@@ -28,11 +28,11 @@ bool TextureSystem::load_texture(const std::string& filename)
 
 	jc::stl::string name = util::fs::strip_parent_path(filename);
 
-	ref<AssetTexture> r;
+	shared_ptr<AssetTexture> r;
 
 	jc::v_call(this, vt::LOAD_TEXTURE_FROM_MEM, &r, name, file_data.data(), file_data.size());
 
-	textures.insert({ filename, std::move(r) });
+	textures.insert({ filename, r });
 
 	return true;
 }

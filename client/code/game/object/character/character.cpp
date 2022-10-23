@@ -430,43 +430,32 @@ namespace jc::character::hook
 		character_proxy_add_velocity_hook(proxy, velocity, rotation);
 	}
 
-	DEFINE_HOOK_THISCALL(set_vehicle_seat, jc::character::fn::SET_VEHICLE_SEAT, void, Character* character, ref<VehicleSeat>* seat_ref)
+	DEFINE_HOOK_THISCALL(set_vehicle_seat, jc::character::fn::SET_VEHICLE_SEAT, void, Character* character, shared_ptr<VehicleSeat>* new_seat)
 	{
 		if (const auto lp = g_net->get_localplayer())
 			if (const auto local_char = lp->get_character(); local_char == character)
 			{
-				const auto curr_seat = local_char->get_vehicle_seat();
-				const auto& new_seat = *seat_ref;
+				// if the new seat is valid then get the seat type
+				// otherwise, we need to grab the previous seat type
 
-				VehicleSeat* target_seat = nullptr;
-				NetObject* new_vehicle_net = nullptr;
+				VehicleNetObject* new_vehicle_net = nullptr;
 
-				if (!curr_seat && new_seat)
-				{
-					new_vehicle_net = g_net->get_net_object_by_game_object(new_seat->get_vehicle());
-					target_seat = *new_seat;
-				}
-				else if (curr_seat && !new_seat)
-					target_seat = curr_seat;
-				else if (curr_seat && new_seat)
-				{
-					new_vehicle_net = lp->get_vehicle();
-					target_seat = *new_seat;
-				}
+				uint8_t seat_type = VehicleSeat_None;
 				
-				if (target_seat)
+				if (*new_seat)
 				{
-					// update localplayer's vehicle net
-
-					const auto seat_type = target_seat->get_type();
-
-					lp->set_vehicle(seat_type, new_vehicle_net->cast<VehicleNetObject>());
-
-					g_net->send(Packet(PlayerPID_SetVehicle, ChannelID_Generic, new_vehicle_net, seat_type));
+					seat_type = (*new_seat)->get_type();
+					new_vehicle_net = g_net->get_net_object_by_game_object((*new_seat)->get_vehicle())->cast<VehicleNetObject>();
 				}
+				else if (const auto curr_seat = local_char->get_weak_vehicle_seat())
+					seat_type = curr_seat->get_type();
+
+				lp->set_vehicle(seat_type, new_vehicle_net);
+
+				g_net->send(Packet(PlayerPID_SetVehicle, ChannelID_Generic, new_vehicle_net, seat_type));
 			}
 
-		set_vehicle_seat_hook(character, seat_ref);
+		set_vehicle_seat_hook(character, new_seat);
 	}
 
 	DEFINE_INLINE_HOOK_IMPL(distance_culling_check, 0x590B90)
@@ -664,7 +653,7 @@ void Character::set_skin(int32_t id, int32_t cloth_skin, int32_t head_skin, int3
 
 				npc_variant->init_from_map(map);
 
-				set_npc_variant(*npc_variant);
+				set_npc_variant(npc_variant.get());
 			}
 
 			if (sync)
@@ -727,7 +716,7 @@ void Character::set_npc_variant(int32_t cloth_skin, int32_t head_skin, int32_t c
 
 	npc_variant->init_from_map(&map);
 
-	set_npc_variant(*npc_variant);
+	set_npc_variant(npc_variant.get());
 
 	if (sync)
 	{
@@ -1015,7 +1004,12 @@ Vehicle* Character::get_vehicle() const
 	return seat ? seat->get_vehicle() : nullptr;
 }
 
-VehicleSeat* Character::get_vehicle_seat() const
+shared_ptr<VehicleSeat> Character::get_vehicle_seat() const
+{
+	return *REF(shared_ptr<VehicleSeat>*, this, jc::character::VEHICLE_SEAT);
+}
+
+VehicleSeat* Character::get_weak_vehicle_seat() const
 {
 	return jc::read<VehicleSeat*>(this, jc::character::VEHICLE_SEAT);
 }

@@ -90,7 +90,7 @@ private:
 	std::string ee_name;
 
 #ifdef JC_CLIENT
-	class Vehicle* obj = nullptr;
+	shared_ptr<class Vehicle> obj;
 
 	bool sync_this_tick = false;
 #endif
@@ -121,7 +121,7 @@ public:
 #ifdef JC_CLIENT
 	VehicleNetObject(NID nid, const TransformTR& transform);
 
-	class Vehicle* get_object() const { return obj; }
+	class Vehicle* get_object() const { return obj.get(); }
 
 	class ObjectBase* get_object_base() const override;
 

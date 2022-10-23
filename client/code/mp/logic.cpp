@@ -8,7 +8,6 @@
 #include <game/sys/world/world.h>
 #include <game/sys/time/time_system.h>
 
-#include <game/object/base/comps/physical.h>
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
 #include <game/object/weapon/weapon.h>
@@ -21,10 +20,6 @@
 
 void jc::mp::logic::on_tick()
 {
-	if (g_key->is_key_pressed(VK_NUMPAD9))
-	{
-	}
-
 	if (!g_net->is_joined())
 		return;
 

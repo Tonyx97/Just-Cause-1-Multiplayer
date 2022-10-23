@@ -9,7 +9,7 @@
 #include <game/sys/resource/physics.h>
 #include <game/sys/resource/model_system.h>
 
-ref<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::string& lod_name, const std::string& pfx_name)
+shared_ptr<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::string& lod_name, const std::string& pfx_name)
 {
 	if (auto rf = g_game_control->create_object<DamageableObject>())
 	{
@@ -54,8 +54,6 @@ ref<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::
 		map.insert<object_base_map::Mat4>(0xcab9f941, &dummy_mat);
 
 		rf->init_from_map(&map);
-
-		log(RED, "damageable: {:x}", ptr(*rf));
 
 		return rf;
 	}

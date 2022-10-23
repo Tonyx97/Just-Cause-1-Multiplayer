@@ -409,7 +409,7 @@ Interactable* VehicleSeat::get_interactable() const
 	return jc::read<Interactable*>(this, jc::vehicle_seat::INTERACTABLE);
 }
 
-ref<VehicleSeat> VehicleSeat::get_ref()
+shared_ptr<VehicleSeat> VehicleSeat::get_ref()
 {
 	check(false, "{} Not supported", CURR_FN);
 

@@ -10,17 +10,17 @@ namespace jc::resource_cache
 template <typename T, ptr cache_offset>
 struct ResourceCache
 {
-	struct cache_map : public jc::stl::unordered_map<cache_map, jc::stl::string, ref<T>>
+	struct cache_map : public jc::stl::unordered_map<cache_map, jc::stl::string, shared_ptr<T>>
 	{
 		static constexpr auto FIND() { return 0x659FF0; }
 	};
 
 	cache_map* get_cache() { return REF(cache_map*, this, cache_offset); }
 
-	ref<T> get_cache_item(const jc::stl::string& name)
+	shared_ptr<T> get_cache_item(const jc::stl::string& name)
 	{
 		if (auto node = get_cache()->find(name))
-			return ref<T>(&node->value);
+			return node->value;
 
 		return {};
 	}

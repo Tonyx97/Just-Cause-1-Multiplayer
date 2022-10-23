@@ -9,7 +9,7 @@ namespace jc::game_control
 	{
 		static constexpr uint32_t CREATE_OBJECT				= 0x4EE350;
 		static constexpr uint32_t DISPATCH_LOCATIONS_LOAD	= 0x4F1990;
-		static constexpr uint32_t ENABLE_OBJECT				= 0x4EE480;
+		static constexpr uint32_t ADD_OBJECT_TO_WORLD		= 0x4EE480;
 	}
 }
 
@@ -17,7 +17,7 @@ class GameControl
 {
 private:
 	
-	void* create_object_internal(void* r, jc::stl::string* class_name, bool enable_now);
+	void* create_object_internal(void* r, jc::stl::string* class_name, bool add_to_world);
 
 public:
 
@@ -29,24 +29,22 @@ public:
 	void dispatch_locations_load();
 	void on_tick();
 
-	template <typename T, typename R = ref<T>>
-	R create_object(bool enable_now = true)
+	template <typename T>
+	shared_ptr<T> create_object(bool add_to_world = true)
 	{
-		R r;
+		shared_ptr<T> r;
 
 		jc::stl::string class_name = T::CLASS_NAME();
 
-		create_object_internal(&r, &class_name, enable_now);
+		create_object_internal(&r, &class_name, add_to_world);
 
 		return r;
 	}
 
 	template <typename T>
-	void enable_object(ref<T>& rf)
+	void add_object_to_world(shared_ptr<T>& obj)
 	{
-		rf.make_valid();
-
-		jc::this_call(jc::game_control::fn::ENABLE_OBJECT, this, rf.to_holder());
+		jc::this_call(jc::game_control::fn::ADD_OBJECT_TO_WORLD, this, weak_ptr<T>(obj));
 	}
 };
 

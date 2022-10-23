@@ -27,8 +27,7 @@
 #include <game/object/ui/map_icon.h>
 #include <game/object/localplayer/localplayer.h>
 #include <game/object/physics/pfx_collision.h>
-#include <game/object/physics/pfx_base.h>
-#include <game/object/base/comps/physical.h>
+#include <game/object/physics/pfx_instance.h>
 #include <game/sys/all.h>
 
 #include <serializer/serializer.h>
@@ -145,8 +144,9 @@ void jc::test_units::test_0()
 	auto local_pos = local_char->get_position();
 	Transform local_t(local_pos);
 
-	static std::vector<ref<Vehicle>> vehs;
-	static std::vector<ref<Weapon>> temp_weapons;
+	static std::vector<shared_ptr<Vehicle>> vehs;
+	static std::vector<shared_ptr<Weapon>> temp_weapons;
+	static std::vector<shared_ptr<Vehicle>> temp_vehicles;
 
 	if (g_global_ptr)
 	{
@@ -154,9 +154,14 @@ void jc::test_units::test_0()
 		//jc::this_call(0x854A00, g_global_ptr, 2, true);
 	}
 
-	if (g_key->is_key_pressed(VK_NUMPAD9))
+	if (g_key->is_key_down(VK_NUMPAD9))
 	{
-		g_factory->spawn_general_item_pickup(local_pos + vec3(2.f, 0.f, 0.f), ItemType_Health, "medipack.lod");
+		for (int i = 0; i < 1000; ++i)
+		{
+			const auto velocity = local_char->get_pfx()->get_velocity();
+		}
+
+		//g_factory->spawn_general_item_pickup(local_pos + vec3(2.f, 0.f, 0.f), ItemType_Health, "medipack.lod");
 
 		//jc::this_call(0x74DE20, *seat, true);
 
@@ -169,7 +174,7 @@ void jc::test_units::test_0()
 		log(GREEN, "{} {:x} {:x} {:x}", asset.arc_index, asset.hash, asset.offset, asset.size);*/
 	}
 
-	for (const auto& w : temp_weapons)
+	/*for (const auto& w : temp_weapons)
 	{
 		//w->set_transform(local_t);
 		//w->set_last_shot_time(jc::nums::MAXF);
@@ -179,19 +184,12 @@ void jc::test_units::test_0()
 		w->force_fire();
 		w->set_enabled(true);
 		w->update();
-	}
+	}*/
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		std::string model = "mim.rbm"; // "crate_custom_png.rbm"
-
-		g_texture_system->load_texture("mim.jpg");
-		g_model_system->load_rbm(model);
-
-		//g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), model, "");
-
-		g_model_system->unload_rbm(model);
-		g_texture_system->unload_texture("mim.dds");
+		log(RED, "{}", temp_vehicles.size());
+		temp_vehicles.clear();
 	}
 
 	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
@@ -453,7 +451,7 @@ void jc::test_units::test_0()
 
 		//(*(void(__thiscall**)(Character*, vel_test*))(*(ptr*)local_char + 0x7C))(local_char, &ay);
 
-		auto physical = local_char->get_physical();
+		auto physical = local_char->get_pfx();
 
 		jc::this_call(0x744B20, physical.obj, &ay.dir, ptr(local_char) + 0x608);
 

@@ -7,6 +7,8 @@ static_assert("map_base.h must be defined");
 #define IMPL_OBJECT_TYPE_ID(x) static constexpr auto CLASS_NAME() { return x; } \
 							   static constexpr auto CLASS_ID() { return util::hash::JENKINS(CLASS_NAME()); }
 
+#include "../physics/pfx_instance.h"
+
 #include "obj_event_manager.h"
 
 namespace jc::object_base
@@ -15,7 +17,7 @@ namespace jc::object_base
 	{
 		static constexpr uint32_t DESTROY		= 0;
 		static constexpr uint32_t GET_MODEL		= 1;
-		static constexpr uint32_t GET_PHYSICAL	= 3;
+		static constexpr uint32_t GET_PFX_INSTANCE	= 3;
 		static constexpr uint32_t GET_TRANSFORM = 4;
 		static constexpr uint32_t SET_TRANSFORM = 5;
 		static constexpr uint32_t INIT_FROM_MAP = 6;
@@ -99,7 +101,7 @@ public:
 
 	Model* get_model() const;
 
-	bref<Physical> get_physical() const;
+	shared_ptr<PfxInstance> get_pfx() const;
 
 	Transform get_transform() const;
 

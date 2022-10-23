@@ -180,7 +180,8 @@ public:
 
 	Vehicle* get_vehicle() const;
 
-	VehicleSeat* get_vehicle_seat() const;
+	shared_ptr<VehicleSeat> get_vehicle_seat() const;
+	VehicleSeat* get_weak_vehicle_seat() const;
 
 	Skeleton* get_skeleton() const;
 

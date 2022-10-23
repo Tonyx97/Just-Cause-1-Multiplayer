@@ -142,7 +142,6 @@
     <ClCompile Include="code\game\object\agent_type\vehicle_type.cpp" />
     <ClCompile Include="code\game\object\alive_object\alive_object.cpp" />
     <ClCompile Include="code\game\object\asset\asset_anim.cpp" />
-    <ClCompile Include="code\game\object\asset\asset_pfx.cpp" />
     <ClCompile Include="code\game\object\asset\asset_rbm.cpp" />
     <ClCompile Include="code\game\object\asset\asset_texture.cpp" />
     <ClCompile Include="code\game\object\base\obj_event_manager.cpp" />
@@ -152,7 +151,7 @@
     <ClCompile Include="code\game\object\ladder\ladder.cpp" />
     <ClCompile Include="code\game\object\mission\objective.cpp" />
     <ClCompile Include="code\game\object\mounted_gun\mounted_gun.cpp" />
-    <ClCompile Include="code\game\object\physics\pfx_base.cpp" />
+    <ClCompile Include="code\game\object\physics\pfx_instance.cpp" />
     <ClCompile Include="code\game\object\physics\pfx_collision.cpp" />
     <ClCompile Include="code\game\object\game_resource\ee_resource.cpp" />
     <ClCompile Include="code\game\object\game_resource\game_resource.cpp" />
@@ -201,7 +200,6 @@
     <ClCompile Include="code\game\sys\ai\ai_core.cpp" />
     <ClCompile Include="code\game\sys\game\game_control.cpp" />
     <ClCompile Include="code\game\object\localplayer\localplayer.cpp" />
-    <ClCompile Include="code\game\object\base\comps\physical.cpp" />
     <ClCompile Include="code\game\sys\weapon\ammo_manager.cpp" />
     <ClCompile Include="code\game\sys\camera\camera_manager.cpp" />
     <ClCompile Include="code\game\globals.cpp" />
@@ -253,7 +251,6 @@
     <ClInclude Include="code\game\object\agent_type\vehicle_type.h" />
     <ClInclude Include="code\game\object\alive_object\alive_object.h" />
     <ClInclude Include="code\game\object\asset\asset_anim.h" />
-    <ClInclude Include="code\game\object\asset\asset_pfx.h" />
     <ClInclude Include="code\game\object\asset\asset_rbm.h" />
     <ClInclude Include="code\game\object\asset\asset_texture.h" />
     <ClInclude Include="code\game\object\base\obj_event_manager.h" />
@@ -263,7 +260,7 @@
     <ClInclude Include="code\game\object\ladder\ladder.h" />
     <ClInclude Include="code\game\object\mission\objective.h" />
     <ClInclude Include="code\game\object\mounted_gun\mounted_gun.h" />
-    <ClInclude Include="code\game\object\physics\pfx_base.h" />
+    <ClInclude Include="code\game\object\physics\pfx_instance.h" />
     <ClInclude Include="code\game\object\physics\pfx_collision.h" />
     <ClInclude Include="code\game\object\game_resource\ee_resource.h" />
     <ClInclude Include="code\game\object\game_resource\game_resource.h" />
@@ -315,13 +312,11 @@
     <ClInclude Include="code\mp\cmd\cmd.h" />
     <ClInclude Include="code\mp\net.h" />
     <ClInclude Include="code\mp\logic.h" />
-    <ClInclude Include="code\stl\ref.h" />
     <ClInclude Include="code\game\object\spawn_point\spawn_point.h" />
     <ClInclude Include="code\game\object\character\comps\stance_controller.h" />
     <ClInclude Include="code\game\sys\ai\ai_core.h" />
     <ClInclude Include="code\game\sys\game\game_control.h" />
     <ClInclude Include="code\game\object\localplayer\localplayer.h" />
-    <ClInclude Include="code\game\object\base\comps\physical.h" />
     <ClInclude Include="code\game\sys\all.h" />
     <ClInclude Include="code\game\sys\weapon\ammo_manager.h" />
     <ClInclude Include="code\game\sys\camera\camera_manager.h" />

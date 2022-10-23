@@ -178,5 +178,5 @@ public:
 		Hash_ForceAccessory5		= 0xd6ecd709,
 	};
 
-	static ref<NPCVariant> CREATE();
+	static shared_ptr<NPCVariant> CREATE();
 };

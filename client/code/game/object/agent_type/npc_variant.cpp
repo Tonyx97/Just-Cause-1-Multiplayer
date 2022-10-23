@@ -2,9 +2,9 @@
 
 #include "npc_variant.h"
 
-ref<NPCVariant> NPCVariant::CREATE()
+shared_ptr<NPCVariant> NPCVariant::CREATE()
 {
-	ref<NPCVariant> rf;
+	shared_ptr<NPCVariant> rf;
 
 	jc::std_call(jc::npc_variant::fn::CREATE, &rf);
 

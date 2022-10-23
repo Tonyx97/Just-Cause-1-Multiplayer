@@ -144,9 +144,6 @@
     <ClCompile Include="code\core\clean_dbg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\object\base\comps\physical.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="code\game\sys\core\factory_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -294,7 +291,7 @@
     <ClCompile Include="code\game\object\rigid_object\traffic_light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\object\physics\pfx_base.cpp">
+    <ClCompile Include="code\game\object\physics\pfx_instance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\physics\pfx_collision.cpp">
@@ -316,9 +313,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\asset\asset_anim.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="code\game\object\asset\asset_pfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\game\object\asset\asset_texture.cpp">
@@ -473,9 +467,6 @@
     <ClInclude Include="code\core\clean_dbg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\object\base\comps\physical.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="code\core\patching.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -489,9 +480,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\sys\ai\ai_core.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\stl\ref.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\base\comps\model.h">
@@ -647,7 +635,7 @@
     <ClInclude Include="code\game\object\rigid_object\traffic_light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\object\physics\pfx_base.h">
+    <ClInclude Include="code\game\object\physics\pfx_instance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\physics\pfx_collision.h">
@@ -681,9 +669,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\asset\asset_anim.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\game\object\asset\asset_pfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\asset\asset_texture.h">

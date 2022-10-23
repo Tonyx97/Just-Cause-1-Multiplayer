@@ -91,7 +91,7 @@ namespace jc::game_control
 	bool ignore_blocked_objects = false;
 }
 
-DEFINE_HOOK_THISCALL(create_object, 0x4EE350, ref<ObjectBase>*, GameControl* gc, ref<ObjectBase>* r, jc::stl::string* class_name, bool enable_now)
+DEFINE_HOOK_THISCALL(create_object, 0x4EE350, shared_ptr<ObjectBase>*, GameControl* gc, void** obj, jc::stl::string* class_name, bool add_to_world)
 {
 	if (!jc::game_control::ignore_blocked_objects && jc::game_control::enable_block)
 	{
@@ -99,7 +99,7 @@ DEFINE_HOOK_THISCALL(create_object, 0x4EE350, ref<ObjectBase>*, GameControl* gc,
 
 		if (jc::game_control::default_blocked_objects.contains(class_name_str))
 		{
-			r->make_invalid();
+			memset(obj, 0, sizeof(shared_ptr<ObjectBase>));
 
 			return nullptr;
 		}
@@ -107,14 +107,14 @@ DEFINE_HOOK_THISCALL(create_object, 0x4EE350, ref<ObjectBase>*, GameControl* gc,
 		//log(RED, "created '{}'", class_name_str);
 	}
 
-	return create_object_hook(gc, r, class_name, enable_now);
+	return create_object_hook(gc, obj, class_name, add_to_world);
 }
 
-void* GameControl::create_object_internal(void* r, jc::stl::string* class_name, bool enable_now)
+void* GameControl::create_object_internal(void* obj, jc::stl::string* class_name, bool add_to_world)
 {
 	jc::game_control::ignore_blocked_objects = true;
 
-	const auto res = create_object_hook(this, BITCAST(ref<ObjectBase>*, r), class_name, enable_now);
+	const auto res = create_object_hook(this, BITCAST(void**, obj), class_name, add_to_world);
 
 	jc::game_control::ignore_blocked_objects = false;
 

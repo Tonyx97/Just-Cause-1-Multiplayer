@@ -12,7 +12,6 @@
 #include <game/object/character/character.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/character/comps/stance_controller.h>
-#include <game/object/base/comps/physical.h>
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/vehicle/comps/vehicle_seat.h>
 #include <game/object/interactable/interactable.h>

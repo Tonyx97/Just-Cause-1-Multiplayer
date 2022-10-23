@@ -5,7 +5,6 @@
 #include <shared_mp/objs/player.h>
 
 #ifdef JC_CLIENT
-#include <game/object/base/comps/physical.h>
 #include <game/object/damageable_object/damageable_object.h>
 #include <game/object/ui/map_icon.h>
 #include <game/sys/core/factory_system.h>
@@ -57,7 +56,7 @@ bool NetObject::sync()
 	TransformTR real_transform;
 
 	const auto object_base = BITCAST(AliveObject*, get_object_base());
-	const auto physical = object_base->get_physical();
+	const auto physical = object_base->get_pfx();
 
 	real_transform.t = object_base->get_position();
 	real_transform.r = object_base->get_rotation();

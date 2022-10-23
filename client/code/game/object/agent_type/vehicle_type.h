@@ -33,5 +33,5 @@ public:
 
 	ExportedEntityResource* get_ee_resource() const;
 
-	ref<Vehicle> create_vehicle(const Transform& transform);
+	shared_ptr<Vehicle> create_vehicle(const Transform& transform);
 };

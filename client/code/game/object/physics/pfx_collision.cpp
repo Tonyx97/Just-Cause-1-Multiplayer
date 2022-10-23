@@ -1,6 +1,6 @@
 #include <defs/standard.h>
 
-#include "pfx_base.h"
+#include "pfx_instance.h"
 #include "pfx_collision.h"
 
 #include "../base/base.h"
@@ -13,7 +13,7 @@ namespace jc::pfx_collision::hook
 {
 	DEFINE_HOOK_THISCALL(process, 0x65C2A0, void, PfxCollision* col, vec4* a1, vec3* a2)
 	{
-		if (const auto localplayer = g_net->get_localplayer())
+		/*if (const auto localplayer = g_net->get_localplayer())
 			if (const auto local_char = g_world->get_localplayer_character())
 				if (const auto pfx_base = col->get_pfx())
 					if (const auto object = pfx_base->get_userdata<ObjectBase>())
@@ -25,7 +25,7 @@ namespace jc::pfx_collision::hook
 							process_hook(col, a1, a2);
 
 							net_obj->set_pending_velocity(pfx_base->get_velocity());
-						}
+						}*/
 
 		return process_hook(col, a1, a2);
 	}

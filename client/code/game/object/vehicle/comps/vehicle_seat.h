@@ -80,5 +80,5 @@ public:
 
 	Interactable* get_interactable() const;
 
-	ref<VehicleSeat> get_ref();
+	shared_ptr<VehicleSeat> get_ref();
 };

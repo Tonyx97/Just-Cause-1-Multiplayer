@@ -9,7 +9,6 @@ namespace jc::simple_rigid_object
 	namespace fn
 	{
 		static constexpr uint32_t SETUP		 = 0x795110;
-		static constexpr uint32_t DELETER_FN = 0x673E70;
 	}
 }
 
@@ -21,5 +20,5 @@ public:
 
 	static SimpleRigidObject* ALLOC();
 
-	ref<SimpleRigidObject> create(Transform* transform, const std::string& lod_name, const std::string& pfx_name);
+	shared_ptr<SimpleRigidObject> create(Transform* transform, const std::string& lod_name, const std::string& pfx_name);
 };

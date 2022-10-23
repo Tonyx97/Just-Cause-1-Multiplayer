@@ -6,7 +6,7 @@
 
 namespace jc::anim_system
 {
-	std::unordered_map<std::string, ref<AssetAnim>> anims;
+	std::unordered_map<std::string, shared_ptr<AssetAnim>> anims;
 }
 
 using namespace jc::anim_system;
@@ -28,11 +28,11 @@ bool AnimSystem::load_anim(const std::string& filename)
 
 	jc::stl::string name = util::fs::strip_parent_path(filename);
 
-	ref<AssetAnim> r;
+	shared_ptr<AssetAnim> r;
 
 	jc::this_call(fn::LOAD_ANIM_FROM_MEM, this, &r, &name, file_data.data(), file_data.size());
 
-	anims.insert({ filename, std::move(r) });
+	anims.insert({ filename, r });
 
 	return true;
 }

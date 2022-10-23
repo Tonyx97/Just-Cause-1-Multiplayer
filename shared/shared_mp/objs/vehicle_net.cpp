@@ -7,7 +7,6 @@
 #ifdef JC_CLIENT
 #include <game/sys/core/factory_system.h>
 
-#include <game/object/base/comps/physical.h>
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/vehicle/comps/vehicle_seat.h>
 #include <game/object/weapon/weapon.h>
@@ -110,12 +109,25 @@ VehicleNetObject::VehicleNetObject(SyncType sync_type, const TransformTR& transf
 
 VehicleNetObject::~VehicleNetObject()
 {
+	// set invalid vehicle to all players inside
+	
+	std::vector<Player*> players_inside;
+
+	for (auto [seat, player] : players)
+		players_inside.push_back(player);
+
+	for (auto player : players_inside)
+		player->set_vehicle(VehicleSeat_None, nullptr);
+
 	destroy_object();
 }
 
 void VehicleNetObject::destroy_object()
 {
-	IF_CLIENT_AND_VALID_OBJ_DO([&]() { g_factory->destroy_vehicle(std::exchange(obj, nullptr)); });
+	IF_CLIENT_AND_VALID_OBJ_DO([&]()
+	{
+		obj.reset();
+	});
 }
 
 void VehicleNetObject::on_spawn()
@@ -125,7 +137,7 @@ void VehicleNetObject::on_spawn()
 
 	check(obj, "Could not create vehicle");
 
-	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
+	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*this).name(), get_nid(), ptr(get_object()), get_position().x, get_position().y, get_position().z);
 #endif
 }
 
@@ -148,7 +160,7 @@ void VehicleNetObject::on_net_var_change(NetObjectVarType var_type)
 		case NetObjectVar_Transform:
 		case NetObjectVar_Position:
 		case NetObjectVar_Rotation:		obj->set_transform(Transform(get_position(), get_rotation())); break;
-		case NetObjectVar_Velocity:		obj->get_physical()->set_velocity(get_velocity()); break;
+		case NetObjectVar_Velocity:		obj->get_pfx()->set_velocity(get_velocity()); break;
 		case NetObjectVar_Health:		obj->set_hp(get_hp()); break;
 		case NetObjectVar_MaxHealth:	obj->set_max_hp(get_max_hp()); break;
 		}

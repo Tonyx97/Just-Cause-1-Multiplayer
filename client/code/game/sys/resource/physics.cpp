@@ -4,11 +4,11 @@
 #include "resource_streamer.h"
 
 #include <game/object/force_pulse/force_pulse.h>
-#include <game/object/asset/asset_pfx.h>
+#include <game/object/physics/pfx_instance.h>
 
 namespace jc::physics
 {
-	std::unordered_map<std::string, bref<AssetPFX>> pfxs;
+	std::unordered_map<std::string, shared_ptr<PfxInstance>> pfxs;
 }
 
 using namespace jc::physics;
@@ -64,13 +64,13 @@ bool Physics::load_pfx(const std::string& filename, const std::vector<uint8_t>& 
 
 	jc::stl::string name = util::fs::strip_parent_path(filename);
 
-	bref<AssetPFX> r(true);
+	const auto pfx = new PfxInstance();
 
 	mat4 identity = mat4(1.f);
 
-	jc::this_call(fn::LOAD_PFX_FROM_MEM, this, &name, &r, &identity, true, false, &data_holder);
+	jc::this_call(fn::LOAD_PFX_FROM_MEM, this, &name, pfx, &identity, true, false, &data_holder);
 
-	pfxs.insert({ filename, std::move(r) });
+	pfxs.insert({ filename, shared_ptr<PfxInstance>(pfx) });
 
 	return true;
 }

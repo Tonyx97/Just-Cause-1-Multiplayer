@@ -32,9 +32,9 @@ ExportedEntityResource* VehicleType::get_ee_resource() const
 	return jc::read<ExportedEntityResource*>(this, jc::vehicle_type::EE_RESOURCE);
 }
 
-ref<Vehicle> VehicleType::create_vehicle(const Transform& transform)
+shared_ptr<Vehicle> VehicleType::create_vehicle(const Transform& transform)
 {
-	ref<Vehicle> r;
+	shared_ptr<Vehicle> r;
 
 	jc::this_call(jc::vehicle_type::fn::CREATE_VEHICLE, this, &r, &transform, false);
 

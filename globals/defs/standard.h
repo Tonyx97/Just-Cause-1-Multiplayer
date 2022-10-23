@@ -41,9 +41,7 @@
 
 #ifdef JC_CLIENT
 #include <boost/shared_ptr.hpp>
-
-template <typename T>
-using shared_ptr = boost::shared_ptr<T>;
+#include <boost/weak_ptr.hpp>
 
 #include "main.h"
 
@@ -52,7 +50,15 @@ using shared_ptr = boost::shared_ptr<T>;
 #include <MinHook.h>
 #include <hde32.h>
 
-#include <stl/ref.h>
+template <typename T>
+using shared_ptr = boost::shared_ptr<T>;
+
+template <typename T>
+using weak_ptr = boost::weak_ptr<T>;
+
+template <typename T>
+using ref_map = std::unordered_map<T*, shared_ptr<T>>;
+
 #include <stl/vec.h>
 #include <stl/map.h>
 #include <stl/string.h>

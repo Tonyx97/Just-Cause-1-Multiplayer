@@ -4,8 +4,6 @@
 
 #include "base.h"
 
-#include "comps/physical.h"
-
 #include "../character/character.h"
 #include "../spawn_point/agent_spawn_point.h"
 #include "../spawn_point/vehicle_spawn_point.h"
@@ -208,9 +206,7 @@ void ObjectBase::set_transform(const Transform& transform)
 	case Submarine::CLASS_ID():
 	case Boat::CLASS_ID():
 	{
-		const auto physical = get_physical();
-
-		physical->set_transform(transform);
+		get_pfx()->set_transform(transform);
 
 		break;
 	}
@@ -261,13 +257,13 @@ Model* ObjectBase::get_model() const
 	return jc::v_call<Model*>(this, jc::object_base::vt::GET_MODEL);
 }
 
-bref<Physical> ObjectBase::get_physical() const
+shared_ptr<PfxInstance> ObjectBase::get_pfx() const
 {
-	bref<Physical> tmp;
+	const auto pfx = new PfxInstance();
 
-	jc::v_call(this, jc::object_base::vt::GET_PHYSICAL, &tmp);
+	jc::v_call(this, jc::object_base::vt::GET_PFX_INSTANCE, pfx);
 
-	return tmp;
+	return shared_ptr<PfxInstance>(pfx);
 }
 
 Transform ObjectBase::get_transform() const
