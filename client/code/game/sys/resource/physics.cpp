@@ -88,7 +88,7 @@ bool Physics::unload_pfx(const std::string& filename)
 
 bool Physics::raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_info, bool unk1, bool unk2)
 {
-	uint8_t buffer[0x58];
+	uint8_t buffer[0x4C];
 
 	jc::this_call<int, void*>(fn::SETUP_RAYCAST_CTX_BASIC, buffer);
 
@@ -96,16 +96,23 @@ bool Physics::raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_in
 
 	ray r(origin, direction);
 
-	return !!jc::this_call<void*, Physics*, const ray*, float, float, ray_hit_info*, void*, bool, bool>(
+	const auto length = glm::length(direction);
+
+	const bool res = !!jc::this_call<void*, Physics*, const ray*, float, float, ray_hit_info*, void*, bool, bool>(
 		fn::RAYCAST,
 		this,
 		&r,
 		0.f,
-		glm::length(direction),
+		length,
 		&hit_info,
 		buffer,
 		unk1,
 		unk2);
+
+	if (res)
+		hit_info.distance_factor *= length;
+
+	return res;
 }
 
 hkWorld* Physics::get_hk_world() const
