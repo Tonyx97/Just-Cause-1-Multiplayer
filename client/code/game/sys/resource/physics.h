@@ -40,8 +40,8 @@ struct ray
 
 struct ray_hit_info
 {
-	void* object = nullptr,
-		* unk = nullptr;
+	void* object = nullptr;
+	void* rigidbody = nullptr;
 
 	vec3 normal;
 

@@ -199,7 +199,7 @@ DEFINE_HOOK_THISCALL(raycast, jc::physics::fn::RAYCAST, void*, uintptr_t _this, 
 	{
 		const auto ret = raycast_hook(_this, r, a1, distance, hit_info, a3, a4, a5);
 
-		log(RED, "[hk_raycast] {:x} {:x}", ptr(hit_info->object), ptr(hit_info->unk));
+		//log(RED, "[hk_raycast] {:x} {:x}", ptr(hit_info->object), ptr(hit_info->unk));
 
 		return ret;
 	}

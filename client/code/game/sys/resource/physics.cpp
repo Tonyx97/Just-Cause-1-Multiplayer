@@ -88,7 +88,7 @@ bool Physics::unload_pfx(const std::string& filename)
 
 bool Physics::raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_info, bool unk1, bool unk2)
 {
-	uint8_t buffer[0x54];
+	uint8_t buffer[0x58];
 
 	jc::this_call<int, void*>(fn::SETUP_RAYCAST_CTX_BASIC, buffer);
 
@@ -96,11 +96,11 @@ bool Physics::raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_in
 
 	ray r(origin, direction);
 
-	return !!jc::this_call<void*, Physics*, const ray*, int, float, ray_hit_info*, void*, bool, bool>(
+	return !!jc::this_call<void*, Physics*, const ray*, float, float, ray_hit_info*, void*, bool, bool>(
 		fn::RAYCAST,
 		this,
 		&r,
-		0,
+		0.f,
 		glm::length(direction),
 		&hit_info,
 		buffer,

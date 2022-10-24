@@ -430,6 +430,27 @@ void DebugUI::overlay_debug()
 	const auto red_color = ImColor(255, 0, 0);
 	const auto green_color = ImColor(0, 255, 0);
 
+	{
+		vec3 from = vec3(1324.702f, 83.395f + 1.f, 2581.040f);
+		vec3 to = vec3(1334.615f, 83.553f + 1.f, 2572.273f);
+
+		vec2 from_sp, to_sp;
+
+		camera->w2s(from, from_sp);
+		camera->w2s(to, to_sp);
+
+		g_ui->draw_line(from_sp, to_sp, 2.f, { 0.f, 1.f, 0.f, 1.f });
+
+		g_ui->draw_filled_circle(from_sp, 20.f, 50.f, { 0.f, 1.f, 1.f, 1.f });
+		g_ui->draw_filled_circle(to_sp, 20.f, 50.f, { 1.f, 1.f, 0.f, 1.f });
+
+		ray_hit_info hit_info;
+
+		auto res = g_physics->raycast(from, to, hit_info);
+
+		log(RED, "{} -> {:x} {:x} {:.2f} {:.2f} {:.2f} | {:.2f}", res, ptr(hit_info.object), ptr(hit_info.rigidbody), hit_info.normal.x, hit_info.normal.y, hit_info.normal.z, hit_info.distance_factor);
+	}
+
 	g_ammo->for_each_bullet([&](int i, Bullet* bullet)
 	{
 		if (show_bullets)
