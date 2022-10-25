@@ -430,7 +430,7 @@ void DebugUI::overlay_debug()
 	const auto red_color = ImColor(255, 0, 0);
 	const auto green_color = ImColor(0, 255, 0);
 
-	/*{
+	{
 		vec3 from = vec3(1324.702f, 83.395f + 1.f, 2581.040f);
 		vec3 to = vec3(1334.615f, 83.553f + 1.f, 2572.273f);
 
@@ -446,22 +446,22 @@ void DebugUI::overlay_debug()
 
 		ray_hit_info hit_info;
 
-		auto res = g_physics->raycast(from, to, hit_info);
+		auto has_hit = g_physics->raycast(from, to, hit_info, true, false);
 
-		const auto hit_pos = from + glm::normalize(to - from) * hit_info.distance_factor;
-		const auto normal_end = hit_pos + hit_info.normal;
+		const auto normal_end = hit_info.hit_position + hit_info.normal;
 
 		vec2 hit_pos_sp;
 		vec2 normal_sp;
 
-		camera->w2s(hit_pos, hit_pos_sp);
+		camera->w2s(hit_info.hit_position, hit_pos_sp);
 		camera->w2s(normal_end, normal_sp);
 
 		g_ui->draw_line(hit_pos_sp, normal_sp, 2.f, { 0.f, 0.f, 1.f, 1.f });
 		g_ui->draw_filled_circle(hit_pos_sp, 5.f, 50.f, { 1.f, 0.f, 0.f, 1.f });
 
-		log(RED, "{} -> {:x} {:x} {:.2f} {:.2f} {:.2f} | {:.2f}", res, ptr(hit_info.object), ptr(hit_info.rigidbody), hit_info.normal.x, hit_info.normal.y, hit_info.normal.z, hit_info.distance_factor);
-	}*/
+		if (has_hit)
+			log(RED, "{:x} {:.2f} {:.2f} {:.2f} | {:.2f}", ptr(hit_info.object), hit_info.normal.x, hit_info.normal.y, hit_info.normal.z, hit_info.distance);
+	}
 
 	g_ammo->for_each_bullet([&](int i, Bullet* bullet)
 	{

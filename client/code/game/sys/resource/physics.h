@@ -2,6 +2,8 @@
 
 #include <game/object/physics/pfx_instance.h>
 
+#include <havok/defs.h>
+
 #include "resource_cache.h"
 
 namespace jc::physics
@@ -16,7 +18,7 @@ namespace jc::physics
 	{
 		static constexpr uint32_t FIND_PFX_INSTANCE			= 0x659FF0;
 		static constexpr uint32_t LOAD_PFX_FROM_MEM			= 0x4E4760;
-		static constexpr uint32_t SETUP_RAYCAST_CTX_BASIC	= 0x4CAFF0;
+		static constexpr uint32_t RAY_FILTER_CTOR			= 0x4CAFF0;
 		static constexpr uint32_t RAYCAST					= 0x4E56D0;
 	}
 }
@@ -38,7 +40,7 @@ struct ray
 	}
 };
 
-struct ray_hit_info
+struct ray_hit_info_internal
 {
 	void* object = nullptr;
 	void* rigidbody = nullptr;
@@ -46,6 +48,35 @@ struct ray_hit_info
 	vec3 normal;
 
 	float distance_factor;
+};
+
+struct ray_hit_info
+{
+	void* object = nullptr;
+
+	vec3 hit_position,
+		 normal;
+
+	float distance;
+};
+
+struct ray_filter
+{
+	float early_hit_out_fraction;
+	const class hkpCollidable* root_collidable;
+	vec4 normal;
+	float hit_fraction;
+	int extra_info;
+	int unk[2];
+	hkpShapeKey shape_keys[hkpShapeRayCastOutput_MAX_HIERARCHY_DEPTH];
+	int shape_key_index;
+	int ignore_mask;
+	int force_mask;
+	PfxInstance* ignore_pfx_instance;
+	const class hkpShape* shape;
+	hkpShapeKey _shape_keys[4];
+
+	ray_filter() { jc::this_call<int>(jc::physics::fn::RAY_FILTER_CTOR, this); }
 };
 
 struct hkWorld
@@ -68,7 +99,7 @@ public:
 	bool load_pfx(const std::string& filename);
 	bool load_pfx(const std::string& filename, const std::vector<uint8_t>& data);
 	bool unload_pfx(const std::string& filename);
-	bool raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_info, bool unk1 = false, bool unk2 = true);
+	bool raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_info, bool force_better_heights = false, bool hit_characters = true);
 
 	hkWorld* get_hk_world() const;
 

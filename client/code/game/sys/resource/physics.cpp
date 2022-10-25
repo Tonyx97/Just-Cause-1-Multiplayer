@@ -86,33 +86,36 @@ bool Physics::unload_pfx(const std::string& filename)
 	return true;
 }
 
-bool Physics::raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_info, bool unk1, bool unk2)
+bool Physics::raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_info, bool force_better_heights, bool hit_characters)
 {
-	uint8_t buffer[0x4C];
-
-	jc::this_call<int, void*>(fn::SETUP_RAYCAST_CTX_BASIC, buffer);
-
 	const auto direction = dest - origin;
 
 	ray r(origin, direction);
+	ray_hit_info_internal internal_hit_info;
+	ray_filter filter {};
 
 	const auto length = glm::length(direction);
 
-	const bool res = !!jc::this_call<void*, Physics*, const ray*, float, float, ray_hit_info*, void*, bool, bool>(
+	const bool has_hit = jc::this_call<bool>(
 		fn::RAYCAST,
 		this,
 		&r,
 		0.f,
 		length,
-		&hit_info,
-		buffer,
-		unk1,
-		unk2);
+		&internal_hit_info,
+		&filter,
+		force_better_heights,
+		hit_characters);
 
-	if (res)
-		hit_info.distance_factor *= length;
+	if (has_hit)
+	{
+		hit_info.object = internal_hit_info.object;
+		hit_info.distance = internal_hit_info.distance_factor * length;
+		hit_info.hit_position = origin + r.direction * hit_info.distance;
+		hit_info.normal = internal_hit_info.normal;
+	}
 
-	return res;
+	return has_hit;
 }
 
 hkWorld* Physics::get_hk_world() const

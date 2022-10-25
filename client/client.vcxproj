@@ -307,6 +307,7 @@
     <ClInclude Include="code\game\sys\world\player_global_info.h" />
     <ClInclude Include="code\game\sys\resource\resource_streamer.h" />
     <ClInclude Include="code\game\sys\settings\settings_system.h" />
+    <ClInclude Include="code\havok\defs.h" />
     <ClInclude Include="code\main.h" />
     <ClInclude Include="code\mp\chat\chat.h" />
     <ClInclude Include="code\mp\cmd\cmd.h" />
