@@ -18,6 +18,7 @@
 #include <game/object/character/comps/stance_controller.h>
 #include <game/object/weapon/weapon_belt.h>
 #include <game/object/ui/map_icon.h>
+#include <game/object/game_player/game_player.h>
 
 Player::Player(PlayerClient* pc, NID nid) : client(pc)
 {
@@ -30,6 +31,8 @@ Player::~Player()
 		return;
 
 	destroy_object();
+
+	std::exchange(game_player, nullptr)->destroy();
 }
 
 Character* Player::get_character() const
@@ -52,6 +55,12 @@ void Player::verify_exec(const std::function<void(Character*)>& fn)
 
 	if (const auto character = handle->get_character())
 		fn(character);
+}
+
+void Player::update_game_player()
+{
+	if (game_player)
+		game_player->update();
 }
 
 void Player::dispatch_movement()
@@ -161,6 +170,9 @@ void Player::destroy_object()
 #ifdef JC_CLIENT
 	if (handle) g_factory->destroy_character_handle(std::exchange(handle, nullptr));
 	if (blip)	g_factory->destroy_map_icon(std::exchange(blip, nullptr));
+
+	if (!is_local())
+		game_player->set_character(nullptr);
 #endif
 }
 
@@ -179,6 +191,11 @@ void Player::on_spawn()
 	}
 	else
 	{
+		// create GamePlayer instance if it wasn't created
+
+		if (!game_player)
+			game_player = GamePlayer::CREATE();
+
 		// create and spawn the character if it's not the localplayer
 
 		handle = g_factory->spawn_character("female1");
@@ -190,6 +207,8 @@ void Player::on_spawn()
 		blip = g_factory->create_map_icon("player_blip", get_position());
 
 		check(blip, "Could not create the player's blip");
+
+		game_player->set_character(get_character());
 	}
 #endif
 }

@@ -11,6 +11,7 @@ class PlayerClient;
 class VehicleNetObject;
 class CharacterHandle;
 class UIMapIcon;
+class GamePlayer;
 
 DEFINE_ENUM(PlayerDynamicInfoID, uint8_t)
 {
@@ -109,6 +110,8 @@ private:
 
 	CharacterHandle* handle = nullptr;
 
+	GamePlayer* game_player = nullptr;
+
 	bool local = false,
 		 dispatching_movement = true,
 		 correcting_position = false;
@@ -130,6 +133,7 @@ public:
 	class ObjectBase* get_object_base() const override;
 
 	void verify_exec(const std::function<void(Character*)>& fn);
+	void update_game_player();
 	void dispatch_movement();
 	void correct_position();
 	void update_blip();

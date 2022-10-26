@@ -9,6 +9,8 @@ namespace jc::game_player
 
 	namespace fn
 	{
+		static constexpr uint32_t CTOR									= 0x4C03B0;
+		static constexpr uint32_t UPDATE								= 0x4CB8C0;
 		static constexpr uint32_t RESET_WEAPON_BELT						= 0x4C35E0;
 		static constexpr uint32_t TELEPORT_TO_CLOSEST_SAFEHOUSE			= 0x4D0490;
 		static constexpr uint32_t SET_CURRENT_WEAPON_SCOPE_FOV			= 0x4D0020;
@@ -31,6 +33,11 @@ class GamePlayer
 private:
 public:
 
+	static GamePlayer* CREATE();
+
+	void destroy();
+	void update();
+	void set_character(Character* character);
 	void reset_weapon_belt();
 	void teleport_to_closest_safehouse();
 	void increase_current_weapon_scope_fov(float factor = 0.5f);

@@ -110,7 +110,7 @@ namespace jc::character::hook
 			case 79:
 			case 81:
 			case 82:	// jump out of vehicle (right)
-			case 88: return true;
+						return true;
 			}
 
 			return false;
@@ -169,18 +169,9 @@ namespace jc::character::hook
 				// like falling and stuff like that, which will be controlled by packets sent by remote players
 				// containg such information (summary: to avoid desync)
 
-				switch (id)
-				{
-				case 1:
-				case 14: break;
-				default: log(YELLOW, "[2] {}", id);
-				}
-
 				if (!can_be_ignored())
-				{
 					if (!player->is_dispatching_movement())
 						return;
-				}
 			}
 			else
 			{
