@@ -30,6 +30,7 @@ public:
 	void set_position(const vec3& v);
 	void set_velocity(float v);
 	void set_direction(const vec3& v);
+	void set_pending_kill();
 
 	bool is_alive();
 

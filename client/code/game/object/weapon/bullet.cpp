@@ -12,6 +12,14 @@ namespace jc::bullet::hook
 	{
 		step_hook(bullet, delta);
 
+		// for some reason, the game won't destroy bullets that hit very very far
+		// away so we will just check the velocity here and kill them ourselves
+
+		log(RED, "{:.2f}", glm::length(bullet->get_velocity()));
+
+		if (glm::length(bullet->get_velocity()) <= 5.f)
+			bullet->set_pending_kill();
+
 		// custom bullet drop calculation for bullets
 		// and overall, bullets that are usually affected
 		// by gravity
@@ -70,6 +78,11 @@ void Bullet::set_velocity(float v)
 void Bullet::set_direction(const vec3& v)
 {
 	jc::write(glm::normalize(v), this, jc::bullet::DIRECTION);
+}
+
+void Bullet::set_pending_kill()
+{
+	jc::write(false, this, jc::bullet::IS_ALIVE);
 }
 
 bool Bullet::is_alive()
