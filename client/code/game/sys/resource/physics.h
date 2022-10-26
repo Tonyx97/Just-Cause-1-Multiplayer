@@ -21,6 +21,11 @@ namespace jc::physics
 		static constexpr uint32_t RAY_FILTER_CTOR			= 0x4CAFF0;
 		static constexpr uint32_t RAYCAST					= 0x4E56D0;
 	}
+
+	namespace hook
+	{
+		void enable(bool apply);
+	}
 }
 
 namespace jc::hk_world

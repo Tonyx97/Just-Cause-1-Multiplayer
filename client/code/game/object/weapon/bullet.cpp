@@ -2,6 +2,7 @@
 
 #include "bullet.h"
 
+#include <game/object/character/character.h>
 #include <game/object/vars/weapons.h>
 
 #include <game/sys/resource/physics.h>
@@ -52,9 +53,15 @@ namespace jc::bullet::hook
 		}
 	}
 
+	DEFINE_HOOK_THISCALL(hit_object, 0x64FFB0, void, Bullet* bullet, vec3* hit_pos, ObjectBase** object_ptr)
+	{
+		hit_object_hook(bullet, hit_pos, object_ptr);
+	}
+
 	void enable(bool apply)
 	{
 		step_hook.hook(apply);
+		hit_object_hook.hook(apply);
 	}
 }
 

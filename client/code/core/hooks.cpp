@@ -11,6 +11,8 @@
 #include <game/object/physics/pfx_collision.h>
 #include <game/object/weapon/bullet.h>
 
+#include <game/sys/resource/physics.h>
+
 void jc::hooks::init()
 {
 	check(MH_Initialize() == MH_OK, "Could not initialize MinHook");
@@ -73,4 +75,5 @@ void jc::hooks::hook_game_fns(bool enable)
 	vehicle_seat::hook::enable(enable);
 	vehicle::hook::enable(enable);
 	bullet::hook::enable(enable);
+	physics::hook::enable(enable);
 }

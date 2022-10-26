@@ -31,7 +31,6 @@ namespace jc::game_player::hook
 			update_hook(game_player);
 
 			const auto localplayer = g_net->get_localplayer();
-
 			if (!localplayer)
 				return;
 
@@ -44,71 +43,69 @@ namespace jc::game_player::hook
 
 			localplayer->set_movement_info(cam_yaw, local_gp->get_right(), local_gp->get_forward(), is_looking);
 
-			//log(GREEN, "{} {} {}", jc::read<int>(game_player, 0x130), cam_yaw, is_looking);
+			return;
 		}
-		else
+
+		// remote players
+		
+		const auto player_char = game_player->get_character();
+
+		check(player_char, "Trying to update a GamePlayer with no character");
+
+		if (const auto player = g_net->get_net_object_by_game_object(player_char)->cast<Player>())
 		{
-			const auto player_char = game_player->get_character();
+			const auto& move_info = player->get_movement_info();
 
-			check(player_char, "Trying to update a GamePlayer with no character");
+			game_player->set_right(move_info.right);
+			game_player->set_forward(move_info.forward);
 
-			if (const auto player = g_net->get_net_object_by_game_object(player_char)->cast<Player>())
+			//log(GREEN, "{} {}", move_info.right, move_info.forward);
+
+			jc::write(true, game_player, 0x1D8); // seems to block the key input
+
+			auto state_id = jc::read<int>(game_player, 0x130);
+			auto unk1 = jc::read<int>(game_player, 0x134);
+
+			check(unk1 == 0, "Not implemented");
+
+			if (!jc::this_call<bool>(0x597E30, player_char) || jc::this_call<bool>(0x597E80, player_char))
 			{
-				const auto& move_info = player->get_movement_info();
-
-				game_player->set_right(move_info.right);
-				game_player->set_forward(move_info.forward);
-
-				log(GREEN, "{} {}", move_info.right, move_info.forward);
-
-				jc::write(true, game_player, 0x1D8); // seems to block the key input
-
-				auto state_id = jc::read<int>(game_player, 0x130);
-				auto unk1 = jc::read<int>(game_player, 0x134);
-
-				check(unk1 == 0, "Not implemented");
-
-				if (!jc::this_call<bool>(0x597E30, player_char) || jc::this_call<bool>(0x597E80, player_char))
+				if (jc::this_call<bool>(0x597E80, player_char) || jc::this_call<bool>(0x5A2080, player_char))
 				{
-					if (jc::this_call<bool>(0x597E80, player_char) || jc::this_call<bool>(0x5A2080, player_char))
+					//check(false, "Not implemented");
+				}
+				else
+				{
+					if (jc::this_call(0x597B00, player_char))
 					{
-						//check(false, "Not implemented");
+						check(false, "Not implemented");
 					}
 					else
 					{
-						if (jc::this_call(0x597B00, player_char))
+						if (!player_char->is_in_vehicle() || !jc::this_call<bool>(0x58F340, player_char, 0))
 						{
-							check(false, "Not implemented");
-						}
-						else
-						{
-							if (!player_char->is_in_vehicle() || !jc::this_call<bool>(0x58F340, player_char, 0))
+							if (jc::this_call<bool>(0x596420, player_char) || jc::this_call<bool>(0x596550, player_char))
 							{
-								if (jc::this_call<bool>(0x596420, player_char) || jc::this_call<bool>(0x596550, player_char))
+								jc::this_call(0x4C8470, game_player);
+							}
+							else
+							{
+								if (state_id == 5)
 								{
-									jc::this_call(0x4C8470, game_player);
+									check(false, "Not implemented");
 								}
-								else
+
+								//state_id = 4;
+
+								state_id = 2;
+
+								switch (state_id)
 								{
-									log(RED, "todo");
-
-									if (state_id == 5)
-									{
-										check(false, "Not implemented");
-									}
-
-									//state_id = 4;
-
-									state_id = 2;
-
-									switch (state_id)
-									{
-									case 2:
-									{
-										jc::this_call(0x5A45D0, player_char, move_info.angle, move_info.right, move_info.forward, move_info.aiming);
-										break;
-									}
-									}
+								case 2:
+								{
+									jc::this_call(0x5A45D0, player_char, move_info.angle, move_info.right, move_info.forward, move_info.aiming);
+									break;
+								}
 								}
 							}
 						}

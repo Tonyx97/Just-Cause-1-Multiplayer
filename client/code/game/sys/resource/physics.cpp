@@ -3,12 +3,58 @@
 #include "physics.h"
 #include "resource_streamer.h"
 
+#include <game/object/character/character.h>
 #include <game/object/force_pulse/force_pulse.h>
 #include <game/object/physics/pfx_instance.h>
 
 namespace jc::physics
 {
 	std::unordered_map<std::string, shared_ptr<PfxInstance>> pfxs;
+
+	namespace hook
+	{
+		DEFINE_HOOK_THISCALL(raycast, jc::physics::fn::RAYCAST, bool,
+			Physics* _this,
+			ray* r,
+			float start,
+			float distance,
+			ray_hit_info_internal* hit_info,
+			ray_filter* filter,
+			bool force_better_heights,
+			bool hit_characters)
+		{
+			const bool has_hit = raycast_hook(_this, r, start, distance, hit_info, filter, force_better_heights, hit_characters);
+
+			switch (RET_ADDRESS)
+			{
+			case 0x646A00: // Bullet::DetectCollision
+			{
+				// if a bullet hit a player, make sure the bullet only hits if the player
+				// is alive
+
+				if (const auto object = BITCAST(ObjectBase*, hit_info->object))
+				{
+					if (object->get_typename_hash() == Character::CLASS_ID())
+					{
+						const auto character = object->cast<Character>();
+
+						if (!character->is_alive())
+							return false;
+					}
+				}
+
+				break;
+			}
+			}
+
+			return has_hit;
+		}
+
+		void enable(bool apply)
+		{
+			raycast_hook.hook(apply);
+		}
+	}
 }
 
 using namespace jc::physics;
@@ -96,8 +142,7 @@ bool Physics::raycast(const vec3& origin, const vec3& dest, ray_hit_info& hit_in
 
 	const auto length = glm::length(direction);
 
-	const bool has_hit = jc::this_call<bool>(
-		fn::RAYCAST,
+	const bool has_hit = jc::physics::hook::raycast_hook(
 		this,
 		&r,
 		0.f,
