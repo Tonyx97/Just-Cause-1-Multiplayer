@@ -15,8 +15,6 @@ namespace jc::bullet::hook
 		// for some reason, the game won't destroy bullets that hit very very far
 		// away so we will just check the velocity here and kill them ourselves
 
-		log(RED, "{:.2f}", glm::length(bullet->get_velocity()));
-
 		if (glm::length(bullet->get_velocity()) <= 5.f)
 			bullet->set_pending_kill();
 
