@@ -282,24 +282,6 @@ namespace jc::character::hook
 		return ret;
 	}
 
-	DEFINE_HOOK_THISCALL(dispatch_movement, 0x5A45D0, void, Character* character, float angle, float right, float forward, bool aiming)
-	{
-		if (const auto localplayer = g_net->get_localplayer())
-		{
-			if (const auto local_char = localplayer->get_character(); character == local_char)
-				localplayer->set_movement_info(angle, right, forward, aiming);
-
-			// vehicles use this function to make a character enter a vehicle
-			// so we should let the engine do the thing (we will keep this code
-			// just in case we need it in future with a few patches)
-
-			/*else if (auto player = g_net->get_player_by_character(character))
-				return;*/
-		}
-
-		dispatch_movement_hook(character, angle, right, forward, aiming);
-	}
-
 	DEFINE_HOOK_THISCALL_S(setup_punch, 0x5A4380, Character*, Character* character)
 	{
 		auto res = setup_punch_hook(character);
@@ -511,7 +493,6 @@ namespace jc::character::hook
 		set_arms_stance_hook.hook(apply);
 		can_be_destroyed_hook.hook(apply);
 		is_in_ladder_hook.hook(apply);
-		dispatch_movement_hook.hook(apply);
 		setup_punch_hook.hook(apply);
 		update_mid_hook.hook(apply);
 		fire_weapon_hook.hook(apply);
@@ -787,11 +768,6 @@ void Character::set_roll_clamp_enabled(bool v)
 	jc::write(v ? 0.f : 1.f, this, jc::character::ROLL_CLAMP);
 }
 
-void Character::dispatch_movement(float angle, float right, float forward, bool aiming)
-{
-	jc::character::hook::dispatch_movement_hook(this, angle, right, forward, aiming);
-}
-
 void Character::set_body_stance(uint32_t id)
 {
 	jc::character::hook::set_body_stance_hook(get_body_stance(), id);
@@ -967,9 +943,9 @@ bool Character::is_opening_any_vehicle_door() const
 	return jc::this_call<bool>(jc::character::fn::IS_OPENING_ANY_VEHICLE_DOOR, this);
 }
 
-bool Character::is_in_vehicle_stance() const
+bool Character::is_in_vehicle() const
 {
-	return jc::this_call<bool>(jc::character::fn::IS_IN_VEHICLE_STANCE, this);
+	return jc::this_call<bool>(jc::character::fn::IS_IN_VEHICLE, this);
 }
 
 bool Character::is_climbing_ladder() const

@@ -134,7 +134,6 @@ public:
 
 	void verify_exec(const std::function<void(Character*)>& fn);
 	void update_game_player();
-	void dispatch_movement();
 	void correct_position();
 	void update_blip();
 	void set_multiple_rand_seed(uint16_t v);

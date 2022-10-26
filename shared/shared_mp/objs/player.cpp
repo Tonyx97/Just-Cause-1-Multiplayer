@@ -27,9 +27,17 @@ Player::Player(PlayerClient* pc, NID nid) : client(pc)
 
 Player::~Player()
 {
+	// remove instance from the vehicle
+
+	set_vehicle(VehicleSeat_None, nullptr);
+
+	// if it's local we don't have to do anything else
+
 	if (is_local())
 		return;
-
+	
+	// destroy the player character etc
+	
 	destroy_object();
 
 	std::exchange(game_player, nullptr)->destroy();
@@ -61,21 +69,6 @@ void Player::update_game_player()
 {
 	if (game_player)
 		game_player->update();
-}
-
-void Player::dispatch_movement()
-{
-	if (move_info.right == 0.f && move_info.forward == 0.f)
-		return;
-
-	verify_exec([&](Character* c)
-	{
-		// todojc - improve the bool setting
-
-		set_dispatching_movement(true);
-		c->dispatch_movement(move_info.angle, move_info.right, move_info.forward, move_info.aiming);
-		set_dispatching_movement(false);
-	});
 }
 
 void Player::correct_position()

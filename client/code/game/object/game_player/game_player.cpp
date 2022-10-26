@@ -3,10 +3,12 @@
 #include "game_player.h"
 
 #include "../character/character.h"
+#include "../camera/camera.h"
 
 #include <mp/net.h>
 
 #include <game/sys/world/world.h>
+#include <game/sys/camera/camera_manager.h>
 
 namespace jc::game_player::hook
 {
@@ -22,8 +24,28 @@ namespace jc::game_player::hook
 
 	DEFINE_HOOK_THISCALL_S(update, fn::UPDATE, void, GamePlayer* game_player)
 	{
-		if (g_world->get_local() == game_player)
+		const auto local_gp = g_world->get_local();
+
+		if (local_gp == game_player)
+		{
 			update_hook(game_player);
+
+			const auto localplayer = g_net->get_localplayer();
+
+			if (!localplayer)
+				return;
+
+			const auto camera = jc::this_call(0x582920, jc::read<ptr>(0xD8509C), 1);
+			if (!camera)
+				return;
+
+			const auto cam_yaw = jc::v_call<float>(camera, 4);
+			const bool is_looking = jc::read<int8_t>(game_player, 0x13D) || jc::read<int8_t>(game_player, 0x13E);
+
+			localplayer->set_movement_info(cam_yaw, local_gp->get_right(), local_gp->get_forward(), is_looking);
+
+			//log(GREEN, "{} {} {}", jc::read<int>(game_player, 0x130), cam_yaw, is_looking);
+		}
 		else
 		{
 			const auto player_char = game_player->get_character();
@@ -32,47 +54,67 @@ namespace jc::game_player::hook
 
 			if (const auto player = g_net->get_net_object_by_game_object(player_char)->cast<Player>())
 			{
-				player->dispatch_movement();
+				const auto& move_info = player->get_movement_info();
 
-				//jc::this_call(0x4C7860, game_player);
-			}
+				game_player->set_right(move_info.right);
+				game_player->set_forward(move_info.forward);
 
-			// if it's not climbing a ladder then update
-			// the movement, otherwise update the ladder movement
+				log(GREEN, "{} {}", move_info.right, move_info.forward);
 
-			/*if (!player_char->is_climbing_ladder())
-				player->dispatch_movement();
-			else
-			{
-				// dispatch ladder movement
-				// todojc - clean this shit
+				jc::write(true, game_player, 0x1D8); // seems to block the key input
 
-				//log(GREEN, "{}", forward);
+				auto state_id = jc::read<int>(game_player, 0x130);
+				auto unk1 = jc::read<int>(game_player, 0x134);
 
-				const auto forward = move_info.forward;
+				check(unk1 == 0, "Not implemented");
 
-				if (forward >= 0.f)
+				if (!jc::this_call<bool>(0x597E30, player_char) || jc::this_call<bool>(0x597E80, player_char))
 				{
-					if (forward <= 0.f)
+					if (jc::this_call<bool>(0x597E80, player_char) || jc::this_call<bool>(0x5A2080, player_char))
 					{
-						jc::this_call(0x59A280, player_char, false);
+						//check(false, "Not implemented");
 					}
 					else
 					{
-						jc::this_call(0x59F640, player_char, 1.f);
+						if (jc::this_call(0x597B00, player_char))
+						{
+							check(false, "Not implemented");
+						}
+						else
+						{
+							if (!player_char->is_in_vehicle() || !jc::this_call<bool>(0x58F340, player_char, 0))
+							{
+								if (jc::this_call<bool>(0x596420, player_char) || jc::this_call<bool>(0x596550, player_char))
+								{
+									jc::this_call(0x4C8470, game_player);
+								}
+								else
+								{
+									log(RED, "todo");
 
-						if (jc::this_call<bool>(0x597A60, player_char))
-							jc::this_call(0x59A280, player_char, true);
+									if (state_id == 5)
+									{
+										check(false, "Not implemented");
+									}
+
+									//state_id = 4;
+
+									state_id = 2;
+
+									switch (state_id)
+									{
+									case 2:
+									{
+										jc::this_call(0x5A45D0, player_char, move_info.angle, move_info.right, move_info.forward, move_info.aiming);
+										break;
+									}
+									}
+								}
+							}
+						}
 					}
 				}
-				else
-				{
-					jc::this_call(0x59F6B0, player_char, 1.f);
-
-					if (jc::this_call<bool>(0x597A90, player_char))
-						jc::this_call(0x59A280, player_char, true);
-				}
-			}*/
+			}
 		}
 	}
 

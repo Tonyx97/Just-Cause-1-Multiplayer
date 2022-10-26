@@ -7,6 +7,10 @@ namespace jc::camera
 	static constexpr uint32_t VIEW_MATRIX  = 0x94; // mat4
 	static constexpr uint32_t WIDTH		   = 0x3A4; // float
 	static constexpr uint32_t HEIGHT	   = WIDTH + 0x4; // float
+
+	namespace vt
+	{
+	}
 }
 
 class Camera
@@ -17,6 +21,8 @@ public:
 
 	int get_width() const;
 	int get_height() const;
+
+	float get_yaw() const;
 
 	mat4 get_model_matrix() const;
 	mat4 get_proj_matrix() const;

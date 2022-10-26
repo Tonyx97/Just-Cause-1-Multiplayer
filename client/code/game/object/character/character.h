@@ -60,7 +60,7 @@ namespace jc::character
 		static constexpr uint32_t SET_STANCE_EXIT_VEHICLE_FORCED			= 0x59F450;
 		static constexpr uint32_t SET_VEHICLE_SEAT							= 0x74DDC0;
 		static constexpr uint32_t IS_OPENING_ANY_VEHICLE_DOOR				= 0x5A1F30;
-		static constexpr uint32_t IS_IN_VEHICLE_STANCE						= 0x597B80;
+		static constexpr uint32_t IS_IN_VEHICLE								= 0x597B80;
 		static constexpr uint32_t IS_CLIMBING_LADDER						= 0x597A00;
 		
 	}
@@ -139,7 +139,6 @@ public:
 	void remove_flag(uint32_t mask);
 	void play_idle_stance();
 	void set_roll_clamp_enabled(bool v);
-	void dispatch_movement(float angle, float right, float forward, bool aiming);
 	void set_body_stance(uint32_t id);
 	void set_arms_stance(uint32_t id);
 	void setup_punch();
@@ -161,7 +160,7 @@ public:
 	bool has_flag(uint32_t mask) const;
 	bool is_on_ground() const;
 	bool is_opening_any_vehicle_door() const;
-	bool is_in_vehicle_stance() const;
+	bool is_in_vehicle() const;
 	bool is_climbing_ladder() const;
 
 	int32_t get_grenades_ammo() const;
