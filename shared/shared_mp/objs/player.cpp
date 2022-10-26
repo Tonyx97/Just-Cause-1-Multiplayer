@@ -35,7 +35,7 @@ Player::~Player()
 Character* Player::get_character() const
 {
 	if (is_local())
-		return g_world->get_localplayer_character();
+		return g_world->get_local_character();
 
 	return handle ? handle->get_character() : nullptr;
 }
@@ -63,9 +63,9 @@ void Player::dispatch_movement()
 	{
 		// todojc - improve the bool setting
 
-		dispatching_movement = true;
+		set_dispatching_movement(true);
 		c->dispatch_movement(move_info.angle, move_info.right, move_info.forward, move_info.aiming);
-		dispatching_movement = false;
+		set_dispatching_movement(false);
 	});
 }
 
@@ -470,4 +470,11 @@ void Player::set_vehicle(uint8_t seat_type, VehicleNetObject* v)
 
 	vehicle = v;
 	vehicle_seat = seat_type;
+}
+
+bool Player::is_climbing_ladder()
+{
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { move_info.climbing_ladder = c->is_climbing_ladder(); });
+
+	return move_info.climbing_ladder;
 }

@@ -246,6 +246,8 @@ void jc::mp::logic::on_update_objects()
 			const auto seat_type = player->get_vehicle_seat();
 			const auto char_vehicle = player_char->get_vehicle();
 
+			const auto& move_info = player->get_movement_info();
+
 			// update player's blip
 
 			player->update_blip();
@@ -254,9 +256,42 @@ void jc::mp::logic::on_update_objects()
 
 			player->correct_position();
 
-			// update the player movement
+			// if it's not climbing a ladder then update
+			// the movement, otherwise update the ladder movement
 
-			player->dispatch_movement();
+			if (!player_char->is_climbing_ladder())
+				player->dispatch_movement();
+			else
+			{
+				// dispatch ladder movement
+				// todojc - clean this shit
+
+				//log(GREEN, "{}", forward);
+
+				const auto forward = move_info.forward;
+
+				if (forward >= 0.f)
+				{
+					if (forward <= 0.f)
+					{
+						jc::this_call(0x59A280, player_char, false);
+					}
+					else
+					{
+						jc::this_call(0x59F640, player_char, 1.f);
+
+						if (jc::this_call<bool>(0x597A60, player_char))
+							jc::this_call(0x59A280, player_char, true);
+					}
+				}
+				else
+				{
+					jc::this_call(0x59F6B0, player_char, 1.f);
+
+					if (jc::this_call<bool>(0x597A90, player_char))
+						jc::this_call(0x59A280, player_char, true);
+				}
+			}
 
 			// make sure we put the player inside or outside the vehicle
 			// NOTE: i don't know if this is safe because it was causing

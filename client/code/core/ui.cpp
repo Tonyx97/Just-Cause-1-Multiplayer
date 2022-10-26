@@ -15,7 +15,7 @@
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/spawn_point/agent_spawn_point.h>
 #include <game/object/spawn_point/vehicle_spawn_point.h>
-#include <game/object/localplayer/localplayer.h>
+#include <game/object/game_player/game_player.h>
 #include <game/object/agent_type/npc_variant.h>
 #include <game/object/vars/exported_entities.h>
 #include <game/object/vehicle/vehicle.h>

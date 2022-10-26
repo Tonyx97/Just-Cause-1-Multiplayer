@@ -199,7 +199,7 @@
     <ClCompile Include="code\game\object\character\comps\stance_controller.cpp" />
     <ClCompile Include="code\game\sys\ai\ai_core.cpp" />
     <ClCompile Include="code\game\sys\game\game_control.cpp" />
-    <ClCompile Include="code\game\object\localplayer\localplayer.cpp" />
+    <ClCompile Include="code\game\object\game_player\game_player.cpp" />
     <ClCompile Include="code\game\sys\weapon\ammo_manager.cpp" />
     <ClCompile Include="code\game\sys\camera\camera_manager.cpp" />
     <ClCompile Include="code\game\globals.cpp" />
@@ -317,7 +317,7 @@
     <ClInclude Include="code\game\object\character\comps\stance_controller.h" />
     <ClInclude Include="code\game\sys\ai\ai_core.h" />
     <ClInclude Include="code\game\sys\game\game_control.h" />
-    <ClInclude Include="code\game\object\localplayer\localplayer.h" />
+    <ClInclude Include="code\game\object\game_player\game_player.h" />
     <ClInclude Include="code\game\sys\all.h" />
     <ClInclude Include="code\game\sys\weapon\ammo_manager.h" />
     <ClInclude Include="code\game\sys\camera\camera_manager.h" />

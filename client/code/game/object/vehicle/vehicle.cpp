@@ -40,7 +40,7 @@ namespace jc::vehicle::hook
 
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle)->cast<VehicleNetObject>())
 		{
-			const auto local_char = g_world->get_localplayer_character();
+			const auto local_char = g_world->get_local_character();
 
 			const auto& info = vehicle_net->get_control_info();
 
@@ -85,7 +85,7 @@ namespace jc::vehicle::hook
 
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle)->cast<VehicleNetObject>())
 		{
-			const auto local_char = g_world->get_localplayer_character();
+			const auto local_char = g_world->get_local_character();
 
 			const auto& info = vehicle_net->get_control_info();
 
@@ -244,7 +244,7 @@ void jc::vehicle::dispatch_helicopter_input(int control, float* value)
 {
 	const auto vehicle_net = helicopter_input_dispatching;
 	const auto vehicle = vehicle_net->get_object();
-	const auto local_char = g_world->get_localplayer_character();
+	const auto local_char = g_world->get_local_character();
 
 	auto info = vehicle_net->get_control_info();
 

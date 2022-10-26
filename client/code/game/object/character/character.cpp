@@ -9,6 +9,7 @@
 #include "../weapon/weapon_belt.h"
 #include "../character_handle/character_handle.h"
 #include "../vehicle/vehicle.h"
+#include "../game_player/game_player.h"
 
 #include <game/transform/transform.h>
 #include <game/sys/world/world.h>
@@ -77,6 +78,7 @@ namespace jc::character::hook
 			case 17:
 			case 19:
 			case 24:
+			case 27:
 			case 38:	// exit vehicle (left)
 			case 39:	// open vehicle door (left)
 			case 37:	// close vehicle door from inside (left)
@@ -120,17 +122,19 @@ namespace jc::character::hook
 			{
 			case 25:
 			case 27:
-			case 28:
+			case 28:	// get down the ladder (bottom side)
 			case 29:
 			case 30:
 			case 59:
+			case 69:	// get into ladder (bottom side)
+			case 71:	// get into ladder (top side)
 			case 85: return true;
 			}
 
 			return false;
 		};
 
-		if (const auto local_char = g_world->get_localplayer_character())
+		if (const auto local_char = g_world->get_local_character())
 		{
 			const auto character = stance->get_character();
 
@@ -165,9 +169,18 @@ namespace jc::character::hook
 				// like falling and stuff like that, which will be controlled by packets sent by remote players
 				// containg such information (summary: to avoid desync)
 
+				switch (id)
+				{
+				case 1:
+				case 14: break;
+				default: log(YELLOW, "[2] {}", id);
+				}
+
 				if (!can_be_ignored())
+				{
 					if (!player->is_dispatching_movement())
 						return;
+				}
 			}
 			else
 			{
@@ -195,7 +208,7 @@ namespace jc::character::hook
 
 	DEFINE_HOOK_THISCALL(set_arms_stance, 0x744230, void, ArmsStanceController* stance, uint32_t id)
 	{
-		if (const auto local_char = g_world->get_localplayer_character())
+		if (const auto local_char = g_world->get_local_character())
 		{
 			const auto character = stance->get_character();
 
@@ -247,6 +260,37 @@ namespace jc::character::hook
 			character->get_death_time() > 10.f;
 	}
 
+	DEFINE_HOOK_THISCALL_S(is_in_ladder, 0x597A00, bool, Character* character)
+	{
+		const bool ret = is_in_ladder_hook(character);
+
+		if (ret)
+		{
+			switch (RET_ADDRESS)
+			{
+			case 0x4C7E2B: // localplayer check before Character::DispatchMovement
+			{
+				// update forward while we are climbing a ladder so other players
+				// can visually move our player
+				
+				if (const auto localplayer = g_net->get_localplayer())
+					if (const auto local_char = localplayer->get_character())
+					{
+						const auto& move_info = localplayer->get_movement_info();
+
+						const auto local_game_player = g_world->get_local();
+
+						localplayer->set_movement_info(move_info.angle, move_info.right, local_game_player->get_forward(), move_info.aiming);
+					}
+
+				break;
+			}
+			}
+		}
+
+		return ret;
+	}
+
 	DEFINE_HOOK_THISCALL(dispatch_movement, 0x5A45D0, void, Character* character, float angle, float right, float forward, bool aiming)
 	{
 		if (const auto localplayer = g_net->get_localplayer())
@@ -269,7 +313,7 @@ namespace jc::character::hook
 	{
 		auto res = setup_punch_hook(character);
 
-		if (const auto local_char = g_world->get_localplayer_character())
+		if (const auto local_char = g_world->get_local_character())
 			if (character == local_char && res == character)
 				g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_Punch));
 
@@ -475,6 +519,7 @@ namespace jc::character::hook
 		set_body_stance_hook.hook(apply);
 		set_arms_stance_hook.hook(apply);
 		can_be_destroyed_hook.hook(apply);
+		is_in_ladder_hook.hook(apply);
 		dispatch_movement_hook.hook(apply);
 		setup_punch_hook.hook(apply);
 		update_mid_hook.hook(apply);
@@ -854,7 +899,7 @@ void Character::set_draw_weapon(shared_ptr<Weapon>& weapon)
 	if (const auto weapon_belt = get_weapon_belt())
 	{
 		const auto slot = weapon_belt->get_weapon_slot(weapon);
-		const auto is_local = this == g_world->get_localplayer_character();
+		const auto is_local = this == g_world->get_local_character();
 
 		set_draw_weapon(slot);
 	}
@@ -936,6 +981,11 @@ bool Character::is_in_vehicle_stance() const
 	return jc::this_call<bool>(jc::character::fn::IS_IN_VEHICLE_STANCE, this);
 }
 
+bool Character::is_climbing_ladder() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_CLIMBING_LADDER, this);
+}
+
 int32_t Character::get_grenades_ammo() const
 {
 	return jc::read<int32_t>(this, jc::character::GRENADES_AMMO);
@@ -975,7 +1025,7 @@ CharacterController* Character::get_controller() const
 {
 	CharacterController* controller = nullptr;
 
-	if (this == g_world->get_localplayer_character())
+	if (this == g_world->get_local_character())
 		controller = g_player_global_info->get_local_controller();
 
 	if (!controller)

@@ -77,7 +77,8 @@ public:
 
 		bool sync_angle_next_tick = false,
 			 force_sync = false,
-			 aiming = false;
+			 aiming = false,
+			 climbing_ladder = false;
 	};
 
 	struct SkinInfo
@@ -135,6 +136,7 @@ public:
 	void set_multiple_rand_seed(uint16_t v);
 	void respawn_character();
 	void set_local() { local = true; }
+	void set_dispatching_movement(bool v) { dispatching_movement = v; }
 
 	bool is_dispatching_movement() const;
 	bool is_local() const { return local; }
@@ -194,6 +196,7 @@ public:
 	void set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);
 	void set_vehicle(uint8_t seat_type, VehicleNetObject* v);
 
+	bool is_climbing_ladder();
 	bool is_tag_enabled() const { return tag_enabled; }
 	bool is_alive() const { return get_hp() > 0.f; }
 	bool is_hip_aiming() const { return dyn_info.hip_aim; }

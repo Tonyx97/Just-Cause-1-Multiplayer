@@ -25,7 +25,7 @@
 #include <game/object/interactable/interactable.h>
 #include <game/object/camera/camera.h>
 #include <game/object/ui/map_icon.h>
-#include <game/object/localplayer/localplayer.h>
+#include <game/object/game_player/game_player.h>
 #include <game/object/physics/pfx_collision.h>
 #include <game/object/physics/pfx_instance.h>
 #include <game/sys/all.h>
@@ -134,9 +134,9 @@ void jc::test_units::destroy()
 
 void jc::test_units::test_0()
 {
-	auto localplayer = g_world->get_localplayer();
+	auto localplayer = g_world->get_local();
 
-	auto local_char = g_world->get_localplayer_character();
+	auto local_char = g_world->get_local_character();
 
 	if (!local_char)
 		return;
@@ -307,7 +307,7 @@ void jc::test_units::test_0()
 		}*/
 	}
 
-	static LocalPlayer* npc_lp = nullptr;
+	static GamePlayer* npc_lp = nullptr;
 
 	if (g_key->is_key_pressed(VK_NUMPAD7))
 	{
@@ -361,7 +361,7 @@ void jc::test_units::test_0()
 	{
 		/*if (!npc_lp)
 		{
-			npc_lp = game::malloc<LocalPlayer>(0x53C);
+			npc_lp = game::malloc<GamePlayer>(0x53C);
 
 			jc::this_call(0x4C03B0, npc_lp);
 
@@ -370,7 +370,7 @@ void jc::test_units::test_0()
 		
 		if (!info.handle)
 		{
-			info.handle = g_factory->spawn_character("female1", g_world->get_localplayer_character()->get_position());
+			info.handle = g_factory->spawn_character("female1", g_world->get_local_character()->get_position());
 			info.character = info.handle->get_character();
 
 			log(CYAN, "handle {:x}", ptr(info.handle));

@@ -18,7 +18,7 @@
 #include <mp/net.h>
 
 #include <game/object/character/character.h>
-#include <game/object/localplayer/localplayer.h>
+#include <game/object/game_player/game_player.h>
 #include <game/object/character_handle/character_handle.h>
 
 DEFINE_HOOK_FASTCALL(game_draw_scene, 0x412230, int, void* _this)

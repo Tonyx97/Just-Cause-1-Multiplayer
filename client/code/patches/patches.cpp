@@ -496,7 +496,7 @@ void jc::patches::apply()
 
 	game_freeze_patch.nop(22);
 
-	// apply bone distance culling check path
+	// apply bone distance culling check patch
 
 	bone_culling_distance_patch.jump(0x590D81);
 }

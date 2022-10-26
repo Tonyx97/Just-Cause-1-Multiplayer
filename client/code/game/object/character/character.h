@@ -61,6 +61,7 @@ namespace jc::character
 		static constexpr uint32_t SET_VEHICLE_SEAT							= 0x74DDC0;
 		static constexpr uint32_t IS_OPENING_ANY_VEHICLE_DOOR				= 0x5A1F30;
 		static constexpr uint32_t IS_IN_VEHICLE_STANCE						= 0x597B80;
+		static constexpr uint32_t IS_CLIMBING_LADDER						= 0x597A00;
 		
 	}
 
@@ -161,6 +162,7 @@ public:
 	bool is_on_ground() const;
 	bool is_opening_any_vehicle_door() const;
 	bool is_in_vehicle_stance() const;
+	bool is_climbing_ladder() const;
 
 	int32_t get_grenades_ammo() const;
 

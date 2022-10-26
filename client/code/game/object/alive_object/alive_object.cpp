@@ -15,7 +15,7 @@ namespace jc::alive_object::hook
 	{
 		if (const auto localplayer = g_net->get_localplayer())
 		{
-			if (const auto local_char = g_world->get_localplayer_character())
+			if (const auto local_char = g_world->get_local_character())
 			{
 				// clamp health between reasonable limits
 				

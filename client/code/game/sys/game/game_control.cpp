@@ -10,7 +10,7 @@
 #include <resource_sys/resource_system.h>
 
 #include <game/object/character/character.h>
-#include <game/object/localplayer/localplayer.h>
+#include <game/object/game_player/game_player.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/sys/world/world.h>
 #include <game/sys/core/factory_system.h>

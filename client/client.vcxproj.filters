@@ -120,7 +120,7 @@
     <ClCompile Include="code\patches\patches.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\game\object\localplayer\localplayer.cpp">
+    <ClCompile Include="code\game\object\game_player\game_player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="code\havok\character_proxy.cpp">
@@ -443,7 +443,7 @@
     <ClInclude Include="code\patches\patches.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\game\object\localplayer\localplayer.h">
+    <ClInclude Include="code\game\object\game_player\game_player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\havok\character_proxy.h">

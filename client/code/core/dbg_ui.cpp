@@ -16,7 +16,7 @@
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/spawn_point/agent_spawn_point.h>
 #include <game/object/spawn_point/vehicle_spawn_point.h>
-#include <game/object/localplayer/localplayer.h>
+#include <game/object/game_player/game_player.h>
 #include <game/object/agent_type/npc_variant.h>
 #include <game/object/vars/exported_entities.h>
 #include <game/object/vehicle/vehicle.h>
@@ -352,7 +352,7 @@ void DebugUI::render_admin_panel()
 
 		if (ImGui::Button("Spawn Vehicle##ap.veh.spw"))
 		{
-			TransformTR transform(g_world->get_localplayer_character()->get_position() + vec3(2.f, 1.f, 0.f));
+			TransformTR transform(g_world->get_local_character()->get_position() + vec3(2.f, 1.f, 0.f));
 
 			g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, transform, jc::vars::exported_entities_vehicles.find(veh_to_spawn)->second));
 
@@ -364,7 +364,7 @@ void DebugUI::render_admin_panel()
 
 	if (ImGui::TreeNode("Current Vehicle"))
 	{
-		const auto lp = g_world->get_localplayer_character();
+		const auto lp = g_world->get_local_character();
 
 		if (auto veh = lp->get_vehicle(); veh && veh->get_driver_seat()->get_character() == lp)
 		{
@@ -430,7 +430,7 @@ void DebugUI::overlay_debug()
 	const auto red_color = ImColor(255, 0, 0);
 	const auto green_color = ImColor(0, 255, 0);
 
-	{
+	/*{
 		vec3 from = vec3(1324.702f, 83.395f + 1.f, 2581.040f);
 		vec3 to = vec3(1334.615f, 83.553f + 1.f, 2572.273f);
 
@@ -461,7 +461,7 @@ void DebugUI::overlay_debug()
 
 		if (has_hit)
 			log(RED, "{:x} {:.2f} {:.2f} {:.2f} | {:.2f}", ptr(hit_info.object), hit_info.normal.x, hit_info.normal.y, hit_info.normal.z, hit_info.distance);
-	}
+	}*/
 
 	g_ammo->for_each_bullet([&](int i, Bullet* bullet)
 	{
@@ -476,7 +476,7 @@ void DebugUI::overlay_debug()
 
 	const auto character_list = g_world->get_characters();
 
-	if (const auto local_player_pawn = g_world->get_localplayer_character())
+	if (const auto local_player_pawn = g_world->get_local_character())
 	{
 		for (int i = 0; i < 10; ++i)
 			ImGui::Spacing();

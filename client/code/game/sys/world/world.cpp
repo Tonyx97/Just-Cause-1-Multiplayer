@@ -3,7 +3,7 @@
 
 #include "world.h"
 
-#include <game/object/localplayer/localplayer.h>
+#include <game/object/game_player/game_player.h>
 
 void World::init()
 {
@@ -14,7 +14,7 @@ void World::destroy()
 {
 }
 
-void World::set_localplayer(LocalPlayer* v)
+void World::set_localplayer(GamePlayer* v)
 {
 	jc::write(v, this, jc::world::LOCALPLAYER);
 }
@@ -34,14 +34,14 @@ jc::stl::vector<Character*> World::get_characters() const
 	return jc::read<jc::stl::vector<Character*>>(this, jc::world::CHARACTER_LIST);
 }
 
-LocalPlayer* World::get_localplayer() const
+GamePlayer* World::get_local() const
 {
-	return jc::read<LocalPlayer*>(this, jc::world::LOCALPLAYER);
+	return jc::read<GamePlayer*>(this, jc::world::LOCALPLAYER);
 }
 
-Character* World::get_localplayer_character() const
+Character* World::get_local_character() const
 {
-	if (auto localplayer = get_localplayer())
+	if (auto localplayer = get_local())
 		return localplayer->get_character();
 
 	return nullptr;
