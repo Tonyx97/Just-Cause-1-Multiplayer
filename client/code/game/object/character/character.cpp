@@ -936,6 +936,51 @@ bool Character::is_climbing_ladder() const
 	return jc::this_call<bool>(jc::character::fn::IS_CLIMBING_LADDER, this);
 }
 
+bool Character::is_aiming() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_AIMING, this);
+}
+
+bool Character::is_swimming() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_SWIMMING, this);
+}
+
+bool Character::is_falling() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_FALLING, this);
+}
+
+bool Character::is_sky_diving() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_SKY_DIVING, this);
+}
+
+bool Character::is_paragliding() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_PARAGLIDING, this);
+}
+
+bool Character::is_in_stunt_position() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_IN_STUNT_POSITION, this);
+}
+
+bool Character::is_diving() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_DIVING, this);
+}
+
+bool Character::is_crouching() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_CROUCHING, this);
+}
+
+bool Character::is_in_air_vehicle() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_IN_AIR_VEHICLE, this);
+}
+
 int32_t Character::get_grenades_ammo() const
 {
 	return jc::read<int32_t>(this, jc::character::GRENADES_AMMO);

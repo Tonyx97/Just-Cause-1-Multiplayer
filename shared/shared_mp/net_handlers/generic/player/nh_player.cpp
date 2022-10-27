@@ -32,6 +32,7 @@ PacketResult nh::player::state_sync(const Packet& p)
 #endif
 
 	const auto curr_weapon = p.get_u8();
+	const auto curr_state = p.get_i32();
 	const auto curr_vehicle = p.get_net_object()->cast<VehicleNetObject>();
 	const auto seat_type = curr_vehicle ? p.get_u8() : VehicleSeat_None;
 
@@ -42,6 +43,7 @@ PacketResult nh::player::state_sync(const Packet& p)
 #endif
 
 	player->set_weapon_id(curr_weapon);
+	player->set_state_id(curr_state);
 	player->set_vehicle(seat_type, curr_vehicle);
 
 	return PacketRes_Ok;
@@ -161,6 +163,14 @@ PacketResult nh::player::stance_and_movement(const Packet& p)
 		const auto stance_id = p.get_u32();
 
 		player->set_body_stance_id(stance_id);
+
+		break;
+	}
+	case PlayerStanceID_PlayerMoveState:
+	{
+		const auto state_id = p.get_i32();
+
+		player->set_state_id(state_id);
 
 		break;
 	}

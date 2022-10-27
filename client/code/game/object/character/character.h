@@ -63,7 +63,15 @@ namespace jc::character
 		static constexpr uint32_t IS_IN_VEHICLE								= 0x597B80;
 		static constexpr uint32_t IS_CLIMBING_LADDER						= 0x597A00;
 		static constexpr uint32_t DISPATCH_MOVEMENT							= 0x5A45D0;
-		
+		static constexpr uint32_t IS_AIMING									= 0x596360;
+		static constexpr uint32_t IS_SWIMMING								= 0x596420;
+		static constexpr uint32_t IS_FALLING								= 0x597CC0;
+		static constexpr uint32_t IS_SKY_DIVING								= 0x597E30;
+		static constexpr uint32_t IS_PARAGLIDING							= 0x597ED0;
+		static constexpr uint32_t IS_IN_STUNT_POSITION						= 0x597B00;
+		static constexpr uint32_t IS_DIVING									= 0x596550;
+		static constexpr uint32_t IS_CROUCHING								= 0x596050;
+		static constexpr uint32_t IS_IN_AIR_VEHICLE							= 0x5992B0;
 	}
 
 	namespace g
@@ -164,6 +172,15 @@ public:
 	bool is_opening_any_vehicle_door() const;
 	bool is_in_vehicle() const;
 	bool is_climbing_ladder() const;
+	bool is_aiming() const;
+	bool is_swimming() const;
+	bool is_falling() const;
+	bool is_sky_diving() const;
+	bool is_paragliding() const;
+	bool is_in_stunt_position() const;
+	bool is_diving() const;
+	bool is_crouching() const;
+	bool is_in_air_vehicle() const;
 
 	int32_t get_grenades_ammo() const;
 

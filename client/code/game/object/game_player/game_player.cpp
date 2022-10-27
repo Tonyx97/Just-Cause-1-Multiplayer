@@ -47,18 +47,14 @@ namespace jc::game_player::hook
 		{
 			update_hook(game_player);
 
-			const auto localplayer = g_net->get_localplayer();
-			if (!localplayer)
-				return;
+			if (const auto localplayer = g_net->get_localplayer())
+				if (const auto camera = jc::this_call(0x582920, jc::read<ptr>(0xD8509C), 1))
+				{
+					const auto cam_yaw = jc::v_call<float>(camera, 4);
+					const bool is_looking = jc::read<int8_t>(game_player, 0x13D) || jc::read<int8_t>(game_player, 0x13E);
 
-			const auto camera = jc::this_call(0x582920, jc::read<ptr>(0xD8509C), 1);
-			if (!camera)
-				return;
-
-			const auto cam_yaw = jc::v_call<float>(camera, 4);
-			const bool is_looking = jc::read<int8_t>(game_player, 0x13D) || jc::read<int8_t>(game_player, 0x13E);
-
-			localplayer->set_movement_info(cam_yaw, local_gp->get_right(), local_gp->get_forward(), is_looking);
+					localplayer->set_movement_info(cam_yaw, local_gp->get_right(), local_gp->get_forward(), is_looking);
+				}
 
 			return;
 		}
@@ -73,20 +69,11 @@ namespace jc::game_player::hook
 		{
 			const auto& move_info = player->get_movement_info();
 
-			// update the variables for the remote player's GamePlayer instance
-			
-			game_player->set_right(move_info.right);
-			game_player->set_forward(move_info.forward);
-
-			//log(GREEN, "{} {}", move_info.right, move_info.forward);
-
-			auto state_id = jc::read<int>(game_player, 0x130);
-
 			check(jc::read<int>(game_player, 0x134) == 0, "Not implemented 0");
 
 			jc::write(true, game_player, 0x1D8); // seems to block the key input
 
-			if (!jc::this_call<bool>(0x597E30, player_char) || jc::this_call<bool>(0x597E80, player_char))
+			if (!player_char->is_sky_diving() || jc::this_call<bool>(0x597E80, player_char))
 			{
 				if (jc::this_call<bool>(0x597E80, player_char) || jc::this_call<bool>(0x5A2080, player_char))
 				{
@@ -94,7 +81,7 @@ namespace jc::game_player::hook
 				}
 				else
 				{
-					if (jc::this_call(0x597B00, player_char))
+					if (player_char->is_in_stunt_position())
 					{
 						check(false, "Not implemented 2");
 					}
@@ -102,22 +89,18 @@ namespace jc::game_player::hook
 					{
 						if (!player_char->is_in_vehicle() || !jc::this_call<bool>(0x58F340, player_char, 0))
 						{
-							if (jc::this_call<bool>(0x596420, player_char) || jc::this_call<bool>(0x596550, player_char))
-							{
-								jc::this_call(0x4C8470, game_player);
-							}
+							if (player_char->is_swimming() || player_char->is_diving())
+								game_player->dispatch_swimming();
 							else
 							{
-								if (state_id == 5)
+								const auto state = game_player->get_state_id();
+
+								if (state == 5)
 								{
 									check(false, "Not implemented 3");
 								}
 
-								//state_id = 4;
-
-								state_id = 2;
-
-								switch (state_id)
+								switch (state)
 								{
 								case 2:
 								{
@@ -204,6 +187,11 @@ void GamePlayer::decrease_current_weapon_scope_fov(float factor)
 	jc::this_call(jc::game_player::fn::DECREASE_CURRENT_WEAPON_SCOPE_FOV, this, factor);
 }
 
+void GamePlayer::set_state(int32_t v)
+{
+	jc::write(v, this, jc::game_player::STATE);
+}
+
 void GamePlayer::set_right(float v)
 {
 	jc::write(v, this, jc::game_player::RIGHT);
@@ -212,6 +200,16 @@ void GamePlayer::set_right(float v)
 void GamePlayer::set_forward(float v)
 {
 	jc::write(v, this, jc::game_player::FORWARD);
+}
+
+void GamePlayer::dispatch_swimming()
+{
+	jc::this_call(jc::game_player::fn::DISPATCH_SWIMMING, this);
+}
+
+int32_t GamePlayer::get_state_id() const
+{
+	return jc::read<int32_t>(this, jc::game_player::STATE);
 }
 
 float GamePlayer::get_right() const

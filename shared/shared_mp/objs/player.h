@@ -24,6 +24,7 @@ DEFINE_ENUM(PlayerDynamicInfoID, uint8_t)
 DEFINE_ENUM(PlayerStanceID, uint8_t)
 {
 	PlayerStanceID_BodyStance,
+	PlayerStanceID_PlayerMoveState,
 	PlayerStanceID_Movement,
 	PlayerStanceID_MovementAngle,
 	PlayerStanceID_Punch,
@@ -57,7 +58,8 @@ public:
 		int32_t skin = 0,
 				walking_set = 0;
 
-		int32_t	body_stance_id = 0,
+		int32_t	state_id = 0,
+				body_stance_id = 0,
 				arms_stance_id = 0;
 
 		int32_t weapon_id = 0,
@@ -187,6 +189,7 @@ public:
 	void set_velocity(const vec3& v);
 	void set_movement_angle(float angle, bool send_angle_only_next_tick);
 	void set_movement_info(float angle, float right, float forward, bool aiming);
+	void set_state_id(int32_t id);
 	void set_body_stance_id(uint32_t id);
 	void set_arms_stance_id(uint32_t id);
 	void set_head_rotation(const vec3& v, float interpolation);
@@ -210,6 +213,7 @@ public:
 
 	uint8_t get_vehicle_seat() const { return vehicle_seat; }
 
+	int32_t get_state_id() const { return dyn_info.state_id; }
 	int32_t get_firing_weapon_id() const { return dyn_info.firing_weapon_id; }
 	int32_t get_weapon_id() const { return dyn_info.weapon_id; }
 

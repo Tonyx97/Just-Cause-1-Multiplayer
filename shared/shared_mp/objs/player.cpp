@@ -181,6 +181,9 @@ void Player::on_spawn()
 		character->set_skin(0, false);
 		character->set_hp(500.f);
 		character->set_max_hp(500.f);
+
+		if (!game_player)
+			game_player = g_world->get_local();
 	}
 	else
 	{
@@ -373,6 +376,19 @@ void Player::set_movement_info(float angle, float right, float forward, bool aim
 	move_info.right = right;
 	move_info.forward = forward;
 	move_info.aiming = aiming;
+
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c)
+	{
+		game_player->set_right(right);
+		game_player->set_forward(forward);
+	});
+}
+
+void Player::set_state_id(int32_t id)
+{
+	dyn_info.state_id = id;
+
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character*) { game_player->set_state(id); });
 }
 
 void Player::set_body_stance_id(uint32_t id)

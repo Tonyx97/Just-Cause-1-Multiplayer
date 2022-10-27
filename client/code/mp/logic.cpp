@@ -8,6 +8,7 @@
 #include <game/sys/world/world.h>
 #include <game/sys/time/time_system.h>
 
+#include <game/object/game_player/game_player.h>
 #include <game/object/character/character.h>
 #include <game/object/character/comps/stance_controller.h>
 #include <game/object/weapon/weapon.h>
@@ -33,9 +34,17 @@ void jc::mp::logic::on_tick()
 	static TimerRaw head_rotation_timer(enet::TICKS_MS * 25);
 	static TimerRaw aiming_timer(enet::TICKS_MS * 5);
 
+	const auto game_player = g_world->get_local();
+
 	if (auto localplayer = g_net->get_localplayer())
-		if (const auto local_char = localplayer->get_character())
+		if (const auto local_char = localplayer->get_character(); local_char && game_player)
 		{
+			// GamePlayer
+
+			const auto current_state = game_player->get_state_id();
+
+			// Character & Player
+
 			const auto skeleton = local_char->get_skeleton();
 			const auto weapon_belt = local_char->get_weapon_belt();
 			const auto current_weapon = weapon_belt->get_current_weapon();
@@ -96,7 +105,7 @@ void jc::mp::logic::on_tick()
 				const auto vehicle = vehicle_seat ? vehicle_seat->get_vehicle() : nullptr;
 				const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle);
 
-				Packet p(PlayerPID_StateSync, ChannelID_Generic, current_weapon_id, vehicle_net);
+				Packet p(PlayerPID_StateSync, ChannelID_Generic, current_weapon_id, current_state, vehicle_net);
 
 				if (vehicle_net)
 					p.add(vehicle_seat->get_type());
@@ -182,13 +191,14 @@ void jc::mp::logic::on_tick()
 				localplayer->set_weapon_id(current_weapon_id);
 			}
 
-			/*static int last_id = 0;
+			// state id
 
-			if (last_id != local_char->get_body_stance()->get_movement_id())
+			if (current_state != game_player->get_state_id())
 			{
-				last_id = local_char->get_body_stance()->get_movement_id();
-				log(GREEN, "current stance: {}", last_id);
-			}*/
+				g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_PlayerMoveState, current_state));
+
+				localplayer->set_state_id(current_state);
+			}
 
 			// aiming
 

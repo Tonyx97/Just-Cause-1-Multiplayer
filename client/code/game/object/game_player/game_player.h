@@ -4,9 +4,10 @@ namespace jc::game_player
 {
 	static constexpr uint32_t CHARACTER = 0x1C; // Character*
 	
-	static constexpr uint32_t PARACHUTE		= 0x24; // Parachute
-	static constexpr uint32_t RIGHT			= 0xF8; // float
-	static constexpr uint32_t FORWARD		= 0xFC; // float
+	static constexpr uint32_t PARACHUTE		= 0x24;		// Parachute
+	static constexpr uint32_t RIGHT			= 0xF8;		// float
+	static constexpr uint32_t FORWARD		= 0xFC;		// float
+	static constexpr uint32_t STATE			= 0x130;	// int
 
 	namespace fn
 	{
@@ -20,6 +21,7 @@ namespace jc::game_player
 		static constexpr uint32_t SWITCH_TO_PREVIOUS_WEAPON				= 0x4CDD80;
 		static constexpr uint32_t SWITCH_TO_NEXT_WEAPON					= 0x4CDDF0;
 		static constexpr uint32_t LOAD_PARACHUTE_MODEL					= 0x4C3510;
+		static constexpr uint32_t DISPATCH_SWIMMING						= 0x4C8470;
 	}
 
 	namespace hook
@@ -48,8 +50,12 @@ public:
 	void teleport_to_closest_safehouse();
 	void increase_current_weapon_scope_fov(float factor = 0.5f);
 	void decrease_current_weapon_scope_fov(float factor = 0.5f);
+	void set_state(int32_t v);
 	void set_right(float v);
 	void set_forward(float v);
+	void dispatch_swimming();
+
+	int32_t get_state_id() const;
 
 	float get_right() const;
 	float get_forward() const;
