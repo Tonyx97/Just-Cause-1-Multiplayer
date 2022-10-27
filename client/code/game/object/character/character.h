@@ -62,6 +62,7 @@ namespace jc::character
 		static constexpr uint32_t IS_OPENING_ANY_VEHICLE_DOOR				= 0x5A1F30;
 		static constexpr uint32_t IS_IN_VEHICLE								= 0x597B80;
 		static constexpr uint32_t IS_CLIMBING_LADDER						= 0x597A00;
+		static constexpr uint32_t DISPATCH_MOVEMENT							= 0x5A45D0;
 		
 	}
 
@@ -156,6 +157,7 @@ public:
 	void set_stance_enter_vehicle_left(bool skip_anim);
 	void set_stance_enter_vehicle_no_anim();
 	void set_stance_exit_vehicle_forced();
+	void dispatch_movement(float angle, float right, float forward, bool looking);
 
 	bool has_flag(uint32_t mask) const;
 	bool is_on_ground() const;

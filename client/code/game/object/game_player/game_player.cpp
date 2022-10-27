@@ -121,7 +121,7 @@ namespace jc::game_player::hook
 								{
 								case 2:
 								{
-									jc::this_call(0x5A45D0, player_char, move_info.angle, move_info.right, move_info.forward, move_info.aiming);
+									player_char->dispatch_movement(move_info.angle, move_info.right, move_info.forward, move_info.aiming);
 									break;
 								}
 								}

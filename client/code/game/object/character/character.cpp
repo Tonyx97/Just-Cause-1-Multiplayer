@@ -906,6 +906,11 @@ void Character::set_stance_exit_vehicle_forced()
 	jc::this_call(jc::character::fn::SET_STANCE_EXIT_VEHICLE_FORCED, this);
 }
 
+void Character::dispatch_movement(float angle, float right, float forward, bool looking)
+{
+	jc::this_call(jc::character::fn::DISPATCH_MOVEMENT, this, angle, right, forward, looking);
+}
+
 bool Character::has_flag(uint32_t mask) const
 {
 	return get_flags() & mask;
