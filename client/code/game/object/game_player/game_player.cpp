@@ -4,6 +4,7 @@
 
 #include "../character/character.h"
 #include "../camera/camera.h"
+#include "../parachute/parachute.h"
 
 #include <mp/net.h>
 
@@ -22,10 +23,26 @@ namespace jc::game_player::hook
 		player->decrease_current_weapon_scope_fov(0.3f);
 	}
 
+	DEFINE_INLINE_HOOK_IMPL(close_parachute, 0x4C67D8)
+	{
+		if (const auto character = ihp->read_ebp<Character*>(0x334))
+			if (const auto local_char = g_world->get_local_character(); local_char && local_char == character)
+				g_net->send(Packet(PlayerPID_ParachuteControl, ChannelID_Generic, 0ui8));
+	}
+
+	DEFINE_INLINE_HOOK_IMPL(open_parachute, 0x603711)
+	{
+		if (const auto character = ihp->read_ebp<Character*>(0x94))
+			if (const auto local_char = g_world->get_local_character(); local_char && local_char == character)
+				g_net->send(Packet(PlayerPID_ParachuteControl, ChannelID_Generic, 1ui8));
+	}
+	
 	DEFINE_HOOK_THISCALL_S(update, fn::UPDATE, void, GamePlayer* game_player)
 	{
 		const auto local_gp = g_world->get_local();
 
+		// local player
+		
 		if (local_gp == game_player)
 		{
 			update_hook(game_player);
@@ -52,33 +69,34 @@ namespace jc::game_player::hook
 
 		check(player_char, "Trying to update a GamePlayer with no character");
 
-		if (const auto player = g_net->get_net_object_by_game_object(player_char)->cast<Player>())
+		if (const auto player = g_net->get_player_by_character(player_char))
 		{
 			const auto& move_info = player->get_movement_info();
 
+			// update the variables for the remote player's GamePlayer instance
+			
 			game_player->set_right(move_info.right);
 			game_player->set_forward(move_info.forward);
 
 			//log(GREEN, "{} {}", move_info.right, move_info.forward);
 
-			jc::write(true, game_player, 0x1D8); // seems to block the key input
-
 			auto state_id = jc::read<int>(game_player, 0x130);
-			auto unk1 = jc::read<int>(game_player, 0x134);
 
-			check(unk1 == 0, "Not implemented");
+			check(jc::read<int>(game_player, 0x134) == 0, "Not implemented 0");
+
+			jc::write(true, game_player, 0x1D8); // seems to block the key input
 
 			if (!jc::this_call<bool>(0x597E30, player_char) || jc::this_call<bool>(0x597E80, player_char))
 			{
 				if (jc::this_call<bool>(0x597E80, player_char) || jc::this_call<bool>(0x5A2080, player_char))
 				{
-					//check(false, "Not implemented");
+					//check(false, "Not implemented 1");
 				}
 				else
 				{
 					if (jc::this_call(0x597B00, player_char))
 					{
-						check(false, "Not implemented");
+						check(false, "Not implemented 2");
 					}
 					else
 					{
@@ -92,7 +110,7 @@ namespace jc::game_player::hook
 							{
 								if (state_id == 5)
 								{
-									check(false, "Not implemented");
+									check(false, "Not implemented 3");
 								}
 
 								//state_id = 4;
@@ -112,6 +130,8 @@ namespace jc::game_player::hook
 					}
 				}
 			}
+
+			jc::this_call(0x4CB710, game_player);
 		}
 	}
 
@@ -119,6 +139,8 @@ namespace jc::game_player::hook
 	{
 		switch_to_previous_weapon_hook.hook(apply);
 		switch_to_next_weapon_hook.hook(apply);
+		close_parachute_hook.hook(apply);
+		open_parachute_hook.hook(apply);
 		update_hook.hook(apply);
 	}
 }
@@ -129,12 +151,25 @@ GamePlayer* GamePlayer::CREATE()
 
 	jc::this_call(jc::game_player::fn::CTOR, player);
 
+	// load the parachute model for this GamePlayer
+	
+	if (player)
+		player->load_parachute_model();
+
 	return player;
 }
 
 void GamePlayer::destroy()
 {
 	jc::v_call(this, 0, 1);
+}
+
+void GamePlayer::load_parachute_model()
+{
+	// this will only work if the instance has a linked character
+	
+	if (const auto parachute = get_parachute())
+		parachute->load_model();
 }
 
 void GamePlayer::update()
@@ -192,4 +227,9 @@ float GamePlayer::get_forward() const
 Character* GamePlayer::get_character() const
 {
 	return jc::read<Character*>(this, jc::game_player::CHARACTER);
+}
+
+Parachute* GamePlayer::get_parachute() const
+{
+	return REF(Parachute*, this, jc::game_player::PARACHUTE);
 }

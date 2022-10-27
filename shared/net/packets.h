@@ -49,6 +49,7 @@ DEFINE_ENUM(PlayerPacketID, PacketID)
 	PlayerPID_Respawn,								// respawns a player
 	PlayerPID_DynamicInfo,							// syncs dynamic info such as position, velocity etc
 	PlayerPID_StanceAndMovement,					// syncs stance and movement controls
+	PlayerPID_ParachuteControl,						// syncs parachute open/close
 	PlayerPID_SetWeapon,							// sync weapon switching
 	PlayerPID_SetVehicle,							// sync player's vehicles assigns
 	PlayerPID_EnterExitVehicle,						// sync vehicle entering and exiting

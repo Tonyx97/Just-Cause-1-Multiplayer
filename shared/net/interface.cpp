@@ -158,6 +158,7 @@ void enet::setup_channels()
 		case PlayerPID_Respawn:					return nh::player::respawn(p);
 		case PlayerPID_DynamicInfo:				return nh::player::dynamic_info(p);
 		case PlayerPID_StanceAndMovement:		return nh::player::stance_and_movement(p);
+		case PlayerPID_ParachuteControl:		return nh::player::parachute_control(p);
 		case PlayerPID_SetWeapon:				return nh::player::set_weapon(p);
 		case PlayerPID_SetVehicle:				return nh::player::set_vehicle(p);
 		case PlayerPID_EnterExitVehicle:		return nh::player::enter_exit_vehicle(p);

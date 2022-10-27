@@ -4,8 +4,9 @@ namespace jc::game_player
 {
 	static constexpr uint32_t CHARACTER = 0x1C; // Character*
 	
-	static constexpr uint32_t RIGHT		= 0xF8; // float
-	static constexpr uint32_t FORWARD	= 0xFC; // float
+	static constexpr uint32_t PARACHUTE		= 0x24; // Parachute
+	static constexpr uint32_t RIGHT			= 0xF8; // float
+	static constexpr uint32_t FORWARD		= 0xFC; // float
 
 	namespace fn
 	{
@@ -18,6 +19,7 @@ namespace jc::game_player
 		static constexpr uint32_t DECREASE_CURRENT_WEAPON_SCOPE_FOV		= 0x4CFFE0;
 		static constexpr uint32_t SWITCH_TO_PREVIOUS_WEAPON				= 0x4CDD80;
 		static constexpr uint32_t SWITCH_TO_NEXT_WEAPON					= 0x4CDDF0;
+		static constexpr uint32_t LOAD_PARACHUTE_MODEL					= 0x4C3510;
 	}
 
 	namespace hook
@@ -27,10 +29,14 @@ namespace jc::game_player
 }
 
 class Character;
+class Parachute;
 
 class GamePlayer
 {
 private:
+
+	void load_parachute_model();
+
 public:
 
 	static GamePlayer* CREATE();
@@ -49,4 +55,5 @@ public:
 	float get_forward() const;
 
 	Character* get_character() const;
+	Parachute* get_parachute() const;
 };

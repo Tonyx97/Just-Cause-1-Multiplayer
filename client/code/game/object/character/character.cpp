@@ -78,7 +78,7 @@ namespace jc::character::hook
 			case 17:
 			case 19:
 			case 24:
-			case 27:
+			case 27:	// short fall
 			case 38:	// exit vehicle (left)
 			case 39:	// open vehicle door (left)
 			case 37:	// close vehicle door from inside (left)
@@ -110,7 +110,8 @@ namespace jc::character::hook
 			case 79:
 			case 81:
 			case 82:	// jump out of vehicle (right)
-						return true;
+			case 88:	// hit by physical force
+				return true;
 			}
 
 			return false;
@@ -120,12 +121,12 @@ namespace jc::character::hook
 		{
 			switch (id)
 			{
-			case 25:
-			case 27:
+			case 21:	// jump
+			case 25:	// sky dive
 			case 28:	// get down the ladder (bottom side)
 			case 29:
 			case 30:
-			case 59:
+			case 59:	// open parachute
 			case 69:	// get into ladder (bottom side)
 			case 71:	// get into ladder (top side)
 			case 85: return true;
@@ -136,43 +137,19 @@ namespace jc::character::hook
 
 		if (const auto local_char = g_world->get_local_character())
 		{
-			const auto character = stance->get_character();
-
-			if (character == local_char)
+			if (const auto character = stance->get_character(); character == local_char)
 			{
-				switch (RET_ADDRESS)
+				if (!can_be_ignored())
 				{
-				case 0x59F44C: // check jump
-				{
-					g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_Jump));
-					break;
-				}
-				default:
-				{
-					// if the engine is not setting the stance from a known return address
-					// then we need to filter by stance id
-
-					if (!can_be_ignored())
-					{
-						if (can_be_synced())
-							g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_BodyStance, id));
-						else log(GREEN, "[DBG] Localplayer body stance set to: {} from {:x}", id, RET_ADDRESS);
-					}
-				}
+					if (can_be_synced())
+						g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_BodyStance, id));
+					else log(GREEN, "[DBG] Localplayer body stance set to: {} from {:x}", id, RET_ADDRESS);
 				}
 			}
 			else if (const auto player = g_net->get_player_by_character(character))
 			{
-				// if we are trying to set the stance from a top-hooked function such as dispatch_movement
-				// then we want to make sure this player's stance can be changed from this local player,
-				// this is useful because we want to ignore all stances that the game sets to remote players
-				// like falling and stuff like that, which will be controlled by packets sent by remote players
-				// containg such information (summary: to avoid desync)
-
-				if (!can_be_ignored())
-					if (!player->is_dispatching_movement())
-						return;
 			}
+#ifdef JC_DBG
 			else
 			{
 				switch (id)
@@ -192,6 +169,7 @@ namespace jc::character::hook
 					log(GREEN, "[DBG] Character body stance set to: {} from {:x}", id, RET_ADDRESS);
 				}
 			}
+#endif
 		}
 
 		set_body_stance_hook(stance, id);

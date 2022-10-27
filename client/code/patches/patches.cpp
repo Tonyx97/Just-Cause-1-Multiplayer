@@ -107,6 +107,11 @@ namespace jc::patches
 	// removes existing character's bone distance culling check
 	// 
 	patch bone_culling_distance_patch(0x590B96);
+
+	// patches the sky diving for characters so remote players can use this animation
+	// when falling like the player
+
+	patch sky_diving_character_patch(0x592D66);
 }
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
@@ -499,10 +504,20 @@ void jc::patches::apply()
 	// apply bone distance culling check patch
 
 	bone_culling_distance_patch.jump(0x590D81);
+
+	// patches the sky diving for characters so remote players can use this animation
+	// when falling like the player
+
+	sky_diving_character_patch._do(
+	{
+		0xBA, 0x00, 0x00, 0x00, 0x01,
+		0x90, 0x90, 0x90
+	});
 }
 
 void jc::patches::undo()
 {
+	sky_diving_character_patch._undo();
 	bone_culling_distance_patch._undo();
 	game_freeze_patch._undo();
 	heartbeat_sound_patch._undo();

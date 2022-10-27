@@ -23,11 +23,10 @@ DEFINE_ENUM(PlayerDynamicInfoID, uint8_t)
 
 DEFINE_ENUM(PlayerStanceID, uint8_t)
 {
+	PlayerStanceID_BodyStance,
 	PlayerStanceID_Movement,
 	PlayerStanceID_MovementAngle,
-	PlayerStanceID_Jump,
 	PlayerStanceID_Punch,
-	PlayerStanceID_BodyStance,
 	PlayerStanceID_Aiming,
 	PlayerStanceID_Fire,
 	PlayerStanceID_FireMultiple,
@@ -147,6 +146,8 @@ public:
 	uint16_t should_use_multiple_rand_seed() const { return dyn_info.use_multiple_bullet; }
 
 	CharacterHandle* get_character_handle() const;
+
+	GamePlayer* get_game_player() const { return game_player; }
 
 	UIMapIcon* get_blip() const { return blip; }
 

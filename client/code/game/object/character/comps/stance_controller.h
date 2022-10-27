@@ -4,7 +4,8 @@
 
 namespace jc::stance_controller
 {
-	static constexpr uint32_t MOVEMENT_ID = 0x24;
+	static constexpr uint32_t DISTANCE_TO_GROUND	= 0x14;
+	static constexpr uint32_t MOVEMENT_ID			= 0x24;
 
 	namespace fn
 	{
@@ -21,7 +22,11 @@ class StanceController
 private:
 public:
 
+	static float MAX_DISTANCE_PARACHUTE_FALL() { return jc::read<float>(0xAECAF0); }
+
 	int get_movement_id() const;
+
+	float get_distance_to_ground() const;
 };
 
 class BodyStanceController : public StanceController

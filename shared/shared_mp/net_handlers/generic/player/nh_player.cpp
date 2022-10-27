@@ -9,6 +9,8 @@
 // debug
 
 #ifdef JC_CLIENT
+#include <game/object/game_player/game_player.h>
+#include <game/object/parachute/parachute.h>
 #include <game/object/character/character.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/character/comps/stance_controller.h>
@@ -154,6 +156,14 @@ PacketResult nh::player::stance_and_movement(const Packet& p)
 
 	switch (type)
 	{
+	case PlayerStanceID_BodyStance:
+	{
+		const auto stance_id = p.get_u32();
+
+		player->set_body_stance_id(stance_id);
+
+		break;
+	}
 	case PlayerStanceID_Movement:
 	{
 		const auto angle = p.get_i16();
@@ -173,23 +183,9 @@ PacketResult nh::player::stance_and_movement(const Packet& p)
 
 		break;
 	}
-	case PlayerStanceID_Jump:
-	{
-		player->set_body_stance_id(BodyStance_Jump);
-
-		break;
-	}
 	case PlayerStanceID_Punch:
 	{
 		player->do_punch();
-
-		break;
-	}
-	case PlayerStanceID_BodyStance:
-	{
-		const auto stance_id = p.get_u32();
-
-		player->set_body_stance_id(stance_id);
 
 		break;
 	}
@@ -251,6 +247,56 @@ PacketResult nh::player::stance_and_movement(const Packet& p)
 		break;
 	}
 	}
+
+#ifdef JC_SERVER
+	p.add_beginning(player);
+
+	g_net->send_broadcast(pc, p);
+#endif
+
+	return PacketRes_Ok;
+}
+
+PacketResult nh::player::parachute_control(const Packet& p)
+{
+#ifdef JC_CLIENT
+	const auto player = p.get_net_object<Player>();
+
+	if (!player)
+		return PacketRes_BadArgs;
+#else
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+#endif
+
+#ifdef JC_CLIENT
+	if (const auto player_char = player->get_character())
+		if (const auto parachute = player->get_game_player()->get_parachute())
+			switch (const auto control_type = p.get_u8())
+			{
+			case 0:	// close
+			{
+				if (player_char->get_body_stance()->get_distance_to_ground() <= StanceController::MAX_DISTANCE_PARACHUTE_FALL() * 2.f)
+					player->set_body_stance_id(27);
+				else player->set_body_stance_id(25);
+
+				if (!parachute->is_closed())
+					parachute->set_closed(true);
+
+				break;
+			}
+			case 1: // open
+			{
+				player->set_body_stance_id(27);
+				player->set_body_stance_id(25);
+				player->set_body_stance_id(59);
+
+				parachute->set_closed(false);
+
+				break;
+			}
+			}
+#endif
 
 #ifdef JC_SERVER
 	p.add_beginning(player);

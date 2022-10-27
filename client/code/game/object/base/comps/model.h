@@ -14,6 +14,7 @@ class ModelInstance
 {
 private:
 public:
+
 	void set_flags(uint32_t v);
 	void add_flag(uint32_t v);
 	void remove_flag(uint32_t v);
@@ -24,5 +25,6 @@ public:
 class Model
 {
 public:
+
 	ModelInstance* get_instance() const;
 };
