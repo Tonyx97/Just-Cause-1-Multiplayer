@@ -174,6 +174,14 @@ PacketResult nh::player::stance_and_movement(const Packet& p)
 
 		break;
 	}
+	case PlayerStanceID_Crouch:
+	{
+		const auto enabled = p.get_bool();
+
+		player->crouch(enabled);
+
+		break;
+	}
 	case PlayerStanceID_Movement:
 	{
 		const auto angle = p.get_i16();

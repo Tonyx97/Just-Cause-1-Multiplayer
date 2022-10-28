@@ -10,6 +10,7 @@
 #include "../character_handle/character_handle.h"
 #include "../vehicle/vehicle.h"
 #include "../game_player/game_player.h"
+#include "../physics/pfx_character.h"
 
 #include <game/transform/transform.h>
 #include <game/sys/world/world.h>
@@ -77,6 +78,8 @@ namespace jc::character::hook
 			case 16:
 			case 17:
 			case 19:
+			case 22:
+			case 23:
 			case 24:
 			case 27:	// short fall
 			case 38:	// exit vehicle (left)
@@ -110,6 +113,7 @@ namespace jc::character::hook
 			case 79:
 			case 81:
 			case 82:	// jump out of vehicle (right)
+			//case 84:	// crawling injury
 			case 88:	// hit by physical force
 				return true;
 			}
@@ -122,6 +126,7 @@ namespace jc::character::hook
 			switch (id)
 			{
 			case 21:	// jump
+			//case 23:	// crouch
 			case 25:	// sky dive
 			case 28:	// get down the ladder (bottom side)
 			case 29:
@@ -148,6 +153,11 @@ namespace jc::character::hook
 			}
 			else if (const auto player = g_net->get_player_by_character(character))
 			{
+				switch (id)
+				{
+				case 84: // crawling injury
+					return;
+				}
 			}
 #ifdef JC_DBG
 			else
@@ -312,11 +322,13 @@ namespace jc::character::hook
 
 							if (const auto bullets = weapon_info->get_bullets_to_fire(); bullets == 1)
 							{
-								const auto accuracy = 3.f * glm::radians(1.f - weapon_info->get_accuracy(false));
+								const auto is_crouching = character->is_crouching();
+								const auto spread_factor = is_crouching ? Character::CROUCH_SPREAD_MODIFIER() : Character::STAND_SPREAD_MODIFIER();
+								const auto spread = spread_factor * glm::radians(1.f - weapon_info->get_accuracy(false));
 								const auto rotation_matrix = glm::yawPitchRoll(
-									util::rand::rand_flt(-1.f, 1.f) * accuracy,
-									util::rand::rand_flt(-1.f, 1.f) * accuracy,
-									util::rand::rand_flt(-1.f, 1.f) * accuracy);
+									util::rand::rand_flt(-1.f, 1.f) * spread,
+									util::rand::rand_flt(-1.f, 1.f) * spread,
+									util::rand::rand_flt(-1.f, 1.f) * spread);
 
 								direction = vec4(direction, 0.f) * rotation_matrix;
 
@@ -526,7 +538,14 @@ void Character::respawn()
 {
 	remove_flag(1 << 31); // dbg
 
+	// reset general character stuff
+	
 	jc::this_call(jc::character::fn::RESPAWN, this, 1.f);
+
+	// reset character's capsule dimensions
+
+	if (const auto pfx = get_pfx())
+		pfx->as<PfxCharacter>()->set_capsule_dimensions(1.8f, 0.f, 0.4f);
 }
 
 void Character::set_proxy_velocity(const vec3& v)
@@ -911,14 +930,36 @@ void Character::dispatch_movement(float angle, float right, float forward, bool 
 	jc::this_call(jc::character::fn::DISPATCH_MOVEMENT, this, angle, right, forward, looking);
 }
 
+void Character::crouch(bool enabled)
+{
+	if (enabled)
+		jc::this_call(jc::character::fn::CROUCH, this);
+	else jc::this_call(jc::character::fn::UNCROUCH, this);
+}
+
 bool Character::has_flag(uint32_t mask) const
 {
 	return get_flags() & mask;
 }
 
+bool Character::is_standing() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_STANDING, this);
+}
+
 bool Character::is_on_ground() const
 {
 	return get_air_time() <= 0.f;
+}
+
+bool Character::is_moving() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_MOVING, this);
+}
+
+bool Character::is_strafing() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_STRAFING, this);
 }
 
 bool Character::is_opening_any_vehicle_door() const

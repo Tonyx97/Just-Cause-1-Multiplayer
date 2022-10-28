@@ -198,8 +198,10 @@ void __fastcall hk_fire_bullet_patch(Weapon* weapon, ptr _, Transform* final_muz
 
 					if (player->should_use_multiple_rand_seed())
 					{
-						const auto accuracy = 3.f * glm::radians(1.f - weapon_info->get_accuracy(false));
-						const auto rand_vector = player->generate_bullet_rand_spread() * accuracy;
+						const bool is_crouching = player->is_crouching();
+						const auto spread_factor = is_crouching ? Character::CROUCH_SPREAD_MODIFIER() : Character::STAND_SPREAD_MODIFIER();
+						const auto spread = spread_factor * glm::radians(1.f - weapon_info->get_accuracy(false));
+						const auto rand_vector = player->generate_bullet_rand_spread() * spread;
 						const auto rotation_matrix = glm::yawPitchRoll(rand_vector.x, rand_vector.y, rand_vector.z);
 
 						direction = vec4(direction, 0.f) * rotation_matrix;

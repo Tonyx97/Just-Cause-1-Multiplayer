@@ -21,7 +21,7 @@ namespace jc::pfx_instance
 
 class PfxInstance
 {
-private:
+protected:
 
 	shared_ptr<void*> instance;
 	shared_ptr<void*> prototype;
@@ -40,6 +40,9 @@ public:
 	void set_transform(const Transform& v);
 
 	operator bool() const { return !!instance; }
+
+	template <typename T>
+	T* as() const { return BITCAST(T*, this); }
 
 	template <typename T>
 	T* get_userdata() { return jc::read<T*>(this, jc::pfx_instance::USERDATA); }

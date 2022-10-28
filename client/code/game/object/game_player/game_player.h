@@ -22,6 +22,8 @@ namespace jc::game_player
 		static constexpr uint32_t SWITCH_TO_NEXT_WEAPON					= 0x4CDDF0;
 		static constexpr uint32_t LOAD_PARACHUTE_MODEL					= 0x4C3510;
 		static constexpr uint32_t DISPATCH_SWIMMING						= 0x4C8470;
+		static constexpr uint32_t CROUCH								= 0x4CDEC0;
+		static constexpr uint32_t UNCROUCH								= 0x4CDEA0;
 	}
 
 	namespace hook
@@ -32,6 +34,14 @@ namespace jc::game_player
 
 class Character;
 class Parachute;
+
+DEFINE_ENUM(GamePlayerState, int32_t)
+{
+	GamePlayerState_Unk					= 0,
+	GamePlayerState_StrafingWithWeapon	= 1,
+	GamePlayerState_Normal				= 2,
+	GamePlayerState_UsingWeaponScope	= 5,
+};
 
 class GamePlayer
 {
@@ -53,6 +63,7 @@ public:
 	void set_state(int32_t v);
 	void set_right(float v);
 	void set_forward(float v);
+	void crouch(bool enabled, bool sync = true);
 	void dispatch_swimming();
 
 	int32_t get_state_id() const;

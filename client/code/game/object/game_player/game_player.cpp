@@ -2,11 +2,14 @@
 
 #include "game_player.h"
 
+#include "../character/comps/stance_controller.h"
 #include "../character/character.h"
 #include "../camera/camera.h"
 #include "../parachute/parachute.h"
 
 #include <mp/net.h>
+
+#include <core/keycode.h>
 
 #include <game/sys/world/world.h>
 #include <game/sys/camera/camera_manager.h>
@@ -36,12 +39,32 @@ namespace jc::game_player::hook
 			if (const auto local_char = g_world->get_local_character(); local_char && local_char == character)
 				g_net->send(Packet(PlayerPID_ParachuteControl, ChannelID_Generic, 1ui8));
 	}
+
+	DEFINE_INLINE_HOOK_IMPL(crouch_key_handler, 0x4C48A2)
+	{
+		// local crouch key handling
+		
+		if (const auto game_player = ihp->read_ebp<GamePlayer*>(0x14); game_player == g_world->get_local())
+		{
+			const auto player_char = game_player->get_character();
+			const bool is_crouching = player_char->is_crouching();
+			const bool is_moving = player_char->is_moving();
+
+			if (is_crouching && is_moving)
+				game_player->crouch(false);
+			else if (g_key->game_is_key_pressed(0x76))
+			{
+				if (is_crouching)		game_player->crouch(false);
+				else if (!is_moving)	game_player->crouch(true);
+			}
+		}
+	}
 	
 	DEFINE_HOOK_THISCALL_S(update, fn::UPDATE, void, GamePlayer* game_player)
 	{
 		const auto local_gp = g_world->get_local();
 
-		// local player
+		// local player 
 		
 		if (local_gp == game_player)
 		{
@@ -95,14 +118,20 @@ namespace jc::game_player::hook
 							{
 								const auto state = game_player->get_state_id();
 
-								if (state == 5)
+								if (state == GamePlayerState_UsingWeaponScope)
 								{
-									check(false, "Not implemented 3");
+									// no need to implement anything here, it's used only
+									// to force GamePlayerState_Normal when a weapon scope
+									// is being used
 								}
 
 								switch (state)
 								{
-								case 2:
+								case GamePlayerState_StrafingWithWeapon:
+								{
+									[[fallthrough]];
+								}
+								case GamePlayerState_Normal:
 								{
 									player_char->dispatch_movement(move_info.angle, move_info.right, move_info.forward, move_info.aiming);
 									break;
@@ -124,6 +153,7 @@ namespace jc::game_player::hook
 		switch_to_next_weapon_hook.hook(apply);
 		close_parachute_hook.hook(apply);
 		open_parachute_hook.hook(apply);
+		crouch_key_handler_hook.hook(apply, 0x4C4910);
 		update_hook.hook(apply);
 	}
 }
@@ -200,6 +230,31 @@ void GamePlayer::set_right(float v)
 void GamePlayer::set_forward(float v)
 {
 	jc::write(v, this, jc::game_player::FORWARD);
+}
+
+void GamePlayer::crouch(bool enabled, bool sync)
+{
+	if (const auto player_char = get_character(); player_char && player_char->is_crouching() != enabled)
+	{
+		if (enabled)
+			jc::this_call(jc::game_player::fn::CROUCH, this, 1.f);
+		else jc::this_call(jc::game_player::fn::UNCROUCH, this, 1.f);
+
+		const bool was_crouched = player_char->is_crouching();
+
+		// sync only if there was a change
+		
+		if ((enabled && was_crouched) || (!enabled && !was_crouched))
+		{
+			// if the player is local then make sure we update the localplayer crouching state
+
+			if (const auto localplayer = g_net->get_localplayer(); localplayer && localplayer->get_character() == player_char)
+				localplayer->crouch(enabled);
+
+			if (sync)
+				g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_Crouch, enabled));
+		}
+	}
 }
 
 void GamePlayer::dispatch_swimming()

@@ -6,6 +6,7 @@
 #include <core/ui.h>
 
 #include <game/transform/transform.h>
+#include <game/object/character/comps/stance_controller.h>
 #include <game/object/character/character.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/mounted_gun/mounted_gun.h>
@@ -154,11 +155,23 @@ void jc::test_units::test_0()
 		//jc::this_call(0x854A00, g_global_ptr, 2, true);
 	}
 
+	static int aaa = 0;
+
+	/*uint8_t arr[] = { 0xB8, 0x00, 0x00, 0x00, 0x01 };
+
+	jc::write(0x76ui8, 0x4C48A3);
+	jc::write(0x76ui8, 0x4C48DB);*/
+
 	if (g_key->is_key_down(VK_NUMPAD9))
 	{
-		for (int i = 0; i < 1000; ++i)
+		if (aaa != 24)
 		{
-			const auto velocity = local_char->get_pfx()->get_velocity();
+			local_char->get_body_stance()->set_stance(aaa);
+			log(RED, "{}", local_char->is_crouching());
+		}
+		else
+		{
+			jc::this_call(0x4CDEC0, g_world->get_local(), 1.f);
 		}
 
 		//g_factory->spawn_general_item_pickup(local_pos + vec3(2.f, 0.f, 0.f), ItemType_Health, "medipack.lod");
@@ -188,8 +201,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		log(RED, "{}", temp_vehicles.size());
-		temp_vehicles.clear();
+		log(RED, "current {}", --aaa);
 	}
 
 	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
@@ -197,8 +209,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		g_factory->spawn_mounted_gun(local_pos + vec3(0.f, 1.f, 0.f));
-
+		log(RED, "current {}", ++aaa);
 		/*g_anim_system->load_anim("test.anim");
 		local_char->set_animation("test.anim", 0.2f, true, true);
 		g_anim_system->unload_anim("test.anim");*/

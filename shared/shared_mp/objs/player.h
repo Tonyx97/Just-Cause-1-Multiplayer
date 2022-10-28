@@ -25,6 +25,7 @@ DEFINE_ENUM(PlayerStanceID, uint8_t)
 {
 	PlayerStanceID_BodyStance,
 	PlayerStanceID_PlayerMoveState,
+	PlayerStanceID_Crouch,
 	PlayerStanceID_Movement,
 	PlayerStanceID_MovementAngle,
 	PlayerStanceID_Punch,
@@ -68,7 +69,8 @@ public:
 		float head_interpolation = 0.f;
 
 		bool hip_aim = false,
-			 full_aim = false;
+			 full_aim = false,
+			 is_crouching = false;
 	};
 
 	struct MovementInfo
@@ -189,6 +191,7 @@ public:
 	void set_velocity(const vec3& v);
 	void set_movement_angle(float angle, bool send_angle_only_next_tick);
 	void set_movement_info(float angle, float right, float forward, bool aiming);
+	void crouch(bool enabled);
 	void set_state_id(int32_t id);
 	void set_body_stance_id(uint32_t id);
 	void set_arms_stance_id(uint32_t id);
@@ -204,6 +207,7 @@ public:
 	void set_vehicle(uint8_t seat_type, VehicleNetObject* v);
 
 	bool is_climbing_ladder();
+	bool is_crouching();
 	bool is_tag_enabled() const { return tag_enabled; }
 	bool is_alive() const { return get_hp() > 0.f; }
 	bool is_hip_aiming() const { return dyn_info.hip_aim; }

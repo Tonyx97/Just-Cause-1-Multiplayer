@@ -72,6 +72,11 @@ namespace jc::character
 		static constexpr uint32_t IS_DIVING									= 0x596550;
 		static constexpr uint32_t IS_CROUCHING								= 0x596050;
 		static constexpr uint32_t IS_IN_AIR_VEHICLE							= 0x5992B0;
+		static constexpr uint32_t IS_STANDING								= 0x598370;
+		static constexpr uint32_t IS_MOVING									= 0x596250;
+		static constexpr uint32_t IS_STRAFING								= 0x5962C0;
+		static constexpr uint32_t CROUCH									= 0x5A1280;
+		static constexpr uint32_t UNCROUCH									= 0x5A11D0;
 	}
 
 	namespace g
@@ -128,6 +133,9 @@ public:
 
 	IMPL_OBJECT_TYPE_ID("CCharacter");
 
+	static constexpr float CROUCH_SPREAD_MODIFIER() { return 1.5f; }
+	static constexpr float STAND_SPREAD_MODIFIER() { return 3.f; }
+
 	static void SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai = false);
 	static float GET_GLOBAL_PUNCH_DAMAGE(bool ai = false);
 	static void SET_FLYING_Y_MODIFIER(float v);
@@ -166,9 +174,13 @@ public:
 	void set_stance_enter_vehicle_no_anim();
 	void set_stance_exit_vehicle_forced();
 	void dispatch_movement(float angle, float right, float forward, bool looking);
+	void crouch(bool enabled);
 
 	bool has_flag(uint32_t mask) const;
+	bool is_standing() const;
 	bool is_on_ground() const;
+	bool is_moving() const;
+	bool is_strafing() const;
 	bool is_opening_any_vehicle_door() const;
 	bool is_in_vehicle() const;
 	bool is_climbing_ladder() const;

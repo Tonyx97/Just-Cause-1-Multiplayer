@@ -152,6 +152,7 @@
     <ClCompile Include="code\game\object\mission\objective.cpp" />
     <ClCompile Include="code\game\object\mounted_gun\mounted_gun.cpp" />
     <ClCompile Include="code\game\object\parachute\parachute.cpp" />
+    <ClCompile Include="code\game\object\physics\pfx_character.cpp" />
     <ClCompile Include="code\game\object\physics\pfx_instance.cpp" />
     <ClCompile Include="code\game\object\physics\pfx_collision.cpp" />
     <ClCompile Include="code\game\object\game_resource\ee_resource.cpp" />
@@ -262,6 +263,7 @@
     <ClInclude Include="code\game\object\mission\objective.h" />
     <ClInclude Include="code\game\object\mounted_gun\mounted_gun.h" />
     <ClInclude Include="code\game\object\parachute\parachute.h" />
+    <ClInclude Include="code\game\object\physics\pfx_character.h" />
     <ClInclude Include="code\game\object\physics\pfx_instance.h" />
     <ClInclude Include="code\game\object\physics\pfx_collision.h" />
     <ClInclude Include="code\game\object\game_resource\ee_resource.h" />

@@ -430,9 +430,12 @@ void DebugUI::overlay_debug()
 	const auto red_color = ImColor(255, 0, 0);
 	const auto green_color = ImColor(0, 255, 0);
 
-	/*{
-		vec3 from = vec3(1324.702f, 83.395f + 1.f, 2581.040f);
-		vec3 to = vec3(1334.615f, 83.553f + 1.f, 2572.273f);
+	{
+		//vec3 from = vec3(1324.702f, 83.395f + 1.f, 2581.040f);
+		//vec3 to = vec3(1334.615f, 83.553f + 1.f, 2572.273f);
+
+		vec3 from = vec3(411.34f, 143.97f + 1.2f, 4037.72f);
+		vec3 to = vec3(423.f, 143.97f + 1.2f, 4048.54f);
 
 		vec2 from_sp, to_sp;
 
@@ -446,7 +449,7 @@ void DebugUI::overlay_debug()
 
 		ray_hit_info hit_info;
 
-		auto has_hit = g_physics->raycast(from, to, hit_info, true, false);
+		auto has_hit = g_physics->raycast(from, to, hit_info, true, true);
 
 		const auto normal_end = hit_info.hit_position + hit_info.normal;
 
@@ -461,7 +464,7 @@ void DebugUI::overlay_debug()
 
 		if (has_hit)
 			log(RED, "{:x} {:.2f} {:.2f} {:.2f} | {:.2f}", ptr(hit_info.object), hit_info.normal.x, hit_info.normal.y, hit_info.normal.z, hit_info.distance);
-	}*/
+	}
 
 	g_ammo->for_each_bullet([&](int i, Bullet* bullet)
 	{

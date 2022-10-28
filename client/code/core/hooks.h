@@ -105,7 +105,8 @@ public:
 
 private:
 
-	patch to_shell_patch {};
+	patch to_shell_patch {},
+		  optional_jmp_patch {};
 
 	Parameter parameter{};
 
@@ -123,14 +124,14 @@ public:
 	{
 	}
 
-	void hook(bool v)
+	void hook(bool v, ptr optional_jmp_target = 0)
 	{
 		if (v)
-			hook();
+			hook(optional_jmp_target);
 		else unhook();
 	}
 
-	void hook()
+	void hook(ptr optional_jmp_target = 0)
 	{
 		hde32s hde;
 
@@ -194,6 +195,11 @@ public:
 		// write jump in the target address
 
 		to_shell_patch.jump(address, shell_base);
+
+		// write optional jump so we can skip original code
+
+		if (optional_jmp_target != 0)
+			optional_jmp_patch.jump(address + original_code_len, optional_jmp_target);
 	}
 
 	void unhook()
@@ -201,6 +207,7 @@ public:
 		if (!shell_base)
 			return;
 
+		optional_jmp_patch._undo();
 		to_shell_patch._undo();
 
 		delete[] shell_base;

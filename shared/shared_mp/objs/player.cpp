@@ -384,6 +384,13 @@ void Player::set_movement_info(float angle, float right, float forward, bool aim
 	});
 }
 
+void Player::crouch(bool enabled)
+{
+	dyn_info.is_crouching = enabled;
+
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character*) { game_player->crouch(enabled, false); });
+}
+
 void Player::set_state_id(int32_t id)
 {
 	dyn_info.state_id = id;
@@ -505,4 +512,9 @@ bool Player::is_climbing_ladder()
 	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { move_info.climbing_ladder = c->is_climbing_ladder(); });
 
 	return move_info.climbing_ladder;
+}
+
+bool Player::is_crouching()
+{
+	return dyn_info.is_crouching;
 }
