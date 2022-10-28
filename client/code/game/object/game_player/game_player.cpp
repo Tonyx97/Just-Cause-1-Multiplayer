@@ -76,6 +76,8 @@ namespace jc::game_player::hook
 					const auto cam_yaw = jc::v_call<float>(camera, 4);
 					const bool is_looking = jc::read<int8_t>(game_player, 0x13D) || jc::read<int8_t>(game_player, 0x13E);
 
+					//log(PURPLE, "{}", jc::this_call<bool>(0x5A2080, local_gp->get_character()));
+
 					localplayer->set_movement_info(cam_yaw, local_gp->get_right(), local_gp->get_forward(), is_looking);
 				}
 
@@ -94,11 +96,11 @@ namespace jc::game_player::hook
 
 			check(jc::read<int>(game_player, 0x134) == 0, "Not implemented 0");
 
-			jc::write(true, game_player, 0x1D8); // seems to block the key input
+			game_player->block_key_input(true);
 
-			if (!player_char->is_sky_diving() || jc::this_call<bool>(0x597E80, player_char))
+			if (!player_char->is_sky_diving() || player_char->is_in_parachute_state())
 			{
-				if (jc::this_call<bool>(0x597E80, player_char) || jc::this_call<bool>(0x5A2080, player_char))
+				if (player_char->is_in_parachute_state() || jc::this_call<bool>(0x5A2080, player_char))
 				{
 					//check(false, "Not implemented 1");
 				}
@@ -134,6 +136,11 @@ namespace jc::game_player::hook
 								case GamePlayerState_Normal:
 								{
 									player_char->dispatch_movement(move_info.angle, move_info.right, move_info.forward, move_info.aiming);
+									break;
+								}
+								case GamePlayerState_SkyDiving:
+								case GamePlayerState_Paragliding:
+								{
 									break;
 								}
 								}
@@ -260,6 +267,14 @@ void GamePlayer::crouch(bool enabled, bool sync)
 void GamePlayer::dispatch_swimming()
 {
 	jc::this_call(jc::game_player::fn::DISPATCH_SWIMMING, this);
+}
+
+void GamePlayer::block_key_input(bool blocked)
+{
+	// this blocks the key input when calling some GamePlayer function we need
+	// to handle the logic properly
+
+	jc::write(blocked, this, jc::game_player::INPUT_BLOCKED);
 }
 
 int32_t GamePlayer::get_state_id() const

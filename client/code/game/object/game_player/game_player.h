@@ -4,10 +4,11 @@ namespace jc::game_player
 {
 	static constexpr uint32_t CHARACTER = 0x1C; // Character*
 	
-	static constexpr uint32_t PARACHUTE		= 0x24;		// Parachute
-	static constexpr uint32_t RIGHT			= 0xF8;		// float
-	static constexpr uint32_t FORWARD		= 0xFC;		// float
-	static constexpr uint32_t STATE			= 0x130;	// int
+	static constexpr uint32_t PARACHUTE			= 0x24;		// Parachute
+	static constexpr uint32_t RIGHT				= 0xF8;		// float
+	static constexpr uint32_t FORWARD			= 0xFC;		// float
+	static constexpr uint32_t STATE				= 0x130;	// int
+	static constexpr uint32_t INPUT_BLOCKED		= 0x1D8;	// bool
 
 	namespace fn
 	{
@@ -40,6 +41,8 @@ DEFINE_ENUM(GamePlayerState, int32_t)
 	GamePlayerState_Unk					= 0,
 	GamePlayerState_StrafingWithWeapon	= 1,
 	GamePlayerState_Normal				= 2,
+	GamePlayerState_SkyDiving			= 3,
+	GamePlayerState_Paragliding			= 4,
 	GamePlayerState_UsingWeaponScope	= 5,
 };
 
@@ -65,6 +68,7 @@ public:
 	void set_forward(float v);
 	void crouch(bool enabled, bool sync = true);
 	void dispatch_swimming();
+	void block_key_input(bool blocked);
 
 	int32_t get_state_id() const;
 

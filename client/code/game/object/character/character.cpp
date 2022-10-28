@@ -997,6 +997,11 @@ bool Character::is_sky_diving() const
 	return jc::this_call<bool>(jc::character::fn::IS_SKY_DIVING, this);
 }
 
+bool Character::is_in_parachute_state() const
+{
+	return jc::this_call<bool>(jc::character::fn::IS_IN_PARACHUTE_STATE, this);
+}
+
 bool Character::is_paragliding() const
 {
 	return jc::this_call<bool>(jc::character::fn::IS_PARAGLIDING, this);

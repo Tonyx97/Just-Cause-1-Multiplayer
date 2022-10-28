@@ -77,6 +77,8 @@ namespace jc::character
 		static constexpr uint32_t IS_STRAFING								= 0x5962C0;
 		static constexpr uint32_t CROUCH									= 0x5A1280;
 		static constexpr uint32_t UNCROUCH									= 0x5A11D0;
+		static constexpr uint32_t IS_IN_PARACHUTE_STATE						= 0x597E80;
+		
 	}
 
 	namespace g
@@ -188,6 +190,7 @@ public:
 	bool is_swimming() const;
 	bool is_falling() const;
 	bool is_sky_diving() const;
+	bool is_in_parachute_state() const;
 	bool is_paragliding() const;
 	bool is_in_stunt_position() const;
 	bool is_diving() const;
