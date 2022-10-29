@@ -101,11 +101,13 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 		{
 		case NetObject_Player:
 		{
+			PlayerClient* pc = nullptr;
+
 			auto player = net_obj->cast<Player>();
 
 			if (!player)
 			{
-				const auto pc = g_net->add_player_client(nid);
+				pc = g_net->add_player_client(nid);
 
 				player = pc->get_player();
 			}
@@ -128,7 +130,11 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			player->set_nick(nick);
 
 			if (joined)
+			{
+				pc->set_joined(joined);
+
 				g_rsrc->trigger_event(script::event::ON_PLAYER_JOIN, player);
+			}
 
 			break;
 		}
