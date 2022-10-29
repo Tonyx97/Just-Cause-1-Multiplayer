@@ -48,7 +48,7 @@ void DebugUI::render_admin_panel()
 	if (g_chat->is_typing())
 		return;
 
-	const auto main_cam = g_camera->get_main_camera();
+	const auto main_cam = g_camera->get_active_camera();
 	if (!main_cam)
 		return;
 
@@ -425,7 +425,7 @@ void DebugUI::render_admin_panel()
 
 void DebugUI::overlay_debug()
 {
-	const auto camera = g_camera->get_main_camera();
+	const auto camera = g_camera->get_active_camera();
 	const auto v_list = ImGui::GetBackgroundDrawList();
 	const auto red_color = ImColor(255, 0, 0);
 	const auto green_color = ImColor(0, 255, 0);
@@ -497,7 +497,7 @@ void DebugUI::overlay_debug()
 			if (g_key->is_key_down(VK_F2))
 			{
 				constexpr auto magnitude = 1.5f;
-				const auto fp = g_camera->get_main_camera()->get_model_forward_vector();
+				const auto fp = g_camera->get_active_camera()->get_model_forward_vector();
 				vec3 forward_position = {};
 				forward_position.x = local_pos.x + (-fp.x * magnitude);
 				forward_position.y = local_pos.y + (-fp.y * magnitude);

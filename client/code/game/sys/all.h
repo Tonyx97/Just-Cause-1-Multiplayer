@@ -2,6 +2,7 @@
 
 #include "ai/ai_core.h"
 #include "camera/camera_manager.h"
+#include "camera/cam_control_manager.h"
 #include "core/factory_system.h"
 #include "core/explosion_manager.h"
 #include "game/game_control.h"

@@ -145,6 +145,7 @@
     <ClCompile Include="code\game\object\asset\asset_rbm.cpp" />
     <ClCompile Include="code\game\object\asset\asset_texture.cpp" />
     <ClCompile Include="code\game\object\base\obj_event_manager.cpp" />
+    <ClCompile Include="code\game\object\camera\cam_settings.cpp" />
     <ClCompile Include="code\game\object\exported_entity\exported_entity.cpp" />
     <ClCompile Include="code\game\object\interactable\interactable.cpp" />
     <ClCompile Include="code\game\object\item\item_pickup.cpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="code\game\object\vehicle\submarine.cpp" />
     <ClCompile Include="code\game\object\vehicle\tank.cpp" />
     <ClCompile Include="code\game\object\vehicle\vehicle.cpp" />
+    <ClCompile Include="code\game\sys\camera\cam_control_manager.cpp" />
     <ClCompile Include="code\game\sys\resource\anim_system.cpp" />
     <ClCompile Include="code\game\sys\resource\archives.cpp" />
     <ClCompile Include="code\game\sys\game\game_ctx.cpp" />
@@ -256,6 +258,7 @@
     <ClInclude Include="code\game\object\asset\asset_rbm.h" />
     <ClInclude Include="code\game\object\asset\asset_texture.h" />
     <ClInclude Include="code\game\object\base\obj_event_manager.h" />
+    <ClInclude Include="code\game\object\camera\cam_settings.h" />
     <ClInclude Include="code\game\object\exported_entity\exported_entity.h" />
     <ClInclude Include="code\game\object\interactable\interactable.h" />
     <ClInclude Include="code\game\object\item\item_pickup.h" />
@@ -301,6 +304,7 @@
     <ClInclude Include="code\game\object\vehicle\submarine.h" />
     <ClInclude Include="code\game\object\vehicle\tank.h" />
     <ClInclude Include="code\game\object\vehicle\vehicle.h" />
+    <ClInclude Include="code\game\sys\camera\cam_control_manager.h" />
     <ClInclude Include="code\game\sys\resource\anim_system.h" />
     <ClInclude Include="code\game\sys\resource\archives.h" />
     <ClInclude Include="code\game\sys\game\game_ctx.h" />

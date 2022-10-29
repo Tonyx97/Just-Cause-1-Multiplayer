@@ -135,7 +135,7 @@ void script::register_functions(Script* script)
 
 	/* UI */
 
-	vm->add_function("worldToScreen", [](const svec3& v) { vec2 out; g_camera->get_main_camera()->w2s(v.obj(), out); return svec2(out); });
+	vm->add_function("worldToScreen", [](const svec3& v) { vec2 out; g_camera->get_active_camera()->w2s(v.obj(), out); return svec2(out); });
 	vm->add_function("dxGetScreenSize", []() { return svec2(g_ui->get_screen_size()); });
 	vm->add_function("outputChatBox", [](const std::string& str) { g_chat->add_chat_msg(str); });
 	vm->add_function("dxDrawLine", [](const svec2& p0, const svec2& p1, const svec4& color, float thickness) { g_ui->draw_line(p0.obj(), p1.obj(), thickness, color.obj()); });

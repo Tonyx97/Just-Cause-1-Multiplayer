@@ -225,7 +225,7 @@ void UI::begin()
 
 void UI::render()
 {
-	const auto camera = g_camera->get_main_camera();
+	const auto camera = g_camera->get_active_camera();
 
 	static bool open_overlay = true;
 
@@ -299,7 +299,7 @@ void UI::loading_screen()
 
 void UI::render_players()
 {
-	const auto main_cam = g_camera->get_main_camera();
+	const auto main_cam = g_camera->get_active_camera();
 	if (!main_cam)
 		return;
 

@@ -70,6 +70,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		g_renderer->init();
 		g_world->init();
 		g_camera->init();
+		g_cam_control->init();
 		g_physics->init();
 		g_vehicle->init();
 		g_ammo->init();
@@ -226,6 +227,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 			g_ammo->destroy();
 			g_vehicle->destroy();
 			g_physics->destroy();
+			g_cam_control->destroy();
 			g_camera->destroy();
 			g_world->destroy();
 			g_renderer->destroy();

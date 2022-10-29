@@ -10,6 +10,7 @@
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/physics/pfx_collision.h>
 #include <game/object/weapon/bullet.h>
+#include <game/object/camera/cam_settings.h>
 
 #include <game/sys/resource/physics.h>
 
@@ -76,4 +77,5 @@ void jc::hooks::hook_game_fns(bool enable)
 	vehicle::hook::enable(enable);
 	bullet::hook::enable(enable);
 	physics::hook::enable(enable);
+	cam_settings::hook::enable(enable);
 }
