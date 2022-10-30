@@ -113,6 +113,8 @@ void Player::respawn_character()
 		return;
 
 	character->respawn();
+	character->set_body_stance(0);
+	character->set_arms_stance(0);
 #endif
 }
 

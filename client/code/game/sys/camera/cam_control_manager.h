@@ -35,7 +35,6 @@ public:
 	void set_default_focus_height(float v);
 
 	CamSettings* get_settings();
-
 };
 
 inline Singleton<CamControlManager, jc::cam_control_manager::SINGLETON> g_cam_control;

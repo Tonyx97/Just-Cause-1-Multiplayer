@@ -111,6 +111,7 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 
 				player = pc->get_player();
 			}
+			else pc = player->get_client();
 
 			const bool joined = p.get_bool();
 			const auto transform = p.get<TransformPackedTR>();

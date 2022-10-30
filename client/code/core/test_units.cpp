@@ -1,4 +1,5 @@
-﻿#include <defs/standard.h>
+﻿#ifdef JC_DBG
+#include <defs/standard.h>
 
 #include "test_units.h"
 
@@ -29,9 +30,12 @@
 #include <game/object/game_player/game_player.h>
 #include <game/object/physics/pfx_collision.h>
 #include <game/object/physics/pfx_instance.h>
+#include <game/object/camera/cam_settings.h>
 #include <game/sys/all.h>
 
 #include <serializer/serializer.h>
+
+#include <mp/net.h>
 
 #include <luas.h>
 
@@ -162,6 +166,33 @@ void jc::test_units::test_0()
 	jc::write(0x76ui8, 0x4C48A3);
 	jc::write(0x76ui8, 0x4C48DB);*/
 
+	if (g_key->is_key_pressed(VK_NUMPAD4))
+	{
+		if (const auto new_player = g_net->get_random_player())
+		{
+			shared_ptr<Character>* ayptr = new_player != g_net->get_localplayer() ?
+				(shared_ptr<Character>*)(ptr(new_player->get_character_handle()) + 0x11C) :
+				(shared_ptr<Character>*)(ptr(g_world->get_local()) + 0x1C);
+
+			g_cam_control->get_settings()->set_character(*ayptr);
+		}
+
+		//log(RED, "current {}", --aaa);
+	}
+
+	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
+	//	log(YELLOW, "{:x} {:x} {:x}", entry->hash, entry->offset, entry->size);
+
+	if (g_key->is_key_pressed(VK_NUMPAD5))
+	{
+		log(RED, "current {}", ++aaa);
+		/*g_anim_system->load_anim("test.anim");
+		local_char->set_animation("test.anim", 0.2f, true, true);
+		g_anim_system->unload_anim("test.anim");*/
+
+		//local_char->set_animation("dance_hooker_NPC_2.anim", 0.2f, true, true);
+	}
+
 	if (g_key->is_key_down(VK_NUMPAD9))
 	{
 		if (aaa != 24)
@@ -198,24 +229,6 @@ void jc::test_units::test_0()
 		w->set_enabled(true);
 		w->update();
 	}*/
-
-	if (g_key->is_key_pressed(VK_NUMPAD4))
-	{
-		log(RED, "current {}", --aaa);
-	}
-
-	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
-	//	log(YELLOW, "{:x} {:x} {:x}", entry->hash, entry->offset, entry->size);
-
-	if (g_key->is_key_pressed(VK_NUMPAD5))
-	{
-		log(RED, "current {}", ++aaa);
-		/*g_anim_system->load_anim("test.anim");
-		local_char->set_animation("test.anim", 0.2f, true, true);
-		g_anim_system->unload_anim("test.anim");*/
-
-		//local_char->set_animation("dance_hooker_NPC_2.anim", 0.2f, true, true);
-	}
 
 	struct TestInfo
 	{
@@ -713,3 +726,4 @@ void jc::test_units::test_0()
 		test_file.write((char*)out.data(), out.size());
 	}*/
 }
+#endif
