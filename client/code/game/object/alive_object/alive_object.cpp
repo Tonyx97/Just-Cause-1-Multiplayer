@@ -83,9 +83,9 @@ namespace jc::alive_object::hook
 
 						if (const auto net_obj = g_net->get_net_object_by_game_object(object.get()))
 						{
-							localplayer->set_grappled_object(net_obj);
-
 							owner->set_grappled_object(object);
+
+							localplayer->set_grappled_object(net_obj);
 						}
 					}
 	}

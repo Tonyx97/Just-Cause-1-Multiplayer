@@ -10,7 +10,7 @@ private:
 				pfx;
 
 #ifdef JC_CLIENT
-	class DamageableObject* obj = nullptr;
+	shared_ptr<class DamageableObject> obj;
 #endif
 
 	void destroy_object();
@@ -23,6 +23,8 @@ public:
 
 #ifdef JC_CLIENT
 	DamageableNetObject(NID nid, const TransformTR& transform);
+
+	class DamageableObject* get_object() const;
 
 	class ObjectBase* get_object_base() const override;
 #else

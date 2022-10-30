@@ -15,9 +15,14 @@ DamageableNetObject::DamageableNetObject(NID nid, const TransformTR& transform)
 	set_transform(transform);
 }
 
+DamageableObject* DamageableNetObject::get_object() const
+{
+	return obj.get();
+}
+
 ObjectBase* DamageableNetObject::get_object_base() const
 {
-	return obj;
+	return get_object();
 }
 #else
 DamageableNetObject::DamageableNetObject(SyncType sync_type, const TransformTR& transform)
@@ -34,7 +39,7 @@ DamageableNetObject::~DamageableNetObject()
 
 void DamageableNetObject::destroy_object()
 {
-	IF_CLIENT_AND_VALID_OBJ_DO([&]() { g_factory->destroy_damageable_object(std::exchange(obj, nullptr)); });
+	IF_CLIENT_AND_VALID_OBJ_DO([&]() { obj.reset(); });
 }
 
 void DamageableNetObject::on_spawn()
@@ -44,7 +49,7 @@ void DamageableNetObject::on_spawn()
 
 	check(obj, "Could not create damageable object");
 
-	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
+	log(PURPLE, "DamageableNetObject {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", get_nid(), ptr(obj.get()), get_position().x, get_position().y, get_position().z);
 #endif
 }
 

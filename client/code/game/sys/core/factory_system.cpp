@@ -199,18 +199,18 @@ SimpleRigidObject* FactorySystem::spawn_simple_rigid_object(const vec3& position
 	return nullptr;
 }
 
-DamageableObject* FactorySystem::spawn_damageable_object(const vec3& position, const std::string& lod_name, const std::string& pfx_name)
+shared_ptr<DamageableObject> FactorySystem::spawn_damageable_object(const vec3& position, const std::string& lod_name, const std::string& pfx_name)
 {
 	Transform transform(position);
 
-	if (auto obj = DamageableObject::CREATE(&transform, lod_name, pfx_name))
+	if (auto object = DamageableObject::CREATE(&transform, lod_name, pfx_name))
 	{
-		g_game_control->add_object_to_world(obj);
+		g_game_control->add_object_to_world(object);
 
-		return add_to_ref_map(damageables, obj);
+		return object;
 	}
 
-	return nullptr;
+	return {};
 }
 
 shared_ptr<Vehicle> FactorySystem::spawn_vehicle(const std::string& ee_name, const Transform& transform)

@@ -11,7 +11,7 @@
 
 shared_ptr<DamageableObject> DamageableObject::CREATE(Transform* transform, const std::string& lod_name, const std::string& pfx_name)
 {
-	if (auto rf = g_game_control->create_object<DamageableObject>())
+	if (auto object = g_game_control->create_object<DamageableObject>())
 	{
 		// todojc - improve this by properly loading all dependencies such as the 
 		// textures etc
@@ -53,9 +53,9 @@ shared_ptr<DamageableObject> DamageableObject::CREATE(Transform* transform, cons
 		map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, transform);
 		map.insert<object_base_map::Mat4>(0xcab9f941, &dummy_mat);
 
-		rf->init_from_map(&map);
+		object->init_from_map(&map);
 
-		return rf;
+		return object;
 	}
 
 	return {};

@@ -19,6 +19,11 @@ VehicleNetObject::VehicleNetObject(NID nid, const TransformTR& transform)
 	set_velocity_timer(500);
 }
 
+Vehicle* VehicleNetObject::get_object() const
+{
+	return obj.get();
+}
+
 ObjectBase* VehicleNetObject::get_object_base() const
 {
 	return get_object();
@@ -134,10 +139,9 @@ void VehicleNetObject::destroy_object()
 		return true;
 	});
 
-	IF_CLIENT_AND_VALID_OBJ_DO([&]()
-	{
-		obj.reset();
-	});
+	// destroy the actual object
+	
+	IF_CLIENT_AND_VALID_OBJ_DO([&]() { obj.reset(); });
 }
 
 void VehicleNetObject::on_spawn()

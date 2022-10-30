@@ -121,7 +121,7 @@ public:
 #ifdef JC_CLIENT
 	VehicleNetObject(NID nid, const TransformTR& transform);
 
-	class Vehicle* get_object() const { return obj.get(); }
+	class Vehicle* get_object() const;
 
 	class ObjectBase* get_object_base() const override;
 
