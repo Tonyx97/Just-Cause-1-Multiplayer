@@ -937,6 +937,11 @@ void Character::crouch(bool enabled)
 	else jc::this_call(jc::character::fn::UNCROUCH, this);
 }
 
+void Character::set_grappled_object(shared_ptr<ObjectBase> obj)
+{
+	jc::this_call(jc::character::fn::SET_GRAPPLED_OBJECT, this, weak_ptr<ObjectBase>(obj));
+}
+
 bool Character::has_flag(uint32_t mask) const
 {
 	return get_flags() & mask;
@@ -1062,6 +1067,11 @@ float Character::get_air_time() const
 	return jc::read<float>(this, jc::character::AIR_TIME);
 }
 
+weak_ptr<ObjectBase> Character::get_grappled_object() const
+{
+	return jc::read<weak_ptr<ObjectBase>>(this, jc::character::GRAPPLED_OBJECT);
+}
+
 CharacterController* Character::get_controller() const
 {
 	CharacterController* controller = nullptr;
@@ -1093,6 +1103,14 @@ Vehicle* Character::get_vehicle() const
 {
 	const auto seat = get_vehicle_seat();
 	return seat ? seat->get_vehicle() : nullptr;
+}
+
+shared_ptr<Weapon> Character::get_current_weapon() const
+{
+	if (const auto belt = get_weapon_belt())
+		return belt->get_current_weapon();
+
+	return {};
 }
 
 shared_ptr<VehicleSeat> Character::get_vehicle_seat() const

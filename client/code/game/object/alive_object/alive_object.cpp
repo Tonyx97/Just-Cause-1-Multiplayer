@@ -5,7 +5,9 @@
 #include <mp/net.h>
 
 #include <game/sys/world/world.h>
+#include <game/sys/weapon/ammo_manager.h>
 
+#include <game/object/weapon/bullet.h>
 #include <game/object/character/character.h>
 #include <game/object/damageable_object/damageable_object.h>
 
@@ -67,9 +69,31 @@ namespace jc::alive_object::hook
 		set_health_hook(obj, hp);
 	}
 
+	DEFINE_INLINE_HOOK_IMPL(vehicle_inflict_damage, 0x636EF1)
+	{
+		// dispatch the grappling hook object attach when it's
+		// the localplayer who fired the bullet
+		
+		if (const auto bullet = ihp->read_ebp<Bullet*>(-0x8))
+			if (const auto owner = ammo_manager::g_fn::get_bullet_owner(bullet))
+				if (const auto localplayer = g_net->get_localplayer(); localplayer->get_character() == owner)
+					if (const auto _this = ihp->read_ebp<ObjectBase*>(0xF4); auto object = _this->get_shared())
+					{
+						// attach only to networked objects
+
+						if (const auto net_obj = g_net->get_net_object_by_game_object(object.get()))
+						{
+							localplayer->set_grappled_object(net_obj);
+
+							owner->set_grappled_object(object);
+						}
+					}
+	}
+
 	void enable(bool apply)
 	{
 		set_health_hook.hook(apply);
+		vehicle_inflict_damage_hook.hook(apply, 0x63731E);
 	}
 }
 

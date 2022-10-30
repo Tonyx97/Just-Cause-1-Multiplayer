@@ -10,9 +10,10 @@
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/physics/pfx_collision.h>
 #include <game/object/weapon/bullet.h>
+#include <game/object/weapon/weapon.h>
 #include <game/object/camera/cam_settings.h>
 
-#include <game/sys/resource/physics.h>
+#include <game/sys/all.h>
 
 void jc::hooks::init()
 {
@@ -67,6 +68,7 @@ void jc::hooks::unhook_queued()
 
 void jc::hooks::hook_game_fns(bool enable)
 {
+	ammo_manager::hook::enable(enable);
 	game_player::hook::enable(enable);
 	character::hook::enable(enable);
 	alive_object::hook::enable(enable);
@@ -75,6 +77,7 @@ void jc::hooks::hook_game_fns(bool enable)
 	interactable::hook::enable(enable);
 	vehicle_seat::hook::enable(enable);
 	vehicle::hook::enable(enable);
+	weapon::hook::enable(enable);
 	bullet::hook::enable(enable);
 	physics::hook::enable(enable);
 	cam_settings::hook::enable(enable);

@@ -124,6 +124,16 @@ VehicleNetObject::~VehicleNetObject()
 
 void VehicleNetObject::destroy_object()
 {
+	// if any player is grappled onto the vehicle, unlink them
+
+	g_net->for_each_joined_player([&](NID, Player* player)
+	{
+		if (player->get_grappled_object() == this)
+			player->set_grappled_object(nullptr);
+
+		return true;
+	});
+
 	IF_CLIENT_AND_VALID_OBJ_DO([&]()
 	{
 		obj.reset();

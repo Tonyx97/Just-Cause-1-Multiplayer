@@ -252,6 +252,11 @@ const char* ObjectBase::get_typename() const
 	return *jc::v_call<const char**>(this, jc::object_base::vt::GET_TYPENAME, &dummy);
 }
 
+shared_ptr<ObjectBase> ObjectBase::get_shared() const
+{
+	return jc::read<shared_ptr<ObjectBase>>(this, jc::object_base::SHARED_INSTANCE);
+}
+
 Model* ObjectBase::get_model() const
 {
 	return jc::v_call<Model*>(this, jc::object_base::vt::GET_MODEL);

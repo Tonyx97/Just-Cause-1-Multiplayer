@@ -11,7 +11,9 @@
 #ifdef JC_CLIENT
 #include <game/sys/core/factory_system.h>
 #include <game/sys/world/world.h>
+#include <game/sys/weapon/ammo_manager.h>
 #include <game/sys/weapon/weapon_system.h>
+#include <game/object/parachute/parachute.h>
 #include <game/object/spawn_point/spawn_point.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/character/character.h>
@@ -163,6 +165,10 @@ void Player::send_ownerships()
 void Player::destroy_object()
 {
 #ifdef JC_CLIENT
+	// clear our custom map if the character is going to be destroyed
+
+	jc::ammo_manager::g_fn::clear_owner_bullets(get_character());
+
 	if (handle) g_factory->destroy_character_handle(std::exchange(handle, nullptr));
 	if (blip)	g_factory->destroy_map_icon(std::exchange(blip, nullptr));
 
@@ -388,7 +394,7 @@ void Player::set_movement_info(float angle, float right, float forward, bool aim
 
 void Player::crouch(bool enabled)
 {
-	dyn_info.is_crouching = enabled;
+	move_info.is_crouching = enabled;
 
 	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character*) { game_player->crouch(enabled, false); });
 }
@@ -509,6 +515,48 @@ void Player::set_vehicle(uint8_t seat_type, VehicleNetObject* v)
 	vehicle_seat = seat_type;
 }
 
+void Player::set_in_parachute(bool v)
+{
+	move_info.paragliding = v;
+
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c)
+	{
+		if (const auto parachute = game_player->get_parachute())
+			if (v)
+			{
+				set_body_stance_id(27);
+				set_body_stance_id(25);
+				set_body_stance_id(59);
+
+				parachute->set_closed(false);
+			}
+			else
+			{
+				if (c->get_body_stance()->get_distance_to_ground() <= StanceController::MAX_DISTANCE_PARACHUTE_FALL() * 2.f)
+					set_body_stance_id(27);
+				else set_body_stance_id(25);
+
+				if (!parachute->is_closed())
+					parachute->set_closed(true);
+			}
+	});
+}
+
+void Player::set_grappled_object(NetObject* obj, const vec3& relative_position)
+{
+	grappled_object = obj;
+	grappled_relative_position = relative_position;
+
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c)
+	{
+		if (obj)
+			if (const auto object = obj->get_object_base()->get_shared())
+				return c->set_grappled_object(object);
+
+		c->set_grappled_object({});
+	});
+}
+
 bool Player::is_climbing_ladder()
 {
 	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { move_info.climbing_ladder = c->is_climbing_ladder(); });
@@ -518,5 +566,10 @@ bool Player::is_climbing_ladder()
 
 bool Player::is_crouching()
 {
-	return dyn_info.is_crouching;
+	return move_info.is_crouching;
+}
+
+bool Player::is_paragliding()
+{
+	return move_info.paragliding;
 }

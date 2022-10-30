@@ -9,6 +9,7 @@
 
 namespace jc::character
 {
+	static constexpr uint32_t GRAPPLED_OBJECT			= 0x58; // shared_ptr<ObjectBase>
 	static constexpr uint32_t GRENADES_AMMO				= 0x90; // int32_t
 	static constexpr uint32_t WEAPON_BELT				= 0xD8; // WeaponBelt
 	static constexpr uint32_t SKELETON					= 0xDC; // Skeleton
@@ -32,6 +33,8 @@ namespace jc::character
 
 	namespace fn
 	{
+		static constexpr uint32_t SET_GRAPPLED_OBJECT						= 0x637330;
+		static constexpr uint32_t GET_MUZZLE_TRANSFORM						= 0x5985E0;
 		static constexpr uint32_t SET_ANIMATION								= 0x5A1BE0;
 		static constexpr uint32_t SET_TRANSFORM								= 0x58F190;
 		static constexpr uint32_t SET_NPC_VARIANT							= 0x58CA20;
@@ -177,6 +180,7 @@ public:
 	void set_stance_exit_vehicle_forced();
 	void dispatch_movement(float angle, float right, float forward, bool looking);
 	void crouch(bool enabled);
+	void set_grappled_object(shared_ptr<ObjectBase> obj);
 
 	bool has_flag(uint32_t mask) const;
 	bool is_standing() const;
@@ -207,6 +211,8 @@ public:
 	float get_roll_clamp() const;
 	float get_air_time() const;
 
+	weak_ptr<ObjectBase> get_grappled_object() const;
+
 	CharacterController* get_controller() const;
 
 	Character* get_facing_object() const;
@@ -214,6 +220,8 @@ public:
 	WeaponBelt* get_weapon_belt() const;
 
 	Vehicle* get_vehicle() const;
+
+	shared_ptr<Weapon> get_current_weapon() const;
 
 	shared_ptr<VehicleSeat> get_vehicle_seat() const;
 	VehicleSeat* get_weak_vehicle_seat() const;

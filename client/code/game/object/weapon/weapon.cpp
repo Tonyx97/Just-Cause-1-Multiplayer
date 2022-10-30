@@ -2,7 +2,104 @@
 
 #include "weapon.h"
 
+#include <mp/net.h>
+
 #include <game/transform/transform.h>
+
+#include <shared_mp/objs/vehicle_net.h>
+
+#include <game/object/character/character.h>
+#include <game/object/character/comps/stance_controller.h>
+#include <game/object/vehicle/vehicle.h>
+#include <game/object/weapon/weapon.h>
+
+namespace jc::weapon::hook
+{
+	// patch to properly create synced shots in remote players,
+	// since the spread is clientside, the bullets could hit or not in remote players causing
+	// a sense of desync, this patch will sync the rand seed across all players and each
+	// player will generate the correct set of PRGN so they stay the same
+	//
+	DEFINE_INLINE_HOOK_IMPL(fire_bullet, 0x61F6AB)
+	{
+		const auto weapon = ihp->read_ebp<Weapon*>(0x17C);
+		const auto final_muzzle_transform = ihp->at_ebp<Transform>(0x9C);
+
+		if (const auto owner = weapon->get_owner())
+		{
+			if (const auto player = g_net->get_player_by_character(owner))
+			{
+				if (const auto weapon_info = weapon->get_info())
+				{
+					// hand guns first
+
+					if (!weapon_info->is_vehicle_weapon())
+					{
+						// if the player is local then just get our aim target and calculate the
+						// proper direction, otherwise, we want to grab the muzzle and aim target
+						// from the remote Player instance
+
+						const auto muzzle = player->get_muzzle_position();
+
+						auto direction = player->get_bullet_direction();
+
+						// modify direction if this weapon fires more than 1 bullet at the same time
+						// the rand seed used to generate the direction modifier is synced across all players
+						// so all bullets should be the same in other's players instances
+
+						if (player->should_use_multiple_rand_seed())
+						{
+							const bool is_crouching = player->is_crouching();
+							const auto spread_factor = is_crouching ? Character::CROUCH_SPREAD_MODIFIER() : Character::STAND_SPREAD_MODIFIER();
+							const auto spread = spread_factor * glm::radians(1.f - weapon_info->get_accuracy(false));
+							const auto rand_vector = player->generate_bullet_rand_spread() * spread;
+							const auto rotation_matrix = glm::yawPitchRoll(rand_vector.x, rand_vector.y, rand_vector.z);
+
+							direction = vec4(direction, 0.f) * rotation_matrix;
+						}
+
+						*final_muzzle_transform = Transform::look_at(muzzle, muzzle + direction);
+
+						return;
+					}
+					else
+					{
+						// handle vehicle weapons
+
+						if (const auto vehicle_net = player->get_vehicle())
+						{
+							if (const auto seat = owner->get_vehicle_seat(); seat && seat->get_type() == VehicleSeat_Special)
+							{
+								// if the shooter is in the special seat, they must be using a mounted gun
+
+								if (const auto fire_info = vehicle_net->get_mounted_gun_fire_info())
+									*final_muzzle_transform = Transform::look_at(fire_info->muzzle, fire_info->muzzle + fire_info->direction);
+							}
+							else
+							{
+								// actual vehicle weapons
+
+								if (const auto fire_info = vehicle_net->get_fire_info_from_weapon(weapon))
+									*final_muzzle_transform = Transform::look_at(fire_info->base.muzzle, fire_info->base.muzzle + fire_info->base.direction);
+							}
+						}
+
+						return;
+					}
+				}
+			}
+		}
+
+		const auto muzzle = weapon->get_muzzle_position();
+
+		*final_muzzle_transform = Transform::look_at(muzzle, muzzle + weapon->get_aim_target());
+	}
+
+	void enable(bool apply)
+	{
+		fire_bullet_hook.hook(apply, 0x61F6C6);
+	}
+}
 
 std::tuple<vec2, vec2> WeaponInfo::CALCULATE_ICON_UVS(uint8_t icon)
 {

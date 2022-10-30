@@ -13,6 +13,8 @@ static_assert("map_base.h must be defined");
 
 namespace jc::object_base
 {
+	static constexpr uint32_t SHARED_INSTANCE = 0x4;
+
 	namespace vt
 	{
 		static constexpr uint32_t DESTROY			= 0;
@@ -98,6 +100,8 @@ public:
 	uint32_t get_typename_hash() const;
 
 	const char* get_typename() const;
+
+	shared_ptr<ObjectBase> get_shared() const;
 
 	Model* get_model() const;
 

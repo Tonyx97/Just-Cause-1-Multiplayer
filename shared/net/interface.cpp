@@ -154,19 +154,20 @@ void enet::setup_channels()
 
 		switch (auto id = p.get_id())
 		{
-		case PlayerPID_StateSync:				return nh::player::state_sync(p);
-		case PlayerPID_Respawn:					return nh::player::respawn(p);
-		case PlayerPID_DynamicInfo:				return nh::player::dynamic_info(p);
-		case PlayerPID_StanceAndMovement:		return nh::player::stance_and_movement(p);
-		case PlayerPID_ParachuteControl:		return nh::player::parachute_control(p);
-		case PlayerPID_SetWeapon:				return nh::player::set_weapon(p);
-		case PlayerPID_SetVehicle:				return nh::player::set_vehicle(p);
-		case PlayerPID_EnterExitVehicle:		return nh::player::enter_exit_vehicle(p);
-		case PlayerPID_VehicleControl:			return nh::vehicle::control(p);
-		case PlayerPID_VehicleHonk:				return nh::vehicle::honk(p);
-		case PlayerPID_VehicleFire:				return nh::vehicle::fire(p);
-		case PlayerPID_VehicleMountedGunFire:	return nh::vehicle::mounted_gun_fire(p);
-		case PlayerPID_VehicleDynamicInfo:		return nh::vehicle::dynamic_info(p);
+		case PlayerPID_StateSync:					return nh::player::state_sync(p);
+		case PlayerPID_Respawn:						return nh::player::respawn(p);
+		case PlayerPID_DynamicInfo:					return nh::player::dynamic_info(p);
+		case PlayerPID_StanceAndMovement:			return nh::player::stance_and_movement(p);
+		case PlayerPID_ParachuteControl:			return nh::player::parachute_control(p);
+		case PlayerPID_GrapplingHookAttachDetach:	return nh::player::grappling_hook(p);
+		case PlayerPID_SetWeapon:					return nh::player::set_weapon(p);
+		case PlayerPID_SetVehicle:					return nh::player::set_vehicle(p);
+		case PlayerPID_EnterExitVehicle:			return nh::player::enter_exit_vehicle(p);
+		case PlayerPID_VehicleControl:				return nh::vehicle::control(p);
+		case PlayerPID_VehicleHonk:					return nh::vehicle::honk(p);
+		case PlayerPID_VehicleFire:					return nh::vehicle::fire(p);
+		case PlayerPID_VehicleMountedGunFire:		return nh::vehicle::mounted_gun_fire(p);
+		case PlayerPID_VehicleDynamicInfo:			return nh::vehicle::dynamic_info(p);
 		}
 
 		return PacketRes_NotFound;

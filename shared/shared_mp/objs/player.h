@@ -69,8 +69,7 @@ public:
 		float head_interpolation = 0.f;
 
 		bool hip_aim = false,
-			 full_aim = false,
-			 is_crouching = false;
+			 full_aim = false;
 	};
 
 	struct MovementInfo
@@ -82,7 +81,9 @@ public:
 		bool sync_angle_next_tick = false,
 			 force_sync = false,
 			 aiming = false,
-			 climbing_ladder = false;
+			 climbing_ladder = false,
+			 is_crouching = false,
+			 paragliding = false;
 	};
 
 	struct SkinInfo
@@ -100,13 +101,17 @@ private:
 	MovementInfo move_info {};
 	SkinInfo skin_info {};
 
+	PlayerClient* client = nullptr;
+
 	VehicleNetObject* vehicle = nullptr;
+
+	NetObject* grappled_object = nullptr;
+
+	vec3 grappled_relative_position {};
 
 	uint8_t vehicle_seat = VehicleSeat_None;
 
 	bool tag_enabled = true;
-
-	PlayerClient* client = nullptr;
 
 #ifdef JC_CLIENT
 	UIMapIcon* blip = nullptr;
@@ -205,9 +210,12 @@ public:
 	void reload();
 	void set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);
 	void set_vehicle(uint8_t seat_type, VehicleNetObject* v);
+	void set_in_parachute(bool v);
+	void set_grappled_object(NetObject* obj, const vec3& relative_position = {});
 
 	bool is_climbing_ladder();
 	bool is_crouching();
+	bool is_paragliding();
 	bool is_tag_enabled() const { return tag_enabled; }
 	bool is_alive() const { return get_hp() > 0.f; }
 	bool is_hip_aiming() const { return dyn_info.hip_aim; }
@@ -227,6 +235,8 @@ public:
 
 	float get_head_interpolation() const { return dyn_info.head_interpolation; }
 
+	NetObject* get_grappled_object() const { return grappled_object; }
+
 	VehicleNetObject* get_vehicle() const { return vehicle; }
 
 	const vec3& get_head_rotation() const { return dyn_info.head_rotation; }
@@ -237,6 +247,7 @@ public:
 	const std::string& get_nick() const { return dyn_info.nick; }
 
 	const vec3& get_velocity() const { return dyn_info.velocity; }
+	const vec3& get_grappled_relative_position() const { return grappled_relative_position; }
 
 	// basic info getters/setters
 

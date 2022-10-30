@@ -10,6 +10,11 @@ namespace jc::alive_object
 	static constexpr uint32_t HEALTH	 = 0x4C;		// float
 	static constexpr uint32_t FLAGS		 = 0x56;		// uint16_t
 
+	namespace fn
+	{
+		static constexpr uint32_t INFLICT_DAMAGE = 0x636EC0;
+	}
+
 	namespace vt
 	{
 		static constexpr uint32_t SET_HEALTH		= 33;

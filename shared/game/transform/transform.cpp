@@ -113,6 +113,8 @@ Transform Transform::look_at(const vec3& eye, const vec3& target)
 
 vec3 Transform::rotate_point(vec3 p) const
 {
-	return *jc::c_call<vec3*, vec3*, vec3*, const Transform*>(jc::g::math::fn::ROTATE_POINT_BY_MATRIX, &p, &p, this);
+	vec3 out;
+
+	return *jc::c_call<vec3*, vec3*, vec3*, const Transform*>(jc::g::math::fn::ROTATE_POINT_BY_MATRIX, &out, &p, this);
 }
 #endif

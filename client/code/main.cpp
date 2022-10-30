@@ -102,7 +102,10 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		log(GREEN, "Initializing patches...");
 
 		jc::patches::apply();
+
+#ifdef JC_DBG
 		jc::test_units::init();
+#endif
 
 		// initialize mod systems
 
@@ -193,7 +196,10 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 			// uninitialize MH
 
+#ifdef JC_DBG
 			jc::test_units::destroy();
+#endif
+
 			jc::patches::undo();
 
 			// unhook all

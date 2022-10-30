@@ -26,6 +26,11 @@ namespace jc::weapon
 	{
 		static constexpr uint32_t SET_ENABLED		= 36;	// todojc - this is from Item, once the class is done, move it there
 	}
+
+	namespace hook
+	{
+		void enable(bool apply);
+	}
 }
 
 namespace jc::weapon_info

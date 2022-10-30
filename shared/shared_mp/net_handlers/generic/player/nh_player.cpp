@@ -288,34 +288,46 @@ PacketResult nh::player::parachute_control(const Packet& p)
 #endif
 
 #ifdef JC_CLIENT
-	if (const auto player_char = player->get_character())
-		if (const auto parachute = player->get_game_player()->get_parachute())
-			switch (const auto control_type = p.get_u8())
-			{
-			case 0:	// close
-			{
-				if (player_char->get_body_stance()->get_distance_to_ground() <= StanceController::MAX_DISTANCE_PARACHUTE_FALL() * 2.f)
-					player->set_body_stance_id(27);
-				else player->set_body_stance_id(25);
-
-				if (!parachute->is_closed())
-					parachute->set_closed(true);
-
-				break;
-			}
-			case 1: // open
-			{
-				player->set_body_stance_id(27);
-				player->set_body_stance_id(25);
-				player->set_body_stance_id(59);
-
-				parachute->set_closed(false);
-
-				break;
-			}
-			}
+	switch (const auto control_type = p.get_u8())
+	{
+	case 0: player->set_in_parachute(false); break;
+	case 1: player->set_in_parachute(true); break;
+	}
 #endif
 
+#ifdef JC_SERVER
+	p.add_beginning(player);
+
+	g_net->send_broadcast(pc, p);
+#endif
+
+	return PacketRes_Ok;
+}
+
+PacketResult nh::player::grappling_hook(const Packet& p)
+{
+#ifdef JC_CLIENT
+	const auto player = p.get_net_object<Player>();
+
+	if (!player)
+		return PacketRes_BadArgs;
+#else
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+#endif
+
+	if (const bool attach = p.get_bool())
+	{
+		const auto attach_to_net_obj = p.get_net_object<NetObject>();
+		const auto relative_attach_pos = p.get<vec3>();
+
+		if (!attach_to_net_obj)
+			return PacketRes_BadArgs;
+
+		player->set_grappled_object(attach_to_net_obj, relative_attach_pos);
+	}
+	else player->set_grappled_object(nullptr);
+	
 #ifdef JC_SERVER
 	p.add_beginning(player);
 

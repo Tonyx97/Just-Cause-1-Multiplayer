@@ -1,5 +1,8 @@
 #pragma once
 
+class Bullet;
+class Character;
+
 namespace jc::ammo_manager
 {
 	static constexpr uint32_t SINGLETON = 0xD84EC4; // AmmoManager*
@@ -13,6 +16,19 @@ namespace jc::ammo_manager
 	static constexpr uint32_t MAX_AMMO_SLOTF = 0x98; // int32_t
 	static constexpr uint32_t MAX_AMMO_SLOTG = 0x9C; // int32_t
 	static constexpr uint32_t MAX_AMMO_SLOTH = 0xA0; // int32_t
+
+	namespace hook
+	{
+		void enable(bool apply);
+	}
+
+	namespace g_fn
+	{
+		void clear_owner_bullets(Character* character);
+		void add_bullet_owner(Bullet* bullet, Character* character);
+
+		Character* get_bullet_owner(Bullet* bullet);
+	}
 }
 
 using bullet_iteration_t = std::function<void(int, class Bullet*)>;

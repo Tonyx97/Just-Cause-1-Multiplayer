@@ -25,6 +25,7 @@ namespace jc::game_player
 		static constexpr uint32_t DISPATCH_SWIMMING						= 0x4C8470;
 		static constexpr uint32_t CROUCH								= 0x4CDEC0;
 		static constexpr uint32_t UNCROUCH								= 0x4CDEA0;
+		static constexpr uint32_t DRAW_GRAPPLING_HOOK					= 0x4CCC40;
 	}
 
 	namespace hook
@@ -69,6 +70,7 @@ public:
 	void crouch(bool enabled, bool sync = true);
 	void dispatch_swimming();
 	void block_key_input(bool blocked);
+	void draw_grappling_hook(const vec3& begin, const vec3& end, bool hooked = false);
 
 	int32_t get_state_id() const;
 

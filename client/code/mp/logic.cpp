@@ -53,6 +53,7 @@ void jc::mp::logic::on_tick()
 			const auto flags = local_char->get_flags();
 			const auto transform = local_char->get_transform();
 			const auto velocity = local_char->get_velocity();
+			const auto grappled_obj = local_char->get_grappled_object();
 			const auto position = transform.get_position();
 			const auto rotation = transform.get_rotation();
 			const auto hp = local_char->get_real_hp();
@@ -97,6 +98,15 @@ void jc::mp::logic::on_tick()
 
 			if (max_hp != localplayer->get_max_hp())
 				localplayer->set_max_hp(max_hp);
+
+			// grappling hook
+
+			if (!grappled_obj.lock() && localplayer->get_grappled_object())
+			{
+				localplayer->set_grappled_object(nullptr);
+
+				g_net->send(Packet(PlayerPID_GrapplingHookAttachDetach, ChannelID_Generic, false));
+			}
 
 			// resync state
 
