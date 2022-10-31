@@ -464,17 +464,17 @@ AnimatedRigidObject* FactorySystem::spawn_animated_rigid_object(const vec3& posi
 	return nullptr;
 }
 
-UIMapIcon* FactorySystem::create_map_icon(const std::string& name, const vec3& position)
+shared_ptr<UIMapIcon> FactorySystem::create_map_icon(const std::string& name, const vec3& position)
 {
-	if (auto obj = g_game_control->create_object<UIMapIcon>(false))
+	if (auto object = g_game_control->create_object<UIMapIcon>(false))
 	{
-		if (!obj->setup(name, position))
-			return nullptr;
+		if (!object->setup(name, position))
+			return {};
 
-		return add_to_ref_map(ui_map_icons, obj);
+		return object;
 	}
 
-	return nullptr;
+	return {};
 }
 
 UIMapIconType* FactorySystem::create_map_icon_type(const std::string& name, const std::string& texture, const vec2& scale)

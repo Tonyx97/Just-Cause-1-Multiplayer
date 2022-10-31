@@ -37,12 +37,19 @@ Player::~Player()
 
 	if (is_local())
 		return;
+
+	// do not destroy the local's GamePlayer
+
+	if (game_player)
+	{
+		game_player->set_character(nullptr);
+		game_player->destroy();
+		game_player = nullptr;
+	}
 	
 	// destroy the player character etc
 	
 	destroy_object();
-
-	std::exchange(game_player, nullptr)->destroy();
 }
 
 Character* Player::get_character() const
@@ -95,7 +102,8 @@ void Player::update_blip()
 	if (vehicle)
 		set_position(vehicle->get_position());
 
-	blip->set_position(get_position());
+	if (blip)
+		blip->set_position(get_position());
 }
 
 void Player::set_multiple_rand_seed(uint16_t v)
@@ -170,9 +178,9 @@ void Player::destroy_object()
 	jc::ammo_manager::g_fn::clear_owner_bullets(get_character());
 
 	if (handle) g_factory->destroy_character_handle(std::exchange(handle, nullptr));
-	if (blip)	g_factory->destroy_map_icon(std::exchange(blip, nullptr));
+	if (blip)	blip.reset();
 
-	if (!is_local())
+	if (!is_local() && game_player)
 		game_player->set_character(nullptr);
 #endif
 }
@@ -208,6 +216,7 @@ void Player::on_spawn()
 
 		log(PURPLE, "Player {:x} spawned now {:x} - handle {:x}", get_nid(), ptr(get_character()), ptr(handle));
 
+		blip.reset();
 		blip = g_factory->create_map_icon("player_blip", get_position());
 
 		check(blip, "Could not create the player's blip");

@@ -15,9 +15,14 @@ BlipNetObject::BlipNetObject(NID nid, const TransformTR& transform)
 	set_transform(transform);
 }
 
+UIMapIcon* BlipNetObject::get_object() const
+{
+	return obj.get();
+}
+
 ObjectBase* BlipNetObject::get_object_base() const
 {
-	return obj;
+	return get_object();
 }
 #else
 BlipNetObject::BlipNetObject(SyncType sync_type, const TransformTR& transform)
@@ -34,7 +39,7 @@ BlipNetObject::~BlipNetObject()
 
 void BlipNetObject::destroy_object()
 {
-	IF_CLIENT_AND_VALID_OBJ_DO([&]() { g_factory->destroy_map_icon(std::exchange(obj, nullptr)); });
+	IF_CLIENT_AND_VALID_OBJ_DO([&]() { obj.reset(); });
 }
 
 void BlipNetObject::on_sync()
@@ -48,7 +53,7 @@ void BlipNetObject::on_spawn()
 
 	check(obj, "Could not create blip object");
 
-	log(PURPLE, "{} {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", typeid(*obj).name(), get_nid(), ptr(obj), get_position().x, get_position().y, get_position().z);
+	log(PURPLE, "BlipNetObject {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", get_nid(), ptr(obj.get()), get_position().x, get_position().y, get_position().z);
 #endif
 }
 

@@ -58,7 +58,7 @@ public:
 	ItemPickup*				spawn_general_item_pickup(const vec3& position, uint32_t type, const std::string& model, const std::string& description = {});
 	ItemPickup*				spawn_weapon_item_pickup(const vec3& position, uint32_t weapon_id, const std::string& description = {});
 	AnimatedRigidObject*	spawn_animated_rigid_object(const vec3& position, const std::string& model, const std::string& pfx_name);
-	UIMapIcon*				create_map_icon(const std::string& name, const vec3& position);
+	shared_ptr<UIMapIcon> create_map_icon(const std::string& name, const vec3& position);
 	UIMapIconType*			create_map_icon_type(const std::string& name, const std::string& texture, const vec2& scale);
 	Objective*				create_objective(const vec3& position, const u8vec4& color);
 	TrafficLight*			create_traffic_light(const vec3& position);

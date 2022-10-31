@@ -191,10 +191,10 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			{
 				check(localplayer != player, "A localplayer cannot receive its own NID");
 
+				log(YELLOW, "[{}] Destroyed player with NID {:x}", CURR_FN, player->get_nid());
+
 				g_chat->add_chat_msg(FORMATV("{} has left the server", player->get_nick()));
 				g_net->remove_player_client(player->get_client());
-
-				log(YELLOW, "[{}] Destroyed player with NID {:x}", CURR_FN, player->get_nid());
 			}
 		}
 		else check(false, "non-player net objects cannot be destroyed here");

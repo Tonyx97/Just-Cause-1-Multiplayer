@@ -7,7 +7,7 @@ class BlipNetObject : public NetObject
 private:
 
 #ifdef JC_CLIENT
-	class UIMapIcon* obj = nullptr;
+	shared_ptr<class UIMapIcon> obj;
 #endif
 
 	void destroy_object();
@@ -20,6 +20,8 @@ public:
 
 #ifdef JC_CLIENT
 	BlipNetObject(NID nid, const TransformTR& transform);
+
+	class UIMapIcon* get_object() const;
 
 	class ObjectBase* get_object_base() const override;
 #else

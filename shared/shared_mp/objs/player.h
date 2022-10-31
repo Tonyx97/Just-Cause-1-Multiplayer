@@ -114,7 +114,7 @@ private:
 	bool tag_enabled = true;
 
 #ifdef JC_CLIENT
-	UIMapIcon* blip = nullptr;
+	shared_ptr<UIMapIcon> blip;
 
 	CharacterHandle* handle = nullptr;
 
@@ -158,7 +158,7 @@ public:
 
 	GamePlayer* get_game_player() const { return game_player; }
 
-	UIMapIcon* get_blip() const { return blip; }
+	shared_ptr<UIMapIcon> get_blip() const { return blip; }
 
 	vec3 generate_bullet_rand_spread();
 #else
