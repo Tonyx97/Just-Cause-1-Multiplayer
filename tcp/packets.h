@@ -2,15 +2,15 @@
 
 using TcpPacketID = uint16_t;
 
-enum SharedMsPacketID : TcpPacketID
+enum ClientToMsPacketID : TcpPacketID
 {
-	SharedMsPacket_Type,
-	SharedMsPacket_Max,
+	ClientToMsPacket_ServersInfo,
+	ClientToMsPacket_Max,
 };
 
 enum ServerToMsPacketID : TcpPacketID
 {
-	ServerToMsPacket_Verify = SharedMsPacket_Max,
+	ServerToMsPacket_Verify = ClientToMsPacket_Max,
 	ServerToMsPacket_Info,
 	ServerToMsPacket_Max,
 };

@@ -18,5 +18,31 @@
     <ClCompile Include="code\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\base\base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\client\ms_client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\server\ms_server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\ms\ms.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\base\base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\client\ms_client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\server\ms_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\ms\ms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

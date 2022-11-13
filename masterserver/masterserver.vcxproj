@@ -135,6 +135,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,6 +151,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,7 +162,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="code\base\base.cpp" />
+    <ClCompile Include="code\client\ms_client.cpp" />
     <ClCompile Include="code\main.cpp" />
+    <ClCompile Include="code\ms\ms.cpp" />
+    <ClCompile Include="code\server\ms_server.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\base\base.h" />
+    <ClInclude Include="code\client\ms_client.h" />
+    <ClInclude Include="code\ms\ms.h" />
+    <ClInclude Include="code\server\ms_server.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -14,18 +14,9 @@ namespace netcp
 
 		uint16_t port;
 
-		ServerClientType type = ServerClientType_None;
-
 	public:
 
 		tcp_server_client(const on_receive_t& on_receive_fn, asio::ip::tcp::socket& socket, CID cid);
-
-		void set_type(ServerClientType v) { type = v; }
-
-		bool is_client() const { return type == ServerClientType_Client; }
-		bool is_server() const { return type == ServerClientType_Server; }
-
-		ServerClientType get_type() const { return type; }
 
 		uint16_t get_port() const { return port; }
 
