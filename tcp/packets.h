@@ -10,7 +10,7 @@ enum ClientToMsPacketID : TcpPacketID
 
 enum ServerToMsPacketID : TcpPacketID
 {
-	ServerToMsPacket_Verify = ClientToMsPacket_Max,
+	ServerToMsPacket_Verify,
 	ServerToMsPacket_Info,
 	ServerToMsPacket_Max,
 };

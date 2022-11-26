@@ -9,10 +9,12 @@ public:
 	struct Info
 	{
 		std::string ip,
-			name,
-			discord,
-			community,
-			gamemode;
+					name,
+					discord,
+					community,
+					gamemode;
+
+		std::vector<std::string> players;
 
 		int refresh_rate = 0;
 

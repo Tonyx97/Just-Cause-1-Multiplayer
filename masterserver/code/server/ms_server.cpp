@@ -2,6 +2,8 @@
 
 #include "ms_server.h"
 
+#include <ms/ms.h>
+
 void Server::on_receive(const netcp::packet_header& header, serialization_ctx& data)
 {
 	switch (header.id)
@@ -26,7 +28,7 @@ void Server::on_receive(const netcp::packet_header& header, serialization_ctx& d
 			.refresh_rate = _deserialize<int>(data),
 			.password = _deserialize<bool>(data),
 		});
-		
+
 		break;
 	}
 	default: logt(RED, "Unknown server packet id: {}", header.id);
@@ -38,6 +40,11 @@ void Server::set_info(Info&& v)
 	std::lock_guard lock(mtx);
 
 	info = std::move(v);
+
+	if (info.ip.empty())
+		info.ip = base->get_ip();
+
+	log(YELLOW, "Server info received {}", info.name);
 }
 
 Server::Info Server::get_info() const
