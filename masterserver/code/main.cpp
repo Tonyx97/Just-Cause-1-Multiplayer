@@ -11,8 +11,16 @@ int main()
 	BringWindowToTop(GetConsoleWindow());
 
 	MasterServer ms {};
+	
+	std::string cmd;
 
-	while (!GetAsyncKeyState(VK_F7)) Sleep(25);
+	while (cmd != "exit")
+	{
+		std::cin >> cmd;
+
+		if (cmd == "refresh")
+			ms.refresh_client_dll();
+	}
 
 	return EXIT_SUCCESS;
 }

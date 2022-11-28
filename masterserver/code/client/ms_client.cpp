@@ -24,6 +24,18 @@ void Client::on_receive(const netcp::packet_header& header, serialization_ctx& d
 
 		break;
 	}
+	case ClientToMsPacket_ClientHash:
+	{
+		base->send_packet(ClientToMsPacket_ClientHash, ms->get_client_dll_hash());
+
+		break;
+	}
+	case ClientToMsPacket_DownloadClient:
+	{
+		base->send_packet(ClientToMsPacket_DownloadClient, ms->get_client_dll());
+		
+		break;
+	}
 	default: logt(RED, "Unknown client packet id: {}", header.id);
 	}
 }

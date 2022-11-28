@@ -13,8 +13,13 @@ private:
 
 	std::mutex mtx;
 
+	mutable std::mutex client_dll_mtx;
+
 	jc::thread_safe::vector<netcp::tcp_server_client*> clients,
 													   servers;
+
+	std::vector<uint8_t> client_dll,
+						 client_dll_hash;
 
 public:
 
@@ -28,6 +33,10 @@ public:
 	void add_server(netcp::tcp_server_client* cl);
 	void remove_client(netcp::tcp_server_client* cl);
 	void remove_server(netcp::tcp_server_client* cl);
+	void refresh_client_dll();
+
+	std::vector<uint8_t> get_client_dll_hash() const;
+	std::vector<uint8_t> get_client_dll() const;
 
 	template <typename Fn>
 	void for_each_client(const Fn& fn)

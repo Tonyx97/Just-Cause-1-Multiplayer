@@ -2,8 +2,14 @@
 
 #include "ms.h"
 
+#include <crypto/sha512.h>
+
 void MasterServer::start_client_sv()
 {
+	// get dll hash
+
+	refresh_client_dll();
+
 	// setup the client server
 
 	client_sv.set_on_connected_fn([&](netcp::tcp_server_client* cl) { add_client(cl); });
@@ -81,4 +87,31 @@ void MasterServer::remove_server(netcp::tcp_server_client* cl)
 	delete base;
 
 	clients.erase(cl);
+}
+
+void MasterServer::refresh_client_dll()
+{
+	std::lock_guard lock(client_dll_mtx);
+
+	client_dll = util::fs::read_bin_file("jcmp_client.dll");
+
+	check(!client_dll.empty(), "Client DLL does not exist");
+
+	client_dll_hash = crypto::sha512_raw(BITCAST(char*, client_dll.data()), client_dll.size());
+
+	log(GREEN, "Client DLL refreshed: {} bytes", client_dll.size());
+}
+
+std::vector<uint8_t> MasterServer::get_client_dll_hash() const
+{
+	std::lock_guard lock(client_dll_mtx);
+
+	return client_dll_hash;
+}
+
+std::vector<uint8_t> MasterServer::get_client_dll() const
+{
+	std::lock_guard lock(client_dll_mtx);
+
+	return client_dll;
 }

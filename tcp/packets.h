@@ -5,6 +5,8 @@ using TcpPacketID = uint16_t;
 enum ClientToMsPacketID : TcpPacketID
 {
 	ClientToMsPacket_ServersInfo,
+	ClientToMsPacket_ClientHash,
+	ClientToMsPacket_DownloadClient,
 	ClientToMsPacket_Max,
 };
 
