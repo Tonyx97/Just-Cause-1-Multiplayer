@@ -460,7 +460,7 @@ void DebugUI::overlay_debug()
 		camera->w2s(normal_end, normal_sp);
 
 		g_ui->draw_line(hit_pos_sp, normal_sp, 2.f, { 0.f, 0.f, 1.f, 1.f });
-		g_ui->draw_filled_circle(hit_pos_sp, 5.f, 50.f, { 1.f, 0.f, 0.f, 1.f });
+		g_ui->draw_filled_circle(hit_pos_sp, 5.f, 50, { 1.f, 0.f, 0.f, 1.f });
 
 		if (has_hit)
 			log(RED, "{:x} {:.2f} {:.2f} {:.2f} | {:.2f}", ptr(hit_info.object), hit_info.normal.x, hit_info.normal.y, hit_info.normal.z, hit_info.distance);
