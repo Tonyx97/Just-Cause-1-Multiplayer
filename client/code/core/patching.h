@@ -25,7 +25,7 @@ struct scoped_patch
 
 	~scoped_patch()
 	{
-		if (scoped)
+		if (scoped && active)
 			_undo();
 	}
 
@@ -62,7 +62,6 @@ struct scoped_patch
 
 		_do(nop_bytes);
 	}
-
 
 	template <typename Tx, typename Ty>
 	void jump(Tx from, Ty to)

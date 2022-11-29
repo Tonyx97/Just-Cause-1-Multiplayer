@@ -91,6 +91,7 @@ void MasterServer::remove_server(netcp::tcp_server_client* cl)
 
 void MasterServer::refresh_client_dll()
 {
+#ifdef JC_DBG
 	std::lock_guard lock(client_dll_mtx);
 
 	client_dll = util::fs::read_bin_file("jcmp_client.dll");
@@ -100,6 +101,7 @@ void MasterServer::refresh_client_dll()
 	client_dll_hash = crypto::sha512_raw(BITCAST(char*, client_dll.data()), client_dll.size());
 
 	log(GREEN, "Client DLL refreshed: {} bytes", client_dll.size());
+#endif
 }
 
 std::vector<uint8_t> MasterServer::get_client_dll_hash() const

@@ -191,7 +191,17 @@ GamePlayer* GamePlayer::CREATE()
 {
 	const auto player = jc::game::malloc<GamePlayer>(0x53C);
 
-	jc::this_call(jc::game_player::fn::CTOR, player);
+	{
+		scoped_patch avoid_wasd_controller_creation(0x4C21BE);
+
+		avoid_wasd_controller_creation.jump(0x4C2231);
+
+		jc::this_call(jc::game_player::fn::CTOR, player);
+
+		// set invalid wasd controller
+		
+		jc::write<WASDController*>(nullptr, player, jc::game_player::WASD_CONTROLLER);
+	}
 
 	// load the parachute model for this GamePlayer
 	

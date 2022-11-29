@@ -444,8 +444,8 @@ void DebugUI::overlay_debug()
 
 		g_ui->draw_line(from_sp, to_sp, 2.f, { 0.f, 1.f, 0.f, 1.f });
 
-		g_ui->draw_filled_circle(from_sp, 20.f, 50.f, { 0.f, 1.f, 1.f, 1.f });
-		g_ui->draw_filled_circle(to_sp, 20.f, 50.f, { 1.f, 1.f, 0.f, 1.f });
+		g_ui->draw_filled_circle(from_sp, 20.f, 50, { 0.f, 1.f, 1.f, 1.f });
+		g_ui->draw_filled_circle(to_sp, 20.f, 50, { 1.f, 1.f, 0.f, 1.f });
 
 		ray_hit_info hit_info;
 

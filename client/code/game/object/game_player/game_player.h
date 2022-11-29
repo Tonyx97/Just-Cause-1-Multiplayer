@@ -9,6 +9,7 @@ namespace jc::game_player
 	static constexpr uint32_t FORWARD			= 0xFC;		// float
 	static constexpr uint32_t STATE				= 0x130;	// int
 	static constexpr uint32_t INPUT_BLOCKED		= 0x1D8;	// bool
+	static constexpr uint32_t WASD_CONTROLLER	= 0x2BC;	// WASDController*
 
 	namespace fn
 	{
@@ -34,6 +35,7 @@ namespace jc::game_player
 	}
 }
 
+class WASDController;
 class Character;
 class Parachute;
 
