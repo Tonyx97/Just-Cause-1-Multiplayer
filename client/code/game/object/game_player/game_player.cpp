@@ -80,30 +80,41 @@ namespace jc::game_player::hook
 
 		check(player_char, "Trying to update a GamePlayer with no character");
 
-		// local player 
-		
-		if (local_gp == game_player)
-		{
-			update_hook(game_player);
+		// remote players
 
-			if (const auto localplayer = g_net->get_localplayer())
+		if (const auto player = g_net->get_player_by_character(player_char))
+		{
+			// for all players
+			// 
+			// render hooked grappling cable when it's attached to something
+
+			if (auto hooked_obj = player_char->get_grappled_object().lock())
+				if (const auto weapon = player_char->get_current_weapon())
+				{
+					const auto transform = hooked_obj->get_transform();
+
+					game_player->draw_grappling_hook(weapon->get_muzzle_position(), transform.rotate_point(player->get_grappled_relative_position()), false);
+				}
+
+			// local player only
+
+			if (local_gp == game_player)
+			{
+				update_hook(game_player);
+
 				if (const auto camera = jc::this_call(0x582920, jc::read<ptr>(0xD8509C), 1))
 				{
 					const auto cam_yaw = jc::v_call<float>(camera, 4);
 					const bool is_looking = jc::read<int8_t>(game_player, 0x13D) || jc::read<int8_t>(game_player, 0x13E);
 
-					//log(PURPLE, "{}", jc::this_call<bool>(0x5A2080, local_gp->get_character()));
-
-					localplayer->set_movement_info(cam_yaw, local_gp->get_right(), local_gp->get_forward(), is_looking);
+					player->set_movement_info(cam_yaw, local_gp->get_right(), local_gp->get_forward(), is_looking);
 				}
 
-			return;
-		}
+				return;
+			}
 
-		// remote players
+			// dispatch movement specific stuff
 
-		if (const auto player = g_net->get_player_by_character(player_char))
-		{
 			const auto& move_info = player->get_movement_info();
 
 			check(jc::read<int>(game_player, 0x134) == 0, "Not implemented 0");
@@ -163,16 +174,6 @@ namespace jc::game_player::hook
 			}
 
 			jc::this_call(0x4CB710, game_player);
-
-			// render hooked grappling cable when it's attached to something
-
-			if (auto hooked_obj = player_char->get_grappled_object().lock())
-				if (const auto weapon = player_char->get_current_weapon())
-				{
-					const auto transform = hooked_obj->get_transform();
-
-					game_player->draw_grappling_hook(weapon->get_muzzle_position(), transform.rotate_point(player->get_grappled_relative_position()), false);
-				}
 		}
 	}
 
@@ -309,9 +310,9 @@ void GamePlayer::block_key_input(bool blocked)
 	jc::write(blocked, this, jc::game_player::INPUT_BLOCKED);
 }
 
-void GamePlayer::draw_grappling_hook(const vec3& begin, const vec3& end, bool hooked)
+void GamePlayer::draw_grappling_hook(const Transform& begin, const vec3& end, bool hooked)
 {
-	jc::this_call<void>(jc::game_player::fn::DRAW_GRAPPLING_HOOK, this, Transform(begin), end, hooked);
+	jc::this_call<void>(jc::game_player::fn::DRAW_GRAPPLING_HOOK, this, begin, end, hooked);
 }
 
 int32_t GamePlayer::get_state_id() const

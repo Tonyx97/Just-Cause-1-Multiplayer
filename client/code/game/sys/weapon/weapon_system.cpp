@@ -4,6 +4,8 @@
 
 #include "weapon_system.h"
 
+#include <game/sys/resource/model_system.h>
+
 WeaponTemplate* WeaponTemplate::CREATE()
 {
 	const auto instance = jc::game::malloc<WeaponTemplate>(jc::weapon_system::weapon_template::INSTANCE_SIZE);
@@ -243,6 +245,8 @@ shared_ptr<Weapon> WeaponSystem::create_weapon_instance(const std::string& name)
 
 	const jc::stl::string _name = name;
 
+	ModelRestorationPatch patch {};
+
 	jc::this_call(jc::weapon_system::fn::ALLOC_WEAPON_BY_NAME, this, &p, &_name);
 
 	return p;
@@ -251,6 +255,8 @@ shared_ptr<Weapon> WeaponSystem::create_weapon_instance(const std::string& name)
 shared_ptr<Weapon> WeaponSystem::create_weapon_instance(uint8_t id)
 {
 	shared_ptr<Weapon> p;
+
+	ModelRestorationPatch patch {};
 
 	jc::this_call(jc::weapon_system::fn::ALLOC_WEAPON_BY_ID, this, &p, static_cast<int32_t>(id));
 

@@ -383,12 +383,6 @@ DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filena
 		_serialize(savegame, 0);
 		_serialize(savegame, 0); // weapon count
 
-		/*_serialize(savegame, 1); // weapon count
-		_serialize(savegame, 186ui8);
-		_serialize(savegame, std::string("Grapplinghook"));
-		_serialize(savegame, 0ui8);
-		_serialize(savegame, 5);*/
-
 		_serialize(savegame, 0);
 		_serialize(savegame, 0);
 		_serialize(savegame, 0);

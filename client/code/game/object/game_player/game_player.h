@@ -72,7 +72,7 @@ public:
 	void crouch(bool enabled, bool sync = true);
 	void dispatch_swimming();
 	void block_key_input(bool blocked);
-	void draw_grappling_hook(const vec3& begin, const vec3& end, bool hooked = false);
+	void draw_grappling_hook(const Transform& begin, const vec3& end, bool hooked = false);
 
 	int32_t get_state_id() const;
 

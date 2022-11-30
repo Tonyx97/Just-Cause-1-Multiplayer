@@ -13,8 +13,29 @@ namespace jc::model_system
 	namespace fn
 	{
 		static constexpr uint32_t LOAD_RBM_FROM_MEM			= 0x57A070;
+		static constexpr uint32_t GET_MODEL					= 0x57A1B0;
 	}
 }
+
+struct ModelRestorationPatch
+{
+private:
+
+	int old = 0;
+
+public:
+
+	ModelRestorationPatch()
+	{
+		old = jc::read<uint8_t>(0xAF2398);
+		jc::c_call(0x40EFC0, 0);
+	}
+
+	~ModelRestorationPatch()
+	{
+		jc::c_call(0x40EFC0, old);
+	}
+};
 
 class ModelSystem : public ResourceCache<AssetRBM, jc::model_system::MODEL_CACHE>
 {

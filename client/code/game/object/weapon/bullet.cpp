@@ -59,17 +59,8 @@ namespace jc::bullet::hook
 			if (type == BulletType_Hook)
 				if (const auto owner = ammo_manager::g_fn::get_bullet_owner(bullet))
 					if (const auto weapon = owner->get_current_weapon())
-					{
-						if (const auto player = g_net->get_player_by_character(owner); player != g_net->get_localplayer())
-							player->get_game_player()->draw_grappling_hook(weapon->get_muzzle_position(), bullet->get_position(), true);
-						else if (player)
-						{
-							// if it's the localplayer bullet then update the grappling position so it
-							// shows the trashy white line
-							
-							jc::write(bullet->get_position(), 0xD86024);
-						}
-					}
+						if (const auto player = g_net->get_player_by_character(owner))
+							player->get_game_player()->draw_grappling_hook(*weapon->get_muzzle_transform(), bullet->get_position(), true);
 
 			break;
 		}
@@ -87,14 +78,17 @@ namespace jc::bullet::hook
 
 		// sends our grappling attach info to all players
 		
-		if (const auto owner = ammo_manager::g_fn::get_bullet_owner(bullet); owner && owner == g_net->get_localplayer()->get_character())
-			if (auto object = owner->get_grappled_object().lock())
-				if (const auto net_obj = g_net->get_net_object_by_game_object(object.get()))
-				{
-					const auto relative_pos = ihp->at_ebp<vec3>(0x88);
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto owner = ammo_manager::g_fn::get_bullet_owner(bullet); owner && owner == localplayer->get_character())
+				if (auto object = owner->get_grappled_object().lock())
+					if (const auto net_obj = g_net->get_net_object_by_game_object(object.get()))
+					{
+						const auto relative_pos = ihp->at_ebp<vec3>(0x88);
 
-					g_net->send(Packet(PlayerPID_GrapplingHookAttachDetach, ChannelID_Generic, true, net_obj, *relative_pos));
-				}
+						localplayer->set_grappled_object(net_obj, *relative_pos);
+
+						g_net->send(Packet(PlayerPID_GrapplingHookAttachDetach, ChannelID_Generic, true, net_obj, *relative_pos));
+					}
 	}
 
 	void enable(bool apply)

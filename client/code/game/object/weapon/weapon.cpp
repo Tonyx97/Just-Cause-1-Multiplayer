@@ -13,6 +13,9 @@
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/weapon/weapon.h>
 
+#include <game/sys/sound/sound_system.h>
+#include <game/sys/world/world.h>
+
 namespace jc::weapon::hook
 {
 	// patch to properly create synced shots in remote players,
@@ -95,9 +98,15 @@ namespace jc::weapon::hook
 		*final_muzzle_transform = Transform::look_at(muzzle, muzzle + weapon->get_aim_target());
 	}
 
+	DEFINE_HOOK_THISCALL_S(play_fire_sound, jc::weapon::fn::PLAY_FIRE_SOUND, void, Weapon* weapon)
+	{
+		play_fire_sound_hook(weapon);
+	}
+
 	void enable(bool apply)
 	{
 		fire_bullet_hook.hook(apply, 0x61F6C6);
+		play_fire_sound_hook.hook(apply);
 	}
 }
 

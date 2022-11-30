@@ -22,6 +22,13 @@ namespace jc::weapon
 	static constexpr uint32_t TOTAL_BULLETS_FIRED_NOW = 0x1C8; // int32_t
 	static constexpr uint32_t TRIGGER_PULLED		  = 0x1CC; // bool
 
+	namespace fn
+	{
+		static constexpr uint32_t PLAY_FIRE_SOUND		= 0x620AC0;
+		static constexpr uint32_t PLAY_TRIGGER_SOUND	= 0x620B80;
+		static constexpr uint32_t PLAY_RELOAD_SOUND		= 0x620C40;
+	}
+
 	namespace vt
 	{
 		static constexpr uint32_t SET_ENABLED		= 36;	// todojc - this is from Item, once the class is done, move it there

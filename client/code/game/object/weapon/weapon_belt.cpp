@@ -80,6 +80,9 @@ shared_ptr<Weapon> WeaponBelt::get_current_weapon()
 
 shared_ptr<Weapon> WeaponBelt::add_weapon(shared_ptr<Weapon>& r)
 {
+	// todojc - figure this shit out, we have to do that restoration thingy
+	// to be able to load the grappling hook for some reason
+
 	jc::this_call(jc::weapon_belt::fn::ADD_WEAPON, this, r);
 
 	return r;

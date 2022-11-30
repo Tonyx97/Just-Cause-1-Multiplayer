@@ -98,8 +98,12 @@ namespace jc::patches
 
 	// patches the sky diving for characters so remote players can use this animation
 	// when falling like the player
-
+	//
 	patch sky_diving_character_patch(0x592D66);
+
+	// patches the engine grappling hook rendering
+	//
+	patch grappling_hook_line_patch(0x4CC4E4);
 }
 
 DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1, jc::stl::string* a2)
@@ -419,10 +423,15 @@ void jc::patches::apply()
 		0xBA, 0x00, 0x00, 0x00, 0x01,
 		0x90, 0x90, 0x90
 	});
+
+	// apply patch to avoid grappling hook being rendered
+
+	grappling_hook_line_patch.jump(0x4CC6F5);
 }
 
 void jc::patches::undo()
 {
+	grappling_hook_line_patch._undo();
 	sky_diving_character_patch._undo();
 	bone_culling_distance_patch._undo();
 	game_freeze_patch._undo();

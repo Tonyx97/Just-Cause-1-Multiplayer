@@ -43,11 +43,11 @@
 
 DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* name, int type, ptr data, ptr size)
 {
-	if (strstr(name->c_str(), "kc_022_lod1.rbm"))
+	if (strstr(name->c_str(), "WEAP_000"))
 	{
-		/*log(RED, "{:x} {:x} {:x} {}", a1, data, size, name->c_str());
+		log(RED, "{:x} {:x} {:x} {}", a1, data, size, name->c_str());
 
-		const auto data_file = util::fs::read_bin_file("kc_022_lod1.rbm");
+		/*const auto data_file = util::fs::read_bin_file("kc_022_lod1.rbm");
 
 		size = data_file.size();
 
@@ -63,17 +63,19 @@ DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* n
 	return resource_request_hook(a1, name, type, data, size);
 }
 
-DEFINE_HOOK_THISCALL(_test1, 0x93DE90, void, int _this, int a2)
+// 8367D0
+
+DEFINE_HOOK_THISCALL(_load_model, 0x8367D0, bool, int _this, jc::stl::string* name, int type, ptr data, int size)
 {
-	_test1_hook(_this, a2);
-
-	log(RED, "{}", jc::read<float>(_this, 0xC));
-
-	/*if (jc::read<float>(_this, 0x10) > 2000.f)
+	if (strstr(name->c_str(), "weap_00") && strstr(name->c_str(), ".rbm"))
 	{
-		jc::write<float>(99999.f, _this, 0x10);
-		jc::write<float>(99999.f, _this, 0xC);
-	}*/
+		log(RED, "[{:x}] {} {} {:x} {}", RET_ADDRESS, name->c_str(), type, data, size);
+
+		return _load_model_hook(_this, name, type, data, size);
+		//while (!GetAsyncKeyState(VK_F3));
+	}
+
+	return _load_model_hook(_this, name, type, data, size);
 }
 
 DEFINE_HOOK_THISCALL_S(_test2, 0x597B80, bool, int _this)
@@ -115,26 +117,26 @@ DEFINE_HOOK_CCALL(_test4, 0x996FDD, int)
 void jc::test_units::init()
 {
 	//_test4_hook.hook(true);
-
 	//_test1_hook.hook();
 	/*_test2_hook.hook();
 	_test3_hook.hook();*/
+	//_test_hook.hook();
 
 	//resource_request_hook.hook();
-	//_test_hook.hook();
+	//_load_model_hook.hook();
 }
 
 void jc::test_units::destroy()
 {
 	//_test4_hook.hook(false);
-
 	//_test1_hook.unhook();
 	/*_test2_hook.unhook();
 	_test3_hook.unhook();
 	_test4_hook.unhook();*/
+	//_test_hook.unhook();
 
 	//resource_request_hook.unhook();
-	//_test_hook.unhook();
+	//_load_model_hook.unhook();
 }
 
 void jc::test_units::test_0()
@@ -168,8 +170,10 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		if (auto belt = local_char->get_weapon_belt())
-			belt->clear();
+		g_world->get_local()->reset_weapon_belt();
+
+		/*if (auto belt = local_char->get_weapon_belt())
+			belt->clear();*/
 
 		/*if (const auto new_player = g_net->get_random_player())
 		{
@@ -194,33 +198,8 @@ void jc::test_units::test_0()
 
 		if (auto belt = local_char->get_weapon_belt())
 		{
-			/*auto weap = g_weapon->create_weapon_instance("Grapplinghook");
 
-			belt->add_weapon(weap);
-
-			trash.push_back(std::move(weap));*/
-
-			/*if (!g_model_system->has_resource("WEAP_000_lod4.rbm"))
-			{
-				log(RED, "wtf");
-				g_model_system->load_rbm("WEAP_000_lod4.rbm", g_archives->get_asset_data("WEAP_000_lod4.rbm"));
-			}*/
-
-			for (int i = 0; i < 14; ++i)
-				jc::write(0, belt, 4 + 4 * i);
-
-			//belt->clear();
-
-			const auto test = g_model_system->get_cache_item("Weapons\\WEAP_010_lod4.rbm");
-
-			log(RED, "test: {:x}", ptr(test.get()));
-
-			ptr out[2] = { 0 };
-
-			if (jc::this_call(0x57EA00, g_weapon.get(), out, Weapon_Shotgun_automatic))
-			{
-				jc::this_call(0x60CC00, belt, out[0], out[1]);
-			}
+			belt->add_weapon(Weapon_Grapplinghook);
 		}
 
 		/*g_anim_system->load_anim("test.anim");

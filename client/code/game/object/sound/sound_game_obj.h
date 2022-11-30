@@ -29,7 +29,7 @@ public:
 		Hash_Event2 = 0xb22eaffd,
 		Hash_Event3 = 0x60470680,
 		Hash_Event4 = 0xbebbdce3,
-		Hash_Event5 = 0xe022D451,
+		Hash_Event5 = 0xe022d451,
 		Hash_Event6 = 0x5a489a2d,
 	};
 
