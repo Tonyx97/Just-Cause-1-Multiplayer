@@ -88,6 +88,10 @@ namespace jc::bullet::hook
 						localplayer->set_grappled_object(net_obj, *relative_pos);
 
 						g_net->send(Packet(PlayerPID_GrapplingHookAttachDetach, ChannelID_Generic, true, net_obj, *relative_pos));
+
+						// update grapple relative position in the engine JIC
+						
+						jc::write(*relative_pos, 0xD86024);
 					}
 	}
 
