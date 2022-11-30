@@ -168,14 +168,17 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		if (const auto new_player = g_net->get_random_player())
+		if (auto belt = local_char->get_weapon_belt())
+			belt->clear();
+
+		/*if (const auto new_player = g_net->get_random_player())
 		{
 			shared_ptr<Character>* ayptr = new_player != g_net->get_localplayer() ?
 				(shared_ptr<Character>*)(ptr(new_player->get_character_handle()) + 0x11C) :
 				(shared_ptr<Character>*)(ptr(g_world->get_local()) + 0x1C);
 
 			g_cam_control->get_settings()->set_character(*ayptr);
-		}
+		}*/
 
 		//log(RED, "current {}", --aaa);
 	}
@@ -183,9 +186,41 @@ void jc::test_units::test_0()
 	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
 	//	log(YELLOW, "{:x} {:x} {:x}", entry->hash, entry->offset, entry->size);
 
+	static std::vector<shared_ptr<Weapon>> trash;
+
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		log(RED, "current {}", ++aaa);
+		//log(RED, "current {}", ++aaa);
+
+		if (auto belt = local_char->get_weapon_belt())
+		{
+			/*auto weap = g_weapon->create_weapon_instance("Grapplinghook");
+
+			belt->add_weapon(weap);
+
+			trash.push_back(std::move(weap));*/
+
+			if (!g_model_system->has_resource("WEAP_000_lod4.rbm"))
+			{
+				log(RED, "wtf");
+				g_model_system->load_rbm("WEAP_000_lod4.rbm", g_archives->get_asset_data("WEAP_000_lod4.rbm"));
+			}
+
+			for (int i = 0; i < 14; ++i)
+			{
+				jc::write(0, belt, 4 + 4 * i);
+			}
+
+			//belt->clear();
+
+			ptr out[2] = { 0 };
+
+			if (jc::this_call(0x57EA00, g_weapon.get(), out, Weapon_Grapplinghook))
+			{
+				jc::this_call(0x60CC00, belt, out[0], out[1]);
+			}
+		}
+
 		/*g_anim_system->load_anim("test.anim");
 		local_char->set_animation("test.anim", 0.2f, true, true);
 		g_anim_system->unload_anim("test.anim");*/

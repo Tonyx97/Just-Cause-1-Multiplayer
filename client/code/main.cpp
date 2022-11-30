@@ -302,7 +302,10 @@ DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
 
 	g_key = JC_ALLOC(Keycode);
 	g_key->init();
+
+#if FAST_LOAD
 	g_key->block_input(true);
+#endif
 
 	// dispatch hook
 
@@ -358,43 +361,63 @@ DEFINE_HOOK_STDCALL(load_save, 0x66D7F0, void*, shared_ptr<void*>* r)
 
 	return res;
 }
-
+#include <game/object/weapon/weapon_belt.h>
 // intercepts the function to read game files, we will create our own buffer which the game will deserialize after being
 // patched so it deserializes minimal stuff, not everything is needed for multiplayer, in fact, there is barely useful stuff
 //
 DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filename, uint8_t* buffer, size_t size, size_t offset)
 {
-	serialization_ctx savegame;
+	// single savegame size
+	
+	if (size == 81920)
+	{
+		serialization_ctx savegame;
 
-	_serialize(savegame, 1.f);
-	_serialize(savegame, Transform(jc::character::g::DEFAULT_SPAWN_LOCATION).to_raw());
-	_serialize(savegame, 0);	// ammo grenades
+		_serialize(savegame, 1.f);
+		_serialize(savegame, Transform(jc::character::g::DEFAULT_SPAWN_LOCATION).to_raw());
+		_serialize(savegame, 0);	// ammo grenades
 
-	for (int i = 0; i < 14; ++i)
+		for (int i = 0; i < 14; ++i)
+			_serialize(savegame, 0);
+
+		_serialize(savegame, 0);
+		_serialize(savegame, 0); // weapon count
+
+		/*_serialize(savegame, 1); // weapon count
+		_serialize(savegame, 186ui8);
+		_serialize(savegame, std::string("Grapplinghook"));
+		_serialize(savegame, 0ui8);
+		_serialize(savegame, 5);*/
+
+		_serialize(savegame, 0);
+		_serialize(savegame, 0);
+		_serialize(savegame, 0);
 		_serialize(savegame, 0);
 
-	_serialize(savegame, 0);
-	_serialize(savegame, 0); // weapon count
+		_serialize(savegame, 0ui8);
 
-	_serialize(savegame, 0);
-	_serialize(savegame, 0);
-	_serialize(savegame, 0);
-	_serialize(savegame, 0);
+		_serialize(savegame, 0ui8);
+		_serialize(savegame, 0ui8);
 
-	_serialize(savegame, 0ui8);
+		_serialize(savegame, 25.f);
+		_serialize(savegame, 3);
+		_serialize(savegame, 12.5f);
+		_serialize(savegame, 25.f);
 
-	_serialize(savegame, 0ui8);
-	_serialize(savegame, 0ui8);
+		for (int i = 0; i < 21; ++i)
+			_serialize(savegame, true);
+		
+		log(RED, "ayy {} {} {}", savegame.data.size(), size, offset);
 
-	_serialize(savegame, 25.f);
-	_serialize(savegame, 3);
-	_serialize(savegame, 12.5f);
-	_serialize(savegame, 25.f);
+		savegame.copy_to(buffer);
 
-	for (int i = 0; i < 21; ++i)
-		_serialize(savegame, true);
+		auto data = util::fs::read_bin_file("JCSaves.sav");
+		
+		//memcpy(savegame.data.data() + offset_test, data.data() + offset + offset_test, 4 * 4);
+		//memcpy(data.data() + offset, savegame.data.data(), savegame.data.size());
 
-	savegame.copy_to(buffer);
+		//memcpy(buffer, data.data() + offset, 350);
+	}
 
 	return 0;
 }

@@ -241,7 +241,9 @@ shared_ptr<Weapon> WeaponSystem::create_weapon_instance(const std::string& name)
 {
 	shared_ptr<Weapon> p;
 
-	jc::this_call(jc::weapon_system::fn::ALLOC_WEAPON_BY_NAME, this, &p, &name);
+	const jc::stl::string _name = name;
+
+	jc::this_call(jc::weapon_system::fn::ALLOC_WEAPON_BY_NAME, this, &p, &_name);
 
 	return p;
 }
