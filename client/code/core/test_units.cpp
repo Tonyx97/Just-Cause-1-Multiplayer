@@ -200,22 +200,24 @@ void jc::test_units::test_0()
 
 			trash.push_back(std::move(weap));*/
 
-			if (!g_model_system->has_resource("WEAP_000_lod4.rbm"))
+			/*if (!g_model_system->has_resource("WEAP_000_lod4.rbm"))
 			{
 				log(RED, "wtf");
 				g_model_system->load_rbm("WEAP_000_lod4.rbm", g_archives->get_asset_data("WEAP_000_lod4.rbm"));
-			}
+			}*/
 
 			for (int i = 0; i < 14; ++i)
-			{
 				jc::write(0, belt, 4 + 4 * i);
-			}
 
 			//belt->clear();
 
+			const auto test = g_model_system->get_cache_item("Weapons\\WEAP_010_lod4.rbm");
+
+			log(RED, "test: {:x}", ptr(test.get()));
+
 			ptr out[2] = { 0 };
 
-			if (jc::this_call(0x57EA00, g_weapon.get(), out, Weapon_Grapplinghook))
+			if (jc::this_call(0x57EA00, g_weapon.get(), out, Weapon_Shotgun_automatic))
 			{
 				jc::this_call(0x60CC00, belt, out[0], out[1]);
 			}

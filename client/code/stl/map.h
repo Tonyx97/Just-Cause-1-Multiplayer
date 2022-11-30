@@ -48,9 +48,9 @@ namespace jc::stl
 
 		struct Node
 		{
-			Node* left,
+			Node* parent,
 				* right,
-				* parent;
+				* left;
 
 			K key;
 

@@ -406,17 +406,8 @@ DEFINE_HOOK_STDCALL(read_save_games_file, 0x45F680, int, jc::stl::string* filena
 
 		for (int i = 0; i < 21; ++i)
 			_serialize(savegame, true);
-		
-		log(RED, "ayy {} {} {}", savegame.data.size(), size, offset);
 
 		savegame.copy_to(buffer);
-
-		auto data = util::fs::read_bin_file("JCSaves.sav");
-		
-		//memcpy(savegame.data.data() + offset_test, data.data() + offset + offset_test, 4 * 4);
-		//memcpy(data.data() + offset, savegame.data.data(), savegame.data.size());
-
-		//memcpy(buffer, data.data() + offset, 350);
 	}
 
 	return 0;
