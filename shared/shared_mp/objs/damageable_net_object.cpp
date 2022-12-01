@@ -13,8 +13,8 @@ DamageableNetObject::DamageableNetObject(NID nid, const TransformTR& transform)
 {
 	set_nid(nid);
 	set_transform(transform);
-	set_transform_timer(250);
-	set_velocity_timer(50);
+	set_transform_timer(500);
+	set_velocity_timer(100);
 }
 
 DamageableObject* DamageableNetObject::get_object() const

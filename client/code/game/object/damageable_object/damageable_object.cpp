@@ -40,7 +40,7 @@ shared_ptr<DamageableObject> DamageableObject::CREATE(Transform* transform, cons
 		map.insert<object_base_map::Int>(0x63171db5, 1);
 		map.insert<object_base_map::Int>(0x5753ddd5, 0);
 		map.insert<object_base_map::Int>(0xb62fa75a, 0);
-		map.insert<object_base_map::Float>(0xac8b94a8, 2000.00f);
+		map.insert<object_base_map::Float>(0xac8b94a8, 5000.00f);
 		map.insert<object_base_map::Float>(0x43a3aff3, 50.00f);
 		map.insert<object_base_map::Float>(0x77acb84d, 100.00f);
 		map.insert<object_base_map::Float>(0x71103eeb, 0.00f);

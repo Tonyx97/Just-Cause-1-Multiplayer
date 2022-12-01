@@ -73,7 +73,12 @@ bool NetObject::sync()
 	default:
 	{
 		if (velocity_timer.get_interval() > 0 && velocity_timer.ready())
-			g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Velocity, velocity.curr = physical->get_velocity()));
+		{
+			const auto curr_velocity = physical->get_velocity();
+
+			if (glm::distance2(curr_velocity, get_velocity()) > 0.0025f)
+				g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, this, NetObjectVar_Velocity, velocity.curr = curr_velocity));
+		}
 	}
 	}
 

@@ -334,10 +334,10 @@ void jc::mp::logic::on_update_objects()
 			{
 				// if this object is not owned then we will simply update the needed stuff
 
-				const auto pos = obj->get_position();
+				/*const auto pos = obj->get_position();
 				const auto rot = obj->get_rotation();
 
-				obj_base->set_transform(obj_base->get_transform().interpolate(Transform(pos, rot), 0.2f, 0.2f));
+				obj_base->set_transform(obj_base->get_transform().interpolate(Transform(pos, rot), 0.2f, 0.2f));*/
 			}
 
 			break;
