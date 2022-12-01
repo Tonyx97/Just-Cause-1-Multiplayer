@@ -430,6 +430,7 @@ void DebugUI::overlay_debug()
 	const auto red_color = ImColor(255, 0, 0);
 	const auto green_color = ImColor(0, 255, 0);
 
+#ifdef JC_DBG
 	{
 		//vec3 from = vec3(1324.702f, 83.395f + 1.f, 2581.040f);
 		//vec3 to = vec3(1334.615f, 83.553f + 1.f, 2572.273f);
@@ -465,6 +466,7 @@ void DebugUI::overlay_debug()
 		if (has_hit)
 			log(RED, "{:x} {:.2f} {:.2f} {:.2f} | {:.2f}", ptr(hit_info.object), hit_info.normal.x, hit_info.normal.y, hit_info.normal.z, hit_info.distance);
 	}
+#endif
 
 	g_ammo->for_each_bullet([&](int i, Bullet* bullet)
 	{
