@@ -27,6 +27,7 @@ void jc::mp::logic::on_tick()
 	// send and update our local player info
 
 	static TimerRaw state_sync_timer(2500);
+	static TimerRaw force_transform_timer(1000);
 	static TimerRaw transform_timer(enet::TICKS_MS * 5);
 	static TimerRaw fast_transform_timer(enet::TICKS_MS);
 	static TimerRaw velocity_timer(enet::TICKS_MS * 5);
@@ -147,8 +148,9 @@ void jc::mp::logic::on_tick()
 
 				const bool is_on_ground = local_char->is_on_ground();
 
-				if ((position != localplayer->get_position() || rotation != localplayer->get_rotation()) &&
-					(is_on_ground && transform_timer.ready()) || (!is_on_ground && fast_transform_timer.ready()))
+				if (force_transform_timer.ready() ||
+					((position != localplayer->get_position() || rotation != localplayer->get_rotation()) &&
+					(is_on_ground && transform_timer.ready()) || (!is_on_ground && fast_transform_timer.ready())))
 				{
 					TransformTR transform_tr(position, rotation);
 

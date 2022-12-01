@@ -6,9 +6,11 @@
 
 #include <shared_mp/objs/player.h>
 
-#ifdef JC_SERVER
-#include <tcp_server.h>
 #include <resource_sys/resource_system.h>
+
+#ifdef JC_CLIENT
+#else
+#include <tcp_server.h>
 #endif
 
 #ifdef JC_CLIENT
@@ -41,17 +43,17 @@ PlayerClient::~PlayerClient()
 }
 
 #ifdef JC_SERVER
-#define SETUP_CREATE_SYNC_PACKET(player, joined) \
-								const auto& dyn_info = player->get_dyn_info(); \
+#define ADD_NET_OBJECT_BASIC_DATA(entity)	p.add(entity->get_transform().pack()); \
+											p.add(entity->get_hp()); \
+											p.add(entity->get_max_hp())
+
+
+#define SETUP_CREATE_SYNC_PACKET(player) \
 								Packet p(PlayerClientPID_ObjectInstanceSync, ChannelID_PlayerClient); \
 								p.add(player, NetObjectActionSyncType_Create); \
-								p.add(joined); \
-								p.add(player->get_transform().pack()); \
-								p.add(player->get_hp()); \
-								p.add(player->get_max_hp()); \
-								p.add(player->get_skin_info()); \
-								p.add(dyn_info.skin); \
-								p.add(dyn_info.nick)
+								ADD_NET_OBJECT_BASIC_DATA(player); \
+								player->serialize_derived_create(&p); \
+								player->serialize_derived(&p)
 
 void PlayerClient::add_resource_to_sync(Resource* rsrc)
 {
@@ -158,7 +160,7 @@ void PlayerClient::startup_sync()
 
 void PlayerClient::sync_broadcast()
 {
-	SETUP_CREATE_SYNC_PACKET(player, true);
+	SETUP_CREATE_SYNC_PACKET(player);
 
 	g_net->send_broadcast_joined(this, p);
 }
@@ -172,7 +174,7 @@ void PlayerClient::sync_player(Player* target_player, bool create)
 	{
 		// sync creation/update
 
-		SETUP_CREATE_SYNC_PACKET(target_player, false);
+		SETUP_CREATE_SYNC_PACKET(target_player);
 
 		send(p, true);
 	}
@@ -199,9 +201,8 @@ void PlayerClient::sync_entity(NetObject* target_entity, bool create)
 	if (create)
 	{
 		p.add(target_entity, NetObjectActionSyncType_Create);
-		p.add(target_entity->get_transform().pack());
-		p.add(target_entity->get_hp());
-		p.add(target_entity->get_max_hp());
+
+		ADD_NET_OBJECT_BASIC_DATA(target_entity);
 
 		// serialize into the packet the data needed for the basic
 		// creation of the object
@@ -248,6 +249,7 @@ void PlayerClient::set_joined(bool v)
 	joined = v;
 
 #ifdef JC_CLIENT
+	g_rsrc->trigger_event(script::event::ON_PLAYER_JOIN, player);
 #else
 	if (joined)
 		startup_sync();

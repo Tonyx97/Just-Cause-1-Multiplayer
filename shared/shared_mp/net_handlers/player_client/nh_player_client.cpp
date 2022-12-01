@@ -113,13 +113,9 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			}
 			else pc = player->get_client();
 
-			const bool joined = p.get_bool();
 			const auto transform = p.get<TransformPackedTR>();
 			const auto hp = p.get_float();
 			const auto max_hp = p.get_float();
-			const auto skin_info = p.get<Player::SkinInfo>();
-			const auto skin = p.get_i32();
-			const auto nick = p.get_str();
 
 			if (!player->is_spawned())
 				player->spawn();
@@ -127,15 +123,13 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			player->set_transform(transform);
 			player->set_hp(hp);
 			player->set_max_hp(max_hp);
-			player->set_skin(skin, skin_info.cloth_skin, skin_info.head_skin, skin_info.cloth_color, skin_info.props);
-			player->set_nick(nick);
 
-			if (joined)
-			{
-				pc->set_joined(joined);
+			// deserialize player stuff such as skin etc
 
-				g_rsrc->trigger_event(script::event::ON_PLAYER_JOIN, player);
-			}
+			player->deserialize_derived(&p);
+
+			if (!pc->is_joined())
+				pc->set_joined(true);
 
 			break;
 		}

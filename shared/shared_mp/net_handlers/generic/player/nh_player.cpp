@@ -89,10 +89,6 @@ PacketResult nh::player::dynamic_info(const Packet& p)
 #else
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
-
-	p.add_beginning(player);
-
-	g_net->send_broadcast(pc, p);
 #endif
 
 	const auto type = p.get_u8();
@@ -138,6 +134,12 @@ PacketResult nh::player::dynamic_info(const Packet& p)
 		break;
 	}
 	}
+
+#ifdef JC_SERVER
+	p.add_beginning(player);
+
+	g_net->send_broadcast(pc, p);
+#endif
 
 	return PacketRes_Ok;
 }

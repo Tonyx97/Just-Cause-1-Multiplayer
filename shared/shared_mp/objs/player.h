@@ -178,10 +178,10 @@ public:
 	void on_despawn() override;
 	void on_sync() override {}
 	void on_net_var_change(NetObjectVarType var_type) override;
-	void serialize_derived(const Packet* p) override {}
-	void deserialize_derived(const Packet* p) override {}
-	void serialize_derived_create(const Packet* p) override {}
-	void deserialize_derived_create(const Packet* p) override {}
+	void serialize_derived(const Packet* p) override;
+	void deserialize_derived(const Packet* p) override;
+	void serialize_derived_create(const Packet* p) override;
+	void deserialize_derived_create(const Packet* p) override;
 
 	PlayerClient* get_client() const { return client; }
 
@@ -208,6 +208,7 @@ public:
 	void set_bullet_direction(const vec3& muzzle, const vec3& dir);
 	void fire_current_weapon(int32_t weapon_id = 0, const vec3& muzzle = {}, const vec3& dir = {});
 	void reload();
+	void set_skin_info(const SkinInfo& info);
 	void set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props);
 	void set_vehicle(uint8_t seat_type, VehicleNetObject* v);
 	void set_in_parachute(bool v);

@@ -291,6 +291,28 @@ void Player::on_net_var_change(NetObjectVarType var_type)
 	}
 }
 
+void Player::serialize_derived(const Packet* p)
+{
+	p->add(get_skin_info());
+	p->add(get_skin());
+	p->add(get_nick());
+}
+
+void Player::deserialize_derived(const Packet* p)
+{
+	set_skin_info(p->get<SkinInfo>());
+	set_skin(p->get_i32());
+	set_nick(p->get_str());
+}
+
+void Player::serialize_derived_create(const Packet* p)
+{
+}
+
+void Player::deserialize_derived_create(const Packet* p)
+{
+}
+
 void Player::respawn(const vec3& position, float rotation, int32_t skin, float hp, float max_hp)
 {
 	if (!is_spawned())
@@ -490,6 +512,11 @@ void Player::fire_current_weapon(int32_t weapon_id, const vec3& muzzle, const ve
 void Player::reload()
 {
 	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->reload_current_weapon(); });
+}
+
+void Player::set_skin_info(const SkinInfo& info)
+{
+	set_skin_info(info.cloth_skin, info.head_skin, info.cloth_color, info.props);
 }
 
 void Player::set_skin_info(int32_t cloth_skin, int32_t head_skin, int32_t cloth_color, const std::vector<VariantPropInfo>& props)
