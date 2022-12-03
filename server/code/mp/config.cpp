@@ -87,7 +87,7 @@ void Config::destroy()
 
 void Config::update()
 {
-	static TimerRaw update_ms_info(2500);
+	static TimerRaw update_ms_info(5000);
 
 	if (update_ms_info.ready())
 	{
