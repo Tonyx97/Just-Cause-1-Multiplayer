@@ -34,7 +34,9 @@ PacketResult nh::player::state_sync(const Packet& p)
 	const auto curr_weapon = p.get_u8();
 	const auto curr_state = p.get_i32();
 	const auto parachute_open = p.get_bool();
+	const auto grappled_obj = p.get_net_object();
 	const auto curr_vehicle = p.get_net_object()->cast<VehicleNetObject>();
+	const auto grappled_relative_pos = grappled_obj ? p.get<vec3>() : vec3 {};
 	const auto seat_type = curr_vehicle ? p.get_u8() : VehicleSeat_None;
 
 #ifdef JC_SERVER
@@ -43,12 +45,10 @@ PacketResult nh::player::state_sync(const Packet& p)
 	g_net->send_broadcast(pc, p);
 #endif
 
-#ifdef JC_CLIENT
-	player->set_in_parachute(parachute_open);
-#endif
-
 	player->set_weapon_id(curr_weapon);
 	player->set_state_id(curr_state);
+	player->set_in_parachute(parachute_open);
+	player->set_grappled_object(grappled_obj, grappled_relative_pos);
 	player->set_vehicle(seat_type, curr_vehicle);
 
 	return PacketRes_Ok;

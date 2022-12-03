@@ -101,27 +101,23 @@ void jc::mp::logic::on_tick()
 			if (max_hp != localplayer->get_max_hp())
 				localplayer->set_max_hp(max_hp);
 
-			// grappling hook
-
-			if (!grappled_obj.lock() && localplayer->get_grappled_object())
-			{
-				localplayer->set_grappled_object(nullptr);
-
-				g_net->send(Packet(PlayerPID_GrapplingHookAttachDetach, ChannelID_Generic, false));
-			}
-
 			// resync state
 
 			if (state_sync_timer.ready())
 			{
 				const auto vehicle = vehicle_seat ? vehicle_seat->get_vehicle() : nullptr;
 				const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle);
+				const auto grappled_obj_net = g_net->get_net_object_by_game_object(grappled_obj.lock().get());
 
 				Packet p(PlayerPID_StateSync, ChannelID_Generic,
 					current_weapon_id,
 					current_state,
 					!game_player->get_parachute()->is_closed(),
+					grappled_obj_net,
 					vehicle_net);
+
+				if (grappled_obj_net)
+					p.add(localplayer->get_grappled_relative_position());
 
 				if (vehicle_net)
 					p.add(vehicle_seat->get_type());

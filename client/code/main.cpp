@@ -361,7 +361,7 @@ DEFINE_HOOK_STDCALL(load_save, 0x66D7F0, void*, shared_ptr<void*>* r)
 
 	return res;
 }
-#include <game/object/weapon/weapon_belt.h>
+
 // intercepts the function to read game files, we will create our own buffer which the game will deserialize after being
 // patched so it deserializes minimal stuff, not everything is needed for multiplayer, in fact, there is barely useful stuff
 //

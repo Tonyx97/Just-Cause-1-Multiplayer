@@ -476,6 +476,20 @@ namespace jc::character::hook
 		*update_bones = true;
 	}
 
+	DEFINE_HOOK_THISCALL_S(remove_grapple_object, jc::character::fn::REMOVE_GRAPPLED_OBJECT, void, uint8_t* grappled_object_ptr)
+	{
+		if (const auto lp = g_net->get_localplayer())
+			if (const auto local_char = lp->get_character())
+				if (const auto character = BITCAST(Character*, grappled_object_ptr - jc::character::GRAPPLED_OBJECT); local_char == character)
+				{
+					remove_grapple_object_hook(grappled_object_ptr);
+
+					lp->set_grappled_object(nullptr);
+
+					g_net->send(Packet(PlayerPID_GrapplingHookAttachDetach, ChannelID_Generic, false));
+				}
+	}
+
 	void enable(bool apply)
 	{
 		update_hook.hook(apply);
@@ -491,10 +505,16 @@ namespace jc::character::hook
 		character_proxy_add_velocity_hook.hook(apply);
 		set_vehicle_seat_hook.hook(apply);
 		distance_culling_check_hook.hook(apply);
+		remove_grapple_object_hook.hook(apply);
 	}
 }
 
 // statics
+
+vec3 Character::GET_GRAPPLE_HOOKED_RELATIVE_POS()
+{
+	return jc::read<vec3>(jc::character::g::GRAPPLE_HOOKED_RELATIVE_POS);
+}
 
 void Character::SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai)
 {
@@ -512,6 +532,11 @@ float Character::GET_GLOBAL_PUNCH_DAMAGE(bool ai)
 void Character::SET_FLYING_Y_MODIFIER(float v)
 {
 	jc::write(v, jc::character::g::FLYING_Y_MODIFIER);
+}
+
+void Character::SET_GRAPPLE_HOOKED_RELATIVE_POS(const vec3& v)
+{
+	jc::write(v, jc::character::g::GRAPPLE_HOOKED_RELATIVE_POS);
 }
 
 // character

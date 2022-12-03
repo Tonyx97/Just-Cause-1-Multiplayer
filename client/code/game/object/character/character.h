@@ -34,6 +34,7 @@ namespace jc::character
 	namespace fn
 	{
 		static constexpr uint32_t SET_GRAPPLED_OBJECT						= 0x637330;
+		static constexpr uint32_t REMOVE_GRAPPLED_OBJECT					= 0x59BDA0;
 		static constexpr uint32_t GET_MUZZLE_TRANSFORM						= 0x5985E0;
 		static constexpr uint32_t SET_ANIMATION								= 0x5A1BE0;
 		static constexpr uint32_t SET_TRANSFORM								= 0x58F190;
@@ -81,14 +82,14 @@ namespace jc::character
 		static constexpr uint32_t CROUCH									= 0x5A1280;
 		static constexpr uint32_t UNCROUCH									= 0x5A11D0;
 		static constexpr uint32_t IS_IN_PARACHUTE_STATE						= 0x597E80;
-		
 	}
 
 	namespace g
 	{
-		static constexpr uint32_t AI_PUNCH_DAMAGE			= 0x5A43F5;
-		static constexpr uint32_t PLAYER_PUNCH_DAMAGE		= 0x5A43EC;
-		static constexpr uint32_t FLYING_Y_MODIFIER			= 0xAECBB0;
+		static constexpr uint32_t AI_PUNCH_DAMAGE				= 0x5A43F5;
+		static constexpr uint32_t PLAYER_PUNCH_DAMAGE			= 0x5A43EC;
+		static constexpr uint32_t FLYING_Y_MODIFIER				= 0xAECBB0;
+		static constexpr uint32_t GRAPPLE_HOOKED_RELATIVE_POS	= 0xD86024;
 
 		static constexpr auto DEFAULT_SPAWN_LOCATION		= vec3(658.f, 100.08f, 4773.71f);
 	}
@@ -141,9 +142,12 @@ public:
 	static constexpr float CROUCH_SPREAD_MODIFIER() { return 1.5f; }
 	static constexpr float STAND_SPREAD_MODIFIER() { return 3.f; }
 
+	static vec3 GET_GRAPPLE_HOOKED_RELATIVE_POS();
+
 	static void SET_GLOBAL_PUNCH_DAMAGE(float v, bool ai = false);
 	static float GET_GLOBAL_PUNCH_DAMAGE(bool ai = false);
 	static void SET_FLYING_Y_MODIFIER(float v);
+	static void SET_GRAPPLE_HOOKED_RELATIVE_POS(const vec3& v);
 
 	void respawn();
 	void set_proxy_velocity(const vec3& v);
