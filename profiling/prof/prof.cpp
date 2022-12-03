@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <DbgHelp.h>
+#include <fstream>
 
 #include "prof.h"
 
@@ -135,9 +136,17 @@ namespace jc::prof
 
     namespace detail
     {
+		void save_to_file(const std::string& text)
+		{
+			if (auto log_file = std::ofstream("logs.txt", std::ios::app))
+				log_file << text;
+		}
+		
         void log(bool nl, eColor color, const std::string& text)
         {
             SetConsoleTextAttribute(console_handle, color);
+
+			save_to_file(text);
 
             if (nl) printf_s("%s\n", text.c_str());
             else	printf_s("%s", text.c_str());
@@ -147,6 +156,8 @@ namespace jc::prof
         {
             SetConsoleTextAttribute(console_handle, color);
 
+			save_to_file(util::string::convert(text));
+
             if (nl) printf_s("%S\n", text.c_str());
             else	printf_s("%S", text.c_str());
 		}
@@ -154,6 +165,8 @@ namespace jc::prof
 		void log(bool nl, bool show_time, eColor color, const std::string& text)
 		{
 			SetConsoleTextAttribute(console_handle, color);
+
+			save_to_file(text);
 
 			auto time_str = util::time::get_str_time();
 
