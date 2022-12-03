@@ -46,15 +46,13 @@ PacketResult nh::player_client::join(const Packet& p)
 	const auto pc = p.get_pc();
 	const auto player = pc->get_player();
 
-	const auto [nid, type] = p.get_nid_and_type();
-	const auto player_net_obj = g_net->get_net_object_by_nid(nid);
+	log(PURPLE, "Player with NID {:x} ({}) trying to join", player->get_nid(), player->get_nick());
 
-	if (player_net_obj)
-		return PacketRes_BadArgs;
+	check(player, "Trying to join a PlayerClient that has no Player linked");
 
 	pc->set_joined(true);
 
-	log(GREEN, "Player with NID {:x} ({}) joined", player->get_nid(), player->get_nick());
+	log(PURPLE, "Player with NID {:x} ({}) joined", player->get_nid(), player->get_nick());
 #endif
 
 	return PacketRes_Ok;
@@ -116,6 +114,7 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			const auto transform = p.get<TransformPackedTR>();
 			const auto hp = p.get_float();
 			const auto max_hp = p.get_float();
+			const auto just_joined = p.get_bool();
 
 			if (!player->is_spawned())
 				player->spawn();
@@ -124,12 +123,12 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			player->set_hp(hp);
 			player->set_max_hp(max_hp);
 
+			if (just_joined)
+				pc->set_joined(true);
+
 			// deserialize player stuff such as skin etc
 
 			player->deserialize_derived(&p);
-
-			if (!pc->is_joined())
-				pc->set_joined(true);
 
 			break;
 		}

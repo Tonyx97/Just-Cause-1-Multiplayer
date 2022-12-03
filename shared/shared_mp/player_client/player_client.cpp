@@ -48,10 +48,11 @@ PlayerClient::~PlayerClient()
 											p.add(entity->get_max_hp())
 
 
-#define SETUP_CREATE_SYNC_PACKET(player) \
+#define SETUP_CREATE_SYNC_PACKET(player, just_joined) \
 								Packet p(PlayerClientPID_ObjectInstanceSync, ChannelID_PlayerClient); \
 								p.add(player, NetObjectActionSyncType_Create); \
 								ADD_NET_OBJECT_BASIC_DATA(player); \
+								p.add(just_joined); \
 								player->serialize_derived_create(&p); \
 								player->serialize_derived(&p)
 
@@ -160,7 +161,7 @@ void PlayerClient::startup_sync()
 
 void PlayerClient::sync_broadcast()
 {
-	SETUP_CREATE_SYNC_PACKET(player);
+	SETUP_CREATE_SYNC_PACKET(player, true);
 
 	g_net->send_broadcast_joined(this, p);
 }
@@ -174,7 +175,7 @@ void PlayerClient::sync_player(Player* target_player, bool create)
 	{
 		// sync creation/update
 
-		SETUP_CREATE_SYNC_PACKET(target_player);
+		SETUP_CREATE_SYNC_PACKET(target_player, false);
 
 		send(p, true);
 	}

@@ -27,9 +27,12 @@ namespace enet
 
 	void call_channel_dispatcher_internal(const Packet& p)
 	{
-		switch (channel_fns[p.get_channel()](p))
+		switch (const auto err = channel_fns[p.get_channel()](p))
 		{
-		case PacketRes_NotFound: logt(RED, "Unknown packet received, id = '{}', channel = '{}'", p.get_id(), p.get_channel()); return;
+		case PacketRes_Ok:			return;		// no error
+		case PacketRes_NotAllowed:	return;		// common warning, do not print it
+		case PacketRes_NotFound:	logt(RED, "Unknown packet received, id = '{}', channel = '{}'", p.get_id(), p.get_channel());					return;
+		default:					logt(RED, "Error {} while parsing packet, id = '{}', channel = '{}'", int(err), p.get_id(), p.get_channel());	return;
 		}
 	}
 }
