@@ -9,21 +9,26 @@ class MasterServer
 private:
 
 	netcp::tcp_server client_sv,
-					  server_sv;
+					  server_sv,
+					  web_sv;
 
 	std::mutex mtx;
 
 	mutable std::mutex client_dll_mtx;
 
 	jc::thread_safe::vector<netcp::tcp_server_client*> clients,
-													   servers;
+													   servers,
+													   web_clients;
 
 	std::vector<uint8_t> client_dll,
 						 client_dll_hash;
 
 public:
 
-	MasterServer() : client_sv(netcp::CLIENT_TO_MS_PORT), server_sv(netcp::SERVER_TO_MS_PORT)
+	MasterServer() :
+		client_sv(netcp::CLIENT_TO_MS_PORT),
+		server_sv(netcp::SERVER_TO_MS_PORT),
+		web_sv(netcp::WEBSITE_TO_MS_PORT, true)
 	{
 		start_client_sv();
 	}

@@ -51,6 +51,8 @@ namespace netcp
 
 		std::atomic<void*> userdata = nullptr;
 
+		bool is_http = false;
+
 		CID cid = INVALID_CID;
 
 	public:
@@ -76,6 +78,7 @@ namespace netcp
 		void update();
 		void cancel_sleep();
 		void set_userdata(void* v) { userdata = v; }
+		void set_http() { is_http = true; }
 
 		template <typename T>
 		void send_packet(uint16_t id, const T& out_data) requires(!std::is_same_v<T, serialization_ctx>)

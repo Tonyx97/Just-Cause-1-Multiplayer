@@ -18,7 +18,7 @@ namespace netcp
 
 	// TCP SERVER
 
-	tcp_server::tcp_server(uint16_t port) : acceptor(ctx, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
+	tcp_server::tcp_server(uint16_t port, bool is_http) : port(port), is_http(is_http), acceptor(ctx, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
 	{
 		// create a total of 65534 possible cids (1-65534)
 
@@ -78,7 +78,8 @@ namespace netcp
 					return false;
 				});
 
-				SetConsoleTitleA(std::format("Connections: {} (free cids: {})", clients.size(), free_cids.size()).c_str());
+				if (GetAsyncKeyState(VK_F2))
+					log(YELLOW, "[{}] Connections: {} (free cids: {})", port, clients.size(), free_cids.size());
 			}
 		});
 	}
@@ -107,6 +108,9 @@ namespace netcp
 			if (!ec)
 			{
 				auto ci = std::make_shared<tcp_server_client>(on_receive_fn, socket, get_free_cid());
+
+				if (is_http)
+					ci->set_http();
 
 				if (on_connected_fn)
 					on_connected_fn(ci.get());

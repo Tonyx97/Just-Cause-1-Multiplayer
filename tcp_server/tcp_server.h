@@ -44,9 +44,13 @@ namespace netcp
 		std::unordered_set<CID> free_cids,
 								used_cids;
 
+		uint16_t port;
+
+		bool is_http = false;
+
 	public:
 
-		tcp_server(uint16_t port);
+		tcp_server(uint16_t port, bool is_http = false);
 		~tcp_server();
 
 		CID get_free_cid();

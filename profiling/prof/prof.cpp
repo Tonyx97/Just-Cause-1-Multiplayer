@@ -73,14 +73,12 @@ namespace jc::prof
 
 			console_allocated = true;
 
-#ifdef JC_CLIENT
 			screen_width = GetSystemMetrics(SM_CXSCREEN);
 			screen_height = GetSystemMetrics(SM_CYSCREEN);
 
 			SetConsoleTitleA(name);
-			SetWindowPos(console_hwnd, 0, 0, 0, 1000, 650, 0);
 
-			CONSOLE_FONT_INFOEX cfi { 0 };
+			CONSOLE_FONT_INFOEX cfi{ 0 };
 			cfi.cbSize = sizeof(cfi);
 
 			GetCurrentConsoleFontEx(CONSOLE_OUT, FALSE, &cfi);
@@ -91,6 +89,9 @@ namespace jc::prof
 
 			SetCurrentConsoleFontEx(CONSOLE_OUT, FALSE, &cfi);
 			SetConsoleTextAttribute(CONSOLE_OUT, WHITE);
+
+#ifdef JC_CLIENT
+			SetWindowPos(console_hwnd, 0, 0, 0, 1000, 650, 0);
 #endif
 
 #ifdef _DEBUG

@@ -32,13 +32,26 @@ void MasterServer::start_client_sv()
 			server->on_receive(header, data);
 	});
 
-	// startup both servers
+	// setup the web server
+
+	web_sv.set_on_connected_fn([&](netcp::tcp_server_client* cl) { log(GREEN, "WS connection opened"); });
+	web_sv.set_on_disconnected_fn([&](netcp::tcp_server_client* cl) { log(RED, "WS connection closed"); });
+
+	web_sv.set_on_receive_fn([&](netcp::client_interface* ci, const netcp::packet_header& header, serialization_ctx& data)
+	{
+		log(GREEN, "Received something");
+	});
+
+	// startup all servers
 
 	client_sv.start();
 	client_sv.launch_update_thread();
 
 	server_sv.start();
 	server_sv.launch_update_thread();
+
+	web_sv.start();
+	web_sv.launch_update_thread();
 }
 
 void MasterServer::add_client(netcp::tcp_server_client* cl)
@@ -51,7 +64,7 @@ void MasterServer::add_client(netcp::tcp_server_client* cl)
 	clients.push(cl);
 }
 
-void MasterServer::MasterServer::add_server(netcp::tcp_server_client* cl)
+void MasterServer::add_server(netcp::tcp_server_client* cl)
 {
 	if (!cl)
 		return;

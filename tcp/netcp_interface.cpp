@@ -61,26 +61,61 @@ namespace netcp
 
 		while (is_connected())
 		{
-			// read header
-
-			asio::read(socket, asio::buffer(&header_in, sizeof(header_in)), asio::transfer_exactly(sizeof(header_in)), ec);
-
-			if (ec) break;
-
-			// read data (if size is bigger than 0 ofc)
-
-			if (header_in.size > 0u)
+			if (is_http)
 			{
-				data_in.resize(header_in.size);
+				// read http request
 
-				asio::read(socket, asio::buffer(data_in.data.data(), data_in.data.size()), asio::transfer_exactly(header_in.size), ec);
+				std::string request;
+
+				const auto bytes_read = asio::read_until(socket, asio::dynamic_buffer(request), "\r\n", ec);
 
 				if (ec) break;
 
-				data_in.recalculate_begin_end();
-			}
+				if (bytes_read > 0)
+				{
+					std::string line;
 
-			on_receive_fn(this, header_in, data_in);
+					std::stringstream ss(request);
+
+					while (std::getline(ss, line))
+					{
+						std::smatch sm;
+
+						if (std::regex_search(line, sm, std::regex(R"(GET\s(.+)\sHTTP\/(\d+)\.(\d+))")))
+						{
+							const auto query = sm[1].str();
+							const auto ver_major = sm[2].str();
+							const auto ver_minor = sm[3].str();
+
+							log(GREEN, "Query: {} ({}.{})", query, ver_major, ver_minor);
+						}
+						else log(RED, "{}", line.c_str());
+					}
+				}
+			}
+			else
+			{
+				// read header
+
+				asio::read(socket, asio::buffer(&header_in, sizeof(header_in)), asio::transfer_exactly(sizeof(header_in)), ec);
+
+				if (ec) break;
+
+				// read data (if size is bigger than 0 ofc)
+
+				if (header_in.size > 0u)
+				{
+					data_in.resize(header_in.size);
+
+					asio::read(socket, asio::buffer(data_in.data.data(), data_in.data.size()), asio::transfer_exactly(header_in.size), ec);
+
+					if (ec) break;
+
+					data_in.recalculate_begin_end();
+				}
+
+				on_receive_fn(this, header_in, data_in);
+			}
 		}
 
 		if (is_connected())
