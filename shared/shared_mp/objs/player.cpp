@@ -558,7 +558,7 @@ void Player::set_in_parachute(bool v)
 	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c)
 	{
 		if (const auto parachute = game_player->get_parachute())
-			if (v)
+			if (const bool is_parachute_open = !parachute->is_closed(); !is_parachute_open && v)
 			{
 				set_body_stance_id(27);
 				set_body_stance_id(25);
@@ -566,7 +566,7 @@ void Player::set_in_parachute(bool v)
 
 				parachute->set_closed(false);
 			}
-			else
+			else if (is_parachute_open && !v)
 			{
 				if (c->get_body_stance()->get_distance_to_ground() <= StanceController::MAX_DISTANCE_PARACHUTE_FALL() * 2.f)
 					set_body_stance_id(27);

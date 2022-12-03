@@ -14,6 +14,7 @@
 #include <game/object/weapon/weapon.h>
 #include <game/object/weapon/weapon_belt.h>
 #include <game/object/vehicle/vehicle.h>
+#include <game/object/parachute/parachute.h>
 
 #include <core/keycode.h>
 
@@ -26,7 +27,7 @@ void jc::mp::logic::on_tick()
 
 	// send and update our local player info
 
-	static TimerRaw state_sync_timer(2500);
+	static TimerRaw state_sync_timer(2000);
 	static TimerRaw force_transform_timer(1000);
 	static TimerRaw transform_timer(enet::TICKS_MS * 5);
 	static TimerRaw fast_transform_timer(enet::TICKS_MS);
@@ -116,7 +117,11 @@ void jc::mp::logic::on_tick()
 				const auto vehicle = vehicle_seat ? vehicle_seat->get_vehicle() : nullptr;
 				const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle);
 
-				Packet p(PlayerPID_StateSync, ChannelID_Generic, current_weapon_id, current_state, vehicle_net);
+				Packet p(PlayerPID_StateSync, ChannelID_Generic,
+					current_weapon_id,
+					current_state,
+					!game_player->get_parachute()->is_closed(),
+					vehicle_net);
 
 				if (vehicle_net)
 					p.add(vehicle_seat->get_type());

@@ -33,6 +33,7 @@ PacketResult nh::player::state_sync(const Packet& p)
 
 	const auto curr_weapon = p.get_u8();
 	const auto curr_state = p.get_i32();
+	const auto parachute_open = p.get_bool();
 	const auto curr_vehicle = p.get_net_object()->cast<VehicleNetObject>();
 	const auto seat_type = curr_vehicle ? p.get_u8() : VehicleSeat_None;
 
@@ -40,6 +41,10 @@ PacketResult nh::player::state_sync(const Packet& p)
 	p.add_beginning(player);
 
 	g_net->send_broadcast(pc, p);
+#endif
+
+#ifdef JC_CLIENT
+	player->set_in_parachute(parachute_open);
 #endif
 
 	player->set_weapon_id(curr_weapon);
