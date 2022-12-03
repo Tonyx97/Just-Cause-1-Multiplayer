@@ -139,7 +139,7 @@ namespace jc::prof
 		void save_to_file(const std::string& text)
 		{
 			if (auto log_file = std::ofstream("logs.txt", std::ios::app))
-				log_file << text;
+				log_file << text << '\n';
 		}
 		
         void log(bool nl, eColor color, const std::string& text)

@@ -97,7 +97,7 @@ namespace jc::bug_ripper
 		const bool exception_on_game = game_mod.contains_address(eip);
 		const bool exception_on_mod = mod_mod.contains_address(eip);
 
-		wchar_t mod_name[256] { 0 };
+		wchar_t mod_name[256] = { 0 };
 
 		if (auto mod_base = get_module_info_if_valid(eip, mod_name))
 		{
