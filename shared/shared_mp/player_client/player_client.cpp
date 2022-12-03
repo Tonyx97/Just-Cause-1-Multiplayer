@@ -247,10 +247,13 @@ void PlayerClient::set_initialized(bool v)
 
 void PlayerClient::set_joined(bool v)
 {
+	const bool was_joined = v != joined;
+
 	joined = v;
 
 #ifdef JC_CLIENT
-	g_rsrc->trigger_event(script::event::ON_PLAYER_JOIN, player);
+	if (was_joined)
+		g_rsrc->trigger_event(script::event::ON_PLAYER_JOIN, player);
 #else
 	if (joined)
 		startup_sync();
