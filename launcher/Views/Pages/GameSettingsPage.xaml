@@ -1,0 +1,431 @@
+﻿<ui:UiPage
+    x:Class="launcher.Views.Pages.GameSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="clr-namespace:launcher.Helpers"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+    xmlns:local="clr-namespace:launcher.Views.Pages"
+    xmlns:models="clr-namespace:launcher.Models"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    d:DataContext="{d:DesignInstance local:GameSettingsPage,
+                                     IsDesignTimeCreatable=False}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    mc:Ignorable="d"
+    Title="GameSettingsPage"
+    Scrollable="True">
+
+    <ui:UiPage.Resources>
+        <ObjectDataProvider 
+            x:Key="TextureResolutionDataSource"
+            ObjectType="{x:Type sys:Enum}"
+            MethodName="GetValues">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="models:GameSettingTextureResolution" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider
+            x:Key="SceneComplexityDataSource"
+            ObjectType="{x:Type sys:Enum}"
+            MethodName="GetValues">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="models:GameSettingSceneComplexity" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider
+            x:Key="WaterQualityDataSource"
+            ObjectType="{x:Type sys:Enum}"
+            MethodName="GetValues">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="models:GameSettingWaterQuality" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </ui:UiPage.Resources>
+
+    <Grid Margin="56, 0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Grid.Row="0"
+            Margin="0, 0, 0, 12">
+            <TextBlock
+                FontSize="20"
+                FontWeight="Medium"
+                Text="General" />
+            <ui:CardExpander
+                Margin="12, 6, 0, 0"
+                Icon="Person48"
+                IsEnabled="True"
+                IsExpanded="False" >
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock
+                            FontSize="13"
+                            FontWeight="Medium"
+                            Text="Username" />
+                            <TextBlock
+                            FontSize="12"
+                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                            Text="Your username. Field is mandatory." />
+                        </StackPanel>
+                        <ui:TextBox
+                            Grid.Column="1"
+                            Margin="0,0,16,0"
+                            MinWidth="200"
+                            MaxWidth="500"
+                            PlaceholderText="Your username here"
+                            Text="{Binding ViewModel.Username}" />
+                    </Grid>
+                </ui:CardExpander.Header>
+
+                <TextBlock
+                    Text="You have all the freedom to pick whatever nickname you want for yourself. There are no limitations. This is how other people will see you and refer to you at our multiplayer adventure. Choose wisely."
+                    TextAlignment="Left"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap" />
+            </ui:CardExpander>
+
+            <ui:CardExpander
+                Margin="12, 6, 0, 0"
+                Icon="Folder48"
+                IsEnabled="True"
+                IsExpanded="False" >
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock
+                                FontSize="13"
+                                FontWeight="Medium"
+                                Text="Game path" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                Text="Path to JustCause.exe. Field is mandatory." />
+                        </StackPanel>
+                        <ui:TextBox
+                            Margin="0,0,16,0"
+                            Grid.Column="1"
+                            MinWidth="200"
+                            MaxWidth="460"
+                            PlaceholderText="Click to browse file system"
+                            IsReadOnly="True"
+                            PreviewMouseDown="TextBox_PreviewMouseDown"
+                            Text="{Binding ViewModel.GamePath}">
+                        </ui:TextBox>
+                    </Grid>
+                </ui:CardExpander.Header>
+
+                <TextBlock
+                    Text="To automate the process further, in order to install and prepare multiplayer mod requirements, we need to know where Just Cause: 1 is located. We will try to automatically detect installation directory of the game. Sometimes our approach might fail and manually pinning is necessary. Please browse to the JustCause.exe by clicking on the text box."
+                    TextAlignment="Left"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap" />
+            </ui:CardExpander>
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="1"
+            Margin="0, 0, 0, 12">
+            <TextBlock
+                FontSize="20"
+                FontWeight="Medium"
+                Text="Graphics" />
+
+            <ui:CardExpander
+                Margin="12, 12, 0, 0"
+                Icon="Blur20"
+                IsEnabled="True"
+                IsExpanded="False" >
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock
+                            FontSize="13"
+                            FontWeight="Medium"
+                            Text="Motion Blur" />
+                            <TextBlock
+                            FontSize="12"
+                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                            Text="Enable or disable engine motion blur." />
+                        </StackPanel>
+                        <ui:ToggleSwitch
+                            Grid.Column="1"
+                            Margin="0,0,16,0"
+                            IsChecked="{Binding ViewModel.MotionBlur, Mode=TwoWay}"/>
+                    </Grid>
+                </ui:CardExpander.Header>
+
+                <TextBlock
+                    Text="Motion blur is the visual streaking or smearing captured on camera as a result of movement of the camera, the subject, or a combination of the two. The human eye naturally registers motion blur in real life, so a subtle blur in film often mimics reality better than if it were absent. When applied intentionally, this effect may be referred to as aesthetic blur."
+                    TextAlignment="Left"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap" />
+            </ui:CardExpander>
+
+            <ui:CardExpander
+                Margin="12, 6, 0, 0"
+                Icon="WeatherSunnyLow48"
+                IsEnabled="True"
+                IsExpanded="False" >
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock
+                            FontSize="13"
+                            FontWeight="Medium"
+                            Text="Heat Haze" />
+                            <TextBlock
+                            FontSize="12"
+                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                            Text="Enable or disable engine heat haze." />
+                        </StackPanel>
+                        <ui:ToggleSwitch
+                            Grid.Column="1"
+                            Margin="0,0,16,0"
+                            IsChecked="{Binding ViewModel.HeatHaze, Mode=TwoWay}"/>
+                    </Grid>
+                </ui:CardExpander.Header>
+
+                <TextBlock
+                    Text="Heat haze is an atmospheric condition that occurs when a body such as the ground is reflecting a lot of heat. It is caused by the difference in temperature between the hot body and cooler air around it."
+                    TextAlignment="Left"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap" />
+            </ui:CardExpander>
+
+            <ui:CardExpander
+                Margin="12, 6, 0, 0"
+                Icon="VideoBackgroundEffect20"
+                IsEnabled="True"
+                IsExpanded="False" >
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock
+                            FontSize="13"
+                            FontWeight="Medium"
+                            Text="Post FX" />
+                            <TextBlock
+                            FontSize="12"
+                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                            Text="Enable or disable engine Post FX." />
+                        </StackPanel>
+                        <ui:ToggleSwitch
+                            Grid.Column="1"
+                            Margin="0,0,16,0"
+                            IsChecked="{Binding ViewModel.PostFx, Mode=TwoWay}"/>
+                    </Grid>
+                </ui:CardExpander.Header>
+
+                <TextBlock
+                    Text="Post-FX nodes are mostly effects added onto an image, after the scene is rendered. These can vary from Colour Correction to FXAA antialiasing, and are generally used to enhance an image."
+                    TextAlignment="Left"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap" />
+            </ui:CardExpander>
+
+            <ui:CardExpander
+                Margin="12, 6, 0, 0"
+                Icon="CodeText20"
+                IsEnabled="True"
+                IsExpanded="False" >
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock
+                            FontSize="13"
+                            FontWeight="Medium"
+                            Text="Texture Resolution" />
+                            <TextBlock
+                            FontSize="12"
+                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                            Text="Select desirable texture resolution." />
+                        </StackPanel>
+                        <ComboBox
+                            Grid.Column="1"
+                            Margin="0,0,16,0"
+                            MinWidth="200"
+                            ItemsSource="{Binding Source={StaticResource TextureResolutionDataSource}}"
+                            SelectedItem="{Binding ViewModel.TextureResolution}"
+                            />
+                    </Grid>
+                </ui:CardExpander.Header>
+
+                <TextBlock
+                    Text="Texture quality is generally representative of the actual resolution (in pixels) of textures mapped to objects. Higher resolution textures result in significantly deeper details, but are also abusive on VRAM and video processing hardware."
+                    TextAlignment="Left"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap" />
+            </ui:CardExpander>
+
+            <ui:CardExpander
+                Margin="12, 6, 0, 0"
+                Icon="Image20"
+                IsEnabled="True"
+                IsExpanded="False" >
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock
+                                FontSize="13"
+                                FontWeight="Medium"
+                                Text="Scene Complexity" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                Text="Select desirable scene complexity." />
+                        </StackPanel>
+                        <ComboBox
+                            Grid.Column="1"
+                            Margin="0,0,16,0"
+                            MinWidth="200"
+                            ItemsSource="{Binding Source={StaticResource SceneComplexityDataSource}}"
+                            SelectedItem="{Binding ViewModel.SceneComplexity}"
+                            />
+                    </Grid>
+                </ui:CardExpander.Header>
+
+                <TextBlock
+                    Text="Scene Complexity controls the in-game representation of how detailed objects are. A higher setting here results in more complex geometry in things like foliage, rocks, as well as making objects remain highly detailed at farther distances from the player."
+                    TextAlignment="Left"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap" />
+            </ui:CardExpander>
+
+            <ui:CardExpander
+                Margin="12, 6, 0, 0"
+                Icon="DataWaterfall20"
+                IsEnabled="True"
+                IsExpanded="False" >
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock
+                                FontSize="13"
+                                FontWeight="Medium"
+                                Text="Water Quality" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                Text="Select desirable water quality." />
+                        </StackPanel>
+                        <ComboBox
+                            Grid.Column="1"
+                            Margin="0,0,16,0"
+                            MinWidth="200"
+                            ItemsSource="{Binding Source={StaticResource WaterQualityDataSource}}"
+                            SelectedItem="{Binding ViewModel.WaterQuality}"
+                            />
+                    </Grid>
+                </ui:CardExpander.Header>
+
+                <TextBlock
+                    Text="Additional texture and rendering characteristic for water in the world."
+                    TextAlignment="Left"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap" />
+            </ui:CardExpander>
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="2"
+            Margin="0, 0, 0, 12">
+            <TextBlock
+                FontSize="20"
+                FontWeight="Medium"
+                Text="Audio" />
+
+            <ui:CardExpander
+                Margin="12, 12, 0, 0"
+                Icon="TabletSpeaker20"
+                IsEnabled="True"
+                IsExpanded="False" >
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock
+                            FontSize="13"
+                            FontWeight="Medium"
+                            Text="FX Volume" />
+                            <TextBlock
+                            FontSize="12"
+                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                            Text="Adjust ambient sound volume." />
+                        </StackPanel>
+                        <Slider
+                            Grid.Column="1"
+                            Margin="0,8,16,0"
+                            MinWidth="200"
+                            Maximum="10"
+                            Minimum="0"
+                            TickFrequency="1"
+                            Value="{Binding ViewModel.FxVolume}" />
+                    </Grid>
+                </ui:CardExpander.Header>
+
+                <TextBlock
+                    Text="Ambients sounds that are not dialog (pve), music or voice chat. Sounds like these usually include footsteps, jumping, tires, reloading, etc..."
+                    TextAlignment="Left"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap" />
+            </ui:CardExpander>
+        </StackPanel>
+
+        <ui:Snackbar
+                Grid.Row="2"
+                Margin="56, 0"
+                x:Name="SnackBarFirstTime"
+                Title="It's my first time!"
+                MaxWidth="600"
+                Appearance="Secondary"
+                CloseButtonEnabled="True"
+                Icon="PuzzlePiece24"
+                Message="Before you dive into Just Cause, we need to set up some quick settings for you."
+                Timeout="5000" />
+    </Grid>
+
+</ui:UiPage>

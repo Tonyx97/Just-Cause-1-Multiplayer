@@ -1,0 +1,169 @@
+﻿<ui:UiPage
+    x:Class="launcher.Views.Pages.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:launcher.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="DashboardPage"
+    d:DataContext="{d:DesignInstance local:DashboardPage, IsDesignTimeCreatable=False}"
+    d:DesignWidth="1180"
+    d:DesignHeight="760"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    mc:Ignorable="d">
+    <VirtualizingStackPanel
+        x:Name="RootPanel"
+        Margin="18,0,18,18"
+        IsVirtualizing="True"
+        VirtualizationMode="Recycling">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border
+                Grid.Row="0"
+                Height="400"
+                CornerRadius="8,0,0,0">
+                <Border.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Assets/cover.png" Stretch="UniformToFill" />
+                </Border.Background>
+                <Border CornerRadius="8,0,0,0">
+                    <Border.Background>
+                        <RadialGradientBrush>
+                            <GradientStop Offset="0" Color="#2F000000" />
+                            <GradientStop Offset="1" Color="#8F000000" />
+                        </RadialGradientBrush>
+                    </Border.Background>
+                    <StackPanel
+                        Margin="16"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Background="Transparent">
+                        <TextBlock 
+                            FontSize="18" 
+                            Foreground="White"
+                            Text="Welcome to" />
+                        <TextBlock
+                            FontSize="28"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            Text="Just Cause 1: Multiplayer" />
+                        <TextBlock
+                            FontSize="18"
+                            Opacity=".8"
+                            Foreground="White"
+                            Text="You play as Rico, but with your friends." />
+                        <ui:Button
+                            Command="{Binding ViewModel.OnPlayNowCommand, Mode=OneWay}"
+                            Height="36"
+                            Margin="0,6,0,0"
+                            Padding="30,6"
+                            HorizontalAlignment="Left"
+                            Appearance="Transparent"
+                            Content="Play now"
+                            Foreground="{DynamicResource TextFillColorLightPrimaryBrush}" />
+                    </StackPanel>
+                </Border>
+            </Border>
+
+            <Grid Grid.Row="1" Margin="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Grid.Row="0"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Text="What is new" />
+                <Grid 
+                    Grid.Row="1" 
+                    Margin="0,12,0,0" 
+                    IsSharedSizeScope="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ui:Card 
+                        Grid.Column="0" 
+                        Margin="0,0,4,0">
+                        <StackPanel >
+                            <TextBlock 
+                                Grid.Row="0"
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Text="(Un)official Launcher released" />
+                            <TextBlock
+                                MaxWidth="250"
+                                HorizontalAlignment="Left"
+                                Grid.Row="0"
+                                FontSize="12"
+                                Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                TextWrapping="WrapWithOverflow"
+                                Text="Now, more than ever, you can simply press play and enjoy the game with your friends on the fields of San Esperito. Enjoy and have fun." />
+                            <TextBlock
+                                Margin="0, 12, 0, 0"
+                                Grid.Row="0"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Text="29. 10. 2022" />
+                        </StackPanel>
+                    </ui:Card>
+
+                    <ui:Card Grid.Column="1" Margin="4,0,4,0">
+                        <StackPanel>
+                            <TextBlock
+                                Grid.Row="0"
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Text="New server and features" />
+                            <TextBlock
+                                MaxWidth="250"
+                                HorizontalAlignment="Left"
+                                Grid.Row="0"
+                                FontSize="12"
+                                Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                TextWrapping="WrapWithOverflow"
+                                Text="We have added first dedicated server and added bunch of new in-game features for the most immersing JC1:MP experience. Join us!" />
+                            <TextBlock
+                                Margin="0, 12, 0, 0"
+                                Grid.Row="0"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Text="11. 09. 2022" />
+                        </StackPanel>
+                    </ui:Card>
+
+                    <ui:Card Grid.Column="2" Margin="4,0,4,0">
+                        <StackPanel>
+                            <TextBlock
+                                Grid.Row="0"
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Text="Public Discord announcement" />
+                            <TextBlock
+                                MaxWidth="250"
+                                HorizontalAlignment="Left"
+                                Grid.Row="0"
+                                FontSize="12"
+                                Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                TextWrapping="WrapWithOverflow"
+                                Text="We are proud to reach broader public and core fans who wants to play on our multiplayer mod. Join us on: https://discord.gg/dq33yEyjv1" />
+                            <TextBlock
+                                Margin="0, 12, 0, 0"
+                                Grid.Row="0"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Text="17. 07. 2022" />
+                        </StackPanel>
+                    </ui:Card>
+                </Grid>
+            </Grid>
+        </Grid>
+    </VirtualizingStackPanel>
+</ui:UiPage>
