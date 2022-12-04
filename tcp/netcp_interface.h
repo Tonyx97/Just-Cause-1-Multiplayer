@@ -27,6 +27,7 @@ namespace netcp
 #pragma pack(pop)
 
 	using on_receive_t = std::function<void(class client_interface*, const packet_header& header, serialization_ctx& data)>;
+	using on_http_request_t = std::function<void(class client_interface*, const std::string& header)>;
 	using on_connected_t = std::function<void(class tcp_server_client*)>;
 
 	class client_interface
@@ -42,6 +43,8 @@ namespace netcp
 		std::mutex send_mtx;
 
 		on_receive_t on_receive_fn = nullptr;
+
+		on_http_request_t on_http_request = nullptr;
 
 		packet_header header_in {},
 					  header_out {};
@@ -78,7 +81,11 @@ namespace netcp
 		void update();
 		void cancel_sleep();
 		void set_userdata(void* v) { userdata = v; }
-		void set_http() { is_http = true; }
+		void set_http(const on_http_request_t& fn)
+		{
+			on_http_request = fn;
+			is_http = true;
+		}
 
 		template <typename T>
 		void send_packet(uint16_t id, const T& out_data) requires(!std::is_same_v<T, serialization_ctx>)
@@ -111,7 +118,7 @@ namespace netcp
 
 		CID get_cid() const { return cid; }
 
-		const asio::ip::tcp::socket& get_socket() const { return socket; }
+		asio::ip::tcp::socket& get_socket() { return socket; }
 
 		template <typename T>
 		T* get_userdata() const { return std::bit_cast<T*>(userdata.load()); }

@@ -25,6 +25,7 @@ void Server::on_receive(const netcp::packet_header& header, serialization_ctx& d
 			.discord = _deserialize<std::string>(data),
 			.community = _deserialize<std::string>(data),
 			.gamemode = _deserialize<std::string>(data),
+			.players = _deserialize<std::vector<std::string>>(data),
 			.refresh_rate = _deserialize<int>(data),
 			.password = _deserialize<bool>(data),
 		});
@@ -43,6 +44,8 @@ void Server::set_info(Info&& v)
 
 	if (info.ip.empty())
 		info.ip = base->get_ip();
+
+	valid = true;
 
 	log(YELLOW, "Server info received {}", info.name);
 }

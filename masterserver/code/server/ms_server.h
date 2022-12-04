@@ -27,12 +27,16 @@ private:
 
 	Info info {};
 
+	std::atomic_bool valid = false;
+
 public:
 
 	Server(MasterServer* ms, netcp::tcp_server_client* base) : ServerClient(ms, base) {}
 
 	void on_receive(const netcp::packet_header& header, serialization_ctx& data);
 	void set_info(Info&& v);
+
+	bool is_valid() const { return valid; }
 
 	Info get_info() const;
 };

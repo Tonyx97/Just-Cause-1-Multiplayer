@@ -12,9 +12,10 @@ private:
 					  server_sv,
 					  web_sv;
 
-	std::mutex mtx;
-
+	mutable std::mutex clients_mtx;
+	mutable std::mutex servers_mtx;
 	mutable std::mutex client_dll_mtx;
+	mutable std::mutex changelog_mtx;
 
 	jc::thread_safe::vector<netcp::tcp_server_client*> clients,
 													   servers,
@@ -22,6 +23,8 @@ private:
 
 	std::vector<uint8_t> client_dll,
 						 client_dll_hash;
+
+	std::string changelog;
 
 public:
 
@@ -39,9 +42,12 @@ public:
 	void remove_client(netcp::tcp_server_client* cl);
 	void remove_server(netcp::tcp_server_client* cl);
 	void refresh_client_dll();
+	void refresh_changelog();
 
 	std::vector<uint8_t> get_client_dll_hash() const;
 	std::vector<uint8_t> get_client_dll() const;
+
+	std::string get_changelog() const;
 
 	template <typename Fn>
 	void for_each_client(const Fn& fn)
@@ -53,5 +59,15 @@ public:
 	void for_each_server(const Fn& fn)
 	{
 		servers.for_each([&](auto server) { fn(server); });
+	}
+
+	size_t get_clients_count() const
+	{
+		return clients.size();
+	}
+
+	size_t get_servers_count() const
+	{
+		return servers.size();
 	}
 };

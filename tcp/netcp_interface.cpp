@@ -81,15 +81,15 @@ namespace netcp
 					{
 						std::smatch sm;
 
-						if (std::regex_search(line, sm, std::regex(R"(GET\s(.+)\sHTTP\/(\d+)\.(\d+))")))
+						if (std::regex_search(line, sm, std::regex(R"((GET|OPTIONS)\s(.+)\sHTTP\/(\d+)\.(\d+))")))
 						{
-							const auto query = sm[1].str();
-							const auto ver_major = sm[2].str();
-							const auto ver_minor = sm[3].str();
+							const auto query = sm[2].str();
+							const auto ver_major = sm[3].str();
+							const auto ver_minor = sm[4].str();
 
-							log(GREEN, "Query: {} ({}.{})", query, ver_major, ver_minor);
+							on_http_request(this, query);
 						}
-						else log(RED, "{}", line.c_str());
+						//else log(RED, "{}", line.c_str());
 					}
 				}
 			}

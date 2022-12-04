@@ -110,7 +110,7 @@ namespace netcp
 				auto ci = std::make_shared<tcp_server_client>(on_receive_fn, socket, get_free_cid());
 
 				if (is_http)
-					ci->set_http();
+					ci->set_http(on_http_request_fn);
 
 				if (on_connected_fn)
 					on_connected_fn(ci.get());

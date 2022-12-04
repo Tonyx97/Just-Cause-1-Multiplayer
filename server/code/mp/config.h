@@ -28,7 +28,8 @@ private:
 					password,
 					gamemode,
 					discord,
-					community;
+					community,
+					auth_key;
 
 		int refresh_rate;
 	} server_info;
@@ -39,6 +40,8 @@ private:
 		 j_server_files;
 
 	netcp::tcp_client* ms_conn = nullptr;
+
+	bool check_ms_conn(bool force = false);
 
 public:
 

@@ -58,6 +58,29 @@ bool Net::init()
 {
 	logt(YELLOW, "Starting...");
 
+	// initialize enet
+
+	enet::init();
+
+	const auto address = ENetAddress
+	{
+		.host = ENET_HOST_ANY,
+		.port = netcp::CLIENT_TO_SERVER_GAME_PORT
+	};
+
+	// setup channels
+
+	enet::setup_channels();
+
+	// create server host
+
+	logt(YELLOW, "Creating host...");
+
+	if (!(sv = enet_host_create(&address, enet::MAX_PLAYERS, ChannelID_Max, 0, 0)))
+		return logbwt(RED, "Could not create server host");
+
+	logt(GREEN, "Host created");
+
 	// initialize server config
 	
 	check(config.init(), "Could not initialize config");
@@ -93,28 +116,7 @@ bool Net::init()
 	tcp_server->start();
 	tcp_server->launch_update_thread();
 
-	// initialize enet
-
-	enet::init();
-
-	const auto address = ENetAddress
-	{
-		.host = ENET_HOST_ANY,
-		.port = netcp::CLIENT_TO_SERVER_GAME_PORT
-	};
-
-	// setup channels
-
-	enet::setup_channels();
-
-	// create server host
-
-	logt(YELLOW, "Creating host...");
-
-	if (!(sv = enet_host_create(&address, enet::MAX_PLAYERS, ChannelID_Max, 0, 0)))
-		return logbwt(RED, "Could not create server host");
-
-	logt(GREEN, "Host created");
+	// init world
 
 	world_rg = JC_ALLOC(WorldRg,
 		i16vec3 { RG_WORLD_CHUNK_COUNT, 1, RG_WORLD_CHUNK_COUNT },

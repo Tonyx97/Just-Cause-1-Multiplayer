@@ -40,6 +40,7 @@ namespace netcp
 		on_receive_t on_receive_fn = nullptr;
 		on_connected_t on_connected_fn = nullptr;
 		on_connected_t on_disconnected_fn = nullptr;
+		on_http_request_t on_http_request_fn = nullptr;
 
 		std::unordered_set<CID> free_cids,
 								used_cids;
@@ -61,6 +62,7 @@ namespace netcp
 		void set_on_receive_fn(const on_receive_t& fn) { on_receive_fn = fn; }
 		void set_on_connected_fn(const on_connected_t& fn) { on_connected_fn = fn; }
 		void set_on_disconnected_fn(const on_connected_t& fn) { on_disconnected_fn = fn; }
+		void set_on_http_request_fn(const on_http_request_t& fn) { on_http_request_fn = fn; }
 		void free_cid(CID cid);
 		void accept_connections();
 	};

@@ -2,6 +2,8 @@
 
 #include "ms.h"
 
+#include <defs/json.h>
+
 #include <crypto/sha512.h>
 
 void MasterServer::start_client_sv()
@@ -9,6 +11,10 @@ void MasterServer::start_client_sv()
 	// get dll hash
 
 	refresh_client_dll();
+
+	// get changelog
+
+	refresh_changelog();
 
 	// setup the client server
 
@@ -40,6 +46,70 @@ void MasterServer::start_client_sv()
 	web_sv.set_on_receive_fn([&](netcp::client_interface* ci, const netcp::packet_header& header, serialization_ctx& data)
 	{
 		log(GREEN, "Received something");
+	});
+
+	web_sv.set_on_http_request_fn([&](netcp::client_interface* ci, const std::string& query)
+	{
+		auto send_response = [&](const std::string& text)
+		{
+			std::string response;
+
+			response += "HTTP/1.1 200 OK\r\n";
+			response += "Host: 51.77.201.205:22504\r\n";
+			response += "Connection: Keep-Alive\r\n";
+			response += "Keep-Alive: timeout=10, max=10\r\n";
+			response += "Access-Control-Request-Method: GET\r\n";
+			response += "Access-Control-Request-Headers: cache-control,upgrade-insecure-requests\r\n";
+			response += "Sec-Fetch-Mode: cors\r\n";
+			response += "Accept-Encoding: gzip, deflate\r\n";
+			response += "Accept-Language: ru,en;q=0.9,en-GB;q=0.8,en-US;q=0.7\r\n";
+			response += FORMATV("Content-Length: {}\r\n", text.length());
+			response += "Content-Type: application/json\r\n";
+			response += "\r\n";
+			response += text;
+
+			std::error_code ec;
+
+			asio::write(ci->get_socket(), asio::buffer(response), asio::transfer_all(), ec);
+		};
+
+		switch (util::hash::JENKINS(query))
+		{
+		case util::hash::JENKINS("/servers"):
+		{
+			json j;
+
+			int i = 0;
+
+			for_each_server([&](netcp::tcp_server_client* cl)
+			{
+				if (const auto server = cl->get_userdata<Server>(); server && server->is_valid())
+				{
+					const auto info = server->get_info();
+
+					auto& sv_entry = j[i++];
+
+					sv_entry["name"] = info.name;
+					sv_entry["discord"] = info.discord;
+					sv_entry["gamemode"] = info.gamemode;
+					sv_entry["players"] = info.players.size();
+					sv_entry["max_players"] = 128;
+					sv_entry["passworded"] = info.password;
+				}
+			});
+
+			send_response(j.dump());
+
+			break;
+		}
+		case util::hash::JENKINS("/changelog"):
+		{
+			send_response(get_changelog());
+
+			break;
+		}
+		default: log(RED, "Unknown http request: '{}'", query);
+		}
 	});
 
 	// startup all servers
@@ -104,7 +174,7 @@ void MasterServer::remove_server(netcp::tcp_server_client* cl)
 
 void MasterServer::refresh_client_dll()
 {
-#ifdef JC_DBG
+#ifndef JC_DBG
 	std::lock_guard lock(client_dll_mtx);
 
 	client_dll = util::fs::read_bin_file("jcmp_client.dll");
@@ -114,6 +184,17 @@ void MasterServer::refresh_client_dll()
 	client_dll_hash = crypto::sha512_raw(BITCAST(char*, client_dll.data()), client_dll.size());
 
 	log(GREEN, "Client DLL refreshed: {} bytes", client_dll.size());
+#endif
+}
+
+void MasterServer::refresh_changelog()
+{
+#ifndef JC_DBG
+	std::lock_guard lock(changelog_mtx);
+
+	changelog = util::fs::read_plain_file("ms_files\\changelog.txt").data();
+
+	log(GREEN, "Changelog refreshed: {} bytes", changelog.size());
 #endif
 }
 
@@ -129,4 +210,11 @@ std::vector<uint8_t> MasterServer::get_client_dll() const
 	std::lock_guard lock(client_dll_mtx);
 
 	return client_dll;
+}
+
+std::string MasterServer::get_changelog() const
+{
+	std::lock_guard lock(changelog_mtx);
+
+	return changelog;
 }
