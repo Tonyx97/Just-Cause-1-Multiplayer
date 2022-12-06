@@ -16,6 +16,7 @@ private:
 	mutable std::mutex servers_mtx;
 	mutable std::mutex client_dll_mtx;
 	mutable std::mutex changelog_mtx;
+	mutable std::mutex news_mtx;
 
 	jc::thread_safe::vector<netcp::tcp_server_client*> clients,
 													   servers,
@@ -25,6 +26,7 @@ private:
 						 client_dll_hash;
 
 	std::string changelog;
+	std::string news;
 
 public:
 
@@ -43,11 +45,13 @@ public:
 	void remove_server(netcp::tcp_server_client* cl);
 	void refresh_client_dll();
 	void refresh_changelog();
+	void refresh_news();
 
 	std::vector<uint8_t> get_client_dll_hash() const;
 	std::vector<uint8_t> get_client_dll() const;
 
 	std::string get_changelog() const;
+	std::string get_news() const;
 
 	template <typename Fn>
 	void for_each_client(const Fn& fn)

@@ -16,6 +16,10 @@ void MasterServer::start_client_sv()
 
 	refresh_changelog();
 
+	// get news
+
+	refresh_news();
+
 	// setup the client server
 
 	client_sv.set_on_connected_fn([&](netcp::tcp_server_client* cl) { add_client(cl); });
@@ -104,6 +108,12 @@ void MasterServer::start_client_sv()
 		case util::hash::JENKINS("/changelog"):
 		{
 			send_response(get_changelog());
+
+			break;
+		}
+		case util::hash::JENKINS("/news"):
+		{
+			send_response(get_news());
 
 			break;
 		}
@@ -201,6 +211,17 @@ void MasterServer::refresh_changelog()
 #endif
 }
 
+void MasterServer::refresh_news()
+{
+#ifndef JC_DBG
+	std::lock_guard lock(news_mtx);
+
+	news = util::fs::read_plain_file("ms_files\\news.txt").data();
+
+	log(GREEN, "News refreshed: {} bytes", news.size());
+#endif
+}
+
 std::vector<uint8_t> MasterServer::get_client_dll_hash() const
 {
 	std::lock_guard lock(client_dll_mtx);
@@ -220,4 +241,11 @@ std::string MasterServer::get_changelog() const
 	std::lock_guard lock(changelog_mtx);
 
 	return changelog;
+}
+
+std::string MasterServer::get_news() const
+{
+	std::lock_guard lock(news_mtx);
+
+	return news;
 }

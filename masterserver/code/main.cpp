@@ -22,6 +22,14 @@ int main()
 		{
 		case util::hash::JENKINS("r_client"):	ms.refresh_client_dll(); break;
 		case util::hash::JENKINS("r_clog"):		ms.refresh_changelog(); break;
+		case util::hash::JENKINS("r_news"):		ms.refresh_news(); break;
+		case util::hash::JENKINS("r_all"):
+		{
+			ms.refresh_client_dll();
+			ms.refresh_changelog();
+			ms.refresh_news();
+			break;
+		}
 		}
 	}
 
