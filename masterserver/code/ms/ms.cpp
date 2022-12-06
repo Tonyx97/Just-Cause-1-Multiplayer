@@ -87,14 +87,15 @@ void MasterServer::start_client_sv()
 				{
 					const auto info = server->get_info();
 
-					auto& sv_entry = j[i++];
-
-					sv_entry["name"] = info.name;
-					sv_entry["discord"] = info.discord;
-					sv_entry["gamemode"] = info.gamemode;
-					sv_entry["players"] = info.players.size();
-					sv_entry["max_players"] = 128;
-					sv_entry["passworded"] = info.password;
+					j.push_back(json
+					{
+						{ "name", info.name },
+						{ "discord", info.discord },
+						{ "gamemode", info.gamemode },
+						{ "players", info.players.size() },
+						{ "max_players", info.max_players },
+						{ "passworded", info.password },
+					});
 				}
 			});
 

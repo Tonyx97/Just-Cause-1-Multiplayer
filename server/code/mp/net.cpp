@@ -58,6 +58,10 @@ bool Net::init()
 {
 	logt(YELLOW, "Starting...");
 
+	// initialize server config
+
+	check(config.init(), "Could not initialize config");
+
 	// initialize enet
 
 	enet::init();
@@ -76,14 +80,14 @@ bool Net::init()
 
 	logt(YELLOW, "Creating host...");
 
-	if (!(sv = enet_host_create(&address, enet::MAX_PLAYERS, ChannelID_Max, 0, 0)))
+	if (!(sv = enet_host_create(&address, config.get_info().max_players, ChannelID_Max, 0, 0)))
 		return logbwt(RED, "Could not create server host");
 
 	logt(GREEN, "Host created");
 
 	// initialize server config
-	
-	check(config.init(), "Could not initialize config");
+
+	check(config.check_ms_conn(true), "Could not connect to masterserver");
 
 	// initialize server world settings
 

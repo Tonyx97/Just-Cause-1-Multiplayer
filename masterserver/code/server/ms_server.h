@@ -17,6 +17,7 @@ public:
 		std::vector<std::string> players;
 
 		int refresh_rate = 0;
+		int max_players = 0;
 
 		bool password = false;
 	};

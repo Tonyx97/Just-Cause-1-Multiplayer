@@ -27,6 +27,7 @@ void Server::on_receive(const netcp::packet_header& header, serialization_ctx& d
 			.gamemode = _deserialize<std::string>(data),
 			.players = _deserialize<std::vector<std::string>>(data),
 			.refresh_rate = _deserialize<int>(data),
+			.max_players = _deserialize<int>(data),
 			.password = _deserialize<bool>(data),
 		});
 

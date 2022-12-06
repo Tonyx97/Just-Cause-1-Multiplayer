@@ -32,6 +32,7 @@ private:
 					auth_key;
 
 		int refresh_rate;
+		int max_players;
 	} server_info;
 
 	std::vector<DefaultFile> default_files;
@@ -41,14 +42,13 @@ private:
 
 	netcp::tcp_client* ms_conn = nullptr;
 
-	bool check_ms_conn(bool force = false);
-
 public:
 
 	static constexpr auto CONFIG_FILE() { return "settings.json"; }
 	static constexpr auto DEFAULT_FILES_CONFIG_FILE() { return "default_files.json"; }
 
 	bool init();
+	bool check_ms_conn(bool force = false);
 
 	void destroy();
 	void update();

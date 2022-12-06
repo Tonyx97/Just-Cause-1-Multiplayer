@@ -41,5 +41,6 @@ build/
 TombVG/resources/
 loader/x64/
 bins/
+website/
 *.idb
 jc11/

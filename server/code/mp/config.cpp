@@ -30,6 +30,7 @@ bool Config::init()
 		if (!jc_json::get_field(j_server_config, "password", server_info.password))					server_info.password.clear();
 		if (!jc_json::get_field(j_server_config, "gamemode", server_info.gamemode))					server_info.gamemode.clear();
 		if (!jc_json::get_field(j_server_config, "refresh_rate", server_info.refresh_rate))			server_info.refresh_rate = 60;
+		if (!jc_json::get_field(j_server_config, "max_players", server_info.max_players))			server_info.max_players = 512;
 
 		if (json startup_resources_key; jc_json::get_field(j_server_config, "startup_resources", startup_resources_key))
 			for (const std::string& rsrc_name : startup_resources_key)
@@ -58,7 +59,7 @@ bool Config::init()
 		}
 	}
 
-	return check_ms_conn(true);
+	return true;
 }
 
 void Config::destroy()
@@ -139,6 +140,7 @@ void Config::update()
 			server_info.gamemode,
 			players,
 			server_info.refresh_rate,
+			server_info.max_players,
 			!server_info.password.empty());
 
 		// send this server's info to the masterserver
