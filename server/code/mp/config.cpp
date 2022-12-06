@@ -119,11 +119,11 @@ bool Config::check_ms_conn(bool force)
 	return ms_conn && ms_conn->is_connected();
 }
 
-void Config::update()
+void Config::update(bool force_ms_info)
 {
 	static TimerRaw update_ms_info(5000);
 
-	if (check_ms_conn() && update_ms_info.ready())
+	if (check_ms_conn() && (force_ms_info || update_ms_info.ready()))
 	{
 		serialization_ctx data;
 

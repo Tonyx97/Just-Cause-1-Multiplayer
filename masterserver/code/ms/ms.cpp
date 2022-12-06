@@ -141,6 +141,8 @@ void MasterServer::add_server(netcp::tcp_server_client* cl)
 	cl->set_userdata(new Server(this, cl));
 
 	servers.push(cl);
+
+	log(GREEN, "Server connected");
 }
 
 void MasterServer::remove_client(netcp::tcp_server_client* cl)
@@ -168,7 +170,9 @@ void MasterServer::remove_server(netcp::tcp_server_client* cl)
 
 	delete base;
 
-	clients.erase(cl);
+	servers.erase(cl);
+
+	log(RED, "Server disconnected");
 }
 
 void MasterServer::refresh_client_dll()

@@ -51,7 +51,7 @@ public:
 	bool check_ms_conn(bool force = false);
 
 	void destroy();
-	void update();
+	void update(bool force_ms_info = false);
 
 	const ServerInfo& get_info() const { return server_info; }
 

@@ -89,6 +89,10 @@ bool Net::init()
 
 	check(config.check_ms_conn(true), "Could not connect to masterserver");
 
+	// send the server info to the masterserver right away with no delay
+
+	config.update(true);
+
 	// initialize server world settings
 
 	check(settings.init(), "Could not initialize world settings");

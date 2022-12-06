@@ -18,8 +18,11 @@ int main()
 	{
 		std::cin >> cmd;
 
-		if (cmd == "refresh")
-			ms.refresh_client_dll();
+		switch (util::hash::JENKINS(cmd))
+		{
+		case util::hash::JENKINS("r_client"):	ms.refresh_client_dll(); break;
+		case util::hash::JENKINS("r_clog"):		ms.refresh_changelog(); break;
+		}
 	}
 
 	return EXIT_SUCCESS;
