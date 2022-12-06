@@ -79,8 +79,6 @@ void MasterServer::start_client_sv()
 		{
 			json j;
 
-			int i = 0;
-
 			for_each_server([&](netcp::tcp_server_client* cl)
 			{
 				if (const auto server = cl->get_userdata<Server>(); server && server->is_valid())
