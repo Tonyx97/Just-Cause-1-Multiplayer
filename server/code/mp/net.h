@@ -4,6 +4,7 @@
 
 #include "settings.h"
 #include "config.h"
+#include "users_db.h"
 
 class WorldRg;
 
@@ -25,6 +26,8 @@ private:
 	Settings settings {};
 
 	Config config {};
+
+	UsersDB users_db {};
 
 	ENetHost* sv = nullptr;
 
@@ -54,7 +57,10 @@ public:
 	ENetHost* get_host() const { return sv; }
 
 	Settings& get_settings() { return settings; }
+
 	Config& get_config() { return config; }
+
+	UsersDB& get_users() { return users_db; }
 
 	// callbacks
 

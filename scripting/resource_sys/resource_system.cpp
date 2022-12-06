@@ -1,5 +1,4 @@
 #include <defs/standard.h>
-#include <defs/json.h>
 
 #include "resource_system.h"
 
@@ -451,7 +450,7 @@ ResourceResult ResourceSystem::stop_resource(const std::string& name)
 		// to stop resource 
 
 		if (result == ResourceResult_Ok)
-			g_net->send_broadcast(nullptr, Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, name, ResourceResult_Stop));
+			g_net->send_broadcast(nullptr, Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, name, ResourceAction_Stop));
 #endif
 
 		return result;

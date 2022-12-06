@@ -23,6 +23,7 @@ DEFINE_ENUM(ResourceResult, uint8_t)
 	ResourceResult_AlreadyStarted,
 	ResourceResult_AlreadyStopped,
 	ResourceResult_ScriptError,
+	ResourceResult_NotAllowed,
 };
 
 DEFINE_ENUM(ResourceStatus, uint8_t)
@@ -33,9 +34,9 @@ DEFINE_ENUM(ResourceStatus, uint8_t)
 
 DEFINE_ENUM(ResourceAction, uint8_t)
 {
-	ResourceResult_Stop,
-	ResourceResult_Start,
-	ResourceResult_Restart,
+	ResourceAction_Stop,
+	ResourceAction_Start,
+	ResourceAction_Restart,
 };
 
 struct ResourceFileInfo
@@ -143,6 +144,7 @@ public:
 		case ResourceResult_AlreadyStarted:				return "Resource already running";
 		case ResourceResult_AlreadyStopped:				return "Resource already stopped";
 		case ResourceResult_NotExists:					return "Resource does not exist";
+		case ResourceResult_NotAllowed:					return "Not allowed";
 		default:										return FORMATV("Unknown error: {}", v);
 		}
 	}

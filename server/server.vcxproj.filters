@@ -27,6 +27,9 @@
     <ClCompile Include="code\mp\config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\mp\users_db.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\mp\net.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\mp\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\mp\users_db.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

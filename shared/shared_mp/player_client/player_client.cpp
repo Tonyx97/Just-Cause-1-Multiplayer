@@ -32,6 +32,12 @@ PlayerClient::PlayerClient(ENetPeer* peer) : peer(peer)
 PlayerClient::~PlayerClient()
 {
 #ifdef JC_SERVER
+	// log the player out if it was logged in
+
+	g_net->get_users().logout_user(this);
+
+	// send the NetObject destroy packet to all players
+	
 	g_net->send_broadcast_joined(this, Packet(PlayerClientPID_ObjectInstanceSync, ChannelID_PlayerClient, player, NetObjectActionSyncType_Destroy));
 
 	if (timed_out)
@@ -228,6 +234,31 @@ bool PlayerClient::compare_address(const ENetAddress& other)
 	const auto address = get_address();
 
 	return (in6_equal(address->host, other.host) && address->port == other.port);
+}
+
+bool PlayerClient::register_user(const std::string& user, const std::string& pass)
+{
+	return g_net->get_users().register_user(user, pass);
+}
+
+bool PlayerClient::login_user(const std::string& user, const std::string& pass)
+{
+	return g_net->get_users().login_user(this, user, pass);
+}
+
+bool PlayerClient::logout_user()
+{
+	return g_net->get_users().logout_user(this);
+}
+
+bool PlayerClient::is_logged()
+{
+	return g_net->get_users().is_logged_in(this);
+}
+
+bool PlayerClient::has_acl(const std::string& acl_name)
+{
+	return g_net->get_users().has_acl(this, acl_name);
 }
 
 std::string PlayerClient::get_ip() const

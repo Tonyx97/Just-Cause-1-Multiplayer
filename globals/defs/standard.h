@@ -67,6 +67,7 @@ using ref_map = std::unordered_map<T*, shared_ptr<T>>;
 
 #include <../rsrc/resource.h>
 #elif defined(JC_SERVER)
+#include <defs/json.h>
 #endif
 
 #include <bug_ripper/bug_ripper.h>

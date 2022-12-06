@@ -163,11 +163,13 @@
     <ClCompile Include="code\mp\config.cpp" />
     <ClCompile Include="code\mp\net.cpp" />
     <ClCompile Include="code\mp\settings.cpp" />
+    <ClCompile Include="code\mp\users_db.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\mp\config.h" />
     <ClInclude Include="code\mp\net.h" />
     <ClInclude Include="code\mp\settings.h" />
+    <ClInclude Include="code\mp\users_db.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

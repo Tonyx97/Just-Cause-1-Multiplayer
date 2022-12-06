@@ -232,9 +232,9 @@ PacketResult nh::player_client::resource_action(const Packet& p)
 
 	switch (action_type)
 	{
-	case ResourceResult_Start:		result = g_rsrc->start_resource(rsrc_name);		break;
-	case ResourceResult_Stop:		result = g_rsrc->stop_resource(rsrc_name);		break;
-	case ResourceResult_Restart:	result = g_rsrc->restart_resource(rsrc_name);	break;
+	case ResourceAction_Start:		result = g_rsrc->start_resource(rsrc_name);		break;
+	case ResourceAction_Stop:		result = g_rsrc->stop_resource(rsrc_name);		break;
+	case ResourceAction_Restart:	result = g_rsrc->restart_resource(rsrc_name);	break;
 	}
 #else
 	const auto pc = p.get_pc();
@@ -243,12 +243,16 @@ PacketResult nh::player_client::resource_action(const Packet& p)
 
 	ResourceResult result = ResourceResult_Ok;
 
-	switch (action_type)
+	if (pc->has_acl("owner") || pc->has_acl("admin"))
 	{
-	case ResourceResult_Start:		result = g_rsrc->start_resource(rsrc_name);		break;
-	case ResourceResult_Stop:		result = g_rsrc->stop_resource(rsrc_name);		break;
-	case ResourceResult_Restart:	result = g_rsrc->restart_resource(rsrc_name);	break;
-	}
+		switch (action_type)
+		{
+		case ResourceAction_Start:		result = g_rsrc->start_resource(rsrc_name);		break;
+		case ResourceAction_Stop:		result = g_rsrc->stop_resource(rsrc_name);		break;
+		case ResourceAction_Restart:	result = g_rsrc->restart_resource(rsrc_name);	break;
+		}
+}
+	else result = ResourceResult_NotAllowed;
 
 	pc->send(Packet(PlayerClientPID_DebugLog, ChannelID_PlayerClient, Resource::RESULT_TO_STRING(result)), true);
 #endif
@@ -268,12 +272,17 @@ PacketResult nh::player_client::resources_refresh(const Packet& p)
 PacketResult nh::player_client::register_user(const Packet& p)
 {
 #ifdef JC_CLIENT
+	const auto ok = p.get_bool();
+
+	if (ok)
+		g_chat->add_chat_msg("##00ff00ffAccount registered");
+	else g_chat->add_chat_msg("##ff0000ffCould not register account");
 #else
 	const auto pc = p.get_pc();
 	const auto user = p.get_str();
 	const auto pwd = p.get_str();
 
-	log(RED, "register {} {}", user, pwd);
+	pc->send(Packet(PlayerClientPID_RegisterUser, ChannelID_PlayerClient, pc->register_user(user, pwd)), true);
 #endif
 
 	return PacketRes_Ok;
@@ -282,12 +291,17 @@ PacketResult nh::player_client::register_user(const Packet& p)
 PacketResult nh::player_client::login_user(const Packet& p)
 {
 #ifdef JC_CLIENT
+	const auto ok = p.get_bool();
+
+	if (ok)
+		g_chat->add_chat_msg("##00ff00ffLogged in");
+	else g_chat->add_chat_msg("##ff0000ffCould not log in");
 #else
 	const auto pc = p.get_pc();
 	const auto user = p.get_str();
 	const auto pwd = p.get_str();
 
-	log(RED, "login {} {}", user, pwd);
+	pc->send(Packet(PlayerClientPID_LoginUser, ChannelID_PlayerClient, pc->login_user(user, pwd)), true);
 #endif
 
 	return PacketRes_Ok;
@@ -296,10 +310,15 @@ PacketResult nh::player_client::login_user(const Packet& p)
 PacketResult nh::player_client::logout_user(const Packet& p)
 {
 #ifdef JC_CLIENT
+	const auto ok = p.get_bool();
+
+	if (ok)
+		g_chat->add_chat_msg("##00ff00ffLogged out");
+	else g_chat->add_chat_msg("##ff0000ffCould not log out");
 #else
 	const auto pc = p.get_pc();
 
-	log(RED, "logout");
+	pc->send(Packet(PlayerClientPID_LogoutUser, ChannelID_PlayerClient, pc->logout_user()), true);
 #endif
 
 	return PacketRes_Ok;

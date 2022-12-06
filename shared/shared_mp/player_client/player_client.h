@@ -93,6 +93,11 @@ public:
 
 	bool is_timed_out() const { return timed_out; }
 	bool compare_address(const ENetAddress& peer);
+	bool register_user(const std::string& user, const std::string& pass);
+	bool login_user(const std::string& user, const std::string& pass);
+	bool logout_user();
+	bool is_logged();
+	bool has_acl(const std::string& acl_name);
 
 	PlayerClientRole get_roles() const { return roles; }
 

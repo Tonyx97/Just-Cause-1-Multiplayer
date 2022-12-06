@@ -115,7 +115,7 @@ namespace cmd
 		if (params.size() != 1)
 			return Cmd_InvalidParams;
 
-		g_net->send(Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, params[0], ResourceResult_Start));
+		g_net->send(Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, params[0], ResourceAction_Start));
 
 		return Cmd_Ok;
 	}
@@ -125,7 +125,7 @@ namespace cmd
 		if (params.size() != 1)
 			return Cmd_InvalidParams;
 
-		g_net->send(Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, params[0], ResourceResult_Stop));
+		g_net->send(Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, params[0], ResourceAction_Stop));
 
 		return Cmd_Ok;
 	}
@@ -135,7 +135,7 @@ namespace cmd
 		if (params.size() != 1)
 			return Cmd_InvalidParams;
 
-		g_net->send(Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, params[0], ResourceResult_Restart));
+		g_net->send(Packet(PlayerClientPID_ResourceAction, ChannelID_PlayerClient, params[0], ResourceAction_Restart));
 
 		return Cmd_Ok;
 	}

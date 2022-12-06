@@ -1,7 +1,5 @@
 #pragma once
 
-#include <defs/json.h>
-
 namespace netcp { class tcp_client; }
 
 class Config

@@ -1,4 +1,5 @@
 #include <defs/standard.h>
+#include <defs/json.h>
 
 #include <timer/timer.h>
 
@@ -61,6 +62,10 @@ bool Net::init()
 	// initialize server config
 
 	check(config.init(), "Could not initialize config");
+
+	// initialize users database
+
+	check(users_db.init(), "Could not initialize users database");
 
 	// initialize enet
 
@@ -162,6 +167,10 @@ Net::~Net()
 	// destroy settings
 
 	settings.destroy();
+
+	// destroy users database
+
+	users_db.destroy();
 
 	// destroy config
 
