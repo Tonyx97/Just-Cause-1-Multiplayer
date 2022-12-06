@@ -69,7 +69,7 @@ void UI::init()
 
 	io->Fonts->AddFontFromMemoryTTF(font_data, main_font_data.size(), 20.f, nullptr, io->Fonts->GetGlyphRangesDefault());
 
-	chat_font = io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\verdana.ttf", 26.f, nullptr, io->Fonts->GetGlyphRangesJapanese());
+	chat_font = io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\verdana.ttf", 26.f, nullptr, io->Fonts->GetGlyphRangesCyrillic());
 
 	if (const auto splash_data = util::fs::read_bin_file(std::string(Net::DEFAULT_SERVER_FILES_PATH()) + "splash"); !splash_data.empty())
 		D3DXCreateTextureFromFileInMemory(dx_device, splash_data.data(), splash_data.size(), &splash_texture);
@@ -200,10 +200,10 @@ void UI::draw_text(const char* text, const vec2& p, float s, const vec4& color, 
 		float shadow_cos = std::cosf(shadow) * 2.f,
 			  shadow_sin = std::sinf(shadow) * 2.f;
 
-		dl->AddText(chat_font, s, ImVec2(position.x + shadow_cos, position.y + shadow_sin), outline_color, text, 0, wrap);
+		dl->AddText(nullptr, s, ImVec2(position.x + shadow_cos, position.y + shadow_sin), outline_color, text, 0, wrap);
 	}
 
-	dl->AddText(chat_font, s, ImVec2(position.x, position.y), text_color, text, 0, wrap);
+	dl->AddText(nullptr, s, ImVec2(position.x, position.y), text_color, text, 0, wrap);
 }
 
 void UI::draw_text(const wchar_t* text, const vec2& p, float s, const vec4& color, bool center, float shadow, float wrap)
