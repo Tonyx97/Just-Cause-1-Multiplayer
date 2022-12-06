@@ -450,7 +450,10 @@ void dll_thread()
 
 	util::init();
 	jc::hooks::init();
+
+#ifdef JC_DBG
 	jc::clean_dbg::init();
+#endif
 
 	// initialize create window hook
 
@@ -497,7 +500,10 @@ void dll_thread()
 	init_window_context_hook.unhook();
 	create_window_ex_hook.unhook();
 
+#ifdef JC_DBG
 	jc::clean_dbg::destroy();
+#endif
+
 	jc::hooks::unhook_queued();
 	jc::hooks::destroy();
 	jc::bug_ripper::destroy();

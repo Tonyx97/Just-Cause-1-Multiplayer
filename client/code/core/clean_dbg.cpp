@@ -1,3 +1,4 @@
+#ifdef JC_DBG
 #include <defs/standard.h>
 
 #include "clean_dbg.h"
@@ -609,3 +610,4 @@ void jc::clean_dbg::destroy()
 		}
 	}
 }
+#endif

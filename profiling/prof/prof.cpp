@@ -25,7 +25,7 @@ namespace jc::prof
     void init(const char* name)
     {
 #if defined(JC_CLIENT) && !defined(JC_DBG)
-		//return;
+		return;
 #endif
         if (console_allocated)
 			return;
@@ -140,34 +140,39 @@ namespace jc::prof
 		void save_to_file(const std::string& text)
 		{
 			if (auto log_file = std::ofstream("logs.txt", std::ios::app))
-				log_file << text << '\n';
+				log_file << "[" + util::time::get_str_time() + "] " << text << '\n';
 		}
 		
         void log(bool nl, eColor color, const std::string& text)
         {
-            SetConsoleTextAttribute(console_handle, color);
-
 			save_to_file(text);
 
-            if (nl) printf_s("%s\n", text.c_str());
-            else	printf_s("%s", text.c_str());
+#if !defined(JC_CLIENT) || defined(JC_DBG)
+			SetConsoleTextAttribute(console_handle, color);
+
+			if (nl) printf_s("%s\n", text.c_str());
+			else	printf_s("%s", text.c_str());
+#endif
         }
 
         void log(bool nl, eColor color, const std::wstring& text)
         {
-            SetConsoleTextAttribute(console_handle, color);
-
 			save_to_file(util::string::convert(text));
+
+#if !defined(JC_CLIENT) || defined(JC_DBG)
+			SetConsoleTextAttribute(console_handle, color);
 
             if (nl) printf_s("%S\n", text.c_str());
             else	printf_s("%S", text.c_str());
+#endif
 		}
 
 		void log(bool nl, bool show_time, eColor color, const std::string& text)
 		{
-			SetConsoleTextAttribute(console_handle, color);
-
 			save_to_file(text);
+
+#if !defined(JC_CLIENT) || defined(JC_DBG)
+			SetConsoleTextAttribute(console_handle, color);
 
 			auto time_str = util::time::get_str_time();
 
@@ -185,24 +190,8 @@ namespace jc::prof
 				else
 					printf_s("%s", text.c_str());
 			}
+#endif
 		}
-
-        void log_info(bool nl, const char* filename, int line, eColor color, const char* text)
-        {
-            std::string file_str(filename);
-
-            auto real_pos = file_str.substr(0, file_str.find_last_of('\\') - 1).find_last_of('\\') + 1;
-            auto fixed_filename = file_str.substr(real_pos, file_str.length() - real_pos);
-
-            SetConsoleTextAttribute(console_handle, WHITE);		printf_s("[Line ");
-            SetConsoleTextAttribute(console_handle, CYAN);		printf_s("%i", line);
-            SetConsoleTextAttribute(console_handle, WHITE);		printf_s(": ");
-            SetConsoleTextAttribute(console_handle, PURPLE);	printf_s("%s", fixed_filename.c_str());
-            SetConsoleTextAttribute(console_handle, WHITE);		printf_s("] ");
-            SetConsoleTextAttribute(console_handle, color);
-
-            log(nl, color, text);
-        }
 	}
 
 	bool error_internal(const std::string& text, int type)

@@ -46,7 +46,6 @@ namespace jc::prof
         void log(bool nl, eColor color, const std::string& text);
 		void log(bool nl, eColor color, const std::wstring& text);
 		void log(bool nl, bool show_time, eColor color, const std::string& text);
-        void log_info(bool nl, const char* filename, int line, eColor color, const char* text);
     }
 
 	void set_main_thread();

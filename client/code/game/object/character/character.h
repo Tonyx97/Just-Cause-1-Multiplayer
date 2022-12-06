@@ -9,7 +9,7 @@
 
 namespace jc::character
 {
-	static constexpr uint32_t GRAPPLED_OBJECT			= 0x58; // shared_ptr<ObjectBase>
+	static constexpr uint32_t GRAPPLED_OBJECT			= 0x58; // weak_ptr<ObjectBase>
 	static constexpr uint32_t GRENADES_AMMO				= 0x90; // int32_t
 	static constexpr uint32_t WEAPON_BELT				= 0xD8; // WeaponBelt
 	static constexpr uint32_t SKELETON					= 0xDC; // Skeleton
@@ -34,7 +34,7 @@ namespace jc::character
 	namespace fn
 	{
 		static constexpr uint32_t SET_GRAPPLED_OBJECT						= 0x637330;
-		static constexpr uint32_t REMOVE_GRAPPLED_OBJECT					= 0x59BDA0;
+		static constexpr uint32_t INVALIDATE_WEAK_PTR						= 0x59BDA0;
 		static constexpr uint32_t GET_MUZZLE_TRANSFORM						= 0x5985E0;
 		static constexpr uint32_t SET_ANIMATION								= 0x5A1BE0;
 		static constexpr uint32_t SET_TRANSFORM								= 0x58F190;
@@ -82,6 +82,11 @@ namespace jc::character
 		static constexpr uint32_t CROUCH									= 0x5A1280;
 		static constexpr uint32_t UNCROUCH									= 0x5A11D0;
 		static constexpr uint32_t IS_IN_PARACHUTE_STATE						= 0x597E80;
+	}
+
+	namespace vt
+	{
+		static constexpr uint32_t ADDRESS = 0xA567D0;
 	}
 
 	namespace g

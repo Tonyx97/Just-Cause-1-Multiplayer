@@ -476,18 +476,41 @@ namespace jc::character::hook
 		*update_bones = true;
 	}
 
-	DEFINE_HOOK_THISCALL_S(remove_grapple_object, jc::character::fn::REMOVE_GRAPPLED_OBJECT, void, uint8_t* grappled_object_ptr)
+	// weak_ptr::reset is used when resetting a grappled object from a character
+	// so hook it, check what return addresses mess with the grappled object of a character
+	// and avoid remote players from resetting the instance.
+	//
+	DEFINE_HOOK_THISCALL_S(invalidate_weak_ptr, jc::character::fn::INVALIDATE_WEAK_PTR, void, uint8_t* grappled_object_ptr)
 	{
-		if (const auto lp = g_net->get_localplayer())
-			if (const auto local_char = lp->get_character())
-				if (const auto character = BITCAST(Character*, grappled_object_ptr - jc::character::GRAPPLED_OBJECT); local_char == character)
-				{
-					remove_grapple_object_hook(grappled_object_ptr);
+		// ignore the cases where the grappled object is invalidated
+		
+		switch (RET_ADDRESS)
+		{
+		case 0x4C3FA9:
+		case 0x4C5E7C:
+		case 0x4C674C:
+		case 0x4C67C4:
+		case 0x4CC48B:
+		case 0x52C2B7:
+		case 0x59FA76:
+		case 0x5A067E:
+		case 0x5A2EFA:
+		{
+			if (const auto lp = g_net->get_localplayer())
+				if (const auto local_char = lp->get_character())
+					if (const auto character = BITCAST(Character*, grappled_object_ptr - jc::character::GRAPPLED_OBJECT); local_char == character)
+					{
+						lp->set_grappled_object(nullptr);
 
-					lp->set_grappled_object(nullptr);
+						g_net->send(Packet(PlayerPID_GrapplingHookAttachDetach, ChannelID_Generic, false));
+					}
+					else return;
 
-					g_net->send(Packet(PlayerPID_GrapplingHookAttachDetach, ChannelID_Generic, false));
-				}
+			break;
+		}
+		}
+
+		invalidate_weak_ptr_hook(grappled_object_ptr);
 	}
 
 	void enable(bool apply)
@@ -505,7 +528,7 @@ namespace jc::character::hook
 		character_proxy_add_velocity_hook.hook(apply);
 		set_vehicle_seat_hook.hook(apply);
 		distance_culling_check_hook.hook(apply);
-		remove_grapple_object_hook.hook(apply);
+		invalidate_weak_ptr_hook.hook(apply);
 	}
 }
 
@@ -964,7 +987,9 @@ void Character::crouch(bool enabled)
 
 void Character::set_grappled_object(shared_ptr<ObjectBase> obj)
 {
-	jc::this_call(jc::character::fn::SET_GRAPPLED_OBJECT, this, weak_ptr<ObjectBase>(obj));
+	if (obj.get())
+		jc::this_call(jc::character::fn::SET_GRAPPLED_OBJECT, this, weak_ptr<ObjectBase>(obj));
+	else jc::character::hook::invalidate_weak_ptr_hook(REF(uint8_t*, this, jc::character::GRAPPLED_OBJECT));
 }
 
 bool Character::has_flag(uint32_t mask) const
