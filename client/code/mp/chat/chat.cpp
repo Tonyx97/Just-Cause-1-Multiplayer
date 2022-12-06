@@ -223,10 +223,26 @@ void Chat::update()
 	if (interaction_time >= 7.5f)
 		return;
 
-	g_ui->begin_window("##chat_wnd", { 5.f, 300.f }, { max_sx + 5.f, 300.f }, { 0.f, 0.f, 0.f, 0.5f });
+	g_ui->begin_window("##chat_wnd", { 15.f, 250.f }, { max_sx + 5.f, 350.f }, { 0.f, 0.f, 0.f, 0.f });
+
+	ImGui::PushFont(g_ui->get_chat_font());
 
 	for (const auto& msg : chat_list)
-		ImGui::TextWrapped(msg.c_str());
+	{
+		const auto curr_pos = ImGui::GetCursorPos();
+
+		ImGui::PushTextWrapPos(max_sx + 4.f);
+		ImGui::SetCursorPos({ curr_pos.x + 2.f, curr_pos.y + 2.f });
+		ImGui::TextColored(ImVec4(0.f, 0.f, 0.f, 1.f), msg.c_str());
+		ImGui::SetCursorPos(curr_pos);
+		ImGui::PopTextWrapPos();
+
+		ImGui::PushTextWrapPos(max_sx);
+		ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), msg.c_str());
+		ImGui::PopTextWrapPos();
+	}
+
+	ImGui::PopFont();
 
 	if (scrolling)
 	{
@@ -246,8 +262,8 @@ void Chat::update()
 		}
 		else scroll_dir = 0;
 	}
-	else ImGui::SetScrollY(std::lerp(ImGui::GetScrollY(), ImGui::GetScrollMaxY(), 0.25f));
-	
+	else ImGui::SetScrollY(std::ceil(std::lerp(ImGui::GetScrollY(), ImGui::GetScrollMaxY(), 0.25f)));
+
 	g_ui->end_window();
 
 	if (typing)
@@ -257,7 +273,7 @@ void Chat::update()
 		g_ui->draw_filled_rect(vec2(5.f, 630.f), vec2(max_sx + 5.f, sy + 5.f), { 0.f, 0.f, 0.f, 0.5f });
 
 		if (!curr_msg.empty())
-			g_ui->draw_text(curr_msg.c_str(), vec2(10.f, 630.f), text_size, { 1.f, 1.f, 1.f, 1.f }, false, -1, max_sx);
+			g_ui->draw_text(curr_msg.c_str(), vec2(10.f, 630.f), text_size, { 1.f, 1.f, 1.f, 1.f }, false, jc::nums::QUARTER_PI, max_sx);
 	}
 
 	interaction_time += g_time->get_delta();

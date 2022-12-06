@@ -65,6 +65,8 @@ void UI::init()
 
 	io->Fonts->AddFontFromMemoryTTF(font_data, font_size, 20.f, nullptr, io->Fonts->GetGlyphRangesDefault());
 
+	chat_font = io->Fonts->AddFontFromMemoryTTF(font_data, font_size, 26.f, nullptr, io->Fonts->GetGlyphRangesDefault());
+
 	if (const auto splash_data = util::fs::read_bin_file(std::string(Net::DEFAULT_SERVER_FILES_PATH()) + "splash"); !splash_data.empty())
 		D3DXCreateTextureFromFileInMemory(dx_device, splash_data.data(), splash_data.size(), &splash_texture);
 
@@ -123,11 +125,13 @@ void UI::set_cursor_pos(const vec2& v)
 void UI::begin_window(const char* name, const ImVec2& pos, const ImVec2& size, const vec4& color)
 {
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ color.x, color.y, color.z, color.w });
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4 { 0.f, 0.f, 0.f, 0.f });
 
 	ImGui::Begin(name, nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoScrollbar);
 	ImGui::SetWindowPos(pos, ImGuiCond_Always);
 	ImGui::SetWindowSize(size, ImGuiCond_Always);
 
+	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
 }
 
@@ -138,42 +142,42 @@ void UI::end_window()
 
 void UI::draw_line(const vec2& p0, const vec2& p1, float thickness, const vec4& color)
 {
-	ImGui::GetWindowDrawList()->AddLine(ImVec2(p0.x, p0.y), ImVec2(p1.x, p1.y), ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }), thickness);
+	ImGui::GetWindowDrawList()->AddLine(ImVec2(p0.x, p0.y), ImVec2(p1.x, p1.y), ImGui::ColorConvertFloat4ToU32(ImVec4 { color.x, color.y, color.z, color.w }), thickness);
 }
 
 void UI::draw_triangle(const vec2& p0, const vec2& p1, const vec2& p2, const vec4& color)
 {
-	ImGui::GetWindowDrawList()->AddTriangle({ p0.x, p0.y }, { p1.x, p1.y }, { p2.x, p2.y }, ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }));
+	ImGui::GetWindowDrawList()->AddTriangle({ p0.x, p0.y }, { p1.x, p1.y }, { p2.x, p2.y }, ImGui::ColorConvertFloat4ToU32(ImVec4 { color.x, color.y, color.z, color.w }));
 }
 
 void UI::draw_filled_triangle(const vec2& p0, const vec2& p1, const vec2& p2, const vec4& color)
 {
-	ImGui::GetWindowDrawList()->AddTriangleFilled({ p0.x, p0.y }, { p1.x, p1.y }, { p2.x, p2.y }, ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }));
+	ImGui::GetWindowDrawList()->AddTriangleFilled({ p0.x, p0.y }, { p1.x, p1.y }, { p2.x, p2.y }, ImGui::ColorConvertFloat4ToU32(ImVec4 { color.x, color.y, color.z, color.w }));
 }
 
 void UI::draw_rect(const vec2& p, const vec2& size, const vec4& color)
 {
-	ImGui::GetWindowDrawList()->AddQuad({ p.x, p.y }, { p.x, p.y + size.y }, { p.x + size.x, p.y + size.y }, { p.x + size.x, p.y }, ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }));
+	ImGui::GetWindowDrawList()->AddQuad({ p.x, p.y }, { p.x, p.y + size.y }, { p.x + size.x, p.y + size.y }, { p.x + size.x, p.y }, ImGui::ColorConvertFloat4ToU32(ImVec4 { color.x, color.y, color.z, color.w }));
 }
 
 void UI::draw_filled_rect(const vec2& p, const vec2& size, const vec4& color)
 {
-	ImGui::GetWindowDrawList()->AddQuadFilled({ p.x, p.y }, { p.x, p.y + size.y }, { p.x + size.x, p.y + size.y }, { p.x + size.x, p.y }, ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }));
+	ImGui::GetWindowDrawList()->AddQuadFilled({ p.x, p.y }, { p.x, p.y + size.y }, { p.x + size.x, p.y + size.y }, { p.x + size.x, p.y }, ImGui::ColorConvertFloat4ToU32(ImVec4 { color.x, color.y, color.z, color.w }));
 }
 
 void UI::draw_circle(const vec2& center, float radius, float thickness, int segs, const vec4& color)
 {
-	ImGui::GetWindowDrawList()->AddCircle(ImVec2{ center.x, center.y }, radius, ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }), segs, thickness);
+	ImGui::GetWindowDrawList()->AddCircle(ImVec2{ center.x, center.y }, radius, ImGui::ColorConvertFloat4ToU32(ImVec4 { color.x, color.y, color.z, color.w }), segs, thickness);
 }
 
 void UI::draw_filled_circle(const vec2& center, float radius, int segs, const vec4& color)
 {
-	ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2 { center.x, center.y }, radius, ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }), segs);
+	ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2 { center.x, center.y }, radius, ImGui::ColorConvertFloat4ToU32(ImVec4 { color.x, color.y, color.z, color.w }), segs);
 }
 
 void UI::draw_image(IDirect3DTexture9* texture, const vec2& pos, const vec2& size, const vec2& uv0, const vec2& uv1, const vec4& color)
 {
-	ImGui::GetWindowDrawList()->AddImage(texture, ImVec2 { pos.x, pos.y }, ImVec2 { pos.x + size.x, pos.y + size.y }, { uv0.x, uv0.y }, { uv1.x, uv1.y }, ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w }));
+	ImGui::GetWindowDrawList()->AddImage(texture, ImVec2 { pos.x, pos.y }, ImVec2 { pos.x + size.x, pos.y + size.y }, { uv0.x, uv0.y }, { uv1.x, uv1.y }, ImGui::ColorConvertFloat4ToU32(ImVec4 { color.x, color.y, color.z, color.w }));
 }
 
 void UI::draw_text(const char* text, const vec2& p, float s, const vec4& color, bool center, float shadow, float wrap)
@@ -183,7 +187,7 @@ void UI::draw_text(const char* text, const vec2& p, float s, const vec4& color, 
 	const auto size = calc_text_size(text, s, wrap);
 
 	const auto outline_color = ImGui::ColorConvertFloat4ToU32(ImVec4(0.f, 0.f, 0.f, 1.f)),
-			   text_color = ImGui::ColorConvertFloat4ToU32(ImVec4{ color.x, color.y, color.z, color.w });
+			   text_color = ImGui::ColorConvertFloat4ToU32(ImVec4 { color.x, color.y, color.z, color.w });
 
 	const auto position = (center ? ImVec2 { p.x - size.x / 2.f, p.y - size.y / 2.f } : ImVec2 { p.x, p.y });
 

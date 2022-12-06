@@ -1977,6 +1977,7 @@ ImFontAtlas::ImFontAtlas()
 {
     memset(this, 0, sizeof(*this));
     TexGlyphPadding = 1;
+	TexGlyphShadowOffset = ImVec2(0.0f, 0.0f);
     PackIdMouseCursors = PackIdLines = -1;
 }
 
@@ -2472,14 +2473,15 @@ static bool ImFontAtlasBuildWithStbTruetype(ImFontAtlas* atlas)
         // Gather the sizes of all rectangles we will need to pack (this loop is based on stbtt_PackFontRangesGatherRects)
         const float scale = (cfg.SizePixels > 0) ? stbtt_ScaleForPixelHeight(&src_tmp.FontInfo, cfg.SizePixels) : stbtt_ScaleForMappingEmToPixels(&src_tmp.FontInfo, -cfg.SizePixels);
         const int padding = atlas->TexGlyphPadding;
+		const ImVec2 shadow_offset = atlas->TexGlyphShadowOffset;
         for (int glyph_i = 0; glyph_i < src_tmp.GlyphsList.Size; glyph_i++)
         {
             int x0, y0, x1, y1;
             const int glyph_index_in_font = stbtt_FindGlyphIndex(&src_tmp.FontInfo, src_tmp.GlyphsList[glyph_i]);
             IM_ASSERT(glyph_index_in_font != 0);
             stbtt_GetGlyphBitmapBoxSubpixel(&src_tmp.FontInfo, glyph_index_in_font, scale * cfg.OversampleH, scale * cfg.OversampleV, 0, 0, &x0, &y0, &x1, &y1);
-            src_tmp.Rects[glyph_i].w = (stbrp_coord)(x1 - x0 + padding + cfg.OversampleH - 1);
-            src_tmp.Rects[glyph_i].h = (stbrp_coord)(y1 - y0 + padding + cfg.OversampleV - 1);
+            src_tmp.Rects[glyph_i].w = (stbrp_coord)(x1 - x0 + padding + cfg.OversampleH - 1 + shadow_offset.x);
+            src_tmp.Rects[glyph_i].h = (stbrp_coord)(y1 - y0 + padding + cfg.OversampleV - 1 + shadow_offset.y);
             total_surface += src_tmp.Rects[glyph_i].w * src_tmp.Rects[glyph_i].h;
         }
     }
@@ -3593,12 +3595,16 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, const ImVec2& pos, Im
 		int index = 0;
 		int chain = 0;
 		const char* s = text_begin;
-		ImU32 temp_col;
+		ImU32 temp_col = col;
 		while (s < text_end)
 		{
 			if (s < text_end - 10 && ParseColor(s, &temp_col))
 			{
-				col = temp_col;
+				// ignore black text
+
+				if (col != 0xFF000000)
+					col = temp_col;
+
 				s += 10;
 			}
 			else

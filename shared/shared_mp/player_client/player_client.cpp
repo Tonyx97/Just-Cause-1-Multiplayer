@@ -34,7 +34,7 @@ PlayerClient::~PlayerClient()
 #ifdef JC_SERVER
 	// log the player out if it was logged in
 
-	g_net->get_users().logout_user(this);
+	logout_user();
 
 	// send the NetObject destroy packet to all players
 	

@@ -15,15 +15,22 @@ PacketResult nh::chat::msg(const Packet& p)
 {
 #ifdef JC_CLIENT
 	if (const auto player = p.get_net_object<Player>())
-		g_chat->add_chat_msg(player->get_nick() + ": " + p.get_str());
+	{
+		const auto full_text = p.get_str();
+
+		g_chat->add_chat_msg(full_text);
+	}
 #else
 	const auto pc = p.get_pc();
-	const auto player = pc->get_player();
 	const auto msg = p.get_str();
 
-	p.add_beginning(player);
+	std::string nick_color  = "";
 
-	g_net->send_broadcast(p);
+	if (pc->has_acl("owner"))			nick_color = "##ff0000ff";
+	else if (pc->has_acl("admin"))		nick_color = "##ff8000ff";
+	else if (pc->has_acl("supporter"))	nick_color = "##00ffffff";
+
+	g_net->send_broadcast(Packet(ChatPID_Msg, ChannelID_Chat, pc->get_player(), nick_color + pc->get_nick() + "##ffffffff: " + msg));
 
 	logt(WHITE, "{}: {}", pc->get_nick(), msg);
 #endif

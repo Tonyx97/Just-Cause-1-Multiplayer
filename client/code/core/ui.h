@@ -65,6 +65,8 @@ private:
 
 	ImGuiIO* io = nullptr;
 
+	ImFont* chat_font = nullptr;
+
 	HWND jc_hwnd = nullptr;
 
 	float splash_texture_alpha = 1.f;
@@ -119,6 +121,8 @@ public:
 	void set_download_bar_file(const std::string& v)	{ download_bar.set_file(v); }
 
 	float get_download_bar_progress() const				{ return download_bar.get_progress(); }
+
+	ImFont* get_chat_font() const						{ return chat_font; }
 };
 
 inline UI* g_ui = nullptr;

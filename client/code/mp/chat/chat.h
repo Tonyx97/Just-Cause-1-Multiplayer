@@ -14,7 +14,7 @@ private:
 
 	float text_size = 18.f,
 		  curr = 0.f,
-		  max_sx = 390.f,
+		  max_sx = 500.f,
 		  interaction_time = 0.f;
 
 	int scroll_dir = 0,

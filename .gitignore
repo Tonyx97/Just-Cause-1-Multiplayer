@@ -36,6 +36,7 @@
 *.til
 *.idb
 *.rcnet
+logs.txt
 TombVG.lib
 build/
 TombVG/resources/

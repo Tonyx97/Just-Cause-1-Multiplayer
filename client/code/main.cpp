@@ -38,6 +38,7 @@ HMODULE g_module = nullptr;
 std::atomic_bool unload_mod = false;
 std::atomic_bool mod_unloaded = false;
 
+bool window_ctx_initialized = false;
 bool was_initialized = false;
 bool initialized = false;
 bool game_focused = true;
@@ -284,6 +285,28 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 	return tick_hook(_this);
 }
 
+DEFINE_HOOK_STDCALL(create_window_ex, uint64_t(GetProcAddress(GetModuleHandle(L"user32.dll"), "CreateWindowExA")), HWND,
+	DWORD     dwExStyle,
+	LPCSTR    lpClassName,
+	LPCSTR    lpWindowName,
+	DWORD     dwStyle,
+	int       X,
+	int       Y,
+	int       nWidth,
+	int       nHeight,
+	HWND      hWndParent,
+	HMENU     hMenu,
+	HINSTANCE hInstance,
+	LPVOID    lpParam)
+{
+	if (window_ctx_initialized)
+	{
+		//dwStyle = 0;
+	}
+
+	return create_window_ex_hook(dwExStyle, lpClassName, lpWindowName, dwStyle, 0, 0, nWidth, nHeight, hWndParent, hMenu, nullptr, lpParam);
+}
+
 // patches the loading screen and the GuiLoadSave objects updating when
 // the game has started initializing, not before
 //
@@ -336,7 +359,7 @@ DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
 	g_settings->set_int(SettingType_ShowWeaponSelector, 2);
 	g_settings->set_int(SettingType_ShowObjectiveInfo, 2);
 
-	return ok;
+	return (window_ctx_initialized = ok);
 }
 
 #if FAST_LOAD
@@ -429,6 +452,12 @@ void dll_thread()
 	jc::hooks::init();
 	jc::clean_dbg::init();
 
+	// initialize create window hook
+
+	create_window_ex_hook.hook();
+
+	// initialize window context setup hook
+	
 	init_window_context_hook.hook();
 
 #if FAST_LOAD
@@ -466,6 +495,7 @@ void dll_thread()
 #endif
 
 	init_window_context_hook.unhook();
+	create_window_ex_hook.unhook();
 
 	jc::clean_dbg::destroy();
 	jc::hooks::unhook_queued();

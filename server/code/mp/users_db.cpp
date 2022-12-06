@@ -49,6 +49,7 @@ bool UsersDB::verify_user(const std::string& name, const std::string& pass, User
 	if (info.invalid_pass = (password != crypto::sha512(pass)))
 		return false;
 
+	info.username = name;
 	info.acl = util::string::split(entry["acl"], ',');
 
 	return true;
