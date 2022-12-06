@@ -62,7 +62,6 @@ void UI::init()
 	ImGui_ImplDX9_Init(dx_device);
 
 	const auto main_font_data = util::win::load_resource(GET_MODULE(), GAME_FONT, RT_FONT);
-
 	const auto font_data = new uint8_t[main_font_data.size()];
 
 	memcpy(font_data, main_font_data.data(), main_font_data.size());
