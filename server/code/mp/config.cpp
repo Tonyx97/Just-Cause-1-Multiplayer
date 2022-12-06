@@ -32,6 +32,8 @@ bool Config::init()
 		if (!jc_json::get_field(j_server_config, "refresh_rate", server_info.refresh_rate))			server_info.refresh_rate = 60;
 		if (!jc_json::get_field(j_server_config, "max_players", server_info.max_players))			server_info.max_players = 512;
 
+		server_info.max_players = std::clamp(server_info.max_players, 2, 1024);
+
 		if (json startup_resources_key; jc_json::get_field(j_server_config, "startup_resources", startup_resources_key))
 			for (const std::string& rsrc_name : startup_resources_key)
 				server_info.startup_rsrcs.push_back(rsrc_name);
