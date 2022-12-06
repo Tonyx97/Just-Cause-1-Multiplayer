@@ -87,20 +87,19 @@ std::wstring util::win::get_current_directory()
 	return std::wstring(dir);
 }
 
-std::tuple<void*, size_t> util::win::load_resource(void* mod_base, int id, LPWSTR type)
+std::vector<uint8_t> util::win::load_resource(void* mod_base, int id, LPWSTR type)
 {
 	const auto mod_module = (HMODULE)mod_base;
 	const auto resource = FindResource(mod_module, MAKEINTRESOURCE(id), type);
 	const auto rsrc_mem = LoadResource(mod_module, resource);
 	const auto size = SizeofResource(mod_module, resource);
-	const auto rsrc_address = LockResource(rsrc_mem);
-	const auto font_mem = malloc(size);
+	const auto rsrc_address = BITCAST(uint8_t*, LockResource(rsrc_mem));
 
-	memcpy(font_mem, rsrc_address, size);
+	std::vector<uint8_t> out { rsrc_address, rsrc_address + size };
 
 	UnlockResource(resource);
 
-	return { font_mem, size };
+	return out;
 }
 
 int64_t util::fs::get_file_size(std::ifstream& file)

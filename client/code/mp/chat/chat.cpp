@@ -1,4 +1,4 @@
-#include <defs/standard.h>
+﻿#include <defs/standard.h>
 
 #include <core/keycode.h>
 #include <core/ui.h>
@@ -27,12 +27,6 @@ void Chat::key_input(uint32_t key, bool pressed)
 	{
 		if (g_key->is_key_pressed(KEY_T))
 			g_chat->begin_typing();
-
-		/*if (g_chat->is_typing())
-			input = 0;
-		else if (!lara.frozen)
-			input = get_general_input();
-		else input = 0;*/
 
 		return;
 	}
@@ -64,7 +58,7 @@ void Chat::add_char(wchar_t c)
 		return;
 
 	if (curr_msg.length() < 256)
-		curr_msg += static_cast<char>(c);
+		curr_msg += c;
 }
 
 void Chat::remove_char()
@@ -81,11 +75,11 @@ void Chat::remove_word()
 	if (!enabled)
 		return;
 
-	if (auto last_space = curr_msg.find_last_of(" _."); last_space == -1)
+	if (auto last_space = curr_msg.find_last_of(L" _."); last_space == -1)
 	{
 		if (curr_msg.empty())
 			return;
-		else curr_msg = "";
+		else curr_msg.clear();
 	}
 	else
 	{
@@ -101,7 +95,7 @@ void Chat::paste_text()
 	if (!enabled)
 		return;
 
-	//curr_msg += util::win::get_clipboard_text();
+	curr_msg += util::win::get_clipboard_text();
 
 	if (curr_msg.length() >= 256)
 		curr_msg = curr_msg.substr(0, 256 - 1);
@@ -114,7 +108,7 @@ void Chat::begin_typing()
 
 	g_key->block_input(true);
 
-	curr_msg = "";
+	curr_msg.clear();
 
 	typing_blocked = true;
 	typing = true;
@@ -127,7 +121,7 @@ void Chat::end_typing(bool send)
 
 	g_key->block_input(false);
 
-	std::string msg_to_send = curr_msg;
+	auto msg_to_send = curr_msg;
 
 	curr_msg.clear();
 
@@ -147,7 +141,7 @@ void Chat::end_typing(bool send)
 
 		std::string cmd,
 					params,
-					cmd_without_slash = msg_to_send.substr(1);
+					cmd_without_slash = util::string::convert(msg_to_send.substr(1));
 
 		if (!util::string::split_left(cmd_without_slash, cmd, params, ' '))
 			cmd = cmd_without_slash;
@@ -186,7 +180,7 @@ void Chat::add_chat_msg(const std::string& msg)
 
 	std::lock_guard lock(chat_list_mtx);
 
-	chat_list.push_back(msg);
+	chat_list.push_back(util::string::convert(msg));
 
 	interaction_time = 0.f;
 }
@@ -231,14 +225,16 @@ void Chat::update()
 	{
 		const auto curr_pos = ImGui::GetCursorPos();
 
+		const auto& ansi_msg = util::string::convert(msg);
+
 		ImGui::PushTextWrapPos(max_sx + 4.f);
 		ImGui::SetCursorPos({ curr_pos.x + 2.f, curr_pos.y + 2.f });
-		ImGui::TextColored(ImVec4(0.f, 0.f, 0.f, 1.f), msg.c_str());
+		ImGui::TextColored(ImVec4(0.f, 0.f, 0.f, 1.f), ansi_msg.c_str());
 		ImGui::SetCursorPos(curr_pos);
 		ImGui::PopTextWrapPos();
 
 		ImGui::PushTextWrapPos(max_sx);
-		ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), msg.c_str());
+		ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), ansi_msg.c_str());
 		ImGui::PopTextWrapPos();
 	}
 
@@ -268,12 +264,12 @@ void Chat::update()
 
 	if (typing)
 	{
-		auto sy = g_ui->calc_text_size(!curr_msg.empty() ? curr_msg.c_str() : " ", text_size, max_sx).y;
+		auto sy = g_ui->calc_text_size(util::string::convert(!curr_msg.empty() ? curr_msg.c_str() : L" ").c_str(), text_size, max_sx).y;
 
 		g_ui->draw_filled_rect(vec2(5.f, 630.f), vec2(max_sx + 5.f, sy + 5.f), { 0.f, 0.f, 0.f, 0.5f });
 
 		if (!curr_msg.empty())
-			g_ui->draw_text(curr_msg.c_str(), vec2(10.f, 630.f), text_size, { 1.f, 1.f, 1.f, 1.f }, false, jc::nums::QUARTER_PI, max_sx);
+			g_ui->draw_text(util::string::convert(curr_msg).c_str(), vec2(10.f, 630.f), text_size, { 1.f, 1.f, 1.f, 1.f }, false, jc::nums::QUARTER_PI, max_sx);
 	}
 
 	interaction_time += g_time->get_delta();

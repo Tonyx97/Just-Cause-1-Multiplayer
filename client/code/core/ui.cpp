@@ -61,11 +61,15 @@ void UI::init()
 	ImGui_ImplWin32_Init(jc_hwnd);
 	ImGui_ImplDX9_Init(dx_device);
 
-	const auto [font_data, font_size] = util::win::load_resource(GET_MODULE(), GAME_FONT, RT_FONT);
+	const auto main_font_data = util::win::load_resource(GET_MODULE(), GAME_FONT, RT_FONT);
 
-	io->Fonts->AddFontFromMemoryTTF(font_data, font_size, 20.f, nullptr, io->Fonts->GetGlyphRangesDefault());
+	const auto font_data = new uint8_t[main_font_data.size()];
 
-	chat_font = io->Fonts->AddFontFromMemoryTTF(font_data, font_size, 26.f, nullptr, io->Fonts->GetGlyphRangesDefault());
+	memcpy(font_data, main_font_data.data(), main_font_data.size());
+
+	io->Fonts->AddFontFromMemoryTTF(font_data, main_font_data.size(), 20.f, nullptr, io->Fonts->GetGlyphRangesDefault());
+
+	chat_font = io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\verdana.ttf", 26.f, nullptr, io->Fonts->GetGlyphRangesJapanese());
 
 	if (const auto splash_data = util::fs::read_bin_file(std::string(Net::DEFAULT_SERVER_FILES_PATH()) + "splash"); !splash_data.empty())
 		D3DXCreateTextureFromFileInMemory(dx_device, splash_data.data(), splash_data.size(), &splash_texture);
@@ -196,10 +200,10 @@ void UI::draw_text(const char* text, const vec2& p, float s, const vec4& color, 
 		float shadow_cos = std::cosf(shadow) * 2.f,
 			  shadow_sin = std::sinf(shadow) * 2.f;
 
-		dl->AddText(nullptr, s, ImVec2(position.x + shadow_cos, position.y + shadow_sin), outline_color, text, 0, wrap);
+		dl->AddText(chat_font, s, ImVec2(position.x + shadow_cos, position.y + shadow_sin), outline_color, text, 0, wrap);
 	}
 
-	dl->AddText(nullptr, s, ImVec2(position.x, position.y), text_color, text, 0, wrap);
+	dl->AddText(chat_font, s, ImVec2(position.x, position.y), text_color, text, 0, wrap);
 }
 
 void UI::draw_text(const wchar_t* text, const vec2& p, float s, const vec4& color, bool center, float shadow, float wrap)

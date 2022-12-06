@@ -50,7 +50,7 @@ bool UsersDB::verify_user(const std::string& name, const std::string& pass, User
 		return false;
 
 	info.username = name;
-	info.acl = util::string::split(entry["acl"], ',');
+	info.acl = util::string::split(std::string(entry["acl"]), ',');
 
 	return true;
 }

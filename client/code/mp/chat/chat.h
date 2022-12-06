@@ -4,11 +4,11 @@ class Chat
 {
 private:
 
-	std::vector<std::string> cmd_history;
+	std::vector<std::wstring> cmd_history;
 
-	std::vector<std::string> chat_list;
+	std::vector<std::wstring> chat_list;
 
-	std::string curr_msg;
+	std::wstring curr_msg;
 
 	std::mutex chat_list_mtx;
 

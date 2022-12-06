@@ -72,16 +72,27 @@ namespace util
 			return converter.to_bytes(str);
 		}
 
-		inline std::vector<std::string> split(const std::string& str, char delimiter)
+		template <typename T>
+		inline std::vector<T> split(const T& str, typename T::value_type delimiter)
 		{
-			std::stringstream ss(str);
+			std::vector<T> out;
 
-			std::vector<std::string> out;
+			T curr;
 
-			std::string curr;
+			if constexpr (std::is_same_v<typename T::value_type, char>)
+			{
+				std::stringstream ss(str);
 
-			while (std::getline(ss, curr, delimiter))
-				out.push_back(curr);
+				while (std::getline(ss, curr, delimiter))
+					out.push_back(curr);
+			}
+			else
+			{
+				std::wstringstream ss(str);
+
+				while (std::getline(ss, curr, delimiter))
+					out.push_back(curr);
+			}
 
 			return out;
 		}
@@ -521,7 +532,7 @@ namespace util
 
 		std::wstring get_current_directory();
 
-		std::tuple<void*, size_t> load_resource(void* mod_base, int id, LPWSTR type);
+		std::vector<uint8_t> load_resource(void* mod_base, int id, LPWSTR type);
 	}
 
 	namespace fs

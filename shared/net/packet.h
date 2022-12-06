@@ -187,4 +187,6 @@ public:
 	}
 
 	std::string get_str() const { return get<std::string>(); }
+
+	std::wstring get_wstr() const { return get<std::wstring>(); }
 };

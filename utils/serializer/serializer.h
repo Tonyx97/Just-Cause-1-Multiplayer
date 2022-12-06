@@ -146,7 +146,7 @@ template <typename T>
 constexpr bool is_vector_v = is_specialization<T, std::vector>::value;
 
 template <typename T>
-constexpr bool is_string_v = std::is_same_v<T, std::string>;
+constexpr bool is_string_v = std::is_same_v<T, std::string> || std::is_same_v<T, std::wstring>;
 
 template <typename T>
 constexpr bool is_complex_v = !is_plain_copyable_v<T> && !is_string_v<T> && !std::is_pointer_v<T> && !is_vector_v<T>;
@@ -261,7 +261,7 @@ void _serialize(serialization_ctx& ctx, const T& v, A&&... args) requires(is_str
 	const auto size = ctx.write(v.size());
 
 	if (size > 0u)
-		ctx.write(v.data(), size);
+		ctx.write(v.data(), size * sizeof(typename T::value_type));
 
 	if constexpr (sizeof...(args) > 0)
 		_serialize(ctx, args...);
@@ -302,11 +302,11 @@ T _deserialize(serialization_ctx& ctx) requires(is_string_v<T>)
 {
 	const auto size = ctx.read<size_t>();
 
-	std::string v;
+	T v;
 
 	v.resize(size);
 
-	ctx.read(v.data(), size);
+	ctx.read(v.data(), size * sizeof(typename T::value_type));
 
 	return v;
 }
