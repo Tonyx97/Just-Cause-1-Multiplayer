@@ -116,27 +116,17 @@ int main()
 
 		log(CYAN, "Launching Just Cause...");
 
-		bool suspend = !!GetAsyncKeyState(VK_F2);
-		
 		wprintf(L"Path: %s\n", game_dir.c_str());
 
-		if (!CreateProcessW(full_game_path.c_str(), nullptr, nullptr, nullptr, FALSE, suspend ? CREATE_SUSPENDED : 0, nullptr, game_dir.c_str(), &si, &pi))
+		if (!CreateProcessW(full_game_path.c_str(), nullptr, nullptr, nullptr, FALSE, CREATE_SUSPENDED, nullptr, game_dir.c_str(), &si, &pi))
 			return logb(RED, "Could not launch the game");
-
-		if (suspend)
-		{
-			log(CYAN, "Game is suspended, press F3 to continue");
-
-			while (!GetAsyncKeyState(VK_F3))
-				Sleep(100);
-
-			ResumeThread(pi.hThread);
-		}
 
 		log(CYAN, "Just Cause launched");
 		
 		if (!inject_dll(pi.dwProcessId, current_dll_path))
 			return logb(RED, "Injection failed");
+
+		ResumeThread(pi.hThread);
 
 		log(CYAN, "JCMP initialized");
 

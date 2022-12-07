@@ -40,6 +40,7 @@ logs.txt
 TombVG.lib
 build/
 TombVG/resources/
+launcher/obj/
 loader/x64/
 bins/
 website/
