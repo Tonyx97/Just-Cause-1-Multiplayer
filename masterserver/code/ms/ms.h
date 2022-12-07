@@ -15,6 +15,7 @@ private:
 	mutable std::mutex clients_mtx;
 	mutable std::mutex servers_mtx;
 	mutable std::mutex client_dll_mtx;
+	mutable std::mutex inj_helper_dll_mtx;
 	mutable std::mutex changelog_mtx;
 	mutable std::mutex news_mtx;
 
@@ -23,7 +24,9 @@ private:
 													   web_clients;
 
 	std::vector<uint8_t> client_dll,
-						 client_dll_hash;
+						 inj_helper_dll,
+						 client_dll_hash,
+						 inj_helper_dll_hash;
 
 	std::string changelog;
 	std::string news;
@@ -44,11 +47,14 @@ public:
 	void remove_client(netcp::tcp_server_client* cl);
 	void remove_server(netcp::tcp_server_client* cl);
 	void refresh_client_dll();
+	void refresh_inj_helper_dll();
 	void refresh_changelog();
 	void refresh_news();
 
 	std::vector<uint8_t> get_client_dll_hash() const;
+	std::vector<uint8_t> get_inj_helper_dll_hash() const;
 	std::vector<uint8_t> get_client_dll() const;
+	std::vector<uint8_t> get_inj_helper_dll() const;
 
 	std::string get_changelog() const;
 	std::string get_news() const;

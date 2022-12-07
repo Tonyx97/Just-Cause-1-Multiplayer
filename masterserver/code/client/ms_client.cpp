@@ -30,9 +30,21 @@ void Client::on_receive(const netcp::packet_header& header, serialization_ctx& d
 
 		break;
 	}
+	case ClientToMsPacket_InjectorHelperHash:
+	{
+		base->send_packet(ClientToMsPacket_InjectorHelperHash, ms->get_inj_helper_dll_hash());
+
+		break;
+	}
 	case ClientToMsPacket_DownloadClient:
 	{
 		base->send_packet(ClientToMsPacket_DownloadClient, ms->get_client_dll());
+
+		break;
+	}
+	case ClientToMsPacket_DownloadInjectorHelper:
+	{
+		base->send_packet(ClientToMsPacket_DownloadInjectorHelper, ms->get_inj_helper_dll());
 		
 		break;
 	}

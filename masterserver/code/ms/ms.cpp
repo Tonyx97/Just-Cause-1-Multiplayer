@@ -8,9 +8,13 @@
 
 void MasterServer::start_client_sv()
 {
-	// get dll hash
+	// get client dll
 
 	refresh_client_dll();
+
+	// get injector helper
+
+	refresh_inj_helper_dll();
 
 	// get changelog
 
@@ -201,6 +205,21 @@ void MasterServer::refresh_client_dll()
 #endif
 }
 
+void MasterServer::refresh_inj_helper_dll()
+{
+#ifndef JC_DBG
+	std::lock_guard lock(inj_helper_dll_mtx);
+
+	inj_helper_dll = util::fs::read_bin_file("dinput8.dll");
+
+	check(!inj_helper_dll.empty(), "Injector Helper DLL does not exist");
+
+	inj_helper_dll_hash = crypto::sha512_raw(BITCAST(char*, inj_helper_dll.data()), inj_helper_dll.size());
+
+	log(GREEN, "Injector Helper DLL refreshed: {} bytes", inj_helper_dll.size());
+#endif
+}
+
 void MasterServer::refresh_changelog()
 {
 #ifndef JC_DBG
@@ -230,11 +249,25 @@ std::vector<uint8_t> MasterServer::get_client_dll_hash() const
 	return client_dll_hash;
 }
 
+std::vector<uint8_t> MasterServer::get_inj_helper_dll_hash() const
+{
+	std::lock_guard lock(inj_helper_dll_mtx);
+
+	return inj_helper_dll_hash;
+}
+
 std::vector<uint8_t> MasterServer::get_client_dll() const
 {
 	std::lock_guard lock(client_dll_mtx);
 
 	return client_dll;
+}
+
+std::vector<uint8_t> MasterServer::get_inj_helper_dll() const
+{
+	std::lock_guard lock(inj_helper_dll_mtx);
+
+	return inj_helper_dll;
 }
 
 std::string MasterServer::get_changelog() const
