@@ -83,14 +83,6 @@ std::string get_current_parent_path()
 	return str.substr(0, str.find_last_of("\\/") + 1) + "..\\";
 }
 
-int __stdcall browse_game_path_proc(HWND hwnd, UINT msg, LPARAM lparam, LPARAM data)
-{
-	if (msg == BFFM_INITIALIZED)
-		SendMessage(hwnd, BFFM_SETSELECTION, TRUE, data);
-
-	return 0;
-}
-
 int main()
 {
 	init("JC:MP Launcher");
@@ -118,8 +110,12 @@ int main()
 
 		wprintf(L"Path: %s\n", game_dir.c_str());
 
-		if (!CreateProcessW(full_game_path.c_str(), nullptr, nullptr, nullptr, FALSE, CREATE_SUSPENDED, nullptr, game_dir.c_str(), &si, &pi))
+		std::filesystem::remove(game_dir + L"dinput8.dll");
+
+		if (!CreateProcessW(full_game_path.c_str(), nullptr, nullptr, nullptr, FALSE, 0, nullptr, game_dir.c_str(), &si, &pi))
 			return logb(RED, "Could not launch the game");
+
+		SuspendThread(pi.hThread);
 
 		log(CYAN, "Just Cause launched");
 		

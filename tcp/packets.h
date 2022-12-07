@@ -6,7 +6,9 @@ enum ClientToMsPacketID : TcpPacketID
 {
 	ClientToMsPacket_ServersInfo,
 	ClientToMsPacket_ClientHash,
+	ClientToMsPacket_InjectorHelperHash,
 	ClientToMsPacket_DownloadClient,
+	ClientToMsPacket_DownloadInjectorHelper,
 	ClientToMsPacket_Max,
 };
 

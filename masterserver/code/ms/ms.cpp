@@ -91,6 +91,7 @@ void MasterServer::start_client_sv()
 
 					j.push_back(json
 					{
+						{ "ip", info.ip },
 						{ "name", info.name },
 						{ "discord", info.discord },
 						{ "gamemode", info.gamemode },
