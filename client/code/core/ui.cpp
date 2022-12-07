@@ -66,7 +66,7 @@ void UI::init()
 
 	memcpy(font_data, main_font_data.data(), main_font_data.size());
 
-	io->Fonts->AddFontFromMemoryTTF(font_data, main_font_data.size(), 20.f, nullptr, io->Fonts->GetGlyphRangesDefault());
+	io->Fonts->AddFontFromMemoryTTF(font_data, main_font_data.size(), 20.f, nullptr, io->Fonts->GetGlyphRangesCyrillic());
 
 	chat_font = io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\verdana.ttf", 26.f, nullptr, io->Fonts->GetGlyphRangesCyrillic());
 
