@@ -30,6 +30,7 @@ namespace script::event
 	static inline std::string ON_RSRC_STOP = "onClientResourceStop";
 
 	// params: Player, Pickup
+	// cancellable: if event is cancelled the pickup won't be picked up
 	//
 	static inline std::string ON_PICKUP_HIT = "onClientPickupHit";
 #else
