@@ -146,7 +146,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 		log(GREEN, "Initializing NET...");
 
 #ifdef _DEBUG
-		const bool conn_ok = g_net->init("192.168.1.201", {}, nick);
+		const bool conn_ok = g_net->init("192.168.1.205", {}, nick);
 #else
 		const bool conn_ok = g_net->init(g_registry.get_string("ip"), g_registry.get_string("password"), nick);
 #endif
