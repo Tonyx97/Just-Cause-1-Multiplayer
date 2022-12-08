@@ -44,6 +44,7 @@ public:
 
 	static constexpr auto CONFIG_FILE() { return "settings.json"; }
 	static constexpr auto DEFAULT_FILES_CONFIG_FILE() { return "default_files.json"; }
+	static constexpr auto DEFAULT_FILES_PATH() { return "default_files\\"; }
 
 	bool init();
 	bool check_ms_conn(bool force = false);

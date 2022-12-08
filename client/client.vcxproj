@@ -132,6 +132,10 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>DbgHelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>$(SolutionDir)bins\sign_$(TargetName).bat</Command>
+      <Message>Signing $(TargetName)...</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="code\core\clean_dbg.cpp" />
