@@ -527,6 +527,7 @@ namespace util
 		}
 
 		void get_desktop_resolution(int32_t& x, int32_t& y);
+		void get_desktop_pos(int32_t& x, int32_t& y);
 
 		bool set_current_directory(const std::wstring& new_dir);
 

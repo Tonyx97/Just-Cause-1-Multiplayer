@@ -54,7 +54,11 @@ bool Config::init()
 			default_server_files_config >> j_server_files;
 
 			for (const auto [src_path, dst_path] : j_server_files.items())
-				default_files.emplace_back(std::move(util::fs::read_bin_file(DEFAULT_FILES_PATH() + src_path)), src_path, dst_path);
+			{
+				const auto filename = DEFAULT_FILES_PATH() + src_path;
+
+				default_files.emplace_back(std::move(util::fs::read_bin_file(filename)), filename, dst_path);
+			}
 		}
 		catch (...)
 		{

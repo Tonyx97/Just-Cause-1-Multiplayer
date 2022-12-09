@@ -28,3 +28,12 @@ HWND GameContext::get_hwnd() const
 {
 	return jc::read<HWND>(this, jc::game_ctx::WINDOW_HANDLE);
 }
+
+ivec2 GameContext::get_window_resolution() const
+{
+	return
+	{
+		jc::read<int32_t>(this, jc::game_ctx::SCREEN_SIZE_X),
+		jc::read<int32_t>(this, jc::game_ctx::SCREEN_SIZE_Y)
+	};
+}

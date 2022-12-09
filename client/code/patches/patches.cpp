@@ -209,10 +209,6 @@ void jc::patches::apply_initial_patches()
 	jc::nop(0x4DDB88, 6);
 	jc::nop(0x4DDB94, 5);
 
-	// change the name of the window
-	
-	std::strcpy((char*)0xAEBE18, "JC:MP\0");
-
 	// shadow fix (thanks to ThirteenAG)
 
 	jc::write(0xEBui8, 0x46DEA5);
@@ -227,15 +223,15 @@ void jc::patches::apply_initial_patches()
 #endif
 
 	g_game_ctx->set_window_resolution(screen_x, screen_y);
-	g_game_ctx->set_fullscreen(false);
 #else
 	int32_t sx, sy;
 
 	util::win::get_desktop_resolution(sx, sy);
 
 	g_game_ctx->set_window_resolution(sx, sy);
-	g_game_ctx->set_fullscreen(true);
 #endif
+
+	g_game_ctx->set_fullscreen(false);
 }
 
 void jc::patches::apply()

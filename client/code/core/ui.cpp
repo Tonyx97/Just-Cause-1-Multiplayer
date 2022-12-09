@@ -78,6 +78,15 @@ void UI::init()
 	SendMessageW(jc_hwnd, WM_SETICON, ICON_SMALL, GET_GAME_ICON());
 	SendMessageW(jc_hwnd, WM_SETICON, ICON_BIG, GET_GAME_ICON());
 
+#ifdef JC_REL
+	const auto screen_size = g_game_ctx->get_window_resolution();
+
+	SetWindowPos(jc_hwnd, nullptr, 0, 0, screen_size.x, screen_size.y, 0);
+
+	UpdateWindow(jc_hwnd);
+	UpdateWindow(FindWindow(L"Shell_TrayWnd", nullptr));
+#endif
+
 	dbg = JC_ALLOC(DebugUI);
 
 	initialized = true;

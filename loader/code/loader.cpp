@@ -102,9 +102,10 @@ int main()
 		si.cb = sizeof(si);
 
 		const auto current_parent_path = get_current_parent_path() + "client\\";
+		const auto current_parent_pathw = std::wstring(current_parent_path.begin(), current_parent_path.end());
 
 		const std::wstring full_game_path	= game_dir + L"JustCause.exe",
-						   current_dll_path = std::wstring(current_parent_path.begin(), current_parent_path.end()) + L"jcmp_client.dll";
+						   current_dll_path = current_parent_pathw + L"jcmp_client.dll";
 
 		log(CYAN, "Launching Just Cause...");
 

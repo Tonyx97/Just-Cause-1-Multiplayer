@@ -8,6 +8,8 @@
 
 void MasterServer::start_client_sv()
 {
+	check(load_config(), "Could not load config");
+
 	// get client dll
 
 	refresh_client_dll();
@@ -46,86 +48,6 @@ void MasterServer::start_client_sv()
 			server->on_receive(header, data);
 	});
 
-	// setup the web server
-
-	web_sv.set_on_connected_fn([&](netcp::tcp_server_client* cl) { log(GREEN, "WS connection opened"); });
-	web_sv.set_on_disconnected_fn([&](netcp::tcp_server_client* cl) { log(RED, "WS connection closed"); });
-
-	web_sv.set_on_receive_fn([&](netcp::client_interface* ci, const netcp::packet_header& header, serialization_ctx& data)
-	{
-		log(GREEN, "Received something");
-	});
-
-	web_sv.set_on_http_request_fn([&](netcp::client_interface* ci, const std::string& query)
-	{
-		auto send_response = [&](const std::string& text)
-		{
-			std::string response;
-
-			response += "HTTP/1.1 200 OK\r\n";
-			response += "Host: 51.77.201.205:22504\r\n";
-			response += "Connection: Keep-Alive\r\n";
-			response += "Keep-Alive: timeout=10, max=10\r\n";
-			response += "Access-Control-Request-Method: GET\r\n";
-			response += "Access-Control-Request-Headers: cache-control,upgrade-insecure-requests\r\n";
-			response += "Sec-Fetch-Mode: cors\r\n";
-			response += "Accept-Encoding: gzip, deflate\r\n";
-			response += "Accept-Language: ru,en;q=0.9,en-GB;q=0.8,en-US;q=0.7\r\n";
-			response += FORMATV("Content-Length: {}\r\n", text.length());
-			response += "Content-Type: application/json\r\n";
-			response += "\r\n";
-			response += text;
-
-			std::error_code ec;
-
-			asio::write(ci->get_socket(), asio::buffer(response), asio::transfer_all(), ec);
-		};
-
-		switch (util::hash::JENKINS(query))
-		{
-		case util::hash::JENKINS("/servers"):
-		{
-			json j;
-
-			for_each_server([&](netcp::tcp_server_client* cl)
-			{
-				if (const auto server = cl->get_userdata<Server>(); server && server->is_valid())
-				{
-					const auto info = server->get_info();
-
-					j.push_back(json
-					{
-						{ "ip", info.ip },
-						{ "name", info.name },
-						{ "discord", info.discord },
-						{ "gamemode", info.gamemode },
-						{ "players", info.players.size() },
-						{ "max_players", info.max_players },
-						{ "passworded", info.password },
-					});
-				}
-			});
-
-			send_response(j.dump());
-
-			break;
-		}
-		case util::hash::JENKINS("/changelog"):
-		{
-			send_response(get_changelog());
-
-			break;
-		}
-		case util::hash::JENKINS("/news"):
-		{
-			send_response(get_news());
-
-			break;
-		}
-		default: log(RED, "Unknown http request: '{}'", query);
-		}
-	});
-
 	// startup all servers
 
 	client_sv.start();
@@ -134,8 +56,36 @@ void MasterServer::start_client_sv()
 	server_sv.start();
 	server_sv.launch_update_thread();
 
-	web_sv.start();
-	web_sv.launch_update_thread();
+	// launch update thread
+
+	auto update_future = std::async(std::launch::async, &MasterServer::update, this);
+
+	std::string cmd;
+
+	while (cmd != "exit")
+	{
+		std::cin >> cmd;
+
+		switch (util::hash::JENKINS(cmd))
+		{
+		case util::hash::JENKINS("r_client"):	refresh_client_dll(); break;
+		case util::hash::JENKINS("r_inj"):		refresh_inj_helper_dll(); break;
+		case util::hash::JENKINS("r_clog"):		refresh_changelog(); break;
+		case util::hash::JENKINS("r_news"):		refresh_news(); break;
+		case util::hash::JENKINS("r_all"):
+		{
+			refresh_client_dll();
+			refresh_inj_helper_dll();
+			refresh_changelog();
+			refresh_news();
+			break;
+		}
+		}
+	}
+
+	exiting = true;
+
+	update_future.wait();
 }
 
 void MasterServer::add_client(netcp::tcp_server_client* cl)
@@ -225,9 +175,14 @@ void MasterServer::refresh_changelog()
 #ifndef JC_DBG
 	std::lock_guard lock(changelog_mtx);
 
-	changelog = util::fs::read_plain_file("ms_files\\changelog.txt").data();
+	const std::string name = "changelog.txt";
+	const std::string filename = "ms_files\\" + name;
 
-	log(GREEN, "Changelog refreshed: {} bytes", changelog.size());
+	news = util::fs::read_plain_file(filename).data();
+
+	log(GREEN, "Changelog refreshed: {} bytes", news.size());
+
+	std::filesystem::copy_file(filename, web_path + "rsrc\\" + name, std::filesystem::copy_options::overwrite_existing);
 #endif
 }
 
@@ -236,10 +191,74 @@ void MasterServer::refresh_news()
 #ifndef JC_DBG
 	std::lock_guard lock(news_mtx);
 
-	news = util::fs::read_plain_file("ms_files\\news.txt").data();
+	const std::string name = "news.txt";
+	const std::string filename = "ms_files\\" + name;
+
+	news = util::fs::read_plain_file(filename).data();
 
 	log(GREEN, "News refreshed: {} bytes", news.size());
+
+	std::filesystem::copy_file(filename, web_path + "rsrc\\" + name, std::filesystem::copy_options::overwrite_existing);
 #endif
+}
+
+void MasterServer::update()
+{
+	while (!exiting)
+	{
+		json servers_info;
+
+		for_each_server([&](netcp::tcp_server_client* cl)
+		{
+			if (const auto server = cl->get_userdata<Server>())
+			{
+				const auto info = server->get_info();
+
+				servers_info.push_back(json
+				{
+					{ "ip", info.ip },
+					{ "name", info.name },
+					{ "discord", info.discord },
+					{ "gamemode", info.gamemode },
+					{ "players", info.players.size() },
+					{ "max_players", info.max_players },
+					{ "passworded", info.password },
+				});
+			}
+		});
+
+		{
+			std::ofstream servers_info_file(web_path + "rsrc\\servers.json", std::ios::trunc);
+
+			servers_info_file << servers_info;
+		}
+
+		std::this_thread::sleep_for(1s);
+	}
+}
+
+bool MasterServer::load_config()
+{
+	if (!std::filesystem::is_regular_file(CONFIG_FILE()))
+		std::ofstream(CONFIG_FILE(), std::ios::trunc);
+
+	try
+	{
+		auto config_file = std::ifstream(CONFIG_FILE());
+
+		config_file >> config;
+
+		if (!jc_json::get_field(config, "web_path", web_path))
+			return false;
+
+		log(GREEN, "Web Path: '{}'", web_path);
+	}
+	catch (...)
+	{
+		return logbt(RED, "Could not parse {}", CONFIG_FILE());
+	}
+
+	return true;
 }
 
 std::vector<uint8_t> MasterServer::get_client_dll_hash() const

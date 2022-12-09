@@ -20,6 +20,8 @@ public:
 	void set_fullscreen(bool enabled);
 
 	HWND get_hwnd() const;
+
+	ivec2 get_window_resolution() const;
 };
 
 inline Singleton<GameContext, jc::game_ctx::SINGLETON> g_game_ctx;

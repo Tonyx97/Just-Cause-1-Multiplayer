@@ -299,12 +299,12 @@ DEFINE_HOOK_STDCALL(create_window_ex, uint64_t(GetProcAddress(GetModuleHandle(L"
 	HINSTANCE hInstance,
 	LPVOID    lpParam)
 {
+#ifdef JC_REL
 	if (window_ctx_initialized)
-	{
-		//dwStyle = 0;
-	}
-
-	return create_window_ex_hook(dwExStyle, lpClassName, lpWindowName, dwStyle, 0, 0, nWidth, nHeight, hWndParent, hMenu, nullptr, lpParam);
+		dwStyle = (WS_POPUP | WS_VISIBLE | WS_SYSMENU);
+#endif
+	
+	return create_window_ex_hook(0, lpClassName, "JC1:MP", dwStyle, 0, 0, nWidth, nHeight, hWndParent, hMenu, nullptr, lpParam);
 }
 
 // patches the loading screen and the GuiLoadSave objects updating when

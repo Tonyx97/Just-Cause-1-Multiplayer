@@ -1,5 +1,7 @@
 #pragma once
 
+#include <defs/json.h>
+
 #include <base/base.h>
 #include <client/ms_client.h>
 #include <server/ms_server.h>
@@ -9,8 +11,7 @@ class MasterServer
 private:
 
 	netcp::tcp_server client_sv,
-					  server_sv,
-					  web_sv;
+					  server_sv;
 
 	mutable std::mutex clients_mtx;
 	mutable std::mutex servers_mtx;
@@ -31,12 +32,19 @@ private:
 	std::string changelog;
 	std::string news;
 
+	std::string web_path;
+
+	json config;
+
+	std::atomic_bool exiting = false;
+
 public:
+
+	static constexpr auto CONFIG_FILE() { return "config.json"; }
 
 	MasterServer() :
 		client_sv(netcp::CLIENT_TO_MS_PORT),
-		server_sv(netcp::SERVER_TO_MS_PORT),
-		web_sv(netcp::WEBSITE_TO_MS_PORT, true)
+		server_sv(netcp::SERVER_TO_MS_PORT)
 	{
 		start_client_sv();
 	}
@@ -50,6 +58,9 @@ public:
 	void refresh_inj_helper_dll();
 	void refresh_changelog();
 	void refresh_news();
+	void update();
+
+	bool load_config();
 
 	std::vector<uint8_t> get_client_dll_hash() const;
 	std::vector<uint8_t> get_inj_helper_dll_hash() const;

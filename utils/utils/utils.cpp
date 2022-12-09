@@ -68,6 +68,18 @@ void util::win::get_desktop_resolution(int32_t& x, int32_t& y)
 	y = info.rcMonitor.bottom - info.rcMonitor.top;
 }
 
+void util::win::get_desktop_pos(int32_t& x, int32_t& y)
+{
+	MONITORINFO info = {};
+
+	info.cbSize = sizeof(MONITORINFO);
+
+	GetMonitorInfo(MonitorFromWindow(GetDesktopWindow(), MONITOR_DEFAULTTOPRIMARY), &info);
+
+	x = info.rcMonitor.left;
+	y = info.rcMonitor.top;
+}
+
 bool util::win::set_current_directory(const std::wstring& new_dir)
 {
 	SetCurrentDirectoryW(new_dir.c_str());
