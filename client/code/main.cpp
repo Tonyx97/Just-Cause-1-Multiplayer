@@ -285,26 +285,27 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 	return tick_hook(_this);
 }
 
-DEFINE_HOOK_STDCALL(create_window_ex, uint64_t(GetProcAddress(GetModuleHandle(L"user32.dll"), "CreateWindowExA")), HWND,
-	DWORD     dwExStyle,
-	LPCSTR    lpClassName,
-	LPCSTR    lpWindowName,
-	DWORD     dwStyle,
-	int       X,
-	int       Y,
-	int       nWidth,
-	int       nHeight,
-	HWND      hWndParent,
-	HMENU     hMenu,
-	HINSTANCE hInstance,
-	LPVOID    lpParam)
+DEFINE_HOOK_STDCALL(create_window_ex, uint64_t(GetProcAddress(GetModuleHandle(L"user32.dll"), "CreateWindowExA")),
+	HWND,
+	DWORD,
+	LPCSTR class_name,
+	LPCSTR,
+	DWORD style,
+	int,
+	int,
+	int w,
+	int h,
+	HWND      hwnd_parent,
+	HMENU     menu,
+	HINSTANCE instance,
+	LPVOID    param)
 {
 #ifdef JC_REL
 	if (window_ctx_initialized)
-		dwStyle = (WS_POPUP | WS_VISIBLE | WS_SYSMENU);
+		style = (WS_POPUP | WS_VISIBLE | WS_SYSMENU);
 #endif
 	
-	return create_window_ex_hook(0, lpClassName, "JC1:MP", dwStyle, 0, 0, nWidth, nHeight, hWndParent, hMenu, nullptr, lpParam);
+	return create_window_ex_hook(0, class_name, "JC1:MP", style, 0, 0, w, h, hwnd_parent, menu, instance, param);
 }
 
 // patches the loading screen and the GuiLoadSave objects updating when
