@@ -110,6 +110,10 @@ namespace jc::game_player::hook
 					player->set_movement_info(cam_yaw, local_gp->get_right(), local_gp->get_forward(), is_looking);
 				}
 
+				const auto state = game_player->get_state_id();
+
+				log(RED, "state: {}", state);
+
 				return;
 			}
 
@@ -166,6 +170,7 @@ namespace jc::game_player::hook
 								{
 									break;
 								}
+								default:  log(RED, "Unknown GamePlayer state {}", state);
 								}
 							}
 						}

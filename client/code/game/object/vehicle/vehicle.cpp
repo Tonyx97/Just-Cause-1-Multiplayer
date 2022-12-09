@@ -41,10 +41,11 @@ namespace jc::vehicle::hook
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle)->cast<VehicleNetObject>())
 		{
 			const auto local_char = g_world->get_local_character();
+			const auto local_vehicle_seat = local_char->get_vehicle_seat();
 
 			const auto& info = vehicle_net->get_control_info();
 
-			if (vehicle_net->is_owned())
+			if (vehicle_net->is_owned() && local_vehicle_seat && local_vehicle_seat->get_type() == VehicleSeat_Driver)
 			{
 				// accept movement controls (forward and backward) only when the engine is turned on,
 				// braking and wheels should be available even if the engine is turned off obviously
@@ -86,10 +87,11 @@ namespace jc::vehicle::hook
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(vehicle)->cast<VehicleNetObject>())
 		{
 			const auto local_char = g_world->get_local_character();
+			const auto local_vehicle_seat = local_char->get_vehicle_seat();
 
 			const auto& info = vehicle_net->get_control_info();
 
-			if (vehicle_net->is_owned())
+			if (vehicle_net->is_owned() && local_vehicle_seat && local_vehicle_seat->get_type() == VehicleSeat_Driver)
 			{
 				*c1 = g_key->game_get_joystick_value(0x3A) - g_key->game_get_joystick_value(0x39);
 				*c2 = g_key->game_get_joystick_value(0x37) - g_key->game_get_joystick_value(0x38);
@@ -144,12 +146,15 @@ namespace jc::vehicle::hook
 
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(helicopter)->cast<VehicleNetObject>())
 		{
+			const auto local_char = g_world->get_local_character();
+			const auto local_vehicle_seat = local_char->get_vehicle_seat();
+
 			heli_c0 = heli_c1 = heli_c2 = heli_c3 = 0.f;
 			helicopter_input_dispatching = vehicle_net;
 			helicopter_get_input_hook(helicopter, controller, c0, c1, c2, c3);
 			helicopter_input_dispatching = nullptr;
 
-			if (vehicle_net->is_owned() && vehicle_net->should_sync_this_tick())
+			if (vehicle_net->is_owned() && vehicle_net->should_sync_this_tick() && local_vehicle_seat && local_vehicle_seat->get_type() == VehicleSeat_Driver)
 			{
 				const auto& info = vehicle_net->get_control_info();
 
