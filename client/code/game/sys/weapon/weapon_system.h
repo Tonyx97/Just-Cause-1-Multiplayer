@@ -18,12 +18,13 @@ namespace jc::weapon_system
 
 	namespace weapon_template
 	{
-		static constexpr uint32_t ID				= 0x0; // int
-		static constexpr uint32_t SLOT				= 0xC; // int
-		static constexpr uint32_t MODEL_NAME		= 0x14; // std::string
-		static constexpr uint32_t TYPE_NAME			= 0x50; // std::string
-		static constexpr uint32_t NAME				= 0x6C; // std::string
-		static constexpr uint32_t AMMO_MAX_RANGE	= 0x12C; // std::string
+		static constexpr uint32_t ID				= 0x0;		// int
+		static constexpr uint32_t SLOT				= 0xC;		// int
+		static constexpr uint32_t MODEL_NAME		= 0x14;		// std::string
+		static constexpr uint32_t TYPE_NAME			= 0x50;		// std::string
+		static constexpr uint32_t NAME				= 0x6C;		// std::string
+		static constexpr uint32_t AMMO_VELOCITY		= 0x128;	// float
+		static constexpr uint32_t AMMO_MAX_RANGE	= 0x12C;	// float
 
 		static constexpr uint32_t INSTANCE_SIZE = 0x17C;
 
@@ -48,11 +49,13 @@ public:
 	void destroy();
 	void init_from_map(object_base_map* map);
 	void set_ammo_max_range(float v);
+	void set_ammo_velocity(float v);
 
 	uint32_t get_id() const;
 	uint32_t get_slot() const;
 
 	float get_ammo_max_range() const;
+	float get_ammo_velocity() const;
 
 	std::string get_model() const;
 	std::string get_type_name() const;

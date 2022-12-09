@@ -47,6 +47,7 @@ DEFINE_ENUM(GamePlayerState, int32_t)
 	GamePlayerState_SkyDiving			= 3,
 	GamePlayerState_Paragliding			= 4,
 	GamePlayerState_UsingWeaponScope	= 5,
+	GamePlayerState_InVehicle			= 7,
 };
 
 class GamePlayer

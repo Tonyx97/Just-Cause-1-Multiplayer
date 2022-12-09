@@ -38,6 +38,11 @@ void WeaponTemplate::set_ammo_max_range(float v)
 	jc::write(v, this, jc::weapon_system::weapon_template::AMMO_MAX_RANGE);
 }
 
+void WeaponTemplate::set_ammo_velocity(float v)
+{
+	jc::write(v, this, jc::weapon_system::weapon_template::AMMO_VELOCITY);
+}
+
 uint32_t WeaponTemplate::get_id() const
 {
 	return jc::read<uint32_t>(this, jc::weapon_system::weapon_template::ID);
@@ -51,6 +56,11 @@ uint32_t WeaponTemplate::get_slot() const
 float WeaponTemplate::get_ammo_max_range() const
 {
 	return jc::read<float>(this, jc::weapon_system::weapon_template::AMMO_MAX_RANGE);
+}
+
+float WeaponTemplate::get_ammo_velocity() const
+{
+	return jc::read<float>(this, jc::weapon_system::weapon_template::AMMO_VELOCITY);
 }
 
 std::string WeaponTemplate::get_model() const
@@ -75,6 +85,19 @@ void WeaponSystem::init()
 	for_each_weapon_template([](int, WeaponTemplate* weapon_template)
 	{
 		weapon_template->set_ammo_max_range(weapon_template->get_ammo_max_range() * 100.f);
+
+		switch (weapon_template->get_id())
+		{
+		case Weapon_M60:
+		case Weapon_AIRPLANE_GUNS:
+		case Weapon_Car_guns:
+		case Weapon_SIDEWINDER:
+		case Weapon_Helicopter_gun:
+		{
+			weapon_template->set_ammo_velocity(weapon_template->get_ammo_velocity() * 5.f);
+			break;
+		}
+		}
 	});
 }
 
