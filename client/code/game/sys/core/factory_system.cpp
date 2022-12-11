@@ -12,6 +12,7 @@
 #include <game/object/vehicle/vehicle.h>
 #include <game/object/character_handle/character_handle.h>
 #include <game/object/damageable_object/damageable_object.h>
+#include <game/object/damageable_object/grenade.h>
 #include <game/object/rigid_object/simple_rigid_object.h>
 #include <game/object/rigid_object/animated_rigid_object.h>
 #include <game/object/rigid_object/traffic_light.h>
@@ -203,14 +204,7 @@ shared_ptr<DamageableObject> FactorySystem::spawn_damageable_object(const vec3& 
 {
 	Transform transform(position);
 
-	if (auto object = DamageableObject::CREATE(&transform, lod_name, pfx_name))
-	{
-		g_game_control->add_object_to_world(object);
-
-		return object;
-	}
-
-	return {};
+	return DamageableObject::CREATE(&transform, lod_name, pfx_name);
 }
 
 shared_ptr<Vehicle> FactorySystem::spawn_vehicle(const std::string& ee_name, const Transform& transform)
@@ -527,4 +521,11 @@ SoundGameObject* FactorySystem::create_sound(const vec3& position, const std::st
 	}
 
 	return nullptr;
+}
+
+shared_ptr<PlayerGrenade> FactorySystem::spawn_grenade(const vec3& position)
+{
+	Transform transform(position);
+
+	return PlayerGrenade::CREATE(&transform);
 }

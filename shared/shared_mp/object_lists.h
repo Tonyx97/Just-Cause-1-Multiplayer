@@ -144,4 +144,16 @@ public:
 		const TransformTR& transform,
 		uint32_t pickup_type,
 		const std::string& lod);
+
+	NetObject* spawn_grenade(
+#ifdef JC_CLIENT
+		NID nid,
+#else
+		SyncType sync_type,
+#endif
+		NetObjectType type,
+		const TransformTR& transform,
+		Player* owner,
+		const vec3& a2,
+		const vec3& a3);
 };

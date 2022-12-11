@@ -24,6 +24,7 @@ DEFINE_ENUM(PlayerDynamicInfoID, uint8_t)
 DEFINE_ENUM(PlayerStanceID, uint8_t)
 {
 	PlayerStanceID_BodyStance,
+	PlayerStanceID_ArmsStance,
 	PlayerStanceID_PlayerMoveState,
 	PlayerStanceID_Crouch,
 	PlayerStanceID_Movement,

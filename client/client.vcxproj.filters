@@ -348,6 +348,9 @@
     <ClCompile Include="code\game\object\camera\cam_settings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\game\object\damageable_object\grenade.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\game\sys\renderer\renderer.h">
@@ -723,6 +726,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\game\object\camera\cam_settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\damageable_object\grenade.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

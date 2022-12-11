@@ -123,12 +123,15 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			player->set_hp(hp);
 			player->set_max_hp(max_hp);
 
-			if (just_joined)
-				pc->set_joined(true);
-
 			// deserialize player stuff such as skin etc
 
 			player->deserialize_derived(&p);
+
+			// if the player just joined then make sure
+			// it's joined in this client and call onPlayerJoin event
+
+			if (just_joined)
+				pc->set_joined(true);
 
 			break;
 		}
@@ -136,6 +139,7 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 		case NetObject_Blip:
 		case NetObject_Vehicle:
 		case NetObject_Pickup:
+		case NetObject_Grenade:
 		{
 			const auto transform = p.get<TransformPackedTR>();
 			const auto hp = p.get_float();

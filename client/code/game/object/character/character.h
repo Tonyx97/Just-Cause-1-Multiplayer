@@ -33,6 +33,7 @@ namespace jc::character
 
 	namespace fn
 	{
+		static constexpr uint32_t THROW_GRENADE								= 0x599E80;
 		static constexpr uint32_t SET_GRAPPLED_OBJECT						= 0x637330;
 		static constexpr uint32_t INVALIDATE_WEAK_PTR						= 0x59BDA0;
 		static constexpr uint32_t GET_MUZZLE_TRANSFORM						= 0x5985E0;
@@ -159,6 +160,7 @@ public:
 	void set_added_velocity(const vec3& v);
 	void set_grenades_ammo(int32_t v);
 	void set_animation(const std::string& name, float speed, bool unk0 = false, bool unk1 = false);
+	void set_grenade_time(float v);
 	void set_grenade_timeout(float v);
 	void set_walking_anim_set(int32_t walking_anim_id, int32_t skin_id, bool sync = true);
 	void set_skin(int32_t id, bool sync = true);

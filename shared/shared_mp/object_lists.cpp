@@ -390,11 +390,13 @@ NetObject* ObjectLists::spawn_net_object(
 	case NetObject_Blip:		object = CREATE_BLIP_NET_OBJECT(nid, transform); break;
 	case NetObject_Vehicle:		object = CREATE_VEHICLE_NET_OBJECT(nid, transform); break;
 	case NetObject_Pickup:		object = CREATE_PICKUP_NET_OBJECT(nid, transform); break;
+	case NetObject_Grenade:		object = CREATE_GRENADE_NET_OBJECT(nid, transform); break;
 #else
 	case NetObject_Damageable:	object = CREATE_DAMAGEABLE_NET_OBJECT(sync_type, transform); break;
 	case NetObject_Blip:		object = CREATE_BLIP_NET_OBJECT(sync_type, transform); break;
 	case NetObject_Vehicle:		object = CREATE_VEHICLE_NET_OBJECT(sync_type, transform); break;
 	case NetObject_Pickup:		object = CREATE_PICKUP_NET_OBJECT(sync_type, transform); break;
+	case NetObject_Grenade:		object = CREATE_GRENADE_NET_OBJECT(sync_type, transform); break;
 #endif
 	default: log(RED, "Invalid net object type to spawn: {}", type);
 	}
@@ -521,6 +523,38 @@ NetObject* ObjectLists::spawn_pickup(
 
 	object->set_item_type(pickup_type);
 	object->set_lod(lod);
+	object->spawn();
+
+#ifdef JC_SERVER
+	g_net->sync_net_objects(true);
+#endif
+
+	return object;
+}
+
+NetObject* ObjectLists::spawn_grenade(
+#ifdef JC_CLIENT
+	NID nid,
+#else
+	SyncType sync_type,
+#endif
+	NetObjectType type,
+	const TransformTR& transform,
+	Player* owner,
+	const vec3& a2,
+	const vec3& a3)
+{
+#ifdef JC_CLIENT
+	const auto object = CREATE_GRENADE_NET_OBJECT(nid, transform);
+#else
+	const auto object = CREATE_GRENADE_NET_OBJECT(sync_type, transform);
+#endif
+
+	check(add_net_object(object), "Could not create a grenade");
+
+	object->set_owner(owner);
+	object->set_a2(a2);
+	object->set_a3(a3);
 	object->spawn();
 
 #ifdef JC_SERVER

@@ -55,6 +55,7 @@ DEFINE_ENUM(NetObjectType, uint8_t)
 	NetObject_Blip,
 	NetObject_Vehicle,
 	NetObject_Pickup,
+	NetObject_Grenade,
 	NetObject_Max,
 };
 

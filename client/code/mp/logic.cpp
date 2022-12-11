@@ -220,6 +220,7 @@ void jc::mp::logic::on_tick()
 
 			// debug
 
+#ifdef JC_DBG
 			if (g_key->is_key_pressed(VK_F3))
 			{
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
@@ -239,6 +240,21 @@ void jc::mp::logic::on_tick()
 
 				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, transform, std::string("lave_043_Rally_Car.ee")));
 			}
+
+			if (g_key->is_key_pressed(VK_F5))
+			{
+				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
+
+				g_net->send(Packet(
+					WorldPID_SpawnObject,
+					ChannelID_World,
+					NetObject_Grenade,
+					TransformTR(local_char->get_position()),
+					localplayer,
+					vec3(),
+					vec3()));
+			}
+#endif
 		}
 }
 
@@ -326,23 +342,6 @@ void jc::mp::logic::on_update_objects()
 
 			break;
 		}
-		case NetObject_Damageable:
-		{
-			// check if we own this damageable, if so,
-			// let's sync it with the server and other players
-
-			if (!obj->sync())
-			{
-				// if this object is not owned then we will simply update the needed stuff
-
-				/*const auto pos = obj->get_position();
-				const auto rot = obj->get_rotation();
-
-				obj_base->set_transform(obj_base->get_transform().interpolate(Transform(pos, rot), 0.2f, 0.2f));*/
-			}
-
-			break;
-		}
 		case NetObject_Blip:
 		{
 			if (!obj->sync())
@@ -355,12 +354,12 @@ void jc::mp::logic::on_update_objects()
 
 			break;
 		}
+		case NetObject_Damageable:
 		case NetObject_Vehicle:
 		case NetObject_Pickup:
+		case NetObject_Grenade:
 		{
-			if (!obj->sync())
-			{
-			}
+			if (!obj->sync()) {}
 
 			break;
 		}

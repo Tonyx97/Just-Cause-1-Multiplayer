@@ -265,6 +265,11 @@ void jc::patches::apply()
 	jc::nop(0x705256, 0xF);		// grenade bullet update call patch
 	jc::write(0.f, 0xA5B4EC);	// gravity itself
 
+	// remove shitty check from PlayerGrenade::InflictDamage that checks if the bullet is
+	// created by player or something, check inflict damage hook in grenade.cpp
+
+	jc::nop(0x748497, 0xD);
+
 	// avoid automatic destruction of vehicles after 8 seconds
 
 	jc::nop(0x4F522E, 0x5);

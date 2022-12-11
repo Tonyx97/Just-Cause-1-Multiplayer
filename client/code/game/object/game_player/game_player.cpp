@@ -179,6 +179,15 @@ namespace jc::game_player::hook
 		}
 	}
 
+	DEFINE_HOOK_THISCALL(process_grenade_bullet_hit, 0x5FF510, int, GamePlayer* game_player, int a2, bool a3)
+	{
+		// ignore this part of the logic since it's really OP to explode grenades with a huge sphere collision
+		// around it so we will skip it and restrict it only to the actual grenade collision which is small and hard to hit
+		// while in movement
+		
+		return 0;
+	}
+
 	void enable(bool apply)
 	{
 		switch_to_previous_weapon_hook.hook(apply);
@@ -187,6 +196,7 @@ namespace jc::game_player::hook
 		open_parachute_hook.hook(apply);
 		crouch_key_handler_hook.hook(apply, 0x4C4910);
 		update_hook.hook(apply);
+		process_grenade_bullet_hit_hook.hook(apply);
 	}
 }
 

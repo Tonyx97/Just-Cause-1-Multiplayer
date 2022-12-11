@@ -274,7 +274,7 @@ void NetObject::set_max_hp(float v)
 		return;
 
 	// for the sake of avoiding problems in the future, do not change the max health
-	// if the entity is dead...
+	// if the entity is dead (or isn't alive at all)...
 
 	if (!is_alive())
 		return;

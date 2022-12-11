@@ -173,6 +173,14 @@ PacketResult nh::player::stance_and_movement(const Packet& p)
 
 		break;
 	}
+	case PlayerStanceID_ArmsStance:
+	{
+		const auto stance_id = p.get_u32();
+
+		player->set_arms_stance_id(stance_id);
+
+		break;
+	}
 	case PlayerStanceID_PlayerMoveState:
 	{
 		const auto state_id = p.get_i32();
@@ -343,6 +351,10 @@ PacketResult nh::player::grappling_hook(const Packet& p)
 
 	return PacketRes_Ok;
 }
+
+#ifdef JC_CLIENT
+#include <game/sys/core/factory_system.h>
+#endif
 
 PacketResult nh::player::set_weapon(const Packet& p)
 {

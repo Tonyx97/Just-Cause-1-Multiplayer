@@ -388,6 +388,7 @@ void Net::refresh_net_object_sync()
 				[[fallthrough]];
 			}
 			case NetObject_Damageable:
+			case NetObject_Grenade:
 			{
 				if (obj->get_hp() <= 0.f)
 					entities_to_destroy.push_back(obj);

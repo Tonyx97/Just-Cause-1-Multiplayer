@@ -10,6 +10,7 @@
 #include "../character_handle/character_handle.h"
 #include "../vehicle/vehicle.h"
 #include "../game_player/game_player.h"
+#include "../damageable_object/grenade.h"
 #include "../physics/pfx_character.h"
 
 #include <game/transform/transform.h>
@@ -20,6 +21,7 @@
 #include <game/sys/world/player_global_info.h>
 #include <game/sys/weapon/weapon_system.h>
 #include <game/sys/particle/particle_system.h>
+#include <game/sys/core/factory_system.h>
 
 #include <havok/character_proxy.h>
 #include <havok/motion_state.h>
@@ -193,15 +195,15 @@ namespace jc::character::hook
 
 			if (character == local_char)
 			{
-				/*switch (const auto ret_add = ptr(_ReturnAddress()))
+				switch (id)
 				{
-				default:
+				case 18:	// throw grenade
 				{
-					switch (id)
-					{
-					}
+					g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_ArmsStance, id));
+					break;
 				}
-				}*/
+				//default: log(GREEN, "[DBG] Localplayer arms stance set to: {} from {:x}", id, RET_ADDRESS);
+				}
 			}
 		}
 
@@ -513,6 +515,47 @@ namespace jc::character::hook
 		invalidate_weak_ptr_hook(grappled_object_ptr);
 	}
 
+	std::vector<shared_ptr<PlayerGrenade>> test;
+
+	// reimplement logic so we can have a lot of grenades in the game
+	//
+	DEFINE_HOOK_THISCALL(throw_grenade, jc::character::fn::THROW_GRENADE, void, Character* character, vec3* a2, vec3* a3, bool infinite_ammo)
+	{
+		if (const auto lp = g_net->get_localplayer())
+			if (const auto local_char = lp->get_character(); local_char == character)
+			{
+#ifdef JC_DBG
+				infinite_ammo = true;
+#else
+				if (character->get_grenade_time() <= 0.f)
+#endif
+				{
+					const auto ammo_grenades = character->get_grenades_ammo();
+
+					if ((infinite_ammo || ammo_grenades) &&
+						!character->is_opening_any_vehicle_door() &&
+						!jc::this_call<bool>(0x5A01F0, character) &&
+						!jc::this_call<bool>(0x5A2130, character) &&
+						!jc::this_call<bool>(0x596330, character))
+					{
+						if (!infinite_ammo)
+							character->set_grenades_ammo(ammo_grenades - 1);
+
+						character->set_grenade_time(character->get_grenade_timeout());
+
+						g_net->send(Packet(
+							WorldPID_SpawnObject,
+							ChannelID_World,
+							NetObject_Grenade,
+							TransformTR(local_char->get_position()),
+							lp,
+							*a2,
+							*a3));
+					}
+				}
+			}
+	}
+
 	void enable(bool apply)
 	{
 		update_hook.hook(apply);
@@ -529,6 +572,7 @@ namespace jc::character::hook
 		set_vehicle_seat_hook.hook(apply);
 		distance_culling_check_hook.hook(apply);
 		invalidate_weak_ptr_hook.hook(apply);
+		throw_grenade_hook.hook(apply);
 	}
 }
 
@@ -624,6 +668,11 @@ void Character::set_animation(const std::string& name, float speed, bool unk0, b
 	const jc::stl::string str = name;
 
 	jc::this_call<bool>(jc::character::fn::SET_ANIMATION, this, &str, unk0, speed, unk1);
+}
+
+void Character::set_grenade_time(float v)
+{
+	jc::write(v, this, jc::character::GRENADE_TIME);
 }
 
 void Character::set_grenade_timeout(float v)

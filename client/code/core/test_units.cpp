@@ -194,13 +194,9 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		//log(RED, "current {}", ++aaa);
+		const auto grenade = g_factory->spawn_grenade(local_pos + vec3(1.f, 1.f, 0.f));
 
-		if (auto belt = local_char->get_weapon_belt())
-		{
-
-			belt->add_weapon(Weapon_Grapplinghook);
-		}
+		//log(PURPLE, "grenade: {:x}", ptr(grenade));
 
 		/*g_anim_system->load_anim("test.anim");
 		local_char->set_animation("test.anim", 0.2f, true, true);
