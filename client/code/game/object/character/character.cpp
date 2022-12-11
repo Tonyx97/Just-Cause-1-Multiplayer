@@ -195,15 +195,10 @@ namespace jc::character::hook
 
 			if (character == local_char)
 			{
-				switch (id)
+				/*switch (id)
 				{
-				case 18:	// throw grenade
-				{
-					g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_ArmsStance, id));
-					break;
-				}
 				//default: log(GREEN, "[DBG] Localplayer arms stance set to: {} from {:x}", id, RET_ADDRESS);
-				}
+				}*/
 			}
 		}
 

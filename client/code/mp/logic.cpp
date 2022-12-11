@@ -305,13 +305,16 @@ void jc::mp::logic::on_update_objects()
 			// NOTE: i don't know if this is safe because it was causing
 			// crashes before but with the stance checks it should work fine
 			
-			/*switch (player_char->get_body_stance()->get_movement_id())
+			switch (player_char->get_body_stance()->get_movement_id())
 			{
-			//case 30:
-			//case 31:
-			//case 32: break;
+			case 30:	// ignore the stances where the character is being kicked out
+			case 31:
+			case 32:
+			case 35:
+			case 36:
+			case 37: break;
 			default:
-			{*/
+			{
 				if (vehicle && char_vehicle != vehicle && vehicle->is_alive())
 				{
 					log(PURPLE, "trying to warp player to vehicle, {:x} {:x}", ptr(char_vehicle), ptr(vehicle));
@@ -327,8 +330,8 @@ void jc::mp::logic::on_update_objects()
 						seat->instant_exit();
 					}
 				}
-			//}
-			//}
+			}
+			}
 
 			// aiming weapon
 
