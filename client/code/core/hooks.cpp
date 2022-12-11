@@ -12,6 +12,7 @@
 #include <game/object/weapon/bullet.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/camera/cam_settings.h>
+#include <game/object/damageable_object/grenade.h>
 
 #include <game/sys/all.h>
 
@@ -81,4 +82,5 @@ void jc::hooks::hook_game_fns(bool enable)
 	bullet::hook::enable(enable);
 	physics::hook::enable(enable);
 	cam_settings::hook::enable(enable);
+	grenade::hook::enable(enable);
 }
