@@ -440,12 +440,12 @@ void Vehicle::unk1(bool unk)
 	jc::v_call(this, jc::vehicle::vt::UNK1, unk);
 }
 
-bool Vehicle::open_door(uint8_t i)
+bool Vehicle::open_door(uint8_t i, float v)
 {
 	switch (i)
 	{
-	case VehicleDoor_Left:	return jc::this_call<bool>(jc::vehicle::fn::OPEN_LEFT_DOOR, this, 0.9f, 0.f);
-	case VehicleDoor_Right: return jc::this_call<bool>(jc::vehicle::fn::OPEN_RIGHT_DOOR, this, 0.9f, 0.f);
+	case VehicleDoor_Left:	return jc::this_call<bool>(jc::vehicle::fn::OPEN_LEFT_DOOR, this, v, 0.f);
+	case VehicleDoor_Right: return jc::this_call<bool>(jc::vehicle::fn::OPEN_RIGHT_DOOR, this, v, 0.f);
 	}
 
 	return false;

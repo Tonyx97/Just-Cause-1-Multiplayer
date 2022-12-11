@@ -295,6 +295,11 @@ void jc::patches::apply()
 
 	jc::nop(0x6476A3, 23);
 
+	// remove the local check in vehicle roof seat that avoids any other character
+	// from entering stunt position
+
+	jc::nop(0x8B1F13, 0x14);
+
 	// avoid weird 2d sounds
 
 	play_ambience_2d_sounds_hook.hook();

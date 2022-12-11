@@ -194,7 +194,13 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		const auto grenade = g_factory->spawn_grenade(local_pos + vec3(1.f, 1.f, 0.f));
+		if (auto veh = local_char->get_vehicle())
+		{
+			if (const auto seat = veh->get_roof_seat())
+			{
+				seat->warp_character(local_char, true);
+			}
+		}
 
 		//log(PURPLE, "grenade: {:x}", ptr(grenade));
 

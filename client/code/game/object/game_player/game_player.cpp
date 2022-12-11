@@ -131,7 +131,7 @@ namespace jc::game_player::hook
 				{
 					if (player_char->is_in_stunt_position())
 					{
-						check(false, "Not implemented 2");
+						// no need to implement anything here
 					}
 					else
 					{

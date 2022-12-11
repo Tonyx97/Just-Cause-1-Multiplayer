@@ -147,7 +147,7 @@ public:
 	void unk0(bool unk);
 	void unk1(bool unk);
 
-	bool open_door(uint8_t i);
+	bool open_door(uint8_t i, float v = 0.9f);
 	bool get_engine_state() const;
 	bool is_left_door_valid() const;
 	bool is_left_door_closing() const;

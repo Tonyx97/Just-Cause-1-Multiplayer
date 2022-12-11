@@ -66,6 +66,31 @@ namespace jc::vehicle_seat::hook
 					g_net->send(Packet(PlayerPID_EnterExitVehicle, ChannelID_Generic, vehicle_net, driver_seat->get_type(), VehicleEnterExit_DriverToRoof));
 	}
 
+	DEFINE_INLINE_HOOK_IMPL(roof_to_driver_seat, 0x8B2B63)
+	{
+		const auto roof_seat = ihp->read_ebp<VehicleSeat*>(0x250);
+		const auto vehicle = roof_seat->get_vehicle();
+
+		if (const auto lp = g_net->get_localplayer(); lp && vehicle)
+			if (const auto roof_char = roof_seat->get_character(); roof_char == lp->get_character())
+				if (const auto vehicle_net = lp->get_vehicle())
+				{
+					const auto driver_seat = vehicle->get_driver_seat();
+					
+					auto driver_char = driver_seat->get_character();
+
+					if (driver_char && (driver_char->get_flags() & 0x400) == 0)
+						driver_char = nullptr;
+
+					// could be null if there is no driver
+					//
+					const auto driver_player = g_net->get_player_by_character(driver_char);
+
+					if (roof_seat->is_occupied())
+						g_net->send(Packet(PlayerPID_EnterExitVehicle, ChannelID_Generic, vehicle_net, roof_seat->get_type(), VehicleEnterExit_RoofToDriver, driver_player));
+				}
+	}
+
 	DEFINE_INLINE_HOOK_IMPL(passenger_to_driver_seat, 0x78680B)
 	{
 		const auto passenger_seat = ihp->read_ebp<VehicleSeat*>(0x1CC);
@@ -76,7 +101,7 @@ namespace jc::vehicle_seat::hook
 				{
 					auto driver_char = ihp->read_ebp<Character*>(0x24);
 
-					if (!driver_char || !(driver_char->get_flags() & (1 << 10)))	// todore - not sure what's this flag but the engine does this
+					if (!driver_char || !(driver_char->get_flags() & (1 << 10)))	// todojc - not sure what's this flag but the engine does this
 						driver_char = nullptr;
 
 					// could be null if there is no driver
@@ -170,6 +195,7 @@ namespace jc::vehicle_seat::hook
 		// hooks to sync and handle movements from seat to seat
 
 		driver_to_roof_seat_hook.hook(apply);
+		roof_to_driver_seat_hook.hook(apply);
 		passenger_to_driver_seat_hook.hook(apply);
 
 		// hooks to sync seat exits
@@ -179,7 +205,7 @@ namespace jc::vehicle_seat::hook
 		passenger_seat_exit_hook.hook(apply);
 
 		// special seat hooks
-
+		
 		special_seat_fire_hook.hook(apply);
 	}
 }
@@ -196,7 +222,7 @@ void VehicleSeat::warp_character(Character* character, bool warp)	// 76578B
 
 	dispatch_entry(character, false);
 
-	if (warp)
+	if (warp && get_type() != VehicleSeat_Roof)
 		character->set_stance_enter_vehicle_right(true);
 }
 

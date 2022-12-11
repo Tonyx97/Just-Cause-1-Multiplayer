@@ -531,16 +531,36 @@ PacketResult nh::player::enter_exit_vehicle(const Packet& p)
 		//log(GREEN, "VehicleEnterExit_DriverToRoof...");
 
 #ifdef JC_CLIENT
-		/*const auto driver_seat = vehicle->get_driver_seat();
-
-		// make the driver move to the roof seat
-		// todojc - the character won't get attached to the roof :(
-
 		(*(void(__thiscall**)(Vehicle*, int))(*(ptr*)vehicle + 0xE8))(vehicle, 1);
+
 		vehicle->detach_door(VehicleDoor_Left);
+
+		const auto driver_seat = vehicle->get_driver_seat();
+
 		driver_seat->add_flag2(VehicleSeatFlag_DriverToRoofSeat);
 		driver_seat->set_timer(1.f);
-		driver_seat->add_flag2(1 << 6);*/
+		driver_seat->add_flag2(1 << 6);
+#endif
+
+		break;
+	}
+	case VehicleEnterExit_RoofToDriver:
+	{
+		const auto victim = p.get_net_object<Player>();
+
+		log(GREEN, "VehicleEnterExit_RoofToDriver...");
+
+#ifdef JC_CLIENT
+		// if there is a driver then kick him out
+
+		if (const auto victim_char = victim ? victim->get_character() : nullptr)
+		{
+			victim->set_body_stance_id(83);
+			vehicle->open_door(VehicleDoor_Left, 4.f);
+		}
+
+		jc::write<bool>(true, seat, 0x1EC);
+		jc::this_call(0x8B3DD0, REF(ptr, seat, 0x188), player_char, seat);
 #endif
 
 		break;

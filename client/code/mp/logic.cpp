@@ -254,6 +254,8 @@ void jc::mp::logic::on_tick()
 					vec3(),
 					vec3()));
 			}
+
+			log(RED, "{}", local_char->get_body_stance()->get_movement_id());
 //#endif
 		}
 }
@@ -302,22 +304,31 @@ void jc::mp::logic::on_update_objects()
 			// make sure we put the player inside or outside the vehicle
 			// NOTE: i don't know if this is safe because it was causing
 			// crashes before but with the stance checks it should work fine
-
-			if (vehicle && char_vehicle != vehicle && vehicle->is_alive())
+			
+			/*switch (player_char->get_body_stance()->get_movement_id())
 			{
-				log(PURPLE, "trying to warp player to vehicle, {:x} {:x}", ptr(char_vehicle), ptr(vehicle));
-
-				vehicle_net->warp_to_seat(player, seat_type);
-			}
-			else if (!vehicle && char_vehicle)
-			{
-				if (const auto seat = char_vehicle->get_seat_by_type(seat_type))
+			//case 30:
+			//case 31:
+			//case 32: break;
+			default:
+			{*/
+				if (vehicle && char_vehicle != vehicle && vehicle->is_alive())
 				{
-					log(PURPLE, "trying to kick player from vehicle");
+					log(PURPLE, "trying to warp player to vehicle, {:x} {:x}", ptr(char_vehicle), ptr(vehicle));
 
-					seat->instant_exit();
+					vehicle_net->warp_to_seat(player, seat_type);
 				}
-			}
+				else if (!vehicle && char_vehicle)
+				{
+					if (const auto seat = char_vehicle->get_seat_by_type(seat_type))
+					{
+						log(PURPLE, "trying to kick player from vehicle");
+
+						seat->instant_exit();
+					}
+				}
+			//}
+			//}
 
 			// aiming weapon
 

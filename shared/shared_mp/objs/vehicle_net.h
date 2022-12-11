@@ -11,6 +11,7 @@ DEFINE_ENUM(VehicleEnterExitCommand, uint8_t)
 	VehicleEnterExit_Exit,
 	VehicleEnterExit_PassengerToDriver,
 	VehicleEnterExit_DriverToRoof,
+	VehicleEnterExit_RoofToDriver,
 };
 
 DEFINE_ENUM(VehicleDynamicInfoID, uint8_t)
