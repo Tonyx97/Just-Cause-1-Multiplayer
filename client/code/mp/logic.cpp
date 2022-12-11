@@ -254,8 +254,6 @@ void jc::mp::logic::on_tick()
 					vec3(),
 					vec3()));
 			}
-
-			log(RED, "{}", local_char->get_body_stance()->get_movement_id());
 //#endif
 		}
 }
