@@ -45,7 +45,9 @@ private:
 	TcpContext tcp_ctx {};
 
 #ifdef JC_DBG
-	int net_stat = 3;
+	std::map<PacketID, uint64_t> packets_sent_count;
+
+	int net_stat = 4;
 #else
 	int net_stat = 0;
 #endif
@@ -84,6 +86,10 @@ public:
 	{
 		p.create();
 
+#ifdef JC_DBG
+		++packets_sent_count[p.get_id()];
+#endif
+
 		enet::send_packet(peer, p);
 	}
 
@@ -101,6 +107,15 @@ public:
 	ENetPeer* get_peer() const { return peer; }
 
 	const std::string& get_nick() const { return nick; }
+
+#ifdef JC_DBG
+	template <typename Fn>
+	void for_each_packet_sent(const Fn& fn)
+	{
+		for (const auto& [pid, count] : packets_sent_count)
+			fn(pid, count);
+	}
+#endif
 
 	// callbacks
 

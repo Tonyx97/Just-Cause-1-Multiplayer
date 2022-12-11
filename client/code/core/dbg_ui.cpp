@@ -745,15 +745,17 @@ void DebugUI::render_net()
 	if (const auto peer = g_net->get_peer())
 	{
 		static uint64_t kbs_recv = 0ull,
-			kbs_sent = 0ull;
+						kbs_sent = 0ull;
 
 		static float packet_loss = 0.f;
 
 		ImGui::SetCursorPos({ 10.f, g_ui->get_io()->DisplaySize.y / 2.f + 100.f });
 
-		auto render_text = [](const std::string& text)
+		float base_y = ImGui::GetCursorPosY();
+
+		auto render_text = [](const std::string& text, float x = 10.f)
 		{
-			ImGui::SetCursorPos({ 10.f, ImGui::GetCursorPosY() });
+			ImGui::SetCursorPos({ x, ImGui::GetCursorPosY() });
 			ImGui::Text(text.c_str());
 		};
 
@@ -782,6 +784,16 @@ void DebugUI::render_net()
 
 			render_text(FORMATV("Total Packets Sent: {}", peer->totalPacketsSent));
 			render_text(FORMATV("Total Packets Lost: {}", peer->totalPacketsLost));
+		}
+
+		if (stat_level > 3)
+		{
+			ImGui::SetCursorPosY(base_y);
+
+			g_net->for_each_packet_sent([&](PacketID pid, uint64_t count)
+			{
+				render_text(FORMATV("PacketID {}: {}", pid, count), 250.f);
+			});
 		}
 
 		if (kbs_timer.ready())

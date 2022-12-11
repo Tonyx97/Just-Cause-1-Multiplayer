@@ -26,7 +26,7 @@ namespace cmd
 		if (params.size() != 1)
 			return Cmd_InvalidParams;
 
-		if (int level = std::stoi(params[0]); level >= 0 && level <= 3)
+		if (int level = std::stoi(params[0]); level >= 0 && level <= 4)
 			g_net->set_net_stats(level);
 		else return Cmd_InvalidParams;
 
