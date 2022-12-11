@@ -43,6 +43,7 @@ public:
 	void decompose(vec3& t, quat& r, vec3& s) const;
 	void decompose(vec3& t, quat& r) const;
 	void translate(const vec3& v);
+	void scale(const vec3& v);
 
 	/**
 	* compares the current matrix with another one using thresholds for position and rotation

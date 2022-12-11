@@ -46,8 +46,8 @@ shared_ptr<PlayerGrenade> PlayerGrenade::CREATE(Transform* transform)
 		map.insert<object_base_map::Int>(0xfdd85bfa, 10); // int
 		map.insert<object_base_map::Float>(0x43a3aff3, 10.00f); // float
 		map.insert<object_base_map::Float>(0x71103eeb, 0.00f); // float
-		map.insert<object_base_map::Float>(0x77acb84d, 600.00f); // float
-		map.insert<object_base_map::Float>(0xac8b94a8, 1000.00f); // float
+		map.insert<object_base_map::Float>(0x77acb84d, 6000.00f); // float
+		map.insert<object_base_map::Float>(0xac8b94a8, 10000.00f); // float
 		map.insert<object_base_map::Float>(0xe5ff4048, 0.00f); // float
 		map.insert<object_base_map::Float>(0xf847a592, 0.00f); // float
 		map.insert<object_base_map::String>(0xf0503757, R"(ParticleSystems\360_exp_2_1.xml)"); // string

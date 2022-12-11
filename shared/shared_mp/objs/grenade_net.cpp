@@ -52,28 +52,30 @@ void GrenadeNetObject::on_sync()
 void GrenadeNetObject::on_spawn()
 {
 #ifdef JC_CLIENT
-	check(owner, "GrenadeNetObject must have an owner");
+	// it is possible that the local player is getting the grenade spawn before
+	// any player so let's make sure the owner is valid in our instance
+	
+	if (const auto owner_char = owner ? owner->get_character() : nullptr)
+	{
+		obj = g_factory->spawn_grenade({});
 
-	const auto owner_char = owner->get_character();
+		check(obj, "Could not create grenade object");
 
-	obj = g_factory->spawn_grenade({});
+		const auto object = get_object();
 
-	check(obj, "Could not create grenade object");
+		owner_char->set_arms_stance(18);
 
-	const auto object = get_object();
+		jc::this_call(0x747340, object, weak_ptr<ObjectBase>(owner_char->get_shared()));
 
-	owner_char->set_arms_stance(18);
+		jc::write(a2, object, 0x2B0);
+		jc::write(a3, object, 0x2BC);
 
-	jc::this_call(0x747340, object, weak_ptr<ObjectBase>(owner_char->get_shared()));
+		const auto position = get_position();
 
-	jc::write(a2, object, 0x2B0);
-	jc::write(a3, object, 0x2BC);
+		jc::this_call(0x747530, object, &position);
 
-	const auto position = get_position();
-
-	jc::this_call(0x747530, object, &position);
-
-	log(PURPLE, "GrenadeNetObject {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", get_nid(), ptr(obj.get()), get_position().x, get_position().y, get_position().z);
+		log(PURPLE, "GrenadeNetObject {:x} spawned now {:x} at {:.2f} {:.2f} {:.2f}", get_nid(), ptr(obj.get()), get_position().x, get_position().y, get_position().z);
+	}
 #endif
 }
 

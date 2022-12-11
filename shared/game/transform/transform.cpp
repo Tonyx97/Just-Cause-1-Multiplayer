@@ -46,6 +46,11 @@ void Transform::translate(const vec3& v)
 	m = glm::translate(m, v);
 }
 
+void Transform::scale(const vec3& v)
+{
+	m = glm::scale(m, v);
+}
+
 bool Transform::compare_position_and_rotation(const Transform& right, float position_threshold, float rotation_threshold)
 {
 	vec3 t0, t1, s0, s1;
