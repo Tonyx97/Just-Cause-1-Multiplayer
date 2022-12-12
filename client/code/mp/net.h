@@ -4,6 +4,8 @@
 
 #include <thread_system/stl/vector.h>
 
+#define DEBUG_PACKET 1
+
 class PlayerClient;
 
 namespace netcp
@@ -44,7 +46,7 @@ private:
 
 	TcpContext tcp_ctx {};
 
-#ifdef JC_DBG
+#if DEBUG_PACKET
 	std::map<PacketID, uint64_t> packets_sent_count;
 
 	int net_stat = 4;
@@ -86,7 +88,7 @@ public:
 	{
 		p.create();
 
-#ifdef JC_DBG
+#if DEBUG_PACKET
 		++packets_sent_count[p.get_id()];
 #endif
 
@@ -108,7 +110,7 @@ public:
 
 	const std::string& get_nick() const { return nick; }
 
-#ifdef JC_DBG
+#if DEBUG_PACKET
 	template <typename Fn>
 	void for_each_packet_sent(const Fn& fn)
 	{

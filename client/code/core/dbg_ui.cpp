@@ -790,10 +790,12 @@ void DebugUI::render_net()
 		{
 			ImGui::SetCursorPosY(base_y);
 
+#if DEBUG_PACKET
 			g_net->for_each_packet_sent([&](PacketID pid, uint64_t count)
 			{
 				render_text(FORMATV("PacketID {}: {}", pid, count), 250.f);
 			});
+#endif
 		}
 
 		if (kbs_timer.ready())
