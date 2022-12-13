@@ -605,10 +605,13 @@ void Character::SET_GRAPPLE_HOOKED_RELATIVE_POS(const vec3& v)
 
 void Character::rebuild_skeleton()
 {
-	const auto skeleton = get_skeleton();
-
-	jc::this_call(jc::character::fn::DESTROY_SKELETON, skeleton);
-	jc::this_call(jc::character::fn::CREATE_SKELETON, skeleton);
+	if (const auto skeleton = get_skeleton())
+		if (const auto unk = jc::read<ptr>(skeleton, 0x2A8); unk > 0x100 && unk < 0xFFFFFFFF)
+			if (const auto unk2 = jc::read<ptr>(unk, 0x48); unk2 > 0x100 && unk2 < 0xFFFFFFFF)
+			{
+				jc::this_call(jc::character::fn::DESTROY_SKELETON, skeleton);
+				jc::this_call(jc::character::fn::CREATE_SKELETON, skeleton);
+			}
 }
 
 void Character::init_model()
