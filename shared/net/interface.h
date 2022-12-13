@@ -18,11 +18,10 @@ class PlayerClient;
 
 namespace enet
 {
-	static constexpr uint32_t MAX_PLAYERS	= 128;
 	static constexpr uint32_t TICKS			= 62;
 	static constexpr uint32_t TICKS_MS		= 16;
 #ifdef JC_REL
-	static constexpr uint32_t PEER_TIMEOUT = 10 * 1000;
+	static constexpr uint32_t PEER_TIMEOUT = 20 * 1000;
 #else
 	static constexpr uint32_t PEER_TIMEOUT = 10000 * 1000;
 #endif
