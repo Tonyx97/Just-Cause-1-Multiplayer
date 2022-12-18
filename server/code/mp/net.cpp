@@ -478,6 +478,11 @@ void Net::on_client_tcp_message(netcp::client_interface* ci, const netcp::packet
 
 	switch (header->id)
 	{
+	case ClientToMsPacket_Ping:
+	{
+		cl->send_packet(ClientToMsPacket_Ping);
+		break;
+	}
 	case ClientToMsPacket_Password:
 	{
 		const auto sv_password = get_config().get_info().password;

@@ -230,7 +230,12 @@ void Net::set_game_ready_to_load()
 
 void Net::tick()
 {
+	static TimerRaw tcp_ping(1000);
+
 	// check tcp connection
+
+	if (tcp_ping.ready())
+		tcp->send_packet(ClientToMsPacket_Ping);
 
 	check(is_tcp_connected(), "TCP connection lost");
 
@@ -315,6 +320,8 @@ void Net::on_tcp_message(netcp::client_interface* ci, const netcp::packet_header
 
 	switch (header->id)
 	{
+	case ClientToMsPacket_Ping:
+		break;
 	case ClientToMsPacket_Password:
 	{
 		tcp_ctx.password_ack = true;

@@ -13,6 +13,9 @@ namespace netcp
 
 		port = remote_ep.port();
 		ip = remote_ep.address().to_string();
+
+		this->socket.set_option(asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO> { 20000 });
+
 		future = std::async(std::launch::async, &tcp_server_client::update, this);
 	}
 

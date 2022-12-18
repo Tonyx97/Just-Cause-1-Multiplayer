@@ -16,6 +16,8 @@ namespace netcp
 
 		asio::connect(socket, endpoints, ec);
 
+		socket.set_option(asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO> { 20000 });
+
 		if (ec)
 			return false;
 
