@@ -346,7 +346,7 @@ PacketResult nh::player_client::debug_enable_admin_panel(const Packet& p)
 #else
 	const auto pc = p.get_pc();
 
-	if (pc->get_nick() == "Tony") // looooooooool
+	if (pc->has_acl("owner") || pc->has_acl("admin"))
 		g_net->send_broadcast(p);
 #endif
 
