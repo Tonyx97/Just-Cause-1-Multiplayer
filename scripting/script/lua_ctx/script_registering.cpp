@@ -179,6 +179,12 @@ void script::register_functions(Script* script)
 
 		return g_texture_system->load_texture(rsrc_path + texture);
 	});
+
+	/* WEAPONS */
+
+	vm->add_function("createWeaponTemplate", [](luas::state& s)
+	{
+	});
 #elif defined(JC_SERVER)
 	// register server functions
 

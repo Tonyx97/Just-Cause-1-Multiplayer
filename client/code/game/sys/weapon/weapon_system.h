@@ -44,6 +44,59 @@ class WeaponTemplate
 {
 public:
 
+	enum Hash : uint32_t
+	{
+		accuracy_ai = 0x43d3fa78,
+		accuracy_player = 0xc9dae566,
+		animtype = 0x2caec4c6,
+		bulletspershot = 0x67f4b92,
+		bullettype = 0x73c279d9,
+		fireeffectid1 = 0xa9818615,
+		fireeffectpos_x = 0xfde6d38c,
+		fireeffectpos_y = 0xe807fbbe,
+		fireeffectpos_z = 0x83fcbe6d,
+		firerate = 0x3c973815,
+		id = 0xc17ff89f,
+		icon_index = 0x983bdc19,
+		magazinesize = 0x7932fd00,
+		maxaimangledeg = 0x9db0dcdf,
+		minaimangledeg = 0xfdc2fc1f,
+		model = 0xdfe26313,
+		name = 0xb8fbd88e,
+		display_name = 0xb231ec06,
+		reloadtime = 0x737cf1df,
+		shelleffectid1 = 0x520ae427,
+		shelleffectpos_x = 0xdf4dbe38,
+		shelleffectpos_y = 0x40c4076a,
+		shelleffectpos_z = 0xa286f163,
+		soundweaponid = 0xb48c8992,
+		soundclickid = 0x2ecc28f9,
+		soundfireid = 0xdc4e8e89,
+		soundreloadid = 0x3c6afa74,
+		weapontype = 0xea9b2d84,
+		silencer = 0xe43f6ff8,
+		ammo_velocity = 0x3ae7b611,
+		ammo_max_range = 0xb27fbdf,
+		aim_max_range_ai = 0x51905fda,
+		aim_max_range_player = 0x8dccf8a,
+		ammo_max_damage_ai = 0x72fdb359,
+		ammo_max_damage_player = 0x61d710ac,
+		ammo_area_damage_radius = 0x58dd9170,
+		play_recoil_on_release = 0xbebf734b,
+		miss_min_distance = 0x6e24e123,
+		miss_max_distance = 0xe775a5da,
+		miss_shrink_distance = 0x2524eee2,
+		min_burst_bullets = 0xebb4f93f,
+		max_burst_bullets = 0xf776041b,
+		min_burst_delay = 0xc5a583e4,
+		max_burst_delay = 0x2419daa1,
+		use_against_vehicles = 0x2e3e2094,
+		click_fire = 0x92d1b4b0,
+		min_click_delay = 0xf400ec2a,
+		max_click_delay = 0x88bbee10,
+		ammo_explosion_effect = 0xb3776904
+	};
+
 	static WeaponTemplate* CREATE();
 
 	void destroy();

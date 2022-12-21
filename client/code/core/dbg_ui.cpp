@@ -68,49 +68,49 @@ void DebugUI::render_admin_panel()
 	{
 		std::string model = "m488.rbm";
 
-		object_base_map map{};
-		map.insert<object_base_map::Int>(0x2419daa1, 15); // int
-		map.insert<object_base_map::Int>(0x2caec4c6, 3); // int
-		map.insert<object_base_map::Int>(0x2e3e2094, 1); // int
-		map.insert<object_base_map::Int>(0x2ecc28f9, -1); // int
-		map.insert<object_base_map::Int>(0x3c6afa74, -1); // int
-		map.insert<object_base_map::Int>(0x67f4b92, 1); // int
-		map.insert<object_base_map::Int>(0x73c279d9, 7); // int
-		map.insert<object_base_map::Int>(0x7932fd00, 3); // int
-		map.insert<object_base_map::Int>(0x92d1b4b0, 1); // int
-		map.insert<object_base_map::Int>(0x983bdc19, 16); // int
-		map.insert<object_base_map::Int>(0xb48c8992, 14); // int
-		map.insert<object_base_map::Int>(0xc17ff89f, 100); // int
-		map.insert<object_base_map::Int>(0xdc4e8e89, 12); // int
-		map.insert<object_base_map::Int>(0xe43f6ff8, 0); // int
-		map.insert<object_base_map::Int>(0xea9b2d84, 2); // int
-		map.insert<object_base_map::Int>(0xebb4f93f, 1); // int
-		map.insert<object_base_map::Int>(0xf776041b, 1); // int
-		map.insert<object_base_map::Float>(0x2524eee2, 7.00f); // float
-		map.insert<object_base_map::Float>(0x3ae7b611, 500.00f); // float - max radius
-		map.insert<object_base_map::Float>(0x3c973815, 1.00f); // float
-		map.insert<object_base_map::Float>(0x43d3fa78, 1.00f); // float
-		map.insert<object_base_map::Float>(0x51905fda, 50.00f); // float
-		map.insert<object_base_map::Float>(0x58dd9170, 50.00f); // float
-		map.insert<object_base_map::Float>(0x61d710ac, 100.00f); // float
-		map.insert<object_base_map::Float>(0x6e24e123, 1.50f); // float
-		map.insert<object_base_map::Float>(0x72fdb359, 500.00f); // float
-		map.insert<object_base_map::Float>(0x737cf1df, 1.25f); // float
-		map.insert<object_base_map::Float>(0x83fcbe6d, 0.32f); // float
-		map.insert<object_base_map::Float>(0x88bbee10, 1.20f); // float
-		map.insert<object_base_map::Float>(0x8dccf8a, 200.00f); // float
-		map.insert<object_base_map::Float>(0x9db0dcdf, 130.00f); // float
-		map.insert<object_base_map::Float>(0xb27fbdf, 9000.00f); // float - ammo max range
-		map.insert<object_base_map::Float>(0xc5a583e4, 7.00f); // float
-		map.insert<object_base_map::Float>(0xc9dae566, 1.00f); // float
-		map.insert<object_base_map::Float>(0xe775a5da, 2.00f); // float
-		map.insert<object_base_map::Float>(0xe807fbbe, 0.10f); // float
-		map.insert<object_base_map::Float>(0xf400ec2a, 1.00f); // float
-		map.insert<object_base_map::Float>(0xfdc2fc1f, 60.00f); // float
-		map.insert<object_base_map::Float>(0xfde6d38c, 0.01f); // float
-		map.insert<object_base_map::String>(0xa9818615, R"(VFX_I_Muzzle_Rocket_Launcher)"); // string
-		map.insert<object_base_map::String>(0xb231ec06, R"(M488)"); // string
-		map.insert<object_base_map::String>(0xb3776904, R"(360_exp_4_1)"); // string
+		object_base_map map {};
+		map.insert<object_base_map::Int>(WeaponTemplate::max_burst_delay, 15); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::accuracy_ai, 3); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::use_against_vehicles, 1); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::soundclickid, -1); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::soundreloadid, -1); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::bulletspershot, 1); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::bullettype, 7); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::magazinesize, 3); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::click_fire, 1); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::icon_index, 16); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::soundweaponid, 14); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::id, 100); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::soundfireid, 12); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::silencer, 0); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::weapontype, 2); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::min_burst_bullets, 1); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::max_burst_bullets, 1); // int
+		map.insert<object_base_map::Float>(WeaponTemplate::miss_shrink_distance, 7.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::ammo_velocity, 500.00f); // float - max radius
+		map.insert<object_base_map::Float>(WeaponTemplate::firerate, 1.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::accuracy_ai, 1.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::aim_max_range_ai, 50.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::ammo_area_damage_radius, 50.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::ammo_max_damage_player, 100.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::miss_min_distance, 1.50f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::ammo_max_damage_ai, 500.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::reloadtime, 1.25f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::fireeffectpos_z, 0.32f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::max_click_delay, 1.20f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::aim_max_range_player, 200.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::maxaimangledeg, 130.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::ammo_max_range, 9000.00f); // float - ammo max range
+		map.insert<object_base_map::Float>(WeaponTemplate::min_burst_delay, 7.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::accuracy_player, 1.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::miss_max_distance, 2.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::fireeffectpos_y, 0.10f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::min_click_delay, 1.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::minaimangledeg, 60.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::fireeffectpos_x, 0.01f); // float
+		map.insert<object_base_map::String>(WeaponTemplate::fireeffectid1, R"(VFX_I_Muzzle_Rocket_Launcher)"); // string
+		map.insert<object_base_map::String>(WeaponTemplate::display_name, R"(M488)"); // string
+		map.insert<object_base_map::String>(WeaponTemplate::ammo_explosion_effect, R"(360_exp_4_1)"); // string
 		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(Rocket Launcher)"); // string
 		map.insert<object_base_map::String>(ObjectBase::Hash_Model, model); // string
 
