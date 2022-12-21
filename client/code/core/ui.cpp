@@ -660,8 +660,9 @@ void UI::render_default_hud()
 	{
 		if (auto vehicle_net = g_net->get_net_object_by_game_object(veh)->cast<VehicleNetObject>())
 		{
-			if (g_key->is_key_pressed(KEY_X)) // todojc - debug shit
-				vehicle_net->set_engine_state(!vehicle_net->get_engine_state(), true);
+			if (!g_chat->is_typing())
+				if (g_key->is_key_pressed(KEY_X)) // todojc - debug shit
+					vehicle_net->set_engine_state(!vehicle_net->get_engine_state(), true);
 
 			vec2 center = vec2(sx - 250.f, sy - 50.f);
 
