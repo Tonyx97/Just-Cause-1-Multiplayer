@@ -195,6 +195,11 @@ void script::register_functions(Script* script)
 
 		return g_weapon->create_weapon_template(&map);
 	});
+
+	vm->add_function("destroyWeaponTemplate", [](WeaponTemplate* v)
+	{
+		g_weapon->remove_weapon_template(v);
+	});
 #elif defined(JC_SERVER)
 	// register server functions
 

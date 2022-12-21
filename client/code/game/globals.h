@@ -58,7 +58,7 @@ namespace jc::game
 	{
 		const jc::stl::string _str = str;
 
-		return jc::c_call<uint32_t>(0x473720, &str);
+		return jc::c_call<uint32_t>(0x473720, &_str);
 	}
 
 	inline uint16_t encode_float(float v)

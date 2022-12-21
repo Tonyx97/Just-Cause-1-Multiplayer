@@ -44,7 +44,7 @@ namespace jc::stl
 		{
 			alloc();
 
-			jc::this_call(jc::string::fn::INIT, this, str.data(), str.length());
+			jc::this_call(jc::string::fn::INIT, this, str.data(), static_cast<int>(str.length()));
 		}
 
 		const char* c_str() const

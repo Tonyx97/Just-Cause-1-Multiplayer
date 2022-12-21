@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace launcher.Services.Connection
 {
@@ -159,13 +160,16 @@ namespace launcher.Services.Connection
                             data_offset += player_namee_length;
                         }
 
-                        var server_refreshrate = (uint)read_data[data_offset];
+                        var server_refreshrate = BitConverter.ToInt32(read_data, (int)data_offset);
                         data_offset += 0x4;
 
-                        var max_players = (uint)read_data[data_offset];
-                        data_offset += 0x4;
+                        var max_players = BitConverter.ToUInt32(read_data, (int)data_offset);
+						data_offset += 0x4;
 
-                        var server_password_protected = BitConverter.ToBoolean(read_data, (int)data_offset);
+						MessageBox.Show(server_refreshrate.ToString());
+						MessageBox.Show(max_players.ToString());
+
+						var server_password_protected = BitConverter.ToBoolean(read_data, (int)data_offset);
                         data_offset += 0x1;
 
                         var parsed_server = new ServerInformation(server_name, server_ip, ServerGameMode.Freeroam, server_discord, server_players, max_players, server_password_protected);
