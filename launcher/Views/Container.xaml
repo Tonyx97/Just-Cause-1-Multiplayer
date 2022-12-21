@@ -10,7 +10,7 @@
     Title="{Binding ViewModel.ApplicationTitle, Mode=OneWay}"
     MinWidth="1190"
     MinHeight="760"
-    d:DataContext="{d:DesignInstance local:Container IsDesignTimeCreatable=True}"
+    d:DataContext="{d:DesignInstance  IsDesignTimeCreatable=True}"
     ExtendsContentIntoTitleBar="True"
     WindowBackdropType="Mica"
     WindowCornerPreference="Round"
@@ -34,7 +34,7 @@
             Grid.Column="0"
             Grid.ColumnSpan="2"
             Margin="42,0,0,0"
-            Icon="pack://application:,,,/Assets/icon.png">
+            Icon="pack://application:,,,/assets/icon.png">
         </ui:TitleBar>
 
         <Grid 
@@ -48,9 +48,9 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    
+
                     <Frame x:Name="RootFrame" Grid.Row="1" />
-                    
+
                     <ui:Breadcrumb
                         Grid.Row="0"
                         Margin="56, 32"

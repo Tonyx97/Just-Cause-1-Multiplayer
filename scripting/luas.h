@@ -820,14 +820,14 @@ namespace luas
 			value.resize(raw_len(i));
 
 			iterate_table<int, typename T::value_type>([&](const auto&, const auto& v)
-			{ value[table_index++] = v; }, i);
+			{ value[table_index++] = v; }, i++);
 		}
 
 		template <typename T>
 		void _pop(T& value, int& i) const requires(detail::is_map<T>)
 		{
 			iterate_table<typename T::key_type, typename T::mapped_type>([&](const auto& k, const auto& v)
-			{ value[k] = v; }, i);
+			{ value[k] = v; }, i++);
 		}
 
 		template <typename T>

@@ -27,6 +27,6 @@ namespace launcher.Services
         // Fetches data from the repository. Returns data on success null
         // otherwise.
         //
-        Task<GameSettings?> FetchDataAsync();
+        Task<GameSettings> FetchDataAsync();
     }
 }

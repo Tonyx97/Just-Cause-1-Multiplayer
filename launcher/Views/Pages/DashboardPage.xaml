@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="DashboardPage"
-    d:DataContext="{d:DesignInstance local:DashboardPage, IsDesignTimeCreatable=False}"
+    d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False}"
     d:DesignWidth="1180"
     d:DesignHeight="760"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -28,7 +28,7 @@
                 Height="400"
                 CornerRadius="8,0,0,0">
                 <Border.Background>
-                    <ImageBrush ImageSource="pack://application:,,,/Assets/cover.png" Stretch="UniformToFill" />
+                    <ImageBrush ImageSource="pack://application:,,,/assets/cover.png" Stretch="UniformToFill" />
                 </Border.Background>
                 <Border CornerRadius="8,0,0,0">
                     <Border.Background>
@@ -50,7 +50,7 @@
                             FontSize="28"
                             FontWeight="Bold"
                             Foreground="White"
-                            Text="Just Cause 1: Multiplayer" />
+                            Text="Just Cause: Multiplayer" />
                         <TextBlock
                             FontSize="18"
                             Opacity=".8"

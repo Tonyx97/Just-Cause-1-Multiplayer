@@ -128,6 +128,7 @@
                             PreviewMouseDown="TextBox_PreviewMouseDown"
                             Text="{Binding ViewModel.GamePath}">
                         </ui:TextBox>
+                        <ui:Button Click="OpenGameDirectoryEventHandler" Margin="0,0,20,0" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="4,4,4,4">Open in Explorer</ui:Button>
                     </Grid>
                 </ui:CardExpander.Header>
 

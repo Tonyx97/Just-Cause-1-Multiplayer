@@ -21,7 +21,9 @@ namespace launcher.Models
         public IList<PlayerInformation> Players { get; }
         public int PlayerCount { get; }
         public bool IsProtected { get; }
-        public ServerInformation(string title, string ipAddress, ServerGameMode gameMode, string discord, IList<PlayerInformation> players, bool isProtected)
+        public uint MaxPlayers { get; }
+
+        public ServerInformation(string title, string ipAddress, ServerGameMode gameMode, string discord, IList<PlayerInformation> players, uint maxPlayers, bool isProtected)
         {
             Title = title;
             IpAddress = ipAddress;
@@ -30,6 +32,7 @@ namespace launcher.Models
             Players = players;
             PlayerCount = players.Count;
             IsProtected = isProtected;
+            MaxPlayers = maxPlayers;
         }
     }
 }

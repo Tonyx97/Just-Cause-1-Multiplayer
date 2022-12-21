@@ -62,7 +62,7 @@ void DebugUI::render_admin_panel()
 
 	// init stuff
 
-	static WeaponTemplate* templeit = 0;
+	/*static WeaponTemplate* templeit = 0;
 
 	if (!templeit)	// create new weapon :o
 	{
@@ -109,10 +109,7 @@ void DebugUI::render_admin_panel()
 		map.insert<object_base_map::String>(ObjectBase::Hash_Model, model); // string
 
 		templeit = g_weapon->create_weapon_template(&map);
-
-		/*g_texture_system->unload_texture("dummy_black.dds");
-		g_model_system->unload_rbm(model);*/
-	}
+	}*/
 
 	// weapon stuff
 

@@ -24,21 +24,18 @@ namespace launcher.Services.Repositories
                     // key in the registry of this machine. If we can open/access it
                     // we have enough permission and repository is reachable.
                     //
-                    var currentUser = Registry.CurrentUser;
-                    if (currentUser == null)
-                    {
-                        return false;
-                    }
-                    var softwareDirectory = currentUser.OpenSubKey(_softwareKey);
-                    if (softwareDirectory == null)
+                    RegistryKey currentUserRegistryKey = Registry.CurrentUser;
+
+                    RegistryKey? softwareDirectory = currentUserRegistryKey.OpenSubKey(_softwareKey);
+                    if (softwareDirectory is null)
                     {
                         // We never initialized the repository for this session.
                         //
-                        currentUser.Close();
+                        currentUserRegistryKey.Close();
                         return false;
                     }
                     softwareDirectory.Close();
-                    currentUser.Close();
+                    currentUserRegistryKey.Close();
                     return true;
                 }
                 catch (Exception)

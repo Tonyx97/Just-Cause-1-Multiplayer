@@ -1,6 +1,7 @@
-﻿using Wpf.Ui.Common.Interfaces;
+﻿using System.Diagnostics;
+using System.IO;
+using Wpf.Ui.Common.Interfaces;
 using Wpf.Ui.Mvvm.Contracts;
-using Wpf.Ui.Mvvm.Interfaces;
 
 namespace launcher.Views.Pages
 {
@@ -25,6 +26,21 @@ namespace launcher.Views.Pages
         private void TextBox_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ViewModel.SearchGamePathCommand.Execute(sender);
+        }
+
+        private void OpenGameDirectoryEventHandler(object sender, System.Windows.RoutedEventArgs e)
+        {
+            string? gameExecutablePath = ViewModel.GamePath;
+
+            if (string.IsNullOrEmpty(gameExecutablePath))
+                return;
+
+            string? gameDirectoryPath = Path.GetDirectoryName(gameExecutablePath);
+
+            if (string.IsNullOrEmpty(gameDirectoryPath))
+                return;
+
+            Process.Start("explorer.exe", gameDirectoryPath);
         }
     }
 }

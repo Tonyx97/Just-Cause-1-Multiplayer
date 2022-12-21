@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace launcher.Services.Connection
 {
-    public interface IServerService
+    public interface IServerListService
     {
-        Task<IList<ServerInformation>> GetServersAsync();
+        Task<IList<ServerInformation>> GetServerList();
     }
-    public class ServerService : IServerService
+    public class ServerListService : IServerListService
     {
-        public async Task<IList<ServerInformation>> GetServersAsync()
+        public async Task<IList<ServerInformation>> GetServerList()
         {
             // TODO: Improve raw blob parsing and make parsing more dynamic. This is POC.
             //
@@ -42,7 +42,7 @@ namespace launcher.Services.Connection
                     return servers;
                 }
 
-                var serialized_request_header = packet_header.create_server_info_request();
+                var serialized_request_header = packet_header.CreateServersInfoRequest();
 
                 // Send the message to the connected TcpServer.
                 //
@@ -64,10 +64,10 @@ namespace launcher.Services.Connection
                     //
                     if (data_offset >= output_bytes) break;
 
-                    var packed = (packed_id)read_data[data_offset];
+                    var packed = (MasterlistPacketID)read_data[data_offset];
                     // Only supporting server info for now.
                     //
-                    if (packed != packed_id.client_to_ms_packet_server_info) break;
+                    if (packed != MasterlistPacketID.ClientToMsPacket_ServersInfo) break;
                     data_offset += 0x2;
 
                     // Take 4 bytes to parse first chunk.
@@ -162,10 +162,13 @@ namespace launcher.Services.Connection
                         var server_refreshrate = (uint)read_data[data_offset];
                         data_offset += 0x4;
 
+                        var max_players = (uint)read_data[data_offset];
+                        data_offset += 0x4;
+
                         var server_password_protected = BitConverter.ToBoolean(read_data, (int)data_offset);
                         data_offset += 0x1;
 
-                        var parsed_server = new ServerInformation(server_name, server_ip, ServerGameMode.Freeroam, server_discord, server_players, server_password_protected);
+                        var parsed_server = new ServerInformation(server_name, server_ip, ServerGameMode.Freeroam, server_discord, server_players, max_players, server_password_protected);
                         servers.Add(parsed_server);
                     }
                 }
@@ -184,13 +187,10 @@ namespace launcher.Services.Connection
 
     // Mock service for testing purposes.
     //
-    public class ServerServiceMock : IServerService
+    public class MockServerListService : IServerListService
     {
-        public async Task<IList<ServerInformation>> GetServersAsync()
+        public Task<IList<ServerInformation>> GetServerList()
         {
-            // fake web request.
-            //
-            await Task.Delay(5000);
             var rnd = new Random();
             var playerCount = rnd.Next(20);
             var dummyPlayers = new List<PlayerInformation>();
@@ -207,15 +207,15 @@ namespace launcher.Services.Connection
                 dummyPlayers2.Add(new PlayerInformation(playerName));
             }
 
-            var servers = new List<ServerInformation>();
+            IList<ServerInformation> servers = new List<ServerInformation>();
 
-            var dummyServer = new ServerInformation("Official MP server", "156.256.71.3", ServerGameMode.Freeroam, "https://discord.gg/dq33yEyjv1", dummyPlayers, true);
-            var dummyServer2 = new ServerInformation("Official MP server 2", "156.256.71.4", ServerGameMode.Freeroam, "", dummyPlayers2, false);
+            var dummyServer = new ServerInformation("Official MP server", "156.256.71.3", ServerGameMode.Freeroam, "https://discord.gg/dq33yEyjv1", dummyPlayers, 32, true);
+            var dummyServer2 = new ServerInformation("Official MP server 2", "156.256.71.4", ServerGameMode.Freeroam, "", dummyPlayers2, 64, false);
 
             servers.Add(dummyServer);
             servers.Add(dummyServer2);
 
-            return servers;
+            return Task.FromResult(servers);
         }
     }
 }

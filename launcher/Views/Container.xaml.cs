@@ -29,6 +29,8 @@ namespace launcher.Views
             Left = Properties.Settings.Default.WindowLeft;
             Wpf.Ui.Appearance.Theme.Apply((Wpf.Ui.Appearance.ThemeType)(Properties.Settings.Default.Theme + 1));
 
+
+
             InitializeComponent();
             SetPageService(pageService);
 

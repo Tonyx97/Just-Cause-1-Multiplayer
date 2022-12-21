@@ -2,11 +2,9 @@
 using launcher.Services;
 using launcher.Services.Connection;
 using launcher.Services.Repositories;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.IO;
-using System.Reflection;
+using Microsoft.Extensions.Logging;
 using System.Windows;
 using System.Windows.Threading;
 using Wpf.Ui.Mvvm.Contracts;
@@ -26,7 +24,7 @@ namespace launcher
         // https://docs.microsoft.com/dotnet/core/extensions/logging
         private static readonly IHost _host = Host
             .CreateDefaultBuilder()
-            .ConfigureAppConfiguration(c => { c.SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)); })
+            //.ConfigureAppConfiguration(c => { c.SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)); })
             .ConfigureServices((context, services) =>
             {
                 // App Host
@@ -63,11 +61,18 @@ namespace launcher
 
                 // Server service
                 //
-                services.AddSingleton<IServerService, ServerService>();
+                services.AddSingleton<IServerListService, ServerListService>();
 
                 // Client service
                 //
-                services.AddSingleton<IClientService, ClientService>();
+
+               // services.AddSingleton<IClientUpdaterService, LocalClientUpdaterService>();
+                services.AddSingleton<IClientUpdaterService, ClientUpdaterService>();
+
+
+                // Client execution service
+                //
+                services.AddSingleton<IClientExecutionService, ClientExecutionService>();
 
                 // Main window container with navigation
                 //
@@ -79,11 +84,15 @@ namespace launcher
                 services.AddScoped<Views.Pages.DashboardPage>();
                 services.AddScoped<ViewModels.DashboardViewModel>();
                 services.AddScoped<Views.Pages.ServerBrowserPage>();
-                services.AddScoped<ViewModels.ServerBrowserViewModel>();
+                services.AddScoped<ViewModels.ServerBrowserViewModel>().AddLogging();
                 services.AddScoped<Views.Pages.GameSettingsPage>();
                 services.AddScoped<ViewModels.GameSettingsViewModel>();
                 services.AddScoped<Views.Pages.SettingsPage>();
                 services.AddScoped<ViewModels.SettingsViewModel>();
+
+                // Logging
+                //
+                services.AddLogging(configure => configure.AddConsole());
 
                 // Configuration
                 //

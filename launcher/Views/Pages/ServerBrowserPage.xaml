@@ -19,7 +19,7 @@
         <helpers:BoolToServerProtectionConverter x:Key="BoolToServerProtectionConverter" />
         <helpers:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <helpers:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" /> 
+        <helpers:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
     </ui:UiPage.Resources>
 
     <Grid Margin="56,0">
@@ -39,7 +39,7 @@
             Grid.Column="0"
             IsIndeterminate="True"
             Visibility="{Binding ViewModel.FetchingServerDataInProgress, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='Collapsed'}"/>
-        
+
         <DataGrid
             Grid.Row="0"
             Grid.Column="0"
@@ -60,11 +60,12 @@
                 <DataGridTextColumn Header="Title" Width="*" Binding="{Binding Title}"/>
                 <DataGridTextColumn Header="Address" Width="*" Binding="{Binding IpAddress}"/>
                 <DataGridTextColumn Header="Players"  Width="*" Binding="{Binding PlayerCount}"/>
+                <DataGridTextColumn Header="Max Players"  Width="*" Binding="{Binding MaxPlayers}"/>
                 <DataGridTextColumn Header="Game Mode"  Width="*" Binding="{Binding GameMode}"/>
                 <DataGridTextColumn Header="Discord"  Width="*" Binding="{Binding Discord}"/>
             </DataGrid.Columns>
         </DataGrid>
-        
+
         <DataGrid
             Grid.Row="0"
             Grid.Column="2"
@@ -145,7 +146,7 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            
+
             <ui:Button
                 Grid.Row="4"
                 Grid.Column="0"
@@ -156,5 +157,11 @@
                 Command="{Binding ViewModel.JoinServerCommand}"
                 CommandParameter="{Binding ViewModel.SelectedServer}"/>
         </Grid>
+        <ui:Button
+            Grid.Column="2"
+            Content="Refresh servers"
+            HorizontalContentAlignment="Stretch"
+            Command="{Binding ViewModel.RefreshServersCommand}"
+            CommandParameter="{Binding ViewModel.SelectedServer}" Margin="0,70,0,0" VerticalAlignment="Top" Grid.Row="2" HorizontalAlignment="Center"/>
     </Grid>
 </ui:UiPage>

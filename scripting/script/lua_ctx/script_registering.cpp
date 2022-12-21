@@ -182,8 +182,18 @@ void script::register_functions(Script* script)
 
 	/* WEAPONS */
 
-	vm->add_function("createWeaponTemplate", [](luas::state& s)
+	vm->add_function("createWeaponTemplate", [](
+		const std::map<std::string, int>& int_props,
+		const std::map<std::string, float>& float_props,
+		const std::map<std::string, std::string>& string_props)
 	{
+		object_base_map map {};
+
+		for (const auto& [name, value] : int_props)		map.insert<object_base_map::Int>(jc::game::hash_str(name), value);
+		for (const auto& [name, value] : float_props)	map.insert<object_base_map::Float>(jc::game::hash_str(name), value);
+		for (const auto& [name, value] : string_props)	map.insert<object_base_map::String>(jc::game::hash_str(name), value);
+
+		return g_weapon->create_weapon_template(&map);
 	});
 #elif defined(JC_SERVER)
 	// register server functions
