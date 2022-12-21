@@ -4,6 +4,8 @@
 
 #include <resource_sys/resource_system.h>
 
+#include <mp/net.h>
+
 void Resource::clear()
 {
 #ifdef JC_SERVER
@@ -69,11 +71,27 @@ void Resource::build_with_verification_ctx(const ResourceVerificationCtx& ctx)
 
 	client_files_total_size = calculate_total_client_file_size();
 }
+
+void Resource::add_net_object(NetObject* v)
+{
+	create_ctx.net_objects.push_back(v);
+}
 #endif
 
 Resource::~Resource()
 {
 	clear();
+}
+
+void Resource::clear_create_context()
+{
+#ifdef JC_SERVER
+	for (auto net_object : create_ctx.net_objects)
+		g_net->destroy_net_object(net_object);
+
+	create_ctx.net_objects.clear();
+#else
+#endif
 }
 
 void Resource::destroy_scripts()
@@ -119,6 +137,10 @@ ResourceResult Resource::stop()
 		script->stop();
 
 	status = ResourceStatus_Stopped;
+
+	// clear all objects that were created by this resource
+
+	clear_create_context();
 
 	return ResourceResult_Ok;
 }

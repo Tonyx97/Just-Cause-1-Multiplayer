@@ -92,9 +92,16 @@ struct ResourceVerificationCtx
 #endif
 };
 
+class NetObject;
+
 class Resource
 {
 private:
+
+	struct CreationContext
+	{
+		std::vector<NetObject*> net_objects;
+	} create_ctx;
 	
 	std::string path;
 	std::string name;
@@ -201,10 +208,13 @@ public:
 	* builds the resource information using a new verification context
 	*/
 	void build_with_verification_ctx(const ResourceVerificationCtx& ctx);
+
+	void add_net_object(NetObject* v);
 #endif
 
 	~Resource();
 
+	void clear_create_context();
 	void destroy_scripts();
 	void create_script(const ScriptCtx& script_ctx, const std::string& script_name);
 

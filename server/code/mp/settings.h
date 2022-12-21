@@ -7,7 +7,7 @@ private:
 	vec3 gravity = { 0.f, -9.8f, 0.f };
 
 	float timescale = 1.f,
-		  day_time = 8.f,
+		  day_time = 9.f,
 		  punch_force = 50.f;
 
 	bool day_time_enabled = false;

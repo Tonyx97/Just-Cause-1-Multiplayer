@@ -256,19 +256,45 @@ void script::register_functions(Script* script)
 		player->respawn(pos.obj(), rotation, skin, max_hp, max_hp);
 	});
 
-	vm->add_function("createDamageable", [](const svec3& pos, const std::string& lod, const std::string& pfx)
+	vm->add_function("createDamageable", [](luas::state& s, const svec3& pos, const std::string& lod, const std::string& pfx)
 	{
-		return g_net->spawn_damageable(SyncType_Distance, NetObject_Damageable, TransformTR(pos.obj()), lod, pfx);
+		const auto script = s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE);
+		const auto owner = script->get_owner();
+
+		if (const auto obj = g_net->spawn_damageable(SyncType_Distance, NetObject_Damageable, TransformTR(pos.obj()), lod, pfx))
+		{
+			owner->add_net_object(obj);
+
+			return obj->cast<DamageableNetObject>();
+		}
 	});
 
-	vm->add_function("createVehicle", [](const svec3& pos, const std::string& ee_name)
+	vm->add_function("createVehicle", [](luas::state& s, const svec3& pos, const std::string& ee_name)
 	{
-		return g_net->spawn_vehicle(SyncType_Distance, NetObject_Damageable, TransformTR(pos.obj()), ee_name);
+		const auto script = s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE);
+		const auto owner = script->get_owner();
+
+		if (const auto obj = g_net->spawn_vehicle(SyncType_Distance, NetObject_Damageable, TransformTR(pos.obj()), ee_name))
+		{
+			owner->add_net_object(obj);
+
+			return obj->cast<VehicleNetObject>();
+		}
 	});
 
-	vm->add_function("createPickup", [](const svec3& pos, uint32_t type, const std::string& lod)
+	vm->add_function("createPickup", [](luas::state& s, const svec3& pos, uint32_t type, const std::string& lod) -> PickupNetObject*
 	{
-		return g_net->spawn_pickup(SyncType_Distance, NetObject_Pickup, TransformTR(pos.obj()), type, lod);
+		const auto script = s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE);
+		const auto owner = script->get_owner();
+
+		if (const auto obj = g_net->spawn_pickup(SyncType_Distance, NetObject_Pickup, TransformTR(pos.obj()), type, lod))
+		{
+			owner->add_net_object(obj);
+
+			return obj->cast<PickupNetObject>();
+		}
+
+		return nullptr;
 	});
 
 	/* PHYSICS */
@@ -362,7 +388,7 @@ void script::register_functions(Script* script)
 	/* PLAYER */
 
 	vm->add_function("getPlayerName", [](Player* player) { NET_OBJ_CHECK_RET(player, get_nick, ""); });
-	vm->add_function("isPlayerDead", [](Player* player) { return !NET_OBJ_CHECK_RET_EXP(player, is_alive, false); });
+	vm->add_function("isPlayerDead", [](Player* player) { return !(NET_OBJ_CHECK_RET_EXP(player, is_alive, false)); });
 
 	vm->add_function("getPlayerFromName", [](const std::string& name, luas::variadic_args va) -> Player*
 	{

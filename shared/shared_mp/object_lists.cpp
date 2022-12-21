@@ -260,6 +260,8 @@ bool ObjectLists::remove_net_object(NetObject* net_obj)
 	std::lock_guard lock(mtx);
 #endif
 
+	check(has_net_object(net_obj), "Trying to remove a net object that doesn't exist");
+
 	const auto nid = net_obj->get_nid();
 
 	switch (net_obj->get_type())
@@ -353,14 +355,17 @@ PlayerClient* ObjectLists::get_valid_player_client(PlayerClient* pc)
 
 bool ObjectLists::destroy_net_object(NetObject* obj)
 {
+	if (!has_net_object(obj))
+		return false;
+
 	check(!obj->cast<Player>(), "Cannot destroy a Player using this function, use ::remove_player_client");
+
+	if (!remove_net_object(obj))
+		return false;
 
 #ifdef JC_SERVER
 	g_net->send_broadcast_joined(Packet(WorldPID_DestroyObject, ChannelID_World, obj));
 #endif
-
-	if (!remove_net_object(obj))
-		return false;
 
 	JC_FREE(obj);
 

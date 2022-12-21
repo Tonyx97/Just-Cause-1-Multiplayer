@@ -22,11 +22,7 @@ void Settings::update()
 	// send the day time to all players
 
 	if (day_cycle_timer.ready())
-	{
-		day_time += 0.01f;
-
-		set_day_time(get_day_time() + 0.01f);
-	}
+		set_day_time(get_day_time() + 0.001f);
 }
 
 void Settings::set_time_scale(float v)
