@@ -497,9 +497,12 @@ namespace jc::character::hook
 				if (const auto local_char = lp->get_character())
 					if (const auto character = BITCAST(Character*, grappled_object_ptr - jc::character::GRAPPLED_OBJECT); local_char == character)
 					{
-						lp->set_grappled_object(nullptr);
+						if (lp->get_grappled_object())
+						{
+							lp->set_grappled_object(nullptr);
 
-						g_net->send(Packet(PlayerPID_GrapplingHookAttachDetach, ChannelID_Generic, false));
+							g_net->send(Packet(PlayerPID_GrapplingHookAttachDetach, ChannelID_Generic, false));
+						}
 					}
 					else return;
 
