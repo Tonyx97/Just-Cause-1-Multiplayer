@@ -35,7 +35,7 @@ constexpr bool ENABLE_RAYCAST_DEBUG = false;
 constexpr bool ENABLE_OBJECT_BASE_MAP_DUMP = true;
 constexpr bool ENABLE_DUMPING = false;
 constexpr bool ENABLE_INIT_FROM_MAP_DUMP = true;
-constexpr bool ENABLE_ALL_MAPS_DUMP = false;
+constexpr bool ENABLE_ALL_MAPS_DUMP = true;
 constexpr bool ENABLE_STR_DEBUG = false;
 
 inline std::string get_solution_dir()
@@ -350,20 +350,7 @@ DEFINE_HOOK_THISCALL(object_map_find_string, 0x46ADD0, bool, object_base_map* ma
 	auto res = object_map_find_string_hook(map, hash, out);
 
 	if (res && out->unk > 0 && (g_record_object_map || ENABLE_ALL_MAPS_DUMP))
-	{
-		log(*hash == 0xFBA08D60 ? RED : GREEN, "map.insert<object_base_map::String>(0x{:x}, R\"({})\"); // 0x{:x}", *hash, out->c_str(), RET_ADDRESS);
-
-		/*if (strstr(out->c_str(), "lodimages"))
-		{
-			*out = "gui\\lodimages\\lodimage_07.dds";
-			return false;
-		}*/
-
-		/*if (*hash == 0x2fde8c90)
-		{
-			*out = "pause_off$frontend_loadgame$frontend_settings update_from_profile update_settings$exitgame_dlg_show";
-		}*/
-	}
+		log(GREEN, "map.insert<object_base_map::String>(0x{:x}, R\"({})\"); // 0x{:x}", *hash, out->c_str(), RET_ADDRESS);
 
 	return res;
 }
