@@ -31,11 +31,12 @@ bool ModelSystem::load_rbm(const std::string& filename)
 
 bool ModelSystem::load_rbm(const std::string& filename, const std::vector<uint8_t>& data)
 {
-	jc::stl::string name = util::fs::strip_parent_path(filename);
+	std::string clean_name = util::fs::strip_parent_path(filename);
+	jc::stl::string name = clean_name;
 
 	auto model = jc::this_call<AssetRBM*>(fn::LOAD_RBM_FROM_MEM, this, &name, data.data(), data.size(), 2);
 
-	rbms.insert({ filename, model->get_ref() });
+	rbms.insert({ clean_name, model->get_ref() });
 
 	// i don't know about this but the engine does this lol
 

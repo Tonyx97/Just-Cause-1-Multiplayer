@@ -21,18 +21,20 @@ void TextureSystem::destroy()
 
 bool TextureSystem::load_texture(const std::string& filename)
 {
-	const auto file_data = util::fs::read_bin_file(filename.c_str());
+	const auto file_data = util::fs::read_bin_file(filename);
 
 	if (file_data.empty())
 		return false;
 
-	jc::stl::string name = util::fs::strip_parent_path(filename);
+	std::string clean_name = util::fs::strip_parent_path(filename);
+
+	jc::stl::string name = clean_name;
 
 	shared_ptr<AssetTexture> r;
 
 	jc::v_call(this, vt::LOAD_TEXTURE_FROM_MEM, &r, name, file_data.data(), file_data.size());
 
-	textures.insert({ filename, r });
+	textures.insert({ clean_name, r });
 
 	return true;
 }

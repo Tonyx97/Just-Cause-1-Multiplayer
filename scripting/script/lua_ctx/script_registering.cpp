@@ -161,6 +161,24 @@ void script::register_functions(Script* script)
 
 	vm->add_function("setGravity", [](const svec3& v) { g_physics->set_gravity(v.obj()); });
 	vm->add_function("getGravity", []() { return svec3(g_physics->get_gravity()); });
+
+	/* MODELS */
+
+	vm->add_function("loadRBM", [](luas::state& s, const std::string& rbm)
+	{
+		const auto rsrc_path = s.get_global_var<std::string>(script::globals::RSRC_PATH);
+
+		return g_model_system->load_rbm(rsrc_path + rbm);
+	});
+
+	/* TEXTURES */
+
+	vm->add_function("loadTexture", [](luas::state& s, const std::string& texture)
+	{
+		const auto rsrc_path = s.get_global_var<std::string>(script::globals::RSRC_PATH);
+
+		return g_texture_system->load_texture(rsrc_path + texture);
+	});
 #elif defined(JC_SERVER)
 	// register server functions
 

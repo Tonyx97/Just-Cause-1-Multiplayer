@@ -116,9 +116,6 @@ void DebugUI::render_admin_panel()
 
 		templeit = g_weapon->create_weapon_template(&map);
 
-		g_texture_system->load_texture("dummy_black.dds");
-		g_model_system->load_rbm(model);
-
 		/*g_texture_system->unload_texture("dummy_black.dds");
 		g_model_system->unload_rbm(model);*/
 	}

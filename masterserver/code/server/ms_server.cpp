@@ -31,6 +31,8 @@ void Server::on_receive(const netcp::packet_header& header, serialization_ctx& d
 			.password = _deserialize<bool>(data),
 		});
 
+		base->send_packet(ServerToMsPacket_Info, true);
+
 		break;
 	}
 	default: logt(RED, "Unknown server packet id: {}", header.id);
