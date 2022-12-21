@@ -392,18 +392,6 @@ void DebugUI::render_admin_panel()
 
 				static int faction_to_set = 0;
 
-				static int32_t factions[] =
-				{
-					VehFaction_Agency,
-					VehFaction_Military,
-					VehFaction_Police,
-					VehFaction_Guerrilla,
-					VehFaction_BlackHand,
-					VehFaction_Montano,
-					VehFaction_Rioja,
-					VehFaction_Race,
-				};
-
 				if (ImGui::SliderInt("Faction Paintjob##cv.fac", &faction_to_set, 0, 8))
 					vehicle_net->set_faction(faction_to_set, true);
 			}

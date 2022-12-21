@@ -138,7 +138,7 @@ public:
 	void set_color(uint32_t v);
 	void set_velocity(const vec3& v);
 	void honk();
-	void set_engine_state(bool v, bool sync = true);
+	void set_engine_state(bool v);
 	void set_current_weapon_index(uint32_t v);
 	void set_current_weapon_type(uint32_t v);
 	void for_each_weapon(const vehicle_weapon_fn_t& fn);

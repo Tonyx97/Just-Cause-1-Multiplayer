@@ -220,7 +220,7 @@ void jc::mp::logic::on_tick()
 
 			// debug
 
-//#ifdef JC_DBG
+#ifdef JC_DBG
 			if (g_key->is_key_pressed(VK_F3))
 			{
 				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
@@ -254,7 +254,7 @@ void jc::mp::logic::on_tick()
 					vec3(),
 					vec3()));
 			}
-//#endif
+#endif
 		}
 }
 
