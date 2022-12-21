@@ -70,7 +70,7 @@ void DebugUI::render_admin_panel()
 
 		object_base_map map {};
 		map.insert<object_base_map::Int>(WeaponTemplate::max_burst_delay, 15); // int
-		map.insert<object_base_map::Int>(WeaponTemplate::accuracy_ai, 3); // int
+		map.insert<object_base_map::Int>(WeaponTemplate::animtype, 3); // int
 		map.insert<object_base_map::Int>(WeaponTemplate::use_against_vehicles, 1); // int
 		map.insert<object_base_map::Int>(WeaponTemplate::soundclickid, -1); // int
 		map.insert<object_base_map::Int>(WeaponTemplate::soundreloadid, -1); // int
@@ -88,7 +88,7 @@ void DebugUI::render_admin_panel()
 		map.insert<object_base_map::Int>(WeaponTemplate::max_burst_bullets, 1); // int
 		map.insert<object_base_map::Float>(WeaponTemplate::miss_shrink_distance, 7.00f); // float
 		map.insert<object_base_map::Float>(WeaponTemplate::ammo_velocity, 500.00f); // float - max radius
-		map.insert<object_base_map::Float>(WeaponTemplate::firerate, 1.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::firerate, 0.1f); // float
 		map.insert<object_base_map::Float>(WeaponTemplate::accuracy_ai, 1.00f); // float
 		map.insert<object_base_map::Float>(WeaponTemplate::aim_max_range_ai, 50.00f); // float
 		map.insert<object_base_map::Float>(WeaponTemplate::ammo_area_damage_radius, 50.00f); // float
@@ -106,7 +106,7 @@ void DebugUI::render_admin_panel()
 		map.insert<object_base_map::Float>(WeaponTemplate::miss_max_distance, 2.00f); // float
 		map.insert<object_base_map::Float>(WeaponTemplate::fireeffectpos_y, 0.10f); // float
 		map.insert<object_base_map::Float>(WeaponTemplate::min_click_delay, 1.00f); // float
-		map.insert<object_base_map::Float>(WeaponTemplate::minaimangledeg, 60.00f); // float
+		map.insert<object_base_map::Float>(WeaponTemplate::minaimangledeg, 90.f); // float
 		map.insert<object_base_map::Float>(WeaponTemplate::fireeffectpos_x, 0.01f); // float
 		map.insert<object_base_map::String>(WeaponTemplate::fireeffectid1, R"(VFX_I_Muzzle_Rocket_Launcher)"); // string
 		map.insert<object_base_map::String>(WeaponTemplate::display_name, R"(M488)"); // string
