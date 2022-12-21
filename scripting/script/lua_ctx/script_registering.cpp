@@ -256,7 +256,7 @@ void script::register_functions(Script* script)
 		player->respawn(pos.obj(), rotation, skin, max_hp, max_hp);
 	});
 
-	vm->add_function("createDamageable", [](luas::state& s, const svec3& pos, const std::string& lod, const std::string& pfx)
+	vm->add_function("createDamageable", [](luas::state& s, const svec3& pos, const std::string& lod, const std::string& pfx) -> DamageableNetObject*
 	{
 		const auto script = s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE);
 		const auto owner = script->get_owner();
@@ -267,9 +267,11 @@ void script::register_functions(Script* script)
 
 			return obj->cast<DamageableNetObject>();
 		}
+
+		return nullptr;
 	});
 
-	vm->add_function("createVehicle", [](luas::state& s, const svec3& pos, const std::string& ee_name)
+	vm->add_function("createVehicle", [](luas::state& s, const svec3& pos, const std::string& ee_name) -> VehicleNetObject*
 	{
 		const auto script = s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE);
 		const auto owner = script->get_owner();
@@ -280,6 +282,8 @@ void script::register_functions(Script* script)
 
 			return obj->cast<VehicleNetObject>();
 		}
+
+		return nullptr;
 	});
 
 	vm->add_function("createPickup", [](luas::state& s, const svec3& pos, uint32_t type, const std::string& lod) -> PickupNetObject*
