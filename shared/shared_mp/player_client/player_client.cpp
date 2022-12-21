@@ -53,7 +53,6 @@ PlayerClient::~PlayerClient()
 											p.add(entity->get_hp()); \
 											p.add(entity->get_max_hp())
 
-
 #define SETUP_CREATE_SYNC_PACKET(player, just_joined) \
 								Packet p(PlayerClientPID_ObjectInstanceSync, ChannelID_PlayerClient); \
 								p.add(player, NetObjectActionSyncType_Create); \

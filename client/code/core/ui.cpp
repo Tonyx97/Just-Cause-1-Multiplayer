@@ -660,9 +660,11 @@ void UI::render_default_hud()
 	{
 		if (auto vehicle_net = g_net->get_net_object_by_game_object(veh)->cast<VehicleNetObject>())
 		{
+			const bool engine_on = vehicle_net->get_engine_state();
+
 			if (!g_chat->is_typing())
 				if (g_key->is_key_pressed(KEY_X)) // todojc - debug shit
-					vehicle_net->set_engine_state(!vehicle_net->get_engine_state(), true);
+					vehicle_net->set_engine_state(!engine_on, true);
 
 			vec2 center = vec2(sx - 250.f, sy - 50.f);
 
@@ -693,6 +695,9 @@ void UI::render_default_hud()
 			draw_line(center, curr_velocity_pos, 2.f, vec4(1.f));
 
 			draw_text(FORMATV("{:.1f} km/h", (glm::length(veh->get_velocity()) * 3.6f)).c_str(), center + vec2(0.f, 30.f), 22.f, vec4(1.f), true, jc::nums::QUARTER_PI);
+
+			if (!engine_on)
+				draw_text("Press X to toggle the engine", vec2(sx / 2.f, sy - 20.f), 22.f, vec4(1.f), true, jc::nums::QUARTER_PI);
 		}
 	}
 }

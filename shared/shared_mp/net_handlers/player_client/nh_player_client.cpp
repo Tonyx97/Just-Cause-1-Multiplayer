@@ -153,6 +153,13 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 
 			if (!object)
 				object = g_net->spawn_net_object(nid, type, TransformTR(transform), &p);
+			else
+			{
+				// if the instance is already created make sure we also check the
+				// deserializable creation variables
+
+				object->deserialize_derived_create(&p);
+			}
 
 			if (!object->is_spawned())
 				object->spawn();
