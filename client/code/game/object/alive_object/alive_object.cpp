@@ -13,7 +13,7 @@
 
 namespace jc::alive_object::hook
 {
-	DEFINE_HOOK_THISCALL(set_health, 0x743E30, void, AliveObject* obj, float hp)
+	DEFINE_HOOK_THISCALL(set_health, fn::SET_HEALTH, void, AliveObject* obj, float hp)
 	{
 		if (const auto localplayer = g_net->get_localplayer())
 		{
@@ -106,6 +106,11 @@ void AliveObject::remove_alive_flag(uint16_t v)
 void AliveObject::set_hp(float v)
 {
 	jc::alive_object::hook::set_health_hook(this, v);
+}
+
+void AliveObject::set_hp_hk(float v)
+{
+	jc::this_call(jc::alive_object::fn::SET_HEALTH, this, v);
 }
 
 void AliveObject::set_max_hp(float v)

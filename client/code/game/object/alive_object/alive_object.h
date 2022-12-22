@@ -12,7 +12,8 @@ namespace jc::alive_object
 
 	namespace fn
 	{
-		static constexpr uint32_t INFLICT_DAMAGE = 0x636EC0;
+		static constexpr uint32_t SET_HEALTH		= 0x743E30;
+		static constexpr uint32_t INFLICT_DAMAGE	= 0x636EC0;
 	}
 
 	namespace vt
@@ -38,6 +39,7 @@ public:
 	void set_alive_flag(uint16_t v);
 	void remove_alive_flag(uint16_t v);
 	void set_hp(float v);
+	void set_hp_hk(float v);
 	void set_max_hp(float v);
 	void set_invincible(bool v);
 
