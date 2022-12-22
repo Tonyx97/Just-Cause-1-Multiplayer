@@ -169,7 +169,12 @@ void script::register_functions(Script* script)
 
 	/* PLAYERS */
 
-	vm->add_function("warpLocalPlayer", [](const svec3& pos) { return g_net->get_localplayer()->get_character()->set_position(pos.obj()); });
+	vm->add_function("warpLocalPlayer", [](const svec3& pos)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto character = localplayer->get_character())
+				return character->set_position(pos.obj());
+	});
 
 	/* PHYSICS */
 
