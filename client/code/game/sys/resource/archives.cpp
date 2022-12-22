@@ -164,6 +164,10 @@ void Archives::parse_sarcs()
 
 					break;
 				}
+				case 0x4D494E41:
+				{
+					break;
+				}
 				}
 			}
 		}, asset_list));
@@ -224,10 +228,23 @@ std::vector<uint8_t> Archives::get_asset_data(const std::string& name)
 {
 	const auto it = metadata.find(name);
 
-	if (it == metadata.end())
-		return {};
+	AssetInfo info {};
 
-	const auto& info = it->second;
+	if (it == metadata.end())
+	{
+		// if it's not in the general metadata, try to get the data from the single files
+
+		auto entry = get_asset(name);
+
+		if (entry.arc_index == -1)
+			return {};
+
+		info.name = name;
+		info.arc_index = entry.arc_index;
+		info.offset = entry.offset;
+		info.size = entry.size;
+	}
+	else info = it->second;
 
 	if (info.arc_index < 0 || info.arc_index >= MAX_ARCHIVES)
 		return {};

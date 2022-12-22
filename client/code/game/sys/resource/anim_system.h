@@ -12,7 +12,8 @@ namespace jc::anim_system
 
 	namespace fn
 	{
-		static constexpr uint32_t LOAD_ANIM_FROM_MEM = 0x55F170;
+		static constexpr uint32_t LOAD_ANIM_FROM_MEM	= 0x55F170;
+		static constexpr uint32_t LOAD_ANIM_ASYNC		= 0x55EE80;
 	}
 }
 
@@ -24,6 +25,8 @@ public:
 	void destroy();
 
 	bool load_anim(const std::string& filename);
+	bool load_anim(const std::string& filename, const std::vector<uint8_t>& data);
+	bool load_anim_async(const std::string& filename);
 	bool unload_anim(const std::string& filename);
 };
 

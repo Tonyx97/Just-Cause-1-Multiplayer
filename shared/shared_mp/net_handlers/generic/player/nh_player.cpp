@@ -181,6 +181,17 @@ PacketResult nh::player::stance_and_movement(const Packet& p)
 
 		break;
 	}
+	case PlayerStanceID_Animation:
+	{
+		const auto anim_name = p.get_str();
+		const auto speed = p.get_float();
+		const auto unk0 = p.get_bool();
+		const auto unk1 = p.get_bool();
+
+		player->set_animation(anim_name, speed, unk0, unk1);
+
+		break;
+	}
 	case PlayerStanceID_PlayerMoveState:
 	{
 		const auto state_id = p.get_i32();

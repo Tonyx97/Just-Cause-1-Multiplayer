@@ -167,11 +167,17 @@ void jc::test_units::test_0()
 
 	jc::write(0x76ui8, 0x4C48A3);
 	jc::write(0x76ui8, 0x4C48DB);*/
-
+	
 	static shared_ptr<Vehicle> vehicle;
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
+		const std::string anim = "dance_hooker_NPC_2.anim";
+
+		g_anim_system->load_anim_async(anim);
+
+		local_char->set_animation("dance_hooker_NPC_2.anim", 0.2f, true, false);
+
 		/*object_base_map map {};
 
 		const auto m0 = mat4{ 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
@@ -352,20 +358,22 @@ void jc::test_units::test_0()
 		//log(RED, "current {}", --aaa);
 	}
 
-	//if (auto entry = g_archives->get_asset_entry(R"(E:\SteamLibrary\steamapps\common\Just Cause\Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
+	//if (auto entry = g_archives->get_asset_entry(R"(Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_1.anim)"))
 	//	log(YELLOW, "{:x} {:x} {:x}", entry->hash, entry->offset, entry->size);
 
 	static std::vector<shared_ptr<Weapon>> trash;
 
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		if (auto veh = local_char->get_vehicle())
+		local_char->set_animation("dance_hooker_NPC_1.anim", 0.2f, true, false);
+
+		/*if (auto veh = local_char->get_vehicle())
 		{
 			if (const auto seat = veh->get_roof_seat())
 			{
 				seat->warp_character(local_char, true);
 			}
-		}
+		}*/
 
 		//log(PURPLE, "grenade: {:x}", ptr(grenade));
 

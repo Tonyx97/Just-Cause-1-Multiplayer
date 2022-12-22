@@ -25,6 +25,7 @@ DEFINE_ENUM(PlayerStanceID, uint8_t)
 {
 	PlayerStanceID_BodyStance,
 	PlayerStanceID_ArmsStance,
+	PlayerStanceID_Animation,
 	PlayerStanceID_PlayerMoveState,
 	PlayerStanceID_Crouch,
 	PlayerStanceID_Movement,
@@ -201,6 +202,7 @@ public:
 	void set_state_id(int32_t id);
 	void set_body_stance_id(uint32_t id);
 	void set_arms_stance_id(uint32_t id);
+	void set_animation(const std::string& anim_name, float speed, bool unk0, bool unk1);
 	void set_head_rotation(const vec3& v, float interpolation);
 	void do_punch();
 	void force_launch(const vec3& vel, const vec3& dir, float f1, float f2);

@@ -451,6 +451,11 @@ void Player::set_arms_stance_id(uint32_t id)
 	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_arms_stance(id); });
 }
 
+void Player::set_animation(const std::string& anim_name, float speed, bool unk0, bool unk1)
+{
+	IF_CLIENT_AND_VALID_CHARACTER_DO([&](Character* c) { c->set_animation(anim_name, speed, unk0, unk1); });
+}
+
 void Player::set_head_rotation(const vec3& v, float interpolation)
 {
 	dyn_info.head_rotation = v;

@@ -176,6 +176,17 @@ void script::register_functions(Script* script)
 				return character->set_position(pos.obj());
 	});
 
+	vm->add_function("setLocalPlayerAnimation", [](const std::string& anim_name, float speed, bool unk0, bool unk1)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto character = localplayer->get_character())
+				character->set_animation(anim_name + ".anim", speed, unk0, unk1, true);
+	});
+
+	/* ANIMS */
+
+	vm->add_function("loadAnimation", [](const std::string& anim_name) { return g_anim_system->load_anim_async(anim_name + ".anim"); });
+
 	/* PHYSICS */
 
 	vm->add_function("setGravity", [](const svec3& v) { g_physics->set_gravity(v.obj()); });

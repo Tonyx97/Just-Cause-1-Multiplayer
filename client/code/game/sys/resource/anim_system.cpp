@@ -26,15 +26,31 @@ bool AnimSystem::load_anim(const std::string& filename)
 	if (file_data.empty())
 		return false;
 
-	jc::stl::string name = util::fs::strip_parent_path(filename);
+	return load_anim(filename, file_data);
+}
+
+bool AnimSystem::load_anim(const std::string& filename, const std::vector<uint8_t>& data)
+{
+	std::string clean_name = util::fs::strip_parent_path(filename);
+
+	jc::stl::string name = clean_name;
 
 	shared_ptr<AssetAnim> r;
 
-	jc::this_call(fn::LOAD_ANIM_FROM_MEM, this, &r, &name, file_data.data(), file_data.size());
+	jc::this_call(fn::LOAD_ANIM_FROM_MEM, this, &r, &name, data.data(), data.size());
 
-	anims.insert({ filename, r });
+	anims.insert({ clean_name, r });
 
 	return true;
+}
+
+bool AnimSystem::load_anim_async(const std::string& filename)
+{
+	ptr shared_ptr_temp[2] = { 0 };
+
+	const jc::stl::string _filename = filename;
+
+	return !!jc::this_call<ptr*>(fn::LOAD_ANIM_ASYNC, this, shared_ptr_temp, &_filename);
 }
 
 bool AnimSystem::unload_anim(const std::string& filename)

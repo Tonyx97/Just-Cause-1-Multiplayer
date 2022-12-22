@@ -664,11 +664,14 @@ void Character::set_grenades_ammo(int32_t v)
 	jc::write(v, this, jc::character::GRENADES_AMMO);
 }
 
-void Character::set_animation(const std::string& name, float speed, bool unk0, bool unk1)
+void Character::set_animation(const std::string& name, float speed, bool unk0, bool unk1, bool sync)
 {
 	const jc::stl::string str = name;
 
 	jc::this_call<bool>(jc::character::fn::SET_ANIMATION, this, &str, unk0, speed, unk1);
+
+	if (sync)
+		g_net->send(Packet(PlayerPID_StanceAndMovement, ChannelID_Generic, PlayerStanceID_Animation, name, speed, unk0, unk1));
 }
 
 void Character::set_grenade_time(float v)
