@@ -56,11 +56,18 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 	{
 		g_registry.init();
 
-		char nick[256] = { 0 };
+		auto nick = g_registry.get_string("nickname");
 
-		auto len = DWORD(256);
+		if (nick.empty())
+		{
+			char _nick[256] = { 0 };
 
-		GetUserNameA(nick, &len);	// todojc
+			auto len = DWORD(256);
+
+			GetUserNameA(_nick, &len);
+
+			nick = _nick;
+		}
 
 		// initialize game systems/managers
 
