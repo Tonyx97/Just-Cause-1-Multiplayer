@@ -1,5 +1,0 @@
-E:\Projects\JustCauseMP\bins\launcher\launcher.pdb
-E:\Projects\JustCauseMP\bins\launcher\Assets\cover.png
-E:\Projects\JustCauseMP\bins\launcher\Assets\icon.png
-E:\Projects\JustCauseMP\bins\launcher\launcher.dll.config
-E:\Projects\JustCauseMP\bins\launcher\launcher.exe

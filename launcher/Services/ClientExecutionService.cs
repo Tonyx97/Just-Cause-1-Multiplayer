@@ -12,16 +12,20 @@ namespace launcher.Services
         public void LockLauncher(Process process);
         public Task WaitForUnlockLauncher();
         public void ForceUnlockLauncher();
-
+        
+        
         public CancellationTokenSource CancellationTokenSource { get; }
+        public Process? Process { get; }
     }
 
     public class ClientExecutionService : IClientExecutionService
     {
-        private Process? lockedProcess;
+        public Process? lockedProcess;
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
         CancellationTokenSource IClientExecutionService.CancellationTokenSource => cancellationTokenSource;
+
+        Process? IClientExecutionService.Process => lockedProcess;
 
         public void ForceUnlockLauncher()
         {
@@ -31,7 +35,7 @@ namespace launcher.Services
 
             // Kill and dispose the process
             //
-            if(lockedProcess != null)
+            if (lockedProcess != null)
             {
                 lockedProcess.Kill();
                 lockedProcess.Dispose();

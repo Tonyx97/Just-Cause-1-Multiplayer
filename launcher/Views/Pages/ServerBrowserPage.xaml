@@ -58,7 +58,6 @@
             IsEnabled="{Binding ViewModel.FetchingServerDataInProgress, Converter={StaticResource InverseBooleanConverter}}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Title" Width="*" Binding="{Binding Title}"/>
-                <DataGridTextColumn Header="Address" Width="*" Binding="{Binding IpAddress}"/>
                 <DataGridTextColumn Header="Players"  Width="*" Binding="{Binding PlayerCount}"/>
                 <DataGridTextColumn Header="Max Players"  Width="*" Binding="{Binding MaxPlayers}"/>
                 <DataGridTextColumn Header="Game Mode"  Width="*" Binding="{Binding GameMode}"/>
@@ -158,10 +157,18 @@
                 CommandParameter="{Binding ViewModel.SelectedServer}"/>
         </Grid>
         <ui:Button
+            Name="KillGameButton"
+            Grid.Column="2"
+            Content="Kill game"
+            HorizontalContentAlignment="Stretch"
+            Command="{Binding ViewModel.KillGameCommand}" Margin="0,93,0,0" VerticalAlignment="Top" Grid.Row="2" HorizontalAlignment="Center" />
+        <!-- IsEnabled="{Binding ViewModel.IsKillGameButtonEnabled}" -->
+        <ui:Button
+            Name="RefreshButton"
             Grid.Column="2"
             Content="Refresh servers"
             HorizontalContentAlignment="Stretch"
             Command="{Binding ViewModel.RefreshServersCommand}"
-            CommandParameter="{Binding ViewModel.SelectedServer}" Margin="0,70,0,0" VerticalAlignment="Top" Grid.Row="2" HorizontalAlignment="Center"/>
+            CommandParameter="{Binding ViewModel.SelectedServer}" Margin="0,57,0,0" VerticalAlignment="Top" Grid.Row="2" HorizontalAlignment="Center"/>
     </Grid>
 </ui:UiPage>

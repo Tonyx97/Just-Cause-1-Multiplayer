@@ -1,5 +1,0 @@
-E:\Projects\JustCauseMP\bins\launcher\Debug\net6.0-windows\win-x64\publish\launcher.pdb
-E:\Projects\JustCauseMP\bins\launcher\Debug\net6.0-windows\win-x64\publish\Assets\cover.png
-E:\Projects\JustCauseMP\bins\launcher\Debug\net6.0-windows\win-x64\publish\Assets\icon.png
-E:\Projects\JustCauseMP\bins\launcher\Debug\net6.0-windows\win-x64\publish\launcher.dll.config
-E:\Projects\JustCauseMP\bins\launcher\Debug\net6.0-windows\win-x64\publish\launcher.exe

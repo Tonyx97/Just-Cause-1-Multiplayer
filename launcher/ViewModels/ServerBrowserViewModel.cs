@@ -8,6 +8,7 @@ using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace launcher.ViewModels
 {
     public partial class ServerBrowserViewModel : ObservableObject, INavigationAware
     {
-        private bool _isInitialized = false;
+        public bool IsKillGameButtonEnabled { get; set; }
 
         private readonly ILogger<ServerBrowserViewModel> _logger;
         private readonly IServerListService _serverService;
@@ -70,15 +71,26 @@ namespace launcher.ViewModels
         }
 
         [ICommand]
+        private void KillGame()
+        {
+            if (_clientExecutionService.Process != null)
+            {
+                _clientExecutionService.Process.Kill();
+            }
+        }
+
+        [ICommand]
         [MethodImpl(MethodImplOptions.NoOptimization)]
         private async void JoinServer(ServerInformation? selectedServer)
         {
             // Can't join a server if we didn't select one
             if (selectedServer is null) return;
 
+			var jcmpKey = "HKEY_CURRENT_USER\\Software\\JCMP\\Game";
+			Registry.SetValue(jcmpKey, "ip", selectedServer.IpAddress);
 
-            // Handle if game settings, username or gamepath were not set up.
-            GameSettings? gameSettings = await _repositoryService.FetchDataAsync();
+			// Handle if game settings, username or gamepath were not set up.
+			GameSettings ? gameSettings = await _repositoryService.FetchDataAsync();
 
             if (gameSettings is null)
             {
@@ -136,11 +148,24 @@ namespace launcher.ViewModels
             processStartInfo.FileName = gameSettings.GamePath;
             processStartInfo.WorkingDirectory = gameDirectoryPath;
 
-            Process.Start(processStartInfo);
+            IsKillGameButtonEnabled = true;
+
+            Process? process = Process.Start(processStartInfo);
+
+            process.Exited += OnExitEventHandler;
+            
+            if (process != null)
+                _clientExecutionService.LockLauncher(process);
 
             ShowGameLauncherPopup();
 
             _navigationService.Navigate(typeof(ServerBrowserPage));
+        }
+
+        public void OnExitEventHandler(object? sender, EventArgs e)
+        {
+            IsKillGameButtonEnabled = false;
+            _clientExecutionService.ForceUnlockLauncher();
         }
 
         private void ShowGameLauncherPopup()
