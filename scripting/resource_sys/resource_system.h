@@ -22,6 +22,10 @@ private:
 	//
 	std::unordered_map<std::string, std::unordered_map<Resource*, std::vector<ScriptEventInfo>>> events;
 
+	// commands list
+	//
+	std::unordered_map<std::string, std::unordered_map<Resource*, std::vector<ScriptCmdInfo>>> commands;
+
 	// timers list
 	//
 	std::unordered_map<Resource*, std::unordered_set<ScriptTimer*>> timers;
@@ -44,7 +48,7 @@ public:
 
 	void destroy();
 	void refresh();
-	void clear_resource_events(Resource* rsrc);
+	void clear_resource(Resource* rsrc);
 	void cancel_event();
 	void update();
 
@@ -76,11 +80,15 @@ public:
 		return true;
 	}
 
+	bool call_command(const std::string& cmd, const std::vector<std::any>& args);
+
 	bool is_resource_valid(const std::string& rsrc_name) const;
 	bool trigger_remote_event(const std::string& name, const std::vector<std::any>& va);
 	bool trigger_non_remote_event(const std::string& name, const luas::variadic_args& va);
 	bool add_event(const std::string& name, luas::lua_fn& fn, Script* script, bool allow_remote_trigger);
 	bool remove_event(const std::string& name, Script* script);
+	bool add_command(const std::string& name, luas::lua_fn& fn, Script* script);
+	bool remove_command(const std::string& name, Script* script);
 
 	ScriptTimer* add_timer(luas::lua_fn& fn, Resource* rsrc, std::vector<std::any>& args, int interval, int times);
 	bool remove_timer(ScriptTimer* timer, Resource* rsrc);

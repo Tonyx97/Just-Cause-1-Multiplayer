@@ -27,6 +27,7 @@
 #include <unordered_set>
 #include <stack>
 #include <any>
+#include <ranges>
 
 #include <prof/prof.h>
 

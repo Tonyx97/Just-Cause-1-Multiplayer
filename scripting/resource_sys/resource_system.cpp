@@ -177,12 +177,17 @@ void ResourceSystem::refresh()
 #endif
 }
 
-void ResourceSystem::clear_resource_events(Resource* rsrc)
+void ResourceSystem::clear_resource(Resource* rsrc)
 {
 	// clear events
 
-	for (auto& [_, rsrc_events] : events)
+	for (auto& rsrc_events : events | std::views::values)
 		rsrc_events.erase(rsrc);
+
+	// clear commands
+
+	for (auto& rsrc_cmds : commands | std::views::values)
+		rsrc_cmds.erase(rsrc);
 
 	// clear timers
 
@@ -228,6 +233,20 @@ void ResourceSystem::update()
 			return true;
 		});
 	}
+}
+
+bool ResourceSystem::call_command(const std::string& cmd, const std::vector<std::any>& args)
+{
+	if (auto it = commands.find(cmd); it != commands.end())
+	{
+		for (const auto& scripts : it->second | std::views::values)
+			for (auto& [s, cmd_fn] : scripts)
+				cmd_fn.call(args);
+
+		return true;
+	}
+
+	return false;
 }
 
 bool ResourceSystem::is_resource_valid(const std::string& rsrc_name) const
@@ -335,6 +354,92 @@ bool ResourceSystem::remove_event(const std::string& name, Script* script)
 
 					if (rsrc_events.empty())
 						events.erase(name);
+
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+bool ResourceSystem::add_command(const std::string& name, luas::lua_fn& fn, Script* script)
+{
+	if (!script)
+		return false;
+
+	auto rsrc_owner = script->get_owner();
+	if (!rsrc_owner)
+		return false;
+
+	ScriptCmdInfo new_entry =
+	{
+		.script = script,
+		.fn = std::move(fn),
+	};
+
+	// find all resources that register this cmd
+
+	if (auto it_cmd = commands.find(name); it_cmd != commands.end())
+	{
+		auto& rsrc_cmd_info = it_cmd->second;
+
+		// find the script's resource in the cmd resource list
+
+		if (auto it_rsrc_cmd = rsrc_cmd_info.find(rsrc_owner); it_rsrc_cmd != rsrc_cmd_info.end())
+		{
+			auto& rsrc_script_cmds = it_rsrc_cmd->second;
+
+			// do not register the cmd in the same script
+
+			for (const auto& cmd_info : rsrc_script_cmds)
+				if (cmd_info.script == script)
+					return false;
+
+			rsrc_script_cmds.push_back(std::move(new_entry));
+		}
+		else rsrc_cmd_info[rsrc_owner].push_back(std::move(new_entry));
+	}
+	else commands[name][rsrc_owner].push_back(std::move(new_entry));
+
+	return true;
+}
+
+bool ResourceSystem::remove_command(const std::string& name, Script* script)
+{
+	if (!script)
+		return false;
+
+	auto rsrc_owner = script->get_owner();
+	if (!rsrc_owner)
+		return false;
+
+	// find all resources that register this event
+
+	if (auto it_cmd = commands.find(name); it_cmd != commands.end())
+	{
+		auto& rsrc_cmds = it_cmd->second;
+
+		// find the script's resource in the event resource list
+
+		if (auto it_rsrc_cmd = rsrc_cmds.find(rsrc_owner); it_rsrc_cmd != rsrc_cmds.end())
+		{
+			auto& rsrc_script_cmds = it_rsrc_cmd->second;
+
+			for (auto it = rsrc_script_cmds.begin(); it != rsrc_script_cmds.end(); ++it)
+			{
+				// make sure we remove the event from the correct script
+
+				if (it->script == script)
+				{
+					rsrc_script_cmds.erase(it);
+
+					if (rsrc_script_cmds.empty())
+						rsrc_cmds.erase(rsrc_owner);
+
+					if (rsrc_cmds.empty())
+						commands.erase(name);
 
 					return true;
 				}

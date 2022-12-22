@@ -25,6 +25,13 @@ struct ScriptEventInfo
 	bool allow_remote_trigger;
 };
 
+struct ScriptCmdInfo
+{
+	Script* script;
+
+	luas::lua_fn fn;
+};
+
 class Script
 {
 private:

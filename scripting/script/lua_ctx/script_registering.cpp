@@ -157,6 +157,20 @@ void script::register_functions(Script* script)
 	vm->add_function("isKeyReleased", [](int key) { return g_key->is_key_released(key); });
 	vm->add_function("getMouseWheel", []() { return g_key->get_mouse_wheel_value(); });
 
+	vm->add_function("addCommand", [](luas::state& s, const std::string& cmd, luas::lua_fn& fn)
+	{
+		return g_rsrc->add_command(cmd, fn, s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE));
+	});
+
+	vm->add_function("removeCommand", [](luas::state& s, const std::string& cmd)
+	{
+		return g_rsrc->remove_command(cmd, s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE));
+	});
+
+	/* PLAYERS */
+
+	vm->add_function("warpLocalPlayer", [](const svec3& pos) { return g_net->get_localplayer()->get_character()->set_position(pos.obj()); });
+
 	/* PHYSICS */
 
 	vm->add_function("setGravity", [](const svec3& v) { g_physics->set_gravity(v.obj()); });
@@ -346,7 +360,11 @@ void script::register_functions(Script* script)
 	vm->add_function("getGravity", []() { return svec3(g_net->get_settings().get_gravity()); });
 #endif
 
-	// resgister shared functions
+	// register shared functions
+	// register shared functions
+	// register shared functions
+	// register shared functions
+	// register shared functions
 
 	/* CLASSES */
 

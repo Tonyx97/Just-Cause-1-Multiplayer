@@ -131,7 +131,7 @@ ResourceResult Resource::stop()
 
 	logt(YELLOW, "Stopping '{}'... ", name);
 
-	g_rsrc->clear_resource_events(this);
+	g_rsrc->clear_resource(this);
 
 	for (const auto& [script_name, script] : scripts)
 		script->stop();

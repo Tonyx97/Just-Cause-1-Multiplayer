@@ -17,8 +17,12 @@ namespace cmd
 		if (auto it = g_cmds.find(cmd); it != g_cmds.end())
 			return it->second(params);
 
-		return Cmd_Invalid;
-		//return (g_resource->call_command(cmd, params) ? CMD_EXEC_OK : CMD_EXEC_INVALID_CMD);
+		std::vector<std::any> in_params;
+
+		for (const auto& param : params)
+			in_params.emplace_back(param);
+
+		return g_rsrc->call_command(cmd, in_params) ? Cmd_Ok : Cmd_Invalid;
 	}
 
 	CmdExecRes toggle_netstats(cmd_params params)
