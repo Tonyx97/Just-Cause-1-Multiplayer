@@ -111,7 +111,8 @@ DEFINE_HOOK_THISCALL(play_ambience_2d_sounds, 0x656ED0, jc::stl::string*, int a1
 	const auto res = play_ambience_2d_sounds_hook(a1, a2);
 
 	if (a2)
-		*a2 = "";
+		if (!strstr(a2->c_str(), "MUSIC_"))
+			*a2 = "";
 
 	return res;
 }

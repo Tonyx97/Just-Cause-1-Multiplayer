@@ -338,8 +338,8 @@ DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
 	// set our settings (todojc - some of these features will be customizable
 	// from the launcher)
 
-	g_settings->set_float(SettingType_MusicVolume, 0.f);
 	g_settings->set_float(SettingType_DialogueVolume, 0.f);
+	g_settings->set_float(SettingType_MusicVolume, float(g_registry.get_int("MusicVolume")));
 	g_settings->set_float(SettingType_FxVolume, float(g_registry.get_int("FxVolume")));
 	g_settings->set_int(SettingType_Subtitles, 0);
 	g_settings->set_int(SettingType_ActionCamera, 0);
