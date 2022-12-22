@@ -166,9 +166,6 @@ namespace launcher.Services.Connection
                         var max_players = BitConverter.ToUInt32(read_data, (int)data_offset);
 						data_offset += 0x4;
 
-						MessageBox.Show(server_refreshrate.ToString());
-						MessageBox.Show(max_players.ToString());
-
 						var server_password_protected = BitConverter.ToBoolean(read_data, (int)data_offset);
                         data_offset += 0x1;
 

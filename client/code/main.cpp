@@ -54,9 +54,7 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 	if (!initialized)
 	{
-		g_registry.init();
-
-		auto nick = g_registry.get_string("nickname");
+		auto nick = g_registry.get_string("Username");
 
 		if (nick.empty())
 		{
@@ -262,10 +260,6 @@ DEFINE_HOOK_THISCALL_S(tick, 0x4036F0, bool, void* _this)
 
 			resource_system::destroy_resource_system();
 
-			// close registry
-
-			g_registry.destroy();
-
 			log(GREEN, "Unloaded from hook successfully");
 
 			unload_mod = false;
@@ -344,17 +338,17 @@ DEFINE_HOOK_THISCALL_S(init_window_context, 0x403EC0, bool, ptr ctx)
 	// set our settings (todojc - some of these features will be customizable
 	// from the launcher)
 
-	g_settings->set_float(SettingType_FxVolume, 1.f);
 	g_settings->set_float(SettingType_MusicVolume, 0.f);
 	g_settings->set_float(SettingType_DialogueVolume, 0.f);
-	g_settings->set_int(SettingType_MotionBlur, 0);
+	g_settings->set_float(SettingType_FxVolume, float(g_registry.get_int("FxVolume")));
 	g_settings->set_int(SettingType_Subtitles, 0);
 	g_settings->set_int(SettingType_ActionCamera, 0);
-	g_settings->set_int(SettingType_HeatHaze, 0);
-	g_settings->set_int(SettingType_TextureResolution, 2);
-	g_settings->set_int(SettingType_SceneComplexity, 2);
-	g_settings->set_int(SettingType_WaterQuality, 2);
-	g_settings->set_int(SettingType_PostFX, 1);
+	g_settings->set_int(SettingType_MotionBlur, g_registry.get_int("MotionBlur"));
+	g_settings->set_int(SettingType_HeatHaze, g_registry.get_int("HeatHaze"));
+	g_settings->set_int(SettingType_TextureResolution, g_registry.get_int("TextureResolution"));
+	g_settings->set_int(SettingType_SceneComplexity, g_registry.get_int("SceneComplexity"));
+	g_settings->set_int(SettingType_WaterQuality, g_registry.get_int("WaterQuality"));
+	g_settings->set_int(SettingType_PostFX, g_registry.get_int("PostFx"));
 
 	// disable the game's HUD to use our own
 	
@@ -451,6 +445,8 @@ void dll_thread()
 
 	log(GREEN, "Initializing at {:x}...", ptr(g_module));
 
+	g_registry.init();
+
 	util::init();
 	jc::hooks::init();
 
@@ -510,6 +506,10 @@ void dll_thread()
 	jc::hooks::unhook_queued();
 	jc::hooks::destroy();
 	jc::bug_ripper::destroy();
+
+	// close registry
+
+	g_registry.destroy();
 
 	// close console and unload dll
 

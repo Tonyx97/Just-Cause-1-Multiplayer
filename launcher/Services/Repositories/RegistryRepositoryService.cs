@@ -9,7 +9,7 @@ namespace launcher.Services.Repositories
     public class RegistryRepositoryService : IRepositoryService
     {
         private readonly static string _softwareKey = "SOFTWARE";
-        private readonly static string _directoryKey = "JCMP1";
+        private readonly static string _directoryKey = "JCMP";
         private readonly static string _gameDirectoryKey = "Game";
 
         // IRepositoryService
