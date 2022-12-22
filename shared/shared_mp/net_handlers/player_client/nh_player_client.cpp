@@ -130,8 +130,7 @@ PacketResult nh::player_client::object_instance_sync(const Packet& p)
 			// if the player just joined then make sure
 			// it's joined in this client and call onPlayerJoin event
 
-			if (just_joined)
-				pc->set_joined(true);
+			pc->set_joined(true, just_joined);
 
 			break;
 		}

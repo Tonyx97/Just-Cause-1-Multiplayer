@@ -53,7 +53,7 @@ public:
 	~PlayerClient();
 
 	void set_initialized(bool v);
-	void set_joined(bool v);
+	void set_joined(bool v, bool trigger_event = false);
 	void set_nick(const std::string& v);
 
 	bool is_initialized() const { return initialized; }

@@ -275,14 +275,14 @@ void PlayerClient::set_initialized(bool v)
 	initialized = v;
 }
 
-void PlayerClient::set_joined(bool v)
+void PlayerClient::set_joined(bool v, bool trigger_event)
 {
 	const bool was_joined = v != joined;
 
 	joined = v;
 
 #ifdef JC_CLIENT
-	if (was_joined)
+	if (was_joined && trigger_event)
 		g_rsrc->trigger_event(script::event::ON_PLAYER_JOIN, player);
 #else
 	if (joined)
