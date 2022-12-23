@@ -158,6 +158,7 @@ void script::register_functions(Script* script)
 	vm->add_function("isKeyPressed", [](int key) { return g_key->is_key_pressed(key); });
 	vm->add_function("isKeyReleased", [](int key) { return g_key->is_key_released(key); });
 	vm->add_function("getMouseWheel", []() { return g_key->get_mouse_wheel_value(); });
+	vm->add_function("blockGameInput", [](bool blocked) { return g_key->block_input(blocked); });
 
 	vm->add_function("addCommand", [](luas::state& s, const std::string& cmd, luas::lua_fn& fn)
 	{
@@ -171,25 +172,32 @@ void script::register_functions(Script* script)
 
 	/* PLAYERS */
 
-	vm->add_function("setLocalPlayerHP", [](float v)
+	vm->add_function("setLocalHealth", [](float v)
 	{
 		if (const auto localplayer = g_net->get_localplayer())
 			if (const auto character = localplayer->get_character())
 				return character->set_hp_hk(v);
 	});
 
-	vm->add_function("warpLocalPlayer", [](const svec3& pos)
+	vm->add_function("warpLocal", [](const svec3& pos)
 	{
 		if (const auto localplayer = g_net->get_localplayer())
 			if (const auto character = localplayer->get_character())
 				return character->set_position(pos.obj());
 	});
 
-	vm->add_function("setLocalPlayerAnimation", [](const std::string& anim_name, float speed, bool unk0, bool unk1)
+	vm->add_function("setLocalAnimation", [](const std::string& anim_name, float speed, bool unk0, bool unk1)
 	{
 		if (const auto localplayer = g_net->get_localplayer())
 			if (const auto character = localplayer->get_character())
 				character->set_animation(anim_name + ".anim", speed, unk0, unk1, true);
+	});
+
+	vm->add_function("setLocalWeapon", [](uint8_t id)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto character = localplayer->get_character())
+				character->set_weapon(id, false);
 	});
 
 	/* ANIMS */
