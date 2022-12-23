@@ -1,6 +1,9 @@
 #include <defs/standard.h>
+#include <defs/libs.h>
 
 #include <ms/ms.h>
+
+#include <conncpp.hpp>
 
 int main()
 {

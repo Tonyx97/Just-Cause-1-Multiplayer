@@ -21,6 +21,8 @@
 #include <game/object/camera/camera.h>
 #include <game/object/character/character.h>
 #elif defined(JC_SERVER)
+#include <sql.h>
+
 #include <shared_mp/player_client/player_client.h>
 #endif
 

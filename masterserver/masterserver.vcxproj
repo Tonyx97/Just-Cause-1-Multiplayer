@@ -63,6 +63,7 @@
     <Import Project="..\utils\utils.vcxitems" Label="Shared" />
     <Import Project="..\tcp_client\tcp_client.vcxitems" Label="Shared" />
     <Import Project="..\thread_system\thread_system.vcxitems" Label="Shared" />
+    <Import Project="..\sql\sql.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -81,13 +82,13 @@
     <OutDir>$(SolutionDir)bins\ms\</OutDir>
     <IntDir>build\</IntDir>
     <IncludePath>$(ProjectDir)code\;$(SolutionDir)external\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)external\lib\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)bins\ms\</OutDir>
     <IntDir>build\</IntDir>
     <IncludePath>$(ProjectDir)code\;$(SolutionDir)external\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)external\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)external\lib\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

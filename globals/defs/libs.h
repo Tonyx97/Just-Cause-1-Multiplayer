@@ -19,6 +19,12 @@
 #pragma comment(lib, "lua544_static.lib")
 #endif
 
+// masterserver and server libs
+
+#if defined(JC_MASTERSV) || defined(JC_SERVER)
+#pragma comment(lib, "mariadbcpp.lib")
+#endif
+
 // asset converter libs
 
 #if defined(JC_ASSET_CONV)
