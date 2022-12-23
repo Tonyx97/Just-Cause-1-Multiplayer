@@ -26,7 +26,7 @@
 #include <shared_mp/player_client/player_client.h>
 #endif
 
-#define NET_OBJ_CHECK(obj)								if (!g_net->has_net_object(obj)) return
+#define NET_OBJ_CHECK(obj, ...)								if (!g_net->has_net_object(obj)) return __VA_ARGS__
 #define NET_OBJ_CHECK_DO(obj, action, ...)				if (g_net->has_net_object(obj)) obj->action(__VA_ARGS__); else return
 #define NET_OBJ_CHECK_RET(obj, on_true, on_false)		return g_net->has_net_object(obj) ? obj->on_true() : on_false
 #define NET_OBJ_CHECK_RET_V(obj, on_true, on_false)		return g_net->has_net_object(obj) ? on_true : on_false
@@ -257,13 +257,20 @@ void script::register_functions(Script* script)
 		return g_factory->create_objective(pos.obj(), _color);
 	});
 
+	vm->add_function("getGameObjectPosition", [](ObjectBase* obj)
+	{
+		return svec3(obj->get_position());
+	});
+
 #elif defined(JC_SERVER)
 	// register server functions
 
 	/* ACL */
 
-	vm->add_function("hasPlayerACL", [](Player* player, const std::string& acl)
+	vm->add_function("hasPlayerACL", [](Player* player, const std::string& acl) -> bool
 	{
+		NET_OBJ_CHECK(player, false);
+
 		return player->get_client()->has_acl(acl);
 	});
 
@@ -529,6 +536,11 @@ void script::register_functions(Script* script)
 		});
 
 		return out;
+	});
+
+	vm->add_function("getPlayerVehicle", [](Player* player)
+	{
+		NET_OBJ_CHECK_RET(player, get_vehicle, nullptr);
 	});
 
 	/* UTILS */

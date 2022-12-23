@@ -159,10 +159,10 @@ namespace launcher.Services.Connection
                             data_offset += player_namee_length;
                         }
 
-                        var server_refreshrate = (uint)read_data[data_offset];
+                        var server_refreshrate = BitConverter.ToInt32(read_data, (int)data_offset);
                         data_offset += 0x4;
 
-                        var max_players = (uint)read_data[data_offset];
+                        var max_players = BitConverter.ToUInt32(read_data, (int)data_offset);
                         data_offset += 0x4;
 
                         var server_password_protected = BitConverter.ToBoolean(read_data, (int)data_offset);

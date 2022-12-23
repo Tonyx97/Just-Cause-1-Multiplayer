@@ -631,13 +631,13 @@ void DebugUI::overlay_debug()
 
 		if (show_top_dbg)
 		{
-			ImGui::Text("------------------");
+			/*ImGui::Text("------------------");
 			ImGui::Text("Closest HP ptr: 0x%x", closest_hp_ptr);
 			ImGui::Text("Facing object: 0x%x", ptr(local_player_pawn->get_facing_object()));
 
 			if (closest_weapon)
 				ImGui::Text("Closest Weapon: 0x%x", ptr(closest_weapon));
-			ImGui::Text("------------------");
+			ImGui::Text("------------------");*/
 
 			vec3 lt;
 			quat lr;
@@ -646,8 +646,10 @@ void DebugUI::overlay_debug()
 			{
 				local_transform.decompose(lt, lr, ls);
 
+				const auto euler = glm::eulerAngles(lr);
+
 				ImGui::Text("Position: %.2f %.2f %.2f", lt.x, lt.y, lt.z);
-				ImGui::Text("Rotation: %.2f %.2f %.2f %.2f", lr.w, lr.x, lr.y, lr.z);
+				ImGui::Text("Rotation: %.2f %.2f %.2f %.2f (%.2f %.2f %.2f)", lr.w, lr.x, lr.y, lr.z, euler.x, euler.y, euler.z);
 				ImGui::Text("Scale: %.2f %.2f %.2f", ls.x, ls.y, ls.z);
 			}
 		}
