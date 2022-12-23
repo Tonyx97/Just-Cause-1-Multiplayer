@@ -34,7 +34,7 @@ namespace jc::alive_object::hook
 					// from packets from them or the server. if the player is local then we will
 					// send a packet to the server updating our health
 
-					if (const auto character = BITCAST(Character*, obj); character == local_char)
+					if (const auto character = BITCAST(Character*, obj); character == local_char/* && !local_char->is_invincible()*/)
 					{
 						g_net->send(Packet(WorldPID_SyncObject, ChannelID_World, localplayer, NetObjectVar_Health, hp));
 
@@ -57,7 +57,8 @@ namespace jc::alive_object::hook
 						// that the object exploded or died
 
 						if (!net_obj->is_owned())
-							return;
+							//if (!local_char->is_invincible())
+								return;
 					}
 
 					break;

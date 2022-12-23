@@ -69,7 +69,7 @@ namespace jc::weapon::hook
 					{
 						// handle vehicle weapons
 
-						if (const auto vehicle_net = player->get_vehicle())
+						if (const auto vehicle_net = player->get_vehicle(); vehicle_net && vehicle_net->is_owned())
 						{
 							if (const auto seat = owner->get_vehicle_seat(); seat && seat->get_type() == VehicleSeat_Special)
 							{

@@ -239,8 +239,25 @@ void script::register_functions(Script* script)
 	{
 		g_weapon->remove_weapon_template(v);
 	});
+
+	/* OBJECTS & SPAWNING */
+
+	vm->add_function("spawnObjectiveMarker", [](const svec3& pos, const svec4& color)
+	{
+		const u8vec4 _color = color.obj();
+
+		return g_factory->create_objective(pos.obj(), _color);
+	});
+
 #elif defined(JC_SERVER)
 	// register server functions
+
+	/* ACL */
+
+	vm->add_function("hasPlayerACL", [](Player* player, const std::string& acl)
+	{
+		return player->get_client()->has_acl(acl);
+	});
 
 	/* EVENTS */
 
