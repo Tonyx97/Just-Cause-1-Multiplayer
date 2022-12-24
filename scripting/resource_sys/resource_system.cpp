@@ -219,7 +219,7 @@ void ResourceSystem::update()
 			if (timer->update())
 				timer->set_pending_kill();
 
-		// remove timers that are pending to kill
+			// remove timers that are pending to kill
 		
 		util::container::for_each_safe(timer_list, [](ScriptTimer* timer)
 		{
@@ -254,6 +254,16 @@ bool ResourceSystem::is_resource_valid(const std::string& rsrc_name) const
 	std::lock_guard lock(mtx);
 
 	return resources.contains(rsrc_name);
+}
+
+bool ResourceSystem::is_timer_valid(Resource* rsrc, ScriptTimer* timer)
+{
+	std::lock_guard lock(mtx);
+
+	if (const auto it = timers.find(rsrc); it != timers.end())
+		return it->second.contains(timer);
+
+	return false;
 }
 
 bool ResourceSystem::trigger_remote_event(const std::string& name, const std::vector<std::any>& va)

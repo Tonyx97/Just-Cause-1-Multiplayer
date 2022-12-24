@@ -162,6 +162,8 @@ void script::register_functions(Script* script)
 
 	vm->add_function("addCommand", [](luas::state& s, const std::string& cmd, luas::lua_fn& fn)
 	{
+		if (!fn) return false;
+
 		return g_rsrc->add_command(cmd, fn, s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE));
 	});
 
@@ -449,6 +451,8 @@ void script::register_functions(Script* script)
 
 	vm->add_function("addEvent", [](luas::state& s, const std::string& event_name, luas::lua_fn& fn, luas::variadic_args va)
 	{
+		if (!fn) return false;
+
 		const auto script = s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE);
 		const bool allow_remote_trigger = va.size() == 1 ? va.get<bool>(0) : false;
 
@@ -545,8 +549,10 @@ void script::register_functions(Script* script)
 
 	/* UTILS */
 
-	vm->add_function("setTimer", [](luas::state& s, luas::lua_fn& fn, int interval, int times, const luas::variadic_args& va)
+	vm->add_function("setTimer", [](luas::state& s, luas::lua_fn& fn, int interval, int times, const luas::variadic_args& va) -> ScriptTimer*
 	{
+		if (!fn) return nullptr;
+		
 		auto args = va.push_to_any_vector();
 
 		return g_rsrc->add_timer(fn, s.get_global_var<Resource*>(script::globals::RESOURCE), args, interval, times);
@@ -559,8 +565,13 @@ void script::register_functions(Script* script)
 
 	vm->add_function("resetTimer", [](ScriptTimer* v) { v->reset(); });
 
-	vm->add_function("getTimerInfo", [](ScriptTimer* v)
+	vm->add_function("getTimerInfo", [](luas::state& s, ScriptTimer* v)
 	{
+		const auto rsrc = s.get_global_var<Resource*>(script::globals::RESOURCE);
+
+		if (!rsrc || !g_rsrc->is_timer_valid(rsrc, v))
+			return std::make_tuple(0, 0, 0, 0);
+
 		return std::make_tuple(v->get_interval_left(), v->get_times_remaining(), v->get_interval(), v->get_times());
 	});
 }

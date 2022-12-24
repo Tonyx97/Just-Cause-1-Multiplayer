@@ -1570,6 +1570,7 @@ namespace luas
 
 			value = lua_fn(this);
 		}
+		else throw_error("Invalid function passed as callback");
 	}
 
 	template <typename T>

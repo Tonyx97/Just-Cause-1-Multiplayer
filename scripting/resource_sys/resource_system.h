@@ -83,6 +83,7 @@ public:
 	bool call_command(const std::string& cmd, const std::vector<std::any>& args);
 
 	bool is_resource_valid(const std::string& rsrc_name) const;
+	bool is_timer_valid(Resource* rsrc, ScriptTimer* timer);
 	bool trigger_remote_event(const std::string& name, const std::vector<std::any>& va);
 	bool trigger_non_remote_event(const std::string& name, const luas::variadic_args& va);
 	bool add_event(const std::string& name, luas::lua_fn& fn, Script* script, bool allow_remote_trigger);
