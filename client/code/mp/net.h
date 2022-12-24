@@ -4,7 +4,7 @@
 
 #include <thread_system/stl/vector.h>
 
-#define DEBUG_PACKET 1
+#define DEBUG_PACKET 0
 
 class PlayerClient;
 
