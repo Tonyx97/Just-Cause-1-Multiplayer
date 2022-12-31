@@ -190,8 +190,8 @@ namespace jc::vars
 		{ 5, "lave_005_Luxuary_Car_1.ee" }, // Rossi 866 Corral 		
 		{ 6, "lave_006_BigJeep.ee" }, // Emvee Armadillo
 		{ 7, "sheldons_jeep.ee" }, // Emvee Armadillo
-		{ 8, "lave_006_BigJeep_1_MG_front.ee" }, // Emvee Armadillo
-		{ 9, "lave_006_BigJeep_1_MG_back.ee" }, // Emvee Armadillo
+		//{ 8, "lave_006_BigJeep_1_MG_front.ee" }, // Emvee Armadillo
+		//{ 9, "lave_006_BigJeep_1_MG_back.ee" }, // Emvee Armadillo
 		{ 10, "lave_007_Jeep2.ee" }, // Huerta Mesa
 		{ 11, "lave_008_Pickup.ee" }, // Shimizu Tumbleweed
 		{ 12, "lave_008_Pickup_FMG_G.ee" }, // Shimizu Tumbleweed
@@ -242,7 +242,7 @@ namespace jc::vars
 		{ 56, "lave_046_Civilian_buggy.ee" }, // Stinger Buggy
 		{ 57, "lave_048_Taxi.ee" }, // Taxi
 		{ 58, "lave_050_service_vehicle.ee" }, // AVIA Airport service vehicle
-		{ 59, "lave 051 lave_051_Military_offroad_bike.ee" }, // Apache Army Model 842 
+		//{ 59, "lave 051 lave_051_Military_offroad_bike.ee" }, // Apache Army Model 842 
 		{ 60, "lave_052_military_6_wheel_ATV.ee" }, // Rotor industries ATRV
 		{ 61, "lave_053_Racingbike.ee" }, // Fukuda Bluebolt
 		{ 62, "lave_054_Agency_Jeep.ee" }, // GP Thunder Extreme Prototype
@@ -250,7 +250,7 @@ namespace jc::vars
 		{ 64, "lave_055_tank_AA.ee" }, // Harlan OTWV 2 AAA
 		{ 65, "lave_055_Tank_3.ee" }, // Harlan OTWV 2 CAN
 		{ 66, "lave_056_Bus_2.ee" }, // Vanderbildt Streamliner
-		{ 67, "arve_001_civilchopper" }, // Mullen H45 Dragonfly
+		//{ 67, "arve_001_civilchopper" }, // Mullen H45 Dragonfly
 		{ 68, "arve_002_attack_helicopter.ee" }, // Jackson Z-19 Skreemer
 		{ 69, "arve_003_transport_helicopter.ee" }, // HH 22 Savior
 		{ 69, "arve_003_rocket_helicopter.ee" }, // HH 22 Savior
