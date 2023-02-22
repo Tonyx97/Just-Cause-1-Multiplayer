@@ -20,13 +20,14 @@
 
 #include <game/object/camera/camera.h>
 #include <game/object/character/character.h>
+#include <game/object/mission/objective.h>
 #elif defined(JC_SERVER)
 #include <sql.h>
 
 #include <shared_mp/player_client/player_client.h>
 #endif
 
-#define NET_OBJ_CHECK(obj, ...)								if (!g_net->has_net_object(obj)) return __VA_ARGS__
+#define NET_OBJ_CHECK(obj, ...)							if (!g_net->has_net_object(obj)) return __VA_ARGS__
 #define NET_OBJ_CHECK_DO(obj, action, ...)				if (g_net->has_net_object(obj)) obj->action(__VA_ARGS__); else return
 #define NET_OBJ_CHECK_RET(obj, on_true, on_false)		return g_net->has_net_object(obj) ? obj->on_true() : on_false
 #define NET_OBJ_CHECK_RET_V(obj, on_true, on_false)		return g_net->has_net_object(obj) ? on_true : on_false
@@ -259,6 +260,16 @@ void script::register_functions(Script* script)
 		return g_factory->create_objective(pos.obj(), _color);
 	});
 
+	vm->add_function("destroyObjectiveMarker", [](Objective* objective)
+	{
+		g_factory->destroy_objective(objective);
+	});
+
+	vm->add_function("setGameObjectPosition", [](ObjectBase* obj, const svec3& pos)
+	{
+		obj->set_position(pos.obj());
+	});
+
 	vm->add_function("getGameObjectPosition", [](ObjectBase* obj)
 	{
 		return svec3(obj->get_position());
@@ -283,6 +294,8 @@ void script::register_functions(Script* script)
 		std::unordered_set<PlayerClient*> targets;
 
 		int index = 0;
+
+		bool increase_index = false;
 
 		switch (va.get_type(index))
 		{
@@ -312,6 +325,8 @@ void script::register_functions(Script* script)
 				targets.insert(pc);
 			});
 
+			increase_index = true;
+
 			break;
 		}
 		}
@@ -321,7 +336,7 @@ void script::register_functions(Script* script)
 			// move the variadic argument so serialize_event can work with it
 			// from where we left it
 
-			va.set_stack_offset(index);
+			va.set_stack_offset(index + (increase_index ? 1 : 0));
 
 			util::serialize_event(event_name, va, [&](const Packet& p)
 			{
@@ -574,6 +589,8 @@ void script::register_functions(Script* script)
 
 		return std::make_tuple(v->get_interval_left(), v->get_times_remaining(), v->get_interval(), v->get_times());
 	});
+
+	vm->add_function("distanceVec3", [](const svec3& a, const svec3& b) { return a.distance(b); });
 }
 
 /***********/

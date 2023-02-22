@@ -1309,6 +1309,14 @@ namespace luas
 				if (const auto ud = to_userdata<T>(i))
 					return { ud, true };
 			}
+			else if constexpr (detail::is_vector<T>)
+			{
+				T out;
+
+				pop_read(out, i);
+
+				return { out, true };
+			}
 
 			return { {}, false };
 		}

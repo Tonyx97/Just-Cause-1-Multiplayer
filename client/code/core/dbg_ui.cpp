@@ -282,18 +282,23 @@ void DebugUI::render_admin_panel()
 		static int veh_to_spawn = 0;
 		static int veh_faction = 0;
 
-		ImGui::Text("Selected Vehicle's EE name: %s", jc::vars::exported_entities_vehicles.find(veh_to_spawn)->second.c_str());
+		const auto it = jc::vars::exported_entities_vehicles.find(veh_to_spawn);
 
 		ImGui::SliderInt("Vehicle to spawn##ap.veh.tspw", &veh_to_spawn, 0, 109);
 		ImGui::SliderInt("Vehicle faction ##ap.veh.tfac", &veh_faction, 0, 8);
 
-		if (ImGui::Button("Spawn Vehicle##ap.veh.spw"))
+		ImGui::Text("Selected Vehicle's EE name: %s", it != jc::vars::exported_entities_vehicles.end() ? it->second.c_str() : "Invalid vehicle");
+
+		if (it != jc::vars::exported_entities_vehicles.end())
 		{
-			TransformTR transform(g_world->get_local_character()->get_position() + vec3(2.f, 1.f, 0.f));
+			if (ImGui::Button("Spawn Vehicle##ap.veh.spw"))
+			{
+				TransformTR transform(g_world->get_local_character()->get_position() + vec3(2.f, 1.f, 0.f));
 
-			g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, transform, jc::vars::exported_entities_vehicles.find(veh_to_spawn)->second));
+				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, transform, jc::vars::exported_entities_vehicles.find(veh_to_spawn)->second));
 
-			log(RED, "wants to spawn {}", veh_to_spawn);
+				log(RED, "wants to spawn {}", veh_to_spawn);
+			}
 		}
 
 		ImGui::TreePop();

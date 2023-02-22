@@ -44,6 +44,7 @@ public:
 	void destroy_vehicle_spawn_point(VehicleSpawnPoint* v);
 	void destroy_item_pickup(ItemPickup* v);
 	void destroy_map_icon(UIMapIcon* v);
+	void destroy_objective(Objective* v);
 
 	int16_t get_max_character_spawns() const;
 	int16_t get_max_vehicle_spawns() const;

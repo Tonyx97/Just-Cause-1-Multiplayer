@@ -147,6 +147,11 @@ void FactorySystem::destroy_map_icon(UIMapIcon* v)
 	ui_map_icons.erase(v);
 }
 
+void FactorySystem::destroy_objective(Objective* v)
+{
+	objectives.erase(v);
+}
+
 int16_t FactorySystem::get_max_character_spawns() const
 {
 	return jc::read<int16_t>(this, jc::spawn_system::MAX_CHARACTER_SPAWNS);
