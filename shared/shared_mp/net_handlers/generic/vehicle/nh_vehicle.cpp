@@ -79,6 +79,37 @@ PacketResult nh::vehicle::honk(const Packet& p)
 	return PacketRes_Ok;
 }
 
+PacketResult nh::vehicle::sirens(const Packet& p)
+{
+#ifdef JC_CLIENT
+#else
+	const auto pc = p.get_pc();
+	const auto player = pc->get_player();
+#endif
+
+	const auto vehicle_net = p.get_net_object<VehicleNetObject>();
+
+	if (!vehicle_net)
+		return PacketRes_BadArgs;
+
+	const auto enabled = p.get_bool();
+
+#ifdef JC_CLIENT
+	const auto vehicle = vehicle_net->get_object();
+
+	vehicle->enable_sirens(enabled);
+#endif
+
+#ifdef JC_SERVER
+	if (!vehicle_net->is_owned_by(player))
+		return PacketRes_NotAllowed;
+
+	g_net->send_broadcast(pc, p);
+#endif
+
+	return PacketRes_Ok;
+}
+
 PacketResult nh::vehicle::fire(const Packet& p)
 {
 #ifdef JC_CLIENT

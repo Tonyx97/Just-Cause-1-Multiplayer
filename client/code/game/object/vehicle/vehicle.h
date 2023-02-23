@@ -48,6 +48,8 @@ namespace jc::vehicle
 		static constexpr uint32_t UNK0					= 57;
 		static constexpr uint32_t UNK1					= 58;
 		static constexpr uint32_t HONK					= 76;
+		static constexpr uint32_t SIRENS_ON				= 77;
+		static constexpr uint32_t SIRENS_OFF			= 78;
 		static constexpr uint32_t START_ENGINE_SOUND	= 82;
 		static constexpr uint32_t STOP_ENGINE_SOUND		= 83;
 	}
@@ -138,6 +140,7 @@ public:
 	void set_color(uint32_t v);
 	void set_velocity(const vec3& v);
 	void honk();
+	void enable_sirens(bool enable);
 	void set_engine_state(bool v);
 	void set_current_weapon_index(uint32_t v);
 	void set_current_weapon_type(uint32_t v);

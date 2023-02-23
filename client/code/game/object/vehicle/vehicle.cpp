@@ -188,6 +188,28 @@ namespace jc::vehicle::hook
 		land_vehicle_honk_hook(land_vehicle);
 	}
 
+	DEFINE_HOOK_THISCALL_S(land_vehicle_enable_sirens, 0x856220, void, LandVehicle* land_vehicle)
+	{
+		if (!land_vehicle->is_alive())
+			return;
+
+		if (const auto vehicle_net = g_net->get_net_object_by_game_object(land_vehicle)->cast<VehicleNetObject>())
+			g_net->send(Packet(PlayerPID_VehicleSirens, ChannelID_Generic, vehicle_net, true));
+
+		land_vehicle_enable_sirens_hook(land_vehicle);
+	}
+
+	DEFINE_HOOK_THISCALL_S(land_vehicle_disable_sirens, 0x8563A0, void, LandVehicle* land_vehicle)
+	{
+		if (!land_vehicle->is_alive())
+			return;
+
+		if (const auto vehicle_net = g_net->get_net_object_by_game_object(land_vehicle)->cast<VehicleNetObject>())
+			g_net->send(Packet(PlayerPID_VehicleSirens, ChannelID_Generic, vehicle_net, false));
+
+		land_vehicle_disable_sirens_hook(land_vehicle);
+	}
+
 	DEFINE_HOOK_THISCALL_S(vehicle_fire, 0x636820, bool, Vehicle* vehicle)
 	{
 		if (!vehicle->is_alive())
@@ -236,6 +258,8 @@ namespace jc::vehicle::hook
 		helicopter_get_input_hook.hook(apply);
 		//boat_get_input_hook.hook(apply);
 		land_vehicle_honk_hook.hook(apply);
+		land_vehicle_enable_sirens_hook.hook(apply);
+		land_vehicle_disable_sirens_hook.hook(apply);
 		vehicle_fire_hook.hook(apply);
 	}
 }
@@ -361,6 +385,13 @@ void Vehicle::honk()
 		}
 	}
 	}
+}
+
+void Vehicle::enable_sirens(bool enable)
+{
+	if (enable)
+		jc::v_call(this, jc::vehicle::vt::SIRENS_ON);
+	else jc::v_call(this, jc::vehicle::vt::SIRENS_OFF);
 }
 
 void Vehicle::set_engine_state(bool v)

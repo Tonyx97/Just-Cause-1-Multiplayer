@@ -21,6 +21,7 @@
 #include <game/object/camera/camera.h>
 #include <game/object/character/character.h>
 #include <game/object/mission/objective.h>
+#include <game/object/sound/sound_bank.h>
 #elif defined(JC_SERVER)
 #include <sql.h>
 
@@ -118,6 +119,10 @@ void script::register_functions(Script* script)
 			g_net->send(p);
 		});
 	});
+
+	/* SOUNDS AND AUDIO */
+
+	vm->add_function("playHudSound", [](int id) { g_sound->get_hud_bank()->play(id); });
 
 	/* WORLD */
 
@@ -381,6 +386,15 @@ void script::register_functions(Script* script)
 		}
 
 		player->respawn(pos.obj(), rotation, skin, max_hp, max_hp);
+	});
+
+	vm->add_function("setPlayerSkin", [](Player* player, int32_t id)
+	{
+		NET_OBJ_CHECK(player);
+
+		player->set_skin(id);
+
+		g_net->send_broadcast(Packet(PlayerPID_DynamicInfo, ChannelID_Generic, player, PlayerDynInfo_Skin, id));
 	});
 
 	vm->add_function("createDamageable", [](luas::state& s, const svec3& pos, const std::string& lod, const std::string& pfx) -> DamageableNetObject*

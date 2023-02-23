@@ -168,6 +168,7 @@ void enet::setup_channels()
 		case PlayerPID_EnterExitVehicle:			return nh::player::enter_exit_vehicle(p);
 		case PlayerPID_VehicleControl:				return nh::vehicle::control(p);
 		case PlayerPID_VehicleHonk:					return nh::vehicle::honk(p);
+		case PlayerPID_VehicleSirens:				return nh::vehicle::sirens(p);
 		case PlayerPID_VehicleFire:					return nh::vehicle::fire(p);
 		case PlayerPID_VehicleMountedGunFire:		return nh::vehicle::mounted_gun_fire(p);
 		case PlayerPID_VehicleDynamicInfo:			return nh::vehicle::dynamic_info(p);

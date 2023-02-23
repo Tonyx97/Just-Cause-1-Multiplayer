@@ -115,6 +115,11 @@ PacketResult nh::player::dynamic_info(const Packet& p)
 
 		player->set_skin(skin_id);
 
+#ifdef JC_CLIENT
+		if (player->is_local())
+			player->get_character()->set_skin(skin_id, false);
+#endif
+
 		break;
 	}
 	case PlayerDynInfo_WalkingSetAndSkin:
