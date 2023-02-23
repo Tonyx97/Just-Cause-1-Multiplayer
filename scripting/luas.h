@@ -1374,7 +1374,7 @@ namespace luas
 
 		int get_type(int i) const { return lua_type(*vm, begin() + i); }
 
-		int size() const { return (end() - begin()) + 1; }
+		int size() const { return (end() - begin()) + 1 - stack_offset; }
 
 		int push_all() const
 		{
