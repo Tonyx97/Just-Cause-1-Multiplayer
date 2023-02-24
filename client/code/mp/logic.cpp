@@ -223,7 +223,7 @@ void jc::mp::logic::on_tick()
 #ifdef JC_DBG
 			if (g_key->is_key_pressed(VK_F3))
 			{
-				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
+				TransformTR transform(position + vec3(4.f, 1.f, 0.f));
 
 				g_net->send(Packet(
 					WorldPID_SpawnObject,
@@ -236,7 +236,7 @@ void jc::mp::logic::on_tick()
 
 			if (g_key->is_key_pressed(VK_F4))
 			{
-				TransformTR transform(position + vec3(2.f, 1.f, 0.f));
+				TransformTR transform(position + vec3(4.f, 1.f, 0.f));
 
 				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, transform, std::string("lave_043_Rally_Car.ee")));
 			}
@@ -253,6 +253,13 @@ void jc::mp::logic::on_tick()
 					localplayer,
 					vec3(),
 					vec3()));
+			}
+
+			if (g_key->is_key_pressed(VK_F6))
+			{
+				TransformTR transform(position + vec3(3.f, 1.f, 2.f));
+
+				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, transform, std::string("arve_022_old_school_fighter.ee")));
 			}
 #endif
 		}

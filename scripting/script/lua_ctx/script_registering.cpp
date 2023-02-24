@@ -194,6 +194,12 @@ void script::register_functions(Script* script)
 				return character->set_position(pos.obj());
 	});
 
+	vm->add_function("warpLocalIntoVehicle", [](VehicleNetObject* vehicle_net, int seat)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			vehicle_net->warp_to_seat(localplayer, seat);
+	});
+
 	vm->add_function("setLocalAnimation", [](const std::string& anim_name, float speed, bool unk0, bool unk1)
 	{
 		if (const auto localplayer = g_net->get_localplayer())

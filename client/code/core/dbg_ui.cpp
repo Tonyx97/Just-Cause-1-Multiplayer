@@ -293,7 +293,7 @@ void DebugUI::render_admin_panel()
 		{
 			if (ImGui::Button("Spawn Vehicle##ap.veh.spw"))
 			{
-				TransformTR transform(g_world->get_local_character()->get_position() + vec3(2.f, 1.f, 0.f));
+				TransformTR transform(g_world->get_local_character()->get_position() + vec3(3.f, 1.f, 2.f));
 
 				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, transform, jc::vars::exported_entities_vehicles.find(veh_to_spawn)->second));
 
