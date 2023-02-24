@@ -183,7 +183,8 @@ namespace jc::vehicle::hook
 			return;
 
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(land_vehicle)->cast<VehicleNetObject>())
-			g_net->send(Packet(PlayerPID_VehicleHonk, ChannelID_Generic, vehicle_net));
+			if (vehicle_net->is_owned())
+				g_net->send(Packet(PlayerPID_VehicleHonk, ChannelID_Generic, vehicle_net));
 
 		land_vehicle_honk_hook(land_vehicle);
 	}
@@ -194,9 +195,12 @@ namespace jc::vehicle::hook
 			return;
 
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(land_vehicle)->cast<VehicleNetObject>())
-			g_net->send(Packet(PlayerPID_VehicleSirens, ChannelID_Generic, vehicle_net, true));
+			if (vehicle_net->is_owned())
+			{
+				g_net->send(Packet(PlayerPID_VehicleSirens, ChannelID_Generic, vehicle_net, true));
 
-		land_vehicle_enable_sirens_hook(land_vehicle);
+				land_vehicle_enable_sirens_hook(land_vehicle);
+			}
 	}
 
 	DEFINE_HOOK_THISCALL_S(land_vehicle_disable_sirens, 0x8563A0, void, LandVehicle* land_vehicle)
@@ -205,9 +209,12 @@ namespace jc::vehicle::hook
 			return;
 
 		if (const auto vehicle_net = g_net->get_net_object_by_game_object(land_vehicle)->cast<VehicleNetObject>())
-			g_net->send(Packet(PlayerPID_VehicleSirens, ChannelID_Generic, vehicle_net, false));
+			if (vehicle_net->is_owned())
+			{
+				g_net->send(Packet(PlayerPID_VehicleSirens, ChannelID_Generic, vehicle_net, false));
 
-		land_vehicle_disable_sirens_hook(land_vehicle);
+				land_vehicle_disable_sirens_hook(land_vehicle);
+			}
 	}
 
 	DEFINE_HOOK_THISCALL_S(vehicle_fire, 0x636820, bool, Vehicle* vehicle)
