@@ -389,9 +389,14 @@ void Vehicle::honk()
 
 void Vehicle::enable_sirens(bool enable)
 {
+	const auto land_vehicle = this->cast<LandVehicle>();
+
+	if (!land_vehicle)
+		return;
+
 	if (enable)
-		jc::v_call(this, jc::vehicle::vt::SIRENS_ON);
-	else jc::v_call(this, jc::vehicle::vt::SIRENS_OFF);
+		jc::vehicle::hook::land_vehicle_enable_sirens_hook(land_vehicle);
+	else jc::vehicle::hook::land_vehicle_disable_sirens_hook(land_vehicle);
 }
 
 void Vehicle::set_engine_state(bool v)

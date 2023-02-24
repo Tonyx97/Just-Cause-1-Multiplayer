@@ -311,6 +311,8 @@ void script::register_functions(Script* script)
 			if (const auto player = g_net->get_player(BITCAST(NetObject*, userdata)))
 				targets.insert(player->get_client());
 
+			increase_index = true;
+
 			break;
 		}
 		case LUA_TTABLE:			// a table of players specified
@@ -320,6 +322,8 @@ void script::register_functions(Script* script)
 			for (const auto& userdata : players_list)
 				if (const auto player = g_net->get_player(BITCAST(NetObject*, userdata)))
 					targets.insert(player->get_client());
+
+			increase_index = true;
 
 			break;
 		}
