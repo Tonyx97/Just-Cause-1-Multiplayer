@@ -613,6 +613,13 @@ void script::register_functions(Script* script)
 		NET_OBJ_CHECK_RET(player, get_vehicle, nullptr);
 	});
 
+	/* VEHICLE */
+
+	vm->add_function("getVehicleName", [](VehicleNetObject* vehicle_net)
+	{
+		NET_OBJ_CHECK_RET(vehicle_net, get_ee, nullptr);
+	});
+
 	/* UTILS */
 
 	vm->add_function("setTimer", [](luas::state& s, luas::lua_fn& fn, int interval, int times, const luas::variadic_args& va) -> ScriptTimer*
