@@ -22,6 +22,8 @@
 #include <game/object/character/character.h>
 #include <game/object/mission/objective.h>
 #include <game/object/sound/sound_bank.h>
+#include <game/object/weapon/weapon.h>
+#include <game/object/weapon/weapon_belt.h>
 #elif defined(JC_SERVER)
 #include <sql.h>
 
@@ -212,6 +214,23 @@ void script::register_functions(Script* script)
 		if (const auto localplayer = g_net->get_localplayer())
 			if (const auto character = localplayer->get_character())
 				character->set_weapon(id, false);
+	});
+
+	vm->add_function("addLocalWeaponAmmoByType", [](int32_t type, int32_t amount)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto character = localplayer->get_character())
+				if (const auto weapon_belt = character->get_weapon_belt())
+					if (const auto weapon = weapon_belt->get_weapon_from_type(type))
+						weapon_belt->set_weapon_ammo(type, weapon_belt->get_weapon_ammo(type) + amount);
+	});
+
+	vm->add_function("setLocalWeaponAmmoByType", [](int32_t type, int32_t amount)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto character = localplayer->get_character())
+				if (const auto weapon_belt = character->get_weapon_belt())
+					weapon_belt->set_weapon_ammo(type, amount);
 	});
 
 	/* ANIMS */

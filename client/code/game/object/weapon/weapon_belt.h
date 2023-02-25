@@ -9,11 +9,13 @@ namespace jc::weapon_belt
 
 	namespace fn
 	{
+		static constexpr uint32_t ADD_WEAPON_AMMO		= 0x60C300;
 		static constexpr uint32_t ADD_WEAPON			= 0x60CC00;
 		static constexpr uint32_t GET_CURRENT_WEAPON	= 0x60D7D0;
 		static constexpr uint32_t GET_SLOT_BY_TYPE_ID	= 0x60CA60;
 		static constexpr uint32_t CLEAR					= 0x60BAA0;
 		static constexpr uint32_t REMOVE_WEAPON			= 0x8B8D90;
+		
 	}
 }
 
@@ -26,6 +28,7 @@ public:
 	static constexpr auto MAX_SLOTS() { return 10; }
 
 	void set_weapon_ammo(int32_t bullet_type, int32_t v);
+	void add_weapon_ammo(int32_t bullet_type, int32_t v);
 	void remove_weapon(int32_t slot);
 	void clear();
 

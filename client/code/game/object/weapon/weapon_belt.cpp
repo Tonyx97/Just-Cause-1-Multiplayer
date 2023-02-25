@@ -10,6 +10,11 @@ void WeaponBelt::set_weapon_ammo(int32_t bullet_type, int32_t v)
 	jc::write(v, this, jc::weapon_belt::AMMO_BEGIN + (bullet_type * 0x4));
 }
 
+void WeaponBelt::add_weapon_ammo(int32_t bullet_type, int32_t v)
+{
+	jc::this_call(jc::weapon_belt::fn::ADD_WEAPON_AMMO, this, bullet_type, v);
+}
+
 void WeaponBelt::remove_weapon(int32_t slot)
 {
 	jc::this_call(jc::weapon_belt::fn::REMOVE_WEAPON, REF(ptr, this, jc::weapon_belt::WEAPON_LIST + slot * 0x10));
