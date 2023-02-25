@@ -199,7 +199,11 @@ void Player::on_spawn()
 		character->set_max_hp(500.f);
 
 		if (!game_player)
+		{
 			game_player = g_world->get_local();
+			game_player->block_key_input(false);
+			game_player->block_mouse_input(false);
+		}
 	}
 	else
 	{

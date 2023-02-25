@@ -120,6 +120,7 @@ namespace jc::game_player::hook
 			check(jc::read<int>(game_player, 0x134) == 0, "Not implemented 0");
 
 			game_player->block_key_input(true);
+			game_player->block_mouse_input(true);
 
 			if (!player_char->is_sky_diving() || player_char->is_in_parachute_state())
 			{
@@ -221,6 +222,9 @@ GamePlayer* GamePlayer::CREATE()
 	if (player)
 		player->load_parachute_model();
 
+	player->block_key_input(false);
+	player->block_mouse_input(false);
+
 	return player;
 }
 
@@ -320,6 +324,11 @@ void GamePlayer::block_key_input(bool blocked)
 	// to handle the logic properly
 
 	jc::write(blocked, this, jc::game_player::INPUT_BLOCKED);
+}
+
+void GamePlayer::block_mouse_input(bool blocked)
+{
+	jc::write(blocked, this, jc::game_player::MOUSE_INPUT_BLOCKED);
 }
 
 void GamePlayer::draw_grappling_hook(const Transform& begin, const vec3& end, bool hooked)

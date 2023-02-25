@@ -245,6 +245,11 @@ void jc::patches::apply()
 
 	jc::write(1ui8, 0x5A4400);
 
+	// create variable in GamePlayer next to the global input blocked bool at 0x1D8 so we
+	// can block mouse and keyboard input individually.
+
+	jc::write<uint16_t>(0x1D9, 0x4C4C0C, 3);
+
 	// make npcs look at other npcs when they are less than 0 meters (aka never lol)
 
 	jc::write_protect(0.f, jc::g::patch::CHAR_LOOK_MIN_DISTANCE.address);

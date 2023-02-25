@@ -24,6 +24,7 @@
 #include <game/object/sound/sound_bank.h>
 #include <game/object/weapon/weapon.h>
 #include <game/object/weapon/weapon_belt.h>
+#include <game/object/game_player/game_player.h>
 #elif defined(JC_SERVER)
 #include <sql.h>
 
@@ -166,7 +167,18 @@ void script::register_functions(Script* script)
 	vm->add_function("isKeyPressed", [](int key) { return g_key->is_key_pressed(key); });
 	vm->add_function("isKeyReleased", [](int key) { return g_key->is_key_released(key); });
 	vm->add_function("getMouseWheel", []() { return g_key->get_mouse_wheel_value(); });
-	vm->add_function("blockGameInput", [](bool blocked) { return g_key->block_input(blocked); });
+
+	vm->add_function("blockGameInput", [](bool blocked)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			localplayer->get_game_player()->block_key_input(blocked);
+	});
+
+	vm->add_function("blockGameMouseInput", [](bool blocked)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			localplayer->get_game_player()->block_mouse_input(blocked);
+	});
 
 	vm->add_function("addCommand", [](luas::state& s, const std::string& cmd, luas::lua_fn& fn)
 	{
@@ -214,6 +226,13 @@ void script::register_functions(Script* script)
 		if (const auto localplayer = g_net->get_localplayer())
 			if (const auto character = localplayer->get_character())
 				character->set_weapon(id, false);
+	});
+
+	vm->add_function("setLocalGrenades", [](int32_t amount)
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto character = localplayer->get_character())
+				character->set_grenades_ammo(amount);
 	});
 
 	vm->add_function("clearLocalWeaponBelt", []()
@@ -617,7 +636,7 @@ void script::register_functions(Script* script)
 
 	vm->add_function("getVehicleName", [](VehicleNetObject* vehicle_net)
 	{
-		NET_OBJ_CHECK_RET(vehicle_net, get_ee, nullptr);
+		NET_OBJ_CHECK_RET(vehicle_net, get_ee, "");
 	});
 
 	/* UTILS */
