@@ -36,6 +36,8 @@ namespace launcher.ViewModels
         [ObservableProperty]
         private GameSettingWaterQuality _waterQuality;
         [ObservableProperty]
+        private int _volume;
+        [ObservableProperty]
         private int _fxVolume;
 
         // Private
@@ -77,6 +79,7 @@ namespace launcher.ViewModels
             settings.TextureResolution = _textureResolution;
             settings.SceneComplexity = _sceneComplexity;
             settings.WaterQuality = _waterQuality;
+            settings.Volume = _volume;
             settings.FxVolume = _fxVolume;
 
             var result = await _repositoryService.InsertOrUpdateData(settings);
@@ -115,7 +118,8 @@ namespace launcher.ViewModels
                 TextureResolution = GameSettingTextureResolution.High;
                 SceneComplexity = GameSettingSceneComplexity.High;
                 WaterQuality = GameSettingWaterQuality.High;
-                FxVolume = 4; // 0 - 10.
+                Volume = 3; // 0 - 10.
+                FxVolume = 6; // 0 - 10.
 
                 var settings = new GameSettings();
                 settings.GamePath = _gamePath;
@@ -126,6 +130,7 @@ namespace launcher.ViewModels
                 settings.TextureResolution = _textureResolution;
                 settings.SceneComplexity = _sceneComplexity;
                 settings.WaterQuality = _waterQuality;
+                settings.Volume = _volume;
                 settings.FxVolume = _fxVolume;
 
                 var result = await _repositoryService.InsertOrUpdateData(settings);
@@ -149,7 +154,8 @@ namespace launcher.ViewModels
                     TextureResolution = result.TextureResolution;
                     SceneComplexity = result.SceneComplexity;
                     WaterQuality = result.WaterQuality;
-                    FxVolume = result.FxVolume; // 0 - 10.
+                    Volume = result.Volume;
+					FxVolume = result.FxVolume; // 0 - 10.
                 }
                 else
                 {

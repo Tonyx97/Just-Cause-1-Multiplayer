@@ -15,6 +15,7 @@ namespace launcher.Models
             TextureResolution = GameSettingTextureResolution.High;
             SceneComplexity = GameSettingSceneComplexity.High;
             WaterQuality = GameSettingWaterQuality.High;
+            Volume = 10; // 0 - 10
             FxVolume = 10; // 0 - 10
         }
 
@@ -26,6 +27,7 @@ namespace launcher.Models
         public GameSettingTextureResolution TextureResolution { get; set; }
         public GameSettingSceneComplexity SceneComplexity { get; set; }
         public GameSettingWaterQuality WaterQuality { get; set; }
+        public int Volume { get; set; }
         public int FxVolume { get; set; }
     }
 }

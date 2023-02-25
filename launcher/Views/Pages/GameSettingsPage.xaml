@@ -378,6 +378,45 @@
 
             <ui:CardExpander
                 Margin="12, 12, 0, 0"
+                Icon="Speaker016"
+                IsEnabled="True"
+                IsExpanded="False" >
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock
+                            FontSize="13"
+                            FontWeight="Medium"
+                            Text="Music Volume" />
+                            <TextBlock
+                            FontSize="12"
+                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                            Text="Adjust music volume." />
+                        </StackPanel>
+                        <Slider
+                            Grid.Column="1"
+                            Margin="0,8,16,0"
+                            MinWidth="200"
+                            Maximum="10"
+                            Minimum="0"
+                            TickFrequency="1"
+                            Value="{Binding ViewModel.Volume}" />
+                    </Grid>
+                </ui:CardExpander.Header>
+
+                <TextBlock
+                    Text="Game music volume"
+                    TextAlignment="Left"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap" />
+            </ui:CardExpander>
+            
+            <ui:CardExpander
+                Margin="12, 12, 0, 0"
                 Icon="TabletSpeaker20"
                 IsEnabled="True"
                 IsExpanded="False" >

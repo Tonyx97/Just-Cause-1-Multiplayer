@@ -247,6 +247,7 @@ namespace launcher.Services.Repositories
                     gameDirectory.SetValue(nameof(gameSettings.TextureResolution), gameSettings.TextureResolution, RegistryValueKind.DWord);
                     gameDirectory.SetValue(nameof(gameSettings.SceneComplexity), gameSettings.SceneComplexity, RegistryValueKind.DWord);
                     gameDirectory.SetValue(nameof(gameSettings.WaterQuality), gameSettings.WaterQuality, RegistryValueKind.DWord);
+                    gameDirectory.SetValue(nameof(gameSettings.Volume), gameSettings.Volume, RegistryValueKind.DWord);
                     gameDirectory.SetValue(nameof(gameSettings.FxVolume), gameSettings.FxVolume, RegistryValueKind.DWord);
 
                     return true;
@@ -325,6 +326,7 @@ namespace launcher.Services.Repositories
                     gameSettings.TextureResolution = (GameSettingTextureResolution)gameDirectory.GetValue(nameof(gameSettings.TextureResolution));
                     gameSettings.SceneComplexity = (GameSettingSceneComplexity)gameDirectory.GetValue(nameof(gameSettings.SceneComplexity));
                     gameSettings.WaterQuality = (GameSettingWaterQuality)gameDirectory.GetValue(nameof(gameSettings.WaterQuality));
+                    gameSettings.Volume = (int)gameDirectory.GetValue(nameof(gameSettings.Volume));
                     gameSettings.FxVolume = (int)gameDirectory.GetValue(nameof(gameSettings.FxVolume));
 
                     return gameSettings;
