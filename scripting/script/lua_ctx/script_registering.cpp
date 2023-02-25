@@ -216,6 +216,14 @@ void script::register_functions(Script* script)
 				character->set_weapon(id, false);
 	});
 
+	vm->add_function("clearLocalWeaponBelt", []()
+	{
+		if (const auto localplayer = g_net->get_localplayer())
+			if (const auto character = localplayer->get_character())
+				if (const auto weapon_belt = character->get_weapon_belt())
+					weapon_belt->clear();
+	});
+
 	vm->add_function("addLocalWeaponAmmoByType", [](int32_t type, int32_t amount)
 	{
 		if (const auto localplayer = g_net->get_localplayer())
