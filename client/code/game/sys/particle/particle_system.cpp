@@ -18,5 +18,7 @@ void* ParticleSystem::spawn_fx(const std::string& name, const vec3& position, co
 
 	const jc::stl::string str = name;
 
+	transform.rotate(radians(rotation));
+
 	return jc::this_call<void*>(jc::particle_system::fn::SPAWN_FX, this, &str, &transform, unk1, unk2);
 }

@@ -18,6 +18,8 @@ namespace jc::force_pulse
 
 class ForcePulse : public ObjectBase
 {
+	char data[0xB0];
+
 public:
 	ForcePulse();
 	~ForcePulse();

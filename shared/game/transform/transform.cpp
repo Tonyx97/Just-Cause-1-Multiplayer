@@ -46,6 +46,13 @@ void Transform::translate(const vec3& v)
 	m = glm::translate(m, v);
 }
 
+void Transform::rotate(const vec3& v)
+{
+	m = glm::rotate(m, v.x, vec3(1.f, 0.f, 0.f));
+	m = glm::rotate(m, v.y, vec3(0.f, 1.f, 0.f));
+	m = glm::rotate(m, v.z, vec3(0.f, 0.f, 1.f));
+}
+
 void Transform::scale(const vec3& v)
 {
 	m = glm::scale(m, v);

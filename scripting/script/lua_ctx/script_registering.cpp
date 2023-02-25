@@ -25,6 +25,7 @@
 #include <game/object/weapon/weapon.h>
 #include <game/object/weapon/weapon_belt.h>
 #include <game/object/game_player/game_player.h>
+#include <game/object/area_damage/area_damage.h>
 #elif defined(JC_SERVER)
 #include <sql.h>
 
@@ -126,6 +127,13 @@ void script::register_functions(Script* script)
 	/* SOUNDS AND AUDIO */
 
 	vm->add_function("playHudSound", [](int id) { g_sound->get_hud_bank()->play(id); });
+
+	/* EFFECTS */
+
+	vm->add_function("spawnFx", [](const std::string& name, const svec3& pos, const svec3& rot, const svec3& velocity, bool unk1, bool unk2)
+	{
+		g_particle->spawn_fx(name, pos.obj(), rot.obj(), velocity.obj(), unk1, unk2);
+	});
 
 	/* WORLD */
 
@@ -268,6 +276,18 @@ void script::register_functions(Script* script)
 
 	vm->add_function("setGravity", [](const svec3& v) { g_physics->set_gravity(v.obj()); });
 	vm->add_function("getGravity", []() { return svec3(g_physics->get_gravity()); });
+
+	vm->add_function("createForcePulse", [](const svec3& pos, float radius, float force, float damage)
+	{
+		g_physics->create_force_pulse(pos.obj(), radius, force, damage);
+	});
+
+	vm->add_function("createAreaDamage", [](const svec3& pos, float radius, float damage)
+	{
+		AreaDamage area_dmg(radius, damage);
+
+		area_dmg.activate_at(pos.obj());
+	});
 
 	/* MODELS */
 
