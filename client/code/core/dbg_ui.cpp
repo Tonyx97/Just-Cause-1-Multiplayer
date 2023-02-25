@@ -426,16 +426,19 @@ void DebugUI::overlay_debug()
 
 		if (no_clip)
 		{
-			if (g_key->is_key_down(VK_F2))
+			if (admin_panel_available)
 			{
-				constexpr auto magnitude = 1.5f;
-				const auto fp = g_camera->get_active_camera()->get_model_forward_vector();
-				vec3 forward_position = {};
-				forward_position.x = local_pos.x + (-fp.x * magnitude);
-				forward_position.y = local_pos.y + (-fp.y * magnitude);
-				forward_position.z = local_pos.z + (-fp.z * magnitude);
+				if (g_key->is_key_down(VK_F2))
+				{
+					constexpr auto magnitude = 1.5f;
+					const auto fp = g_camera->get_active_camera()->get_model_forward_vector();
+					vec3 forward_position = {};
+					forward_position.x = local_pos.x + (-fp.x * magnitude);
+					forward_position.y = local_pos.y + (-fp.y * magnitude);
+					forward_position.z = local_pos.z + (-fp.z * magnitude);
 
-				local_player_pawn->set_position(forward_position);
+					local_player_pawn->set_position(forward_position);
+				}
 			}
 		}
 

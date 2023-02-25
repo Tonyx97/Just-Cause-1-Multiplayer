@@ -6,7 +6,12 @@ private:
 
 	bool show_overlay_debug = true;
 	bool show_admin_panel = false;
+
+#ifdef JC_DBG
 	bool admin_panel_available = true;
+#else
+	bool admin_panel_available = false;
+#endif
 
 #ifdef JC_DBG
 	bool show_skeleton			= true,
