@@ -10,7 +10,7 @@ private:
 #ifdef JC_DBG
 	bool admin_panel_available = true;
 #else
-	bool admin_panel_available = false;
+	bool admin_panel_available = true;
 #endif
 
 #ifdef JC_DBG
