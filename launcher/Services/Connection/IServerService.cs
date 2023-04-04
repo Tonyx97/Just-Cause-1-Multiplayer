@@ -18,7 +18,7 @@ namespace launcher.Services.Connection
             //
             var servers = new List<ServerInformation>();
 
-            var master_server_address = "51.77.201.205";
+            var master_server_address = "65.20.98.86";
             var master_server_port = 22502;
 
             var client = new TcpClient();

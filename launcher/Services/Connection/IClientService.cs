@@ -18,7 +18,7 @@ namespace launcher.Services.Connection
     public class ClientUpdaterService : IClientUpdaterService
     {
         // TODO: Extract this to settings, easily change updater address+port
-        string updaterAddress = "51.77.201.205";
+        string updaterAddress = "65.20.98.86";
         int updaterPort = 22502;
 
         public async Task<byte[]> GetLatestClientLibraryHash()
