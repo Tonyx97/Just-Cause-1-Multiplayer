@@ -43,9 +43,9 @@
 
 DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* name, int type, ptr data, ptr size)
 {
-	if (strstr(name->c_str(), "WEAP_000"))
+	if (strstr(name->c_str(), "bullet_") || strstr((const char*)data, "360_fire_1"))
 	{
-		log(RED, "{:x} {:x} {:x} {}", a1, data, size, name->c_str());
+		log(PURPLE, "{:x} {:x} {:x} {} {}", a1, data, size, type, name->c_str());
 
 		/*const auto data_file = util::fs::read_bin_file("kc_022_lod1.rbm");
 
@@ -57,6 +57,7 @@ DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* n
 
 		log(RED, "size: {}", data_file.size());*/
 	}
+	//else log(RED, "{:x} {:x} {:x} {} {}", a1, data, size, type, name->c_str());
 
 	//while (!GetAsyncKeyState(VK_F3));
 
@@ -100,18 +101,16 @@ DEFINE_HOOK_THISCALL_S(_test3, 0x596420, bool, int _this)
 
 std::set<ptr> ay;
 
-DEFINE_HOOK_CCALL(_test4, 0x996FDD, int)
+DEFINE_HOOK_THISCALL(_test4, 0x5747D0, void, ParticleSystem* ps, jc::stl::string* a2, const char* a3,
+	int			 a4,
+	int			 a5,
+	int			 a6,
+	unsigned int a7,
+	unsigned int a8)
 {
-	auto res = _test4_hook();
+	log(PURPLE, "{}", a3);
 
-	if (!ay.contains(RET_ADDRESS))
-	{
-		ay.insert(RET_ADDRESS);
-
-		log(PURPLE, "{} {:x}", res, RET_ADDRESS);
-	}
-
-	return res;
+	_test4_hook(ps, a2, a3, a4, a5, a6, a7, a8);
 }
 
 void jc::test_units::init()
@@ -122,7 +121,7 @@ void jc::test_units::init()
 	_test3_hook.hook();*/
 	//_test_hook.hook();
 
-	//resource_request_hook.hook();
+	resource_request_hook.hook();
 	//_load_model_hook.hook();
 }
 
@@ -135,7 +134,7 @@ void jc::test_units::destroy()
 	_test4_hook.unhook();*/
 	//_test_hook.unhook();
 
-	//resource_request_hook.unhook();
+	resource_request_hook.unhook();
 	//_load_model_hook.unhook();
 }
 

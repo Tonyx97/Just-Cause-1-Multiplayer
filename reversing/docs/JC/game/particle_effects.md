@@ -1,4 +1,3 @@
-```cpp
 360_exp_2_1
 firemedium_static
 missile_fire
@@ -268,4 +267,3 @@ machinegun3
 machinegun2
 machinegun
 360_exp_4_7
-```
