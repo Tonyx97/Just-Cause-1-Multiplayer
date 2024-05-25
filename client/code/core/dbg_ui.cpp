@@ -1,5 +1,7 @@
 ﻿#include <defs/standard.h>
 
+#include <Shlwapi.h>
+
 #include "keycode.h"
 #include "ui.h"
 #include "test_units.h"
@@ -28,8 +30,13 @@
 #include <mp/chat/chat.h>
 #include <mp/net.h>
 
+#include "game/object/vars/anims.h"
+#include "game/object/vars/locations.h"
+#include "game/object/vars/models.h"
+#include "game/object/vars/pfxs.h"
+
 float image_x = 1.f,
-	  image_y = 1.f;
+      image_y = 1.f;
 
 void DebugUI::toggle_admin_panel()
 {
@@ -60,11 +67,25 @@ void DebugUI::render_admin_panel()
 	if (!local_char)
 		return;
 
+	const auto lp = g_world->get_local_character();
+
 	// weapon stuff
 
 	if (auto current_weapon = local_char->get_weapon_belt()->get_current_weapon())
 	{
 		current_weapon->get_info()->set_infinite_ammo(infinite_ammo);
+	}
+
+	if (g_key->is_key_pressed(KEY_F))
+		local_char->play_idle_stance();
+
+	if (g_key->is_key_pressed(KEY_NUM_9))
+	{
+		const auto location_text = FORMATV("{:.2f}, {:.2f}, {:.2f}", lp->get_position().x, lp->get_position().y, lp->get_position().z);
+
+		util::win::set_clipboard_text(location_text);
+
+		g_chat->add_chat_msg(location_text);
 	}
 
 	if (!show_admin_panel)
@@ -76,9 +97,6 @@ void DebugUI::render_admin_panel()
 	ImGui::Begin("Admin Panel");
 
 	ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-
-	if (g_key->is_key_pressed(KEY_F))
-		local_char->play_idle_stance();
 
 	if (ImGui::TreeNode("Server"))
 	{
@@ -287,30 +305,39 @@ void DebugUI::render_admin_panel()
 		ImGui::SliderInt("Vehicle to spawn##ap.veh.tspw", &veh_to_spawn, 0, 109);
 		ImGui::SliderInt("Vehicle faction ##ap.veh.tfac", &veh_faction, 0, 8);
 
-		ImGui::Text("Selected Vehicle's EE name: %s", it != jc::vars::exported_entities_vehicles.end() ? it->second.c_str() : "Invalid vehicle");
+		static char filter[256] = {};
 
-		if (it != jc::vars::exported_entities_vehicles.end())
+		ImGui::Separator();
+		ImGui::SetNextItemWidth(-1.f);
+		ImGui::InputText("Search##veh.search", filter, sizeof(filter));
+
+		if (ImGui::BeginCombo("Vehicle list", ""))
 		{
-			if (ImGui::Button("Spawn Vehicle##ap.veh.spw"))
+			for (const auto& veh_ee : jc::vars::exported_entities_vehicles | std::views::values)
 			{
-				TransformTR transform(g_world->get_local_character()->get_position() + vec3(3.f, 1.f, 2.f));
+				bool use_filter = strlen(filter) > 0;
 
-				g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, transform, jc::vars::exported_entities_vehicles.find(veh_to_spawn)->second));
+				if ((!use_filter || (use_filter && StrStrIA(veh_ee.c_str(), filter))) && ImGui::Selectable(veh_ee.c_str(), false))
+				{
+					TransformTR transform(lp->get_position() + vec3(3.f, 1.f, 2.f));
 
-				log(RED, "wants to spawn {}", veh_to_spawn);
+					g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, transform, veh_ee));
+
+					log(RED, "wants to spawn {}", veh_ee);
+				}
 			}
+
+			ImGui::EndCombo();
 		}
 
 		ImGui::TreePop();
 	}
 
-	if (ImGui::TreeNode("Current Vehicle"))
+	if (auto veh = lp->get_vehicle(); veh && veh->get_driver_seat()->get_character() == lp)
 	{
-		const auto lp = g_world->get_local_character();
-
-		if (auto veh = lp->get_vehicle(); veh && veh->get_driver_seat()->get_character() == lp)
+		if (const auto vehicle_net = g_net->get_net_object_by_game_object(veh)->cast<VehicleNetObject>())
 		{
-			if (const auto vehicle_net = g_net->get_net_object_by_game_object(veh)->cast<VehicleNetObject>())
+			if (ImGui::TreeNode("Current Vehicle"))
 			{
 				auto color_value = vehicle_net->get_color();
 
@@ -328,7 +355,7 @@ void DebugUI::render_admin_panel()
 					auto g = uint32_t(color[1] * 255.f) << 8;
 					auto b = uint32_t(color[2] * 255.f) << 16;
 					auto a = uint32_t(color[3] * 255.f) << 24;
-					
+
 					vehicle_net->set_color(r | g | b | a, true);
 				}
 
@@ -336,16 +363,119 @@ void DebugUI::render_admin_panel()
 
 				if (ImGui::SliderInt("Faction Paintjob##cv.fac", &faction_to_set, 0, 8))
 					vehicle_net->set_faction(faction_to_set, true);
+
+				ImGui::TreePop();
 			}
+		}
+	}
+	
+	if (ImGui::TreeNode("Animations"))
+	{
+		static char filter[256] = {};
+
+		ImGui::SetNextItemWidth(-1.f);
+		ImGui::InputText("Search##anim.search", filter, sizeof(filter));
+
+		if (ImGui::BeginCombo("Anim list", ""))
+		{
+			for (const auto& anim_name : jc::vars::animations_list | std::views::values)
+			{
+				bool use_filter = strlen(filter) > 0;
+
+				if ((!use_filter || (use_filter && StrStrIA(anim_name.c_str(), filter))) && ImGui::Selectable(anim_name.c_str(), false))
+					lp->set_animation(anim_name, 0.1f, true, true, true);
+			}
+
+			ImGui::EndCombo();
 		}
 
 		ImGui::TreePop();
 	}
 
-	if (ImGui::TreeNode("Debug Stuff"))
+	if (ImGui::TreeNode("Locations"))
 	{
-		ImGui::SliderFloat("Image X", &image_x, 0.f, 1.f);
-		ImGui::SliderFloat("Image Y", &image_y, 0.f, 1.f);
+		static char filter[256] = {};
+
+		ImGui::SetNextItemWidth(-1.f);
+		ImGui::InputText("Search##loc.search", filter, sizeof(filter));
+
+		if (ImGui::BeginCombo("Location list", ""))
+		{
+			for (const auto& [loc_name, loc] : jc::vars::locations)
+			{
+				bool use_filter = strlen(filter) > 0;
+
+				if ((!use_filter || (use_filter && StrStrIA(loc_name.c_str(), filter))) && ImGui::Selectable(loc_name.c_str(), false))
+					lp->set_position(loc);
+			}
+
+			ImGui::EndCombo();
+		}
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Model Spawning"))
+	{
+		static int selected_model = -1;
+		static int selected_pfx = -1;
+
+		{
+			static char filter[256] = {};
+
+			ImGui::SetNextItemWidth(-1.f);
+			ImGui::InputText("Search RBM##mdl.search", filter, sizeof(filter));
+
+			if (ImGui::BeginCombo("RBM list", selected_model != -1 ? jc::vars::models_list[selected_model].c_str() : "None"))
+			{
+				for (int i = 0; const auto & model_name : jc::vars::models_list)
+				{
+					bool use_filter = strlen(filter) > 0;
+
+					if ((!use_filter || (use_filter && StrStrIA(model_name.c_str(), filter))) && ImGui::Selectable(model_name.c_str(), false))
+						selected_model = i;
+
+					++i;
+				}
+
+				ImGui::EndCombo();
+			}
+		}
+
+		{
+			static char filter[256] = {};
+
+			ImGui::SetNextItemWidth(-1.f);
+			ImGui::InputText("Search PFX##pfx.search", filter, sizeof(filter));
+
+			if (ImGui::BeginCombo("PFX list", selected_pfx != -1 ? jc::vars::pfxs_list[selected_pfx].c_str() : "None"))
+			{
+				for (int i = 0; const auto& pfx_name : jc::vars::pfxs_list)
+				{
+					bool use_filter = strlen(filter) > 0;
+
+					if ((!use_filter || (use_filter && StrStrIA(pfx_name.c_str(), filter))) && ImGui::Selectable(pfx_name.c_str(), false))
+						selected_pfx = i;
+
+					++i;
+				}
+
+				ImGui::EndCombo();
+			}
+		}
+
+		if (selected_model != -1 && ImGui::Button("Spawn"))
+		{
+			TransformTR transform(lp->get_position() + vec3(3.f, 0.f, 2.f));
+
+			g_net->send(Packet(
+				WorldPID_SpawnObject,
+				ChannelID_World,
+				NetObject_Damageable,
+				transform,
+				jc::vars::models_list[selected_model],
+				selected_pfx != -1 ? jc::vars::pfxs_list[selected_pfx] : ""));
+		}
 
 		ImGui::TreePop();
 	}

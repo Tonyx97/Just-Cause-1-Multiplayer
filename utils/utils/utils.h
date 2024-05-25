@@ -526,6 +526,28 @@ namespace util
 			return out;
 		}
 
+		inline void set_clipboard_text(const std::string& text)
+		{
+			if (!OpenClipboard(nullptr)) return;
+
+			EmptyClipboard();
+
+			HGLOBAL hglbCopy = GlobalAlloc(GMEM_MOVEABLE, (text.size() + 1) * sizeof(char));
+
+			if (!hglbCopy)
+			{
+				CloseClipboard();
+				return;
+			}
+
+			char* lptstrCopy = static_cast<char*>(GlobalLock(hglbCopy));
+
+			memcpy(lptstrCopy, text.c_str(), text.size() + 1);
+			GlobalUnlock(hglbCopy);
+			SetClipboardData(CF_TEXT, hglbCopy);
+			CloseClipboard();
+		}
+
 		void get_desktop_resolution(int32_t& x, int32_t& y);
 		void get_desktop_pos(int32_t& x, int32_t& y);
 
@@ -561,6 +583,7 @@ namespace util
 		bool is_empty(const std::string& path);
 		bool is_directory(const std::string& path);
 		bool create_bin_file(const std::string& filename, const std::vector<uint8_t>& data);
+		bool create_text_file(const std::string& filename, const std::string& data);
 	}
 
 	namespace mem

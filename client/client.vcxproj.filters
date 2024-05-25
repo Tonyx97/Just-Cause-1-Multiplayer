@@ -731,6 +731,15 @@
     <ClInclude Include="code\game\object\damageable_object\grenade.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="code\game\object\vars\locations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\vars\models.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\game\object\vars\pfxs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rsrc\bug_ripper_ui.rc">

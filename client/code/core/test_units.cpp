@@ -43,45 +43,95 @@
 
 DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* name, int type, ptr data, ptr size)
 {
-	if (strstr(name->c_str(), "bullet_") || strstr((const char*)data, "360_fire_1"))
+	/*if (strstr(name->c_str(), "bullet_") || strstr((const char*)data, "360_fire_1"))
 	{
 		log(PURPLE, "{:x} {:x} {:x} {} {}", a1, data, size, type, name->c_str());
-
-		/*const auto data_file = util::fs::read_bin_file("kc_022_lod1.rbm");
-
-		size = data_file.size();
-
-		log(RED, "size: {}", data_file.size());
-
-		memcpy((void*)data, data_file.data(), size);
-
-		log(RED, "size: {}", data_file.size());*/
-	}
+	}*/
 	//else log(RED, "{:x} {:x} {:x} {} {}", a1, data, size, type, name->c_str());
 
 	//while (!GetAsyncKeyState(VK_F3));
+
+	/*if (type == 2)
+		log(RED, "{}", name->c_str());*/
 
 	return resource_request_hook(a1, name, type, data, size);
 }
 
 // 8367D0
 
+std::set<std::string> g_collector;
+
 DEFINE_HOOK_THISCALL(_load_model, 0x8367D0, bool, int _this, jc::stl::string* name, int type, ptr data, int size)
 {
-	if (strstr(name->c_str(), "weap_00") && strstr(name->c_str(), ".rbm"))
+	if (strstr(name->c_str(), ".pfx"))
 	{
-		log(RED, "[{:x}] {} {} {:x} {}", RET_ADDRESS, name->c_str(), type, data, size);
+		//log(RED, "[{:x}] {} {} {:x} {}", RET_ADDRESS, name->c_str(), type, data, size);
+
+		if (name)
+		{
+			std::string fixed_name = name->c_str();
+
+			if (const auto it = fixed_name.find_last_of('\\'); it != -1)
+				fixed_name = fixed_name.substr(it + 1);
+
+			log(PURPLE, "[{}] {}", g_collector.size(), fixed_name);
+
+			g_collector.insert(fixed_name);
+		}
 
 		return _load_model_hook(_this, name, type, data, size);
-		//while (!GetAsyncKeyState(VK_F3));
 	}
+
+	/*if (type == 9)
+	{
+		log(RED, "{}", size);
+
+		//log(RED, "{}", *(char**)data);
+		//log(PURPLE, "{:x} {:x} {:x} {} {}", _this, data, size, type, name->c_str());
+	}*/
 
 	return _load_model_hook(_this, name, type, data, size);
 }
 
-DEFINE_HOOK_THISCALL_S(_test2, 0x597B80, bool, int _this)
+DEFINE_HOOK_THISCALL(_test2, 0x55E9D0, ptr, ptr _this, int a1, const char* name)
 {
-	auto res = _test2_hook(_this);
+	auto res = _test2_hook(_this, a1, name);
+
+	/*if (name)
+	{
+		std::string fixed_name = name;
+
+		if (const auto it = fixed_name.find_last_of('\\'); it != -1)
+			fixed_name = fixed_name.substr(it + 1);
+
+		if (const auto it = fixed_name.find(".anim"); it != -1)
+			fixed_name = fixed_name.substr(0, it);
+
+		log(PURPLE, "[{}] {}", g_collector.size(), fixed_name);
+
+		g_collector.insert(fixed_name);
+	}
+
+	if (GetAsyncKeyState(VK_NUMPAD5))
+	{
+		std::stringstream ss;
+
+		ss << "inline std::unordered_map<int32_t, std::string> animations_list = " << std::endl;
+		ss << "{" << std::endl;
+
+		for (int i = 0; const auto& anim : g_collector)
+		{
+			ss << "\t{ " << i++ << ", ";
+			ss << '"';
+			ss << anim;
+			ss << '"';
+			ss << "}," << std::endl;
+		}
+
+		ss << "};" << std::endl;
+
+		util::fs::create_text_file("collector.txt", ss.str());
+	}*/
 
 	/*if (res && _this != ptr(g_world->get_localplayer_character()))
 		log(RED, "2 {:x} {:x}", RET_ADDRESS, _this);*/
@@ -117,25 +167,25 @@ void jc::test_units::init()
 {
 	//_test4_hook.hook(true);
 	//_test1_hook.hook();
-	/*_test2_hook.hook();
-	_test3_hook.hook();*/
+	//_test2_hook.hook();
+	//_test3_hook.hook();
 	//_test_hook.hook();
 
 	resource_request_hook.hook();
-	//_load_model_hook.hook();
+	_load_model_hook.hook();
 }
 
 void jc::test_units::destroy()
 {
 	//_test4_hook.hook(false);
 	//_test1_hook.unhook();
-	/*_test2_hook.unhook();
-	_test3_hook.unhook();
-	_test4_hook.unhook();*/
+	//_test2_hook.unhook();
+	//_test3_hook.unhook();
+	//_test4_hook.unhook();
 	//_test_hook.unhook();
 
 	resource_request_hook.unhook();
-	//_load_model_hook.unhook();
+	_load_model_hook.unhook();
 }
 
 void jc::test_units::test_0()
@@ -148,11 +198,33 @@ void jc::test_units::test_0()
 		return;
 
 	auto local_pos = local_char->get_position();
+
 	Transform local_t(local_pos);
 
 	static std::vector<shared_ptr<Vehicle>> vehs;
 	static std::vector<shared_ptr<Weapon>> temp_weapons;
 	static std::vector<shared_ptr<Vehicle>> temp_vehicles;
+
+	if (g_key->is_key_pressed(KEY_NUM_5))
+	{
+		std::stringstream ss;
+
+		ss << "inline std::vector<std::string> pfxs_list = " << std::endl;
+		ss << "{" << std::endl;
+
+		for (const auto& item : g_collector)
+		{
+			ss << "\t";
+			ss << '"';
+			ss << item;
+			ss << '"';
+			ss << "," << std::endl;
+		}
+
+		ss << "};" << std::endl;
+
+		util::fs::create_text_file("collector.txt", ss.str());
+	}
 
 	if (g_global_ptr)
 	{

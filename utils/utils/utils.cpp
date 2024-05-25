@@ -325,3 +325,19 @@ bool util::fs::create_bin_file(const std::string& filename, const std::vector<ui
 
 	return true;
 }
+
+bool util::fs::create_text_file(const std::string& filename, const std::string& data)
+{
+#ifdef JC_CLIENT
+	std::ofstream file(GET_MODULE_PATH() + string::convert(filename), std::ios::trunc);
+#else
+	std::ofstream file(filename, std::ios::trunc);
+#endif
+
+	if (!file)
+		return false;
+
+	file.write(BITCAST(char*, data.data()), data.size());
+
+	return true;
+}

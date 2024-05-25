@@ -92,7 +92,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>DbgHelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DbgHelp.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
@@ -130,7 +130,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>DbgHelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DbgHelp.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>$(SolutionDir)bins\sign_$(TargetName).bat</Command>
@@ -297,7 +297,10 @@
     <ClInclude Include="code\game\object\ui\map_icon.h" />
     <ClInclude Include="code\game\object\vars\anims.h" />
     <ClInclude Include="code\game\object\vars\exported_entities.h" />
+    <ClInclude Include="code\game\object\vars\locations.h" />
+    <ClInclude Include="code\game\object\vars\models.h" />
     <ClInclude Include="code\game\object\vars\npc_variants.h" />
+    <ClInclude Include="code\game\object\vars\pfxs.h" />
     <ClInclude Include="code\game\object\vars\ui.h" />
     <ClInclude Include="code\game\object\vars\weapons.h" />
     <ClInclude Include="code\game\object\vehicle\airplane.h" />
