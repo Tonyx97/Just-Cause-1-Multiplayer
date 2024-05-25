@@ -472,7 +472,7 @@ namespace luas
 		struct class_fn_caller<R(__thiscall*)(Tx*, A...)>
 		{
 			template <typename... Args, typename... In>
-			static int _impl(state& _s, void* fn, Tx* _this, In&&... args) requires (detail::is_empty_args<Args>)
+			static int _impl(state& _s, void* fn, Tx* _this, In&&... args) requires (detail::is_empty_args<Args...>)
 			{
 				if constexpr (std::is_void_v<R>)
 					std::bit_cast<R(__thiscall*)(Tx*, A...)>(fn)(_this, args...);
@@ -1422,7 +1422,7 @@ namespace luas
 	struct lua_c_caller
 	{
 		template <typename... A, typename... In>
-		static int _impl(state& _s, int nargs, [[maybe_unused]] int i, In&&... args) requires (detail::is_empty_args<A>)
+		static int _impl(state& _s, int nargs, [[maybe_unused]] int i, In&&... args) requires (detail::is_empty_args<A...>)
 		{
 			using return_type = detail::fn_return_type_v<Fn>;
 
