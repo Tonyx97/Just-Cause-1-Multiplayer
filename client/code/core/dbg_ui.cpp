@@ -30,6 +30,8 @@
 #include <mp/chat/chat.h>
 #include <mp/net.h>
 
+#include "game/object/base/comps/model.h"
+#include "game/object/damageable_object/damageable_object.h"
 #include "game/object/vars/anims.h"
 #include "game/object/vars/locations.h"
 #include "game/object/vars/models.h"
@@ -417,9 +419,6 @@ void DebugUI::render_admin_panel()
 
 	if (ImGui::TreeNode("Model Spawning"))
 	{
-		static int selected_model = -1;
-		static int selected_pfx = -1;
-
 		{
 			static char filter[256] = {};
 
@@ -433,7 +432,15 @@ void DebugUI::render_admin_panel()
 					bool use_filter = strlen(filter) > 0;
 
 					if ((!use_filter || (use_filter && StrStrIA(model_name.c_str(), filter))) && ImGui::Selectable(model_name.c_str(), false))
+					{
 						selected_model = i;
+
+						if (visualize_rbm)
+							dbg_rbm = g_factory->spawn_damageable_object(
+								lp->get_position() + vec3(3.f, 0.f, 2.f),
+								jc::vars::models_list[selected_model],
+								jc::vars::pfxs_list[0]);
+					}
 
 					++i;
 				}
@@ -463,6 +470,9 @@ void DebugUI::render_admin_panel()
 				ImGui::EndCombo();
 			}
 		}
+
+		if (ImGui::Checkbox("Visualize RBM", &visualize_rbm) && !visualize_rbm)
+			dbg_rbm = {};
 
 		if (selected_model != -1 && ImGui::Button("Spawn"))
 		{
@@ -789,6 +799,48 @@ void DebugUI::overlay_debug()
 				ImGui::Text("Position: %.2f %.2f %.2f", lt.x, lt.y, lt.z);
 				ImGui::Text("Rotation: %.2f %.2f %.2f %.2f (%.2f %.2f %.2f)", lr.w, lr.x, lr.y, lr.z, euler.x, euler.y, euler.z);
 				ImGui::Text("Scale: %.2f %.2f %.2f", ls.x, ls.y, ls.z);
+			}
+		}
+
+		if (visualize_rbm && dbg_rbm)
+		{
+			ray_hit_info hit_info;
+
+			auto origin = camera->get_model_translation();
+
+			if (g_physics->raycast(origin, origin + -camera->get_model_forward_vector() * 1000.f, hit_info, true, true) && hit_info.object != dbg_rbm.get())
+			{
+				const auto transform = dbg_rbm->get_transform();
+
+				dbg_rbm->set_transform(Transform(hit_info.hit_position + t_offset, transform.get_rotation()));
+			}
+
+			if (g_key->is_key_pressed(KEY_O) && selected_model != -1 && selected_pfx != -1)
+			{
+				g_net->send(Packet(
+					WorldPID_SpawnObject,
+					ChannelID_World,
+					NetObject_Damageable,
+					dbg_rbm->get_transform().get_tr(),
+					jc::vars::models_list[selected_model],
+					jc::vars::pfxs_list[selected_pfx]));
+			}
+
+			if (const float y_wheel = std::get<1>(g_key->get_mouse_wheel_value()); y_wheel != 0.f)
+			{
+				auto transform = dbg_rbm->get_transform();
+
+				if (g_key->is_key_down(KEY_Y)) transform.rotate(vec3(2.5f * y_wheel * (3.14159f / 180.f), 0.f, 0.f));
+				if (g_key->is_key_down(KEY_U)) transform.rotate(vec3(0.f, 2.5f * y_wheel * (3.14159f / 180.f), 0.f));
+				if (g_key->is_key_down(KEY_I)) transform.rotate(vec3(0.f, 0.f, 2.5f * y_wheel * (3.14159f / 180.f)));
+
+				if (g_key->is_key_down(KEY_H)) t_offset += vec3(0.1f * y_wheel, 0.f, 0.f);
+				if (g_key->is_key_down(KEY_J)) t_offset += vec3(0.f, 0.1f * y_wheel, 0.f);
+				if (g_key->is_key_down(KEY_K)) t_offset += vec3(0.f, 0.f, 0.1f * y_wheel);
+
+				dbg_rbm->set_transform(transform);
+
+				g_key->set_mouse_wheel_value({});
 			}
 		}
 	}

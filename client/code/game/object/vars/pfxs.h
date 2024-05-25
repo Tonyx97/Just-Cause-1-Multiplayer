@@ -4,7 +4,6 @@ namespace jc::vars
 {
 	inline std::vector<std::string> pfxs_list =
 	{
-		"a2m13_mission.pfx",
 		"ammo_boxes_col.pfx",
 		"antenna_mast_blown_col.pfx",
 		"arve_001.pfx",

@@ -96,6 +96,7 @@ LRESULT WINAPI wnd_proc_callback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
 	{
 		was_key = key_pressed = true;
 		g_key->set_key_input(wParam, true);
@@ -105,6 +106,7 @@ LRESULT WINAPI wnd_proc_callback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 	case WM_RBUTTONUP:
 	case WM_MBUTTONUP:
 	case WM_KEYUP:
+	case WM_SYSKEYUP:
 	{
 		was_key = true;
 		key_pressed = false;

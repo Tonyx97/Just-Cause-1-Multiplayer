@@ -114,6 +114,10 @@ void script::register_functions(Script* script)
 #if defined(JC_CLIENT)
 	// register client functions
 
+	/* TIME */
+
+	vm->add_function("getDeltaTime", [] { return g_time->get_delta(); });
+
 	/* EVENTS */
 
 	vm->add_function("triggerServerEvent", [](luas::state& s, const std::string& name, luas::variadic_args va)

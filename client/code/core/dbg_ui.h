@@ -1,11 +1,21 @@
 #pragma once
 
+class DamageableObject;
+
 class DebugUI
 {
 private:
 
 	bool show_overlay_debug = true;
 	bool show_admin_panel = false;
+	bool visualize_rbm = false;
+
+	int selected_model = -1;
+	int selected_pfx = 0;
+
+	vec3 t_offset {};
+
+	shared_ptr<DamageableObject> dbg_rbm = {};
 
 #ifdef JC_DBG
 	bool admin_panel_available = true;
