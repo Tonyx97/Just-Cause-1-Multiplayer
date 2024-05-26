@@ -297,6 +297,7 @@
     <ClInclude Include="code\game\object\ui\map_icon.h" />
     <ClInclude Include="code\game\object\vars\anims.h" />
     <ClInclude Include="code\game\object\vars\exported_entities.h" />
+    <ClInclude Include="code\game\object\vars\fxs.h" />
     <ClInclude Include="code\game\object\vars\locations.h" />
     <ClInclude Include="code\game\object\vars\models.h" />
     <ClInclude Include="code\game\object\vars\npc_variants.h" />

@@ -36,6 +36,7 @@
 #include "game/object/vars/locations.h"
 #include "game/object/vars/models.h"
 #include "game/object/vars/pfxs.h"
+#include "game/object/vars/fxs.h"
 
 float image_x = 1.f,
       image_y = 1.f;
@@ -80,6 +81,15 @@ void DebugUI::render_admin_panel()
 
 	if (g_key->is_key_pressed(KEY_F))
 		local_char->play_idle_stance();
+
+	if (g_key->is_key_pressed(KEY_NUM_8))
+	{
+		const auto location_text = FORMATV("{:.2f}, {:.2f}, {:.2f}", lp->get_rotation().x, lp->get_rotation().y, lp->get_rotation().z);
+
+		util::win::set_clipboard_text(location_text);
+
+		g_chat->add_chat_msg(location_text);
+	}
 
 	if (g_key->is_key_pressed(KEY_NUM_9))
 	{
@@ -386,6 +396,38 @@ void DebugUI::render_admin_panel()
 
 				if ((!use_filter || (use_filter && StrStrIA(anim_name.c_str(), filter))) && ImGui::Selectable(anim_name.c_str(), false))
 					lp->set_animation(anim_name, 0.1f, true, true, true);
+			}
+
+			ImGui::EndCombo();
+		}
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Particles"))
+	{
+		static char filter[256] = {};
+
+		ImGui::SetNextItemWidth(-1.f);
+		ImGui::InputText("Search##fx.search", filter, sizeof(filter));
+
+		if (ImGui::BeginCombo("FX list", ""))
+		{
+			for (const auto& fx_name : jc::vars::fxs_list)
+			{
+				bool use_filter = strlen(filter) > 0;
+
+				if ((!use_filter || (use_filter && StrStrIA(fx_name.c_str(), filter))) && ImGui::Selectable(fx_name.c_str(), false))
+				{
+					ray_hit_info hit_info;
+
+					auto origin = main_cam->get_model_translation();
+					auto dst = origin + -main_cam->get_model_forward_vector() * 100.f;
+
+					if (g_physics->raycast(origin, dst, hit_info, true, true))
+						g_particle->spawn_fx(fx_name, hit_info.hit_position, {}, {}, false, false);
+					else g_particle->spawn_fx(fx_name, dst, {}, {}, false, false);
+				}
 			}
 
 			ImGui::EndCombo();
@@ -822,12 +864,14 @@ void DebugUI::overlay_debug()
 				{
 					auto transform = dbg_rbm->get_transform();
 
-					if (g_key->is_key_down(KEY_NUM_1)) transform.rotate(vec3(2.5f * y_wheel * (3.14159f / 180.f), 0.f, 0.f));
-					if (g_key->is_key_down(KEY_NUM_2)) transform.rotate(vec3(0.f, 2.5f * y_wheel * (3.14159f / 180.f), 0.f));
-					if (g_key->is_key_down(KEY_NUM_3)) transform.rotate(vec3(0.f, 0.f, 2.5f * y_wheel * (3.14159f / 180.f)));
-
-					dbg_rbm_max_dist += y_wheel * 0.1f;
-					dbg_rbm_max_dist = std::clamp(dbg_rbm_max_dist, 1.f, 500.f);
+					if (g_key->is_key_down(KEY_NUM_1))		transform.rotate(vec3(2.5f * y_wheel * (3.14159f / 180.f), 0.f, 0.f));
+					else if (g_key->is_key_down(KEY_NUM_2)) transform.rotate(vec3(0.f, 2.5f * y_wheel * (3.14159f / 180.f), 0.f));
+					else if (g_key->is_key_down(KEY_NUM_3)) transform.rotate(vec3(0.f, 0.f, 2.5f * y_wheel * (3.14159f / 180.f)));
+					else
+					{
+						dbg_rbm_max_dist += y_wheel * 0.1f;
+						dbg_rbm_max_dist = std::clamp(dbg_rbm_max_dist, 1.f, 500.f);
+					}
 
 					dbg_rbm->set_transform(transform);
 

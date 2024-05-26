@@ -255,11 +255,11 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
-		const std::string anim = "dance_hooker_NPC_2.anim";
+		/*const std::string anim = "dance_hooker_NPC_2.anim";
 
 		g_anim_system->load_anim_async(anim);
 
-		local_char->set_animation("dance_hooker_NPC_2.anim", 0.2f, true, false);
+		local_char->set_animation("dance_hooker_NPC_2.anim", 0.2f, true, false);*/
 
 		/*object_base_map map {};
 
@@ -448,7 +448,7 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		local_char->set_animation("dance_hooker_NPC_1.anim", 0.2f, true, false);
+		//local_char->set_animation("dance_hooker_NPC_1.anim", 0.2f, true, false);
 
 		/*if (auto veh = local_char->get_vehicle())
 		{
@@ -467,7 +467,7 @@ void jc::test_units::test_0()
 		//local_char->set_animation("dance_hooker_NPC_2.anim", 0.2f, true, true);
 	}
 
-	if (g_key->is_key_down(VK_NUMPAD9))
+	/*if (g_key->is_key_down(VK_NUMPAD9))
 	{
 		if (aaa != 24)
 		{
@@ -488,9 +488,7 @@ void jc::test_units::test_0()
 
 		//g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "crate_custom_png.rbm", "");
 		//g_archives->dump_hashed_assets();
-		/*const auto asset = g_archives->get_asset(R"(PROP_ponytailgrey.lod)");
-		log(GREEN, "{} {:x} {:x} {:x}", asset.arc_index, asset.hash, asset.offset, asset.size);*/
-	}
+	}*/
 
 	/*for (const auto& w : temp_weapons)
 	{

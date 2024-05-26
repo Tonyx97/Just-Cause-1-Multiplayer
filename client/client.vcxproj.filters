@@ -740,6 +740,9 @@
     <ClInclude Include="code\game\object\vars\pfxs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="code\game\object\vars\fxs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rsrc\bug_ripper_ui.rc">
