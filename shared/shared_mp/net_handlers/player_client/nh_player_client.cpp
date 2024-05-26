@@ -261,7 +261,7 @@ PacketResult nh::player_client::resource_action(const Packet& p)
 		case ResourceAction_Stop:		result = g_rsrc->stop_resource(rsrc_name);		break;
 		case ResourceAction_Restart:	result = g_rsrc->restart_resource(rsrc_name);	break;
 		}
-}
+	}
 	else result = ResourceResult_NotAllowed;
 
 	pc->send(Packet(PlayerClientPID_DebugLog, ChannelID_PlayerClient, Resource::RESULT_TO_STRING(result)), true);

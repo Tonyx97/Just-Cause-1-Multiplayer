@@ -51,8 +51,11 @@ DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* n
 
 	//while (!GetAsyncKeyState(VK_F3));
 
-	/*if (type == 2)
-		log(RED, "{}", name->c_str());*/
+	if (type == 7 || type == 9)
+	{
+		/*if (type == 7)
+			return 0;*/
+	}
 
 	return resource_request_hook(a1, name, type, data, size);
 }
@@ -63,7 +66,7 @@ std::set<std::string> g_collector;
 
 DEFINE_HOOK_THISCALL(_load_model, 0x8367D0, bool, int _this, jc::stl::string* name, int type, ptr data, int size)
 {
-	if (strstr(name->c_str(), ".pfx"))
+	/*if (strstr(name->c_str(), ".loc"))
 	{
 		//log(RED, "[{:x}] {} {} {:x} {}", RET_ADDRESS, name->c_str(), type, data, size);
 
@@ -80,15 +83,24 @@ DEFINE_HOOK_THISCALL(_load_model, 0x8367D0, bool, int _this, jc::stl::string* na
 		}
 
 		return _load_model_hook(_this, name, type, data, size);
-	}
+	}*/
 
-	/*if (type == 9)
+	if (type == 7 || type == 9)
 	{
-		log(RED, "{}", size);
+		/*log(RED, "{} '{}'", name->c_str(), (char*)data);
+
+		auto new_value1 = jc::stl::string("C:\\p4_k21666_JSTROMBRO\\Projects\\JustCause\\Data\\Locations\\test\\test_shootingrange.cgd");
+		auto new_value2 = jc::stl::string("C:\\p4_k21666_JSTROMBRO\\Projects\\JustCause\\Data\\Locations\\test\\test_shootingrange.blo");
+
+		if (type == 7)
+			return _load_model_hook(_this, &new_value1, type, data, size);
+
+		if (type == 9)
+			return _load_model_hook(_this, &new_value2, type, data, size);*/
 
 		//log(RED, "{}", *(char**)data);
 		//log(PURPLE, "{:x} {:x} {:x} {} {}", _this, data, size, type, name->c_str());
-	}*/
+	}
 
 	return _load_model_hook(_this, name, type, data, size);
 }
@@ -205,7 +217,7 @@ void jc::test_units::test_0()
 	static std::vector<shared_ptr<Weapon>> temp_weapons;
 	static std::vector<shared_ptr<Vehicle>> temp_vehicles;
 
-	if (g_key->is_key_pressed(KEY_NUM_5))
+	/*if (g_key->is_key_pressed(KEY_NUM_5))
 	{
 		std::stringstream ss;
 
@@ -224,7 +236,7 @@ void jc::test_units::test_0()
 		ss << "};" << std::endl;
 
 		util::fs::create_text_file("collector.txt", ss.str());
-	}
+	}*/
 
 	if (g_global_ptr)
 	{
@@ -514,7 +526,7 @@ void jc::test_units::test_0()
 		}
 	}
 
-	if (g_key->is_key_pressed(VK_NUMPAD8))
+	/*if (g_key->is_key_pressed(VK_NUMPAD8))
 	{
 		auto mem = jc::game::malloc(0x17C);
 
@@ -582,20 +594,11 @@ void jc::test_units::test_0()
 		/*auto r = info.vehicle->get_driver_seat();
 
 		log(RED, "{:x} {:x}", ptr(info.vehicle), ptr(r.obj));
-
-		if (r && _char)
-		{
-			r->warp_character(_char);
-
-			//info.vehicle->set_velocity(vec3(0.f, 10.f, 0.f));
-
-			log(GREEN, "warped? {:x}", jc::read<ptr>(ptr(*r), 0x48));
-		}*/
-	}
+	}*/
 
 	static GamePlayer* npc_lp = nullptr;
 
-	if (g_key->is_key_pressed(VK_NUMPAD7))
+	/*if (g_key->is_key_pressed(VK_NUMPAD7))
 	{
 		if (const auto veh = BITCAST(Vehicle*, g_global_ptr))
 		{
@@ -608,27 +611,8 @@ void jc::test_units::test_0()
 				weapon->set_enabled(true);
 				weapon->update();
 			}
-
-			/*const auto sound_comp = jc::read<ptr>(veh, 0x404);
-
-			auto res = (*(int(__thiscall**)(ptr, int, ptr))(**(ptr**)(sound_comp + 0xC0) + 0x30))(
-				*(ptr*)(sound_comp + 0xC0),
-				5,
-				*(ptr*)(sound_comp + 4));
-
-			if (res)
-			{
-				if ((*(int(__thiscall**)(int))(*(ptr*)res + 0x6C))(res))
-				{
-					ptr v3 = (*(ptr(__thiscall**)(int))(*(ptr*)res + 0x6C))(res);
-					(*(void(__thiscall**)(int, int))(*(ptr*)v3 + 0x10))(v3, sound_comp + 0x50);
-					(*(int(__thiscall**)(int))(*(ptr*)res + 0x18))(res);
-
-					log(GREEN, "played");
-				}
-			}*/
 		}
-	}
+	}*/
 
 	static bool entered = false;
 
@@ -767,7 +751,7 @@ void jc::test_units::test_0()
 	static ptr anim_ptr = 0;
 	static ptr anim		= 0;
 
-	if (g_key->is_key_pressed(VK_NUMPAD3))
+	/*if (g_key->is_key_pressed(VK_NUMPAD3))
 	{
 		jc::stl::string anim_name = R"(Models\Characters\Animations\NPCMoves\hooker\dance_hooker_NPC_2.anim)";
 		// std::string anim_name = R"(Models\Characters\Animations\NPCMoves\idle\smoke_npc_2.anim)";
@@ -783,13 +767,8 @@ void jc::test_units::test_0()
 			// jc::this_call<ptr>(0x55E9D0, jc::read<void*>(0xD84D14), dummy2, anim_name.c_str());
 		}
 
-		/*while (!GetAsyncKeyState(VK_F3))
-			Sleep(100);*/
-
 		// local_char->set_animation(anim_name, 0.2f, true, true);
-	}
-
-
+	}*/
 
 	// rbm reversing
 

@@ -592,6 +592,21 @@ void script::register_functions(Script* script)
 
 		return out;
 	});
+	
+	vm->add_function("getDamageables", []()
+	{
+		std::vector<NetObject*> out;
+
+		g_net->for_each_net_object([&](NID, NetObject* damageable)
+		{
+			if (damageable->get_type() == NetObject_Damageable)
+				out.push_back(damageable);
+
+			return true;
+		});
+
+		return out;
+	});
 
 	vm->add_function("getRandomPlayer", []() { return g_net->get_random_player(); });
 	vm->add_function("getPlayerFromNID", [](NID nid) { return g_net->get_player_by_nid(nid); });
@@ -661,6 +676,18 @@ void script::register_functions(Script* script)
 	vm->add_function("getVehicleName", [](VehicleNetObject* vehicle_net)
 	{
 		NET_OBJ_CHECK_RET(vehicle_net, get_ee, "");
+	});
+
+	/* DAMAGEABLE */
+
+	vm->add_function("getDamageableRBM", [](DamageableNetObject* damageable)
+	{
+		NET_OBJ_CHECK_RET(damageable, get_lod, "");
+	});
+	
+	vm->add_function("getDamageablePFX", [](DamageableNetObject* damageable)
+	{
+		NET_OBJ_CHECK_RET(damageable, get_pfx, "");
 	});
 
 	/* UTILS */

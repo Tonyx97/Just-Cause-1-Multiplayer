@@ -802,46 +802,61 @@ void DebugUI::overlay_debug()
 			}
 		}
 
-		if (visualize_rbm && dbg_rbm)
+		if (visualize_rbm)
+		{
+			if (dbg_rbm)
+			{
+				ray_hit_info hit_info;
+
+				auto origin = camera->get_model_translation();
+				auto dst = origin + -camera->get_model_forward_vector() * dbg_rbm_max_dist;
+
+				if (g_physics->raycast(origin, dst, hit_info, true, true))
+				{
+					if (hit_info.object != dbg_rbm.get())
+						dbg_rbm->set_transform(Transform(hit_info.hit_position, dbg_rbm->get_transform().get_rotation()));
+				}
+				else dbg_rbm->set_transform(Transform(dst, dbg_rbm->get_transform().get_rotation()));
+
+				if (const float y_wheel = std::get<1>(g_key->get_mouse_wheel_value()); y_wheel != 0.f)
+				{
+					auto transform = dbg_rbm->get_transform();
+
+					if (g_key->is_key_down(KEY_NUM_1)) transform.rotate(vec3(2.5f * y_wheel * (3.14159f / 180.f), 0.f, 0.f));
+					if (g_key->is_key_down(KEY_NUM_2)) transform.rotate(vec3(0.f, 2.5f * y_wheel * (3.14159f / 180.f), 0.f));
+					if (g_key->is_key_down(KEY_NUM_3)) transform.rotate(vec3(0.f, 0.f, 2.5f * y_wheel * (3.14159f / 180.f)));
+
+					dbg_rbm_max_dist += y_wheel * 0.1f;
+					dbg_rbm_max_dist = std::clamp(dbg_rbm_max_dist, 1.f, 500.f);
+
+					dbg_rbm->set_transform(transform);
+
+					g_key->set_mouse_wheel_value({});
+				}
+
+				if (g_key->is_key_pressed(KEY_NUM_5) && selected_model != -1 && selected_pfx != -1)
+				{
+					g_net->send(Packet(
+						WorldPID_SpawnObject,
+						ChannelID_World,
+						NetObject_Damageable,
+						dbg_rbm->get_transform().get_tr(),
+						jc::vars::models_list[selected_model],
+						jc::vars::pfxs_list[selected_pfx]));
+				}
+			}
+		}
+		else
 		{
 			ray_hit_info hit_info;
 
 			auto origin = camera->get_model_translation();
 
-			if (g_physics->raycast(origin, origin + -camera->get_model_forward_vector() * 1000.f, hit_info, true, true) && hit_info.object != dbg_rbm.get())
-			{
-				const auto transform = dbg_rbm->get_transform();
-
-				dbg_rbm->set_transform(Transform(hit_info.hit_position + t_offset, transform.get_rotation()));
-			}
-
-			if (g_key->is_key_pressed(KEY_O) && selected_model != -1 && selected_pfx != -1)
-			{
-				g_net->send(Packet(
-					WorldPID_SpawnObject,
-					ChannelID_World,
-					NetObject_Damageable,
-					dbg_rbm->get_transform().get_tr(),
-					jc::vars::models_list[selected_model],
-					jc::vars::pfxs_list[selected_pfx]));
-			}
-
-			if (const float y_wheel = std::get<1>(g_key->get_mouse_wheel_value()); y_wheel != 0.f)
-			{
-				auto transform = dbg_rbm->get_transform();
-
-				if (g_key->is_key_down(KEY_Y)) transform.rotate(vec3(2.5f * y_wheel * (3.14159f / 180.f), 0.f, 0.f));
-				if (g_key->is_key_down(KEY_U)) transform.rotate(vec3(0.f, 2.5f * y_wheel * (3.14159f / 180.f), 0.f));
-				if (g_key->is_key_down(KEY_I)) transform.rotate(vec3(0.f, 0.f, 2.5f * y_wheel * (3.14159f / 180.f)));
-
-				if (g_key->is_key_down(KEY_H)) t_offset += vec3(0.1f * y_wheel, 0.f, 0.f);
-				if (g_key->is_key_down(KEY_J)) t_offset += vec3(0.f, 0.1f * y_wheel, 0.f);
-				if (g_key->is_key_down(KEY_K)) t_offset += vec3(0.f, 0.f, 0.1f * y_wheel);
-
-				dbg_rbm->set_transform(transform);
-
-				g_key->set_mouse_wheel_value({});
-			}
+			if (g_physics->raycast(origin, origin + -camera->get_model_forward_vector() * 1000.f, hit_info, true, true))
+				if (const auto obj = hit_info.object)
+					if (const auto net_obj = g_net->get_net_object_by_game_object(BITCAST(ObjectBase*, obj)))
+						if ((net_obj->get_type() == NetObject_Damageable || net_obj->get_type() == NetObject_Vehicle) && g_key->is_key_pressed(KEY_NUM_4))
+							g_net->send(Packet(WorldPID_DestroyObject, ChannelID_World, net_obj));
 		}
 	}
 }

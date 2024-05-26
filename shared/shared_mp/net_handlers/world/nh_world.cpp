@@ -80,6 +80,10 @@ PacketResult nh::world::destroy_object(const Packet& p)
 {
 #ifdef JC_CLIENT
 #else
+	const auto pc = p.get_pc();
+
+	if (!pc->has_acl("owner") && !pc->has_acl("admin"))
+		return PacketRes_NotAllowed;
 #endif
 
 	const auto net_obj = p.get_net_object();

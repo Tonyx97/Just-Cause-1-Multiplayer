@@ -13,7 +13,7 @@ private:
 	int selected_model = -1;
 	int selected_pfx = 0;
 
-	vec3 t_offset {};
+	float dbg_rbm_max_dist = 25.f;
 
 	shared_ptr<DamageableObject> dbg_rbm = {};
 

@@ -47,3 +47,16 @@ website/
 *.idb
 jc11/
 misc/private/
+launcher/obj/Release/net6.0-windows/GeneratedInternalTypeHelper.g.cs
+launcher/obj/Release/net6.0-windows/GeneratedInternalTypeHelper.g.i.cs
+launcher/obj/Release/net6.0-windows/launcher.GeneratedMSBuildEditorConfig.editorconfig
+launcher/obj/Release/net6.0-windows/Views/Container.g.cs
+launcher/obj/Release/net6.0-windows/Views/Container.g.i.cs
+launcher/obj/Release/net6.0-windows/Views/Pages/DashboardPage.g.cs
+launcher/obj/Release/net6.0-windows/Views/Pages/DashboardPage.g.i.cs
+launcher/obj/Release/net6.0-windows/Views/Pages/GameSettingsPage.g.cs
+launcher/obj/Release/net6.0-windows/Views/Pages/GameSettingsPage.g.i.cs
+launcher/obj/Release/net6.0-windows/Views/Pages/ServerBrowserPage.g.cs
+launcher/obj/Release/net6.0-windows/Views/Pages/ServerBrowserPage.g.i.cs
+launcher/obj/Release/net6.0-windows/Views/Pages/SettingsPage.g.cs
+launcher/obj/Release/net6.0-windows/Views/Pages/SettingsPage.g.i.cs
