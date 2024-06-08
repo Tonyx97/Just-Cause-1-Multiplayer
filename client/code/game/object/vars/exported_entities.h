@@ -172,6 +172,12 @@ namespace jc::vars
 		{ 151,	"rac_bookmaker_03.ee" },
 		{ 152,	"rac_bookmaker_04.ee" },
 		{ 153,	"rac_bookmaker_05.ee" },
+
+		// misc
+
+		{ 154,	"demo_boss1_beach.ee" },
+		{ 155,	"demo_boss1_car.ee" },
+		{ 156,	"demo_kane.ee" },
 	};
 
 	inline std::string get_ee(int32_t id)
@@ -294,6 +300,7 @@ namespace jc::vars
 		{ 107, "seve_021_fishingboat_special.ee" }, // Fishing boat
 		{ 108, "seve_022_fishing_boat.ee" }, // Fishing boat
 		{ 109, "seve_023_speedboat_special.ee" }, // Bald Eagle Persuader agency boat at Agency 2 safehouse
+		{ 110, "rocket.ee" },
 	};
 
 	inline std::string get_vehicle_ee(int32_t id)

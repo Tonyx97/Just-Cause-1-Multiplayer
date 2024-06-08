@@ -257,7 +257,7 @@ void DebugUI::render_admin_panel()
 			},
 		};
 
-		ImGui::SliderInt("Skin to set##ap.skn.tset", &skin_to_set, 0, 153);
+		ImGui::SliderInt("Skin to set##ap.skn.tset", &skin_to_set, 0, static_cast<int>(jc::vars::exported_entities.size() + 1));
 
 		if (ImGui::Button("Set Skin##ap.skn.set"))
 			local_char->set_skin(skin_to_set);
