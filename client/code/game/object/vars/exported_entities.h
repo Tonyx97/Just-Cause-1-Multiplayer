@@ -301,6 +301,7 @@ namespace jc::vars
 		{ 108, "seve_022_fishing_boat.ee" }, // Fishing boat
 		{ 109, "seve_023_speedboat_special.ee" }, // Bald Eagle Persuader agency boat at Agency 2 safehouse
 		{ 110, "rocket.ee" },
+		{ 111, "LAVE_036_Mossberg.ee"}
 	};
 
 	inline std::string get_vehicle_ee(int32_t id)
