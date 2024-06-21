@@ -241,7 +241,7 @@ void jc::test_units::test_0()
 	jc::write(0x76ui8, 0x4C48A3);
 	jc::write(0x76ui8, 0x4C48DB);*/
 
-	if (g_key->is_key_pressed(VK_NUMPAD4))
+	if (g_key->is_key_pressed(VK_NUMPAD4)) 
 	{
 		/*const std::string anim = "dance_hooker_NPC_2.anim";
 
@@ -280,12 +280,12 @@ void jc::test_units::test_0()
 				const auto v3_12 = vec3 { 0.00f, 0.00f, 0.00f };
 				const auto v3_13 = vec3 { -1.00f, 5.00f, 0.00f };
 				const auto v3_15 = vec3 { 0.00f, 1.05f, 1.97f };
+				map.insert<object_base_map::Int>(0x2f61d80e, 1); // int - use mounted gun
 				map.insert<object_base_map::Int>(0x10cea63e, 1); // int
 				map.insert<object_base_map::Int>(0x1bdbd87f, 0); // int
 				map.insert<object_base_map::Int>(0x29abd0e7, 0); // int
 				map.insert<object_base_map::Int>(0x2d27d71, 0); // int
 				map.insert<object_base_map::Int>(0x2e8bae0c, 1); // int
-				map.insert<object_base_map::Int>(0x2f61d80e, 1); // int - use mounted gun
 				map.insert<object_base_map::Int>(0x3366da33, 0); // int
 				map.insert<object_base_map::Int>(0x37595a1a, 10); // int
 				map.insert<object_base_map::Int>(0x3d9c4b55, 0); // int
@@ -496,10 +496,10 @@ void jc::test_units::test_0()
 				const auto v3_13 = vec3 { 0.00f, 0.00f, 0.00f };
 				const auto v3_14 = vec3 { -1.00f, 5.00f, 0.00f };
 				const auto v3_16 = vec3 { 0.01f, 1.51f, 4.27f };
+				map.insert<object_base_map::Int>(0x2f61d80e, 1); // int - use MG
 				map.insert<object_base_map::Int>(0x10cea63e, 1); // int
 				map.insert<object_base_map::Int>(0x29abd0e7, 1); // int
 				map.insert<object_base_map::Int>(0x2e8bae0c, 1); // int
-				map.insert<object_base_map::Int>(0x2f61d80e, 1); // int
 				map.insert<object_base_map::Int>(0x3366da33, 0); // int
 				map.insert<object_base_map::Int>(0x37595a1a, 10); // int
 				map.insert<object_base_map::Int>(0x4b049cc6, 1); // int
