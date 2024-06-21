@@ -34,6 +34,10 @@ bool ModelSystem::load_rbm(const std::string& filename, const std::vector<uint8_
 	std::string clean_name = util::fs::strip_parent_path(filename);
 	jc::stl::string name = clean_name;
 
+#if _DEBUG
+	log(GREEN, "RBM data size: {}", data.size());
+#endif
+
 	auto model = jc::this_call<AssetRBM*>(fn::LOAD_RBM_FROM_MEM, this, &name, data.data(), data.size(), 2);
 
 	rbms.insert({ clean_name, model->get_ref() });

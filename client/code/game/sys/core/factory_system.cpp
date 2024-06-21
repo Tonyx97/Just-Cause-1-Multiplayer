@@ -30,6 +30,7 @@
 #include <game/object/game_resource/ee_resource.h>
 #include <game/object/exported_entity/exported_entity.h>
 #include <game/object/vehicle/vehicle.h>
+#include <game/sys/resource/archives.h>
 
 namespace jc::factory_system
 {
@@ -65,6 +66,35 @@ namespace jc::factory_system
 }
 
 using namespace jc::factory_system::v;
+
+template <typename T>
+T read_ee(auto ptr, size_t& offset)
+{
+	return *(T*)(ptr + std::exchange(offset, offset + sizeof(T)));
+}
+
+void read_ee_mem(auto ptr, size_t& offset, void* out, size_t size)
+{
+	memcpy(out, ptr + std::exchange(offset, offset + size), size);
+}
+
+void read_ee_mem_at(auto ptr, size_t at, void* out, size_t size)
+{
+	memcpy(out, ptr + at, size);
+}
+
+std::string read_ee_str(auto ptr, size_t& offset)
+{
+	const auto len = read_ee<int>(ptr, offset);
+
+	std::string str;
+
+	str.resize(len);
+
+	read_ee_mem(ptr, offset, str.data(), len);
+
+	return str;
+}
 
 void FactorySystem::init()
 {
@@ -216,6 +246,93 @@ shared_ptr<Vehicle> FactorySystem::spawn_vehicle(const std::string& ee_name, con
 {
 	shared_ptr<Vehicle> vehicle;
 
+	// check if the EE is from a custom vehicle
+
+	if (g_custom_vehicle_ees.contains(ee_name))
+	{
+		const auto ee_data = util::fs::read_bin_file(ee_name);
+
+		auto curr_ptr = ee_data.data();
+
+		size_t curr_offset = 0ull;
+
+		read_ee<uint32_t>(curr_ptr, curr_offset);
+		read_ee<uint32_t>(curr_ptr, curr_offset);
+		read_ee<uint32_t>(curr_ptr, curr_offset);
+
+		const auto meta_size = read_ee<uint32_t>(curr_ptr, curr_offset) + 0xC;
+
+		std::vector<AssetInfo> ee_files;
+
+		while (curr_offset < meta_size)
+		{
+			const auto filename = read_ee_str(curr_ptr, curr_offset);
+			const auto data_offset = read_ee<uint32_t>(curr_ptr, curr_offset);
+			const auto data_size = read_ee<uint32_t>(curr_ptr, curr_offset);
+
+			ee_files.emplace_back(filename, -1, data_offset, data_size);
+		}
+
+		// init EE
+
+		const auto ee_resource = ExportedEntityResource::CREATE();
+		const auto ee = ee_resource->get_exported_entity();
+
+		// load EE assets
+
+		for (const auto& ee_file : ee_files)
+		{
+			std::vector<uint8_t> file_data(ee_file.size);
+
+			read_ee_mem_at(curr_ptr, ee_file.offset, file_data.data(), ee_file.size);
+
+			const auto file_type = g_archives->get_asset_type(ee_file.name);
+
+			bool loaded = false;
+
+			while (!loaded)
+			{
+				jc::stl::string file_name = ee_file.name;
+
+				loaded = jc::this_call<bool>(0x7618A0, ee_resource, &file_name, file_type, file_data.data(), ee_file.size);
+
+#if _DEBUG
+				log(GREEN, "loading ee file: {} (type: {}, loaded: {}) {}", ee_file.name, file_type, loaded, (char*)file_data.data());
+#endif
+			}
+
+			if (ee_file.name.find(".epe") != std::string::npos)
+			{
+#if _DEBUG
+				log(GREEN, "ee: {}", (void*)ee);
+				log(GREEN, "name: {} {} {}", ee_file.name, ee_file.offset, ee_file.size);
+#endif
+
+				// spawn vehicle
+
+				const auto vehicle_type = VehicleType::CREATE();
+
+				std::string class_name;
+
+				object_base_map* _map = nullptr;
+
+				ee->take_class_property(&class_name, _map);
+
+				vehicle_type->load(class_name, "exported", _map);
+
+				vehicle = vehicle_type->create_vehicle(transform);
+				vehicle->enable(true);
+				vehicle->set_color(0xFFFFFFFF);
+
+				g_game_control->add_object_to_world(vehicle);
+			}
+		}
+
+		ee_resource->free();
+
+		return vehicle;
+	}
+
 	// make sure we load the ee right now, we don't want to wait
 	// for the next frame, we need the vehicle now
 
@@ -229,6 +346,10 @@ shared_ptr<Vehicle> FactorySystem::spawn_vehicle(const std::string& ee_name, con
 
 		if (ee->take_class_property(&class_name, _map))
 		{
+#if _DEBUG
+			_map->walk();
+#endif
+
 			const auto vehicle_type = VehicleType::CREATE();
 
 			vehicle_type->load(class_name, name, _map);

@@ -269,7 +269,7 @@ int Archives::get_asset_type(const std::string& name) const
 {
 	const jc::stl::string str = name;
 
-	return jc::std_call<int>(fn::GET_ASSET_TYPE_BY_NAME, &name);
+	return jc::std_call<int>(fn::GET_ASSET_TYPE_BY_NAME, &str);
 }
 
 jc::stl::vector<size_t> Archives::get_borders() const

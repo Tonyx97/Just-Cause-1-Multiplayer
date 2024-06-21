@@ -31,6 +31,8 @@
 #include <game/object/physics/pfx_collision.h>
 #include <game/object/physics/pfx_instance.h>
 #include <game/object/camera/cam_settings.h>
+#include <game/object/vehicle/car.h>
+
 #include <game/sys/all.h>
 
 #include <serializer/serializer.h>
@@ -41,7 +43,7 @@
 
 // 40E940 = FnThatReadsAssetFromDisk
 
-DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* name, int type, ptr data, ptr size)
+DEFINE_HOOK_THISCALL(resource_request, 0x7618A0, bool, ptr a1, jc::stl::string* name, int type, ptr data, ptr size)
 {
 	/*if (strstr(name->c_str(), "bullet_") || strstr((const char*)data, "360_fire_1"))
 	{
@@ -51,20 +53,21 @@ DEFINE_HOOK_THISCALL(resource_request, 0x5C2DC0, int, ptr a1, jc::stl::string* n
 
 	//while (!GetAsyncKeyState(VK_F3));
 
-	if (type == 7 || type == 9)
+	const auto result = resource_request_hook(a1, name, type, data, size);;
+
+	//if (type == 12)
 	{
-		/*if (type == 7)
-			return 0;*/
+		//log(PURPLE, "[{:x}] {:x} {:x} {:x} {} {} ({})", RET_ADDRESS, a1, data, size, type, name->c_str(), result);
 	}
 
-	return resource_request_hook(a1, name, type, data, size);
+	return result;
 }
 
 // 8367D0
 
 std::set<std::string> g_collector;
 
-DEFINE_HOOK_THISCALL(_load_model, 0x8367D0, bool, int _this, jc::stl::string* name, int type, ptr data, int size)
+DEFINE_HOOK_THISCALL(_load_model, 0x5C1BD0, bool, int _this, jc::stl::string* name, ptr data, int size)
 {
 	/*if (strstr(name->c_str(), ".loc"))
 	{
@@ -85,24 +88,9 @@ DEFINE_HOOK_THISCALL(_load_model, 0x8367D0, bool, int _this, jc::stl::string* na
 		return _load_model_hook(_this, name, type, data, size);
 	}*/
 
-	if (type == 7 || type == 9)
-	{
-		/*log(RED, "{} '{}'", name->c_str(), (char*)data);
+	log(PURPLE, "[{:x}] {:x} {} {}", RET_ADDRESS, _this, data, size);
 
-		auto new_value1 = jc::stl::string("C:\\p4_k21666_JSTROMBRO\\Projects\\JustCause\\Data\\Locations\\test\\test_shootingrange.cgd");
-		auto new_value2 = jc::stl::string("C:\\p4_k21666_JSTROMBRO\\Projects\\JustCause\\Data\\Locations\\test\\test_shootingrange.blo");
-
-		if (type == 7)
-			return _load_model_hook(_this, &new_value1, type, data, size);
-
-		if (type == 9)
-			return _load_model_hook(_this, &new_value2, type, data, size);*/
-
-		//log(RED, "{}", *(char**)data);
-		//log(PURPLE, "{:x} {:x} {:x} {} {}", _this, data, size, type, name->c_str());
-	}
-
-	return _load_model_hook(_this, name, type, data, size);
+	return _load_model_hook(_this, name, data, size);
 }
 
 DEFINE_HOOK_THISCALL(_test2, 0x55E9D0, ptr, ptr _this, int a1, const char* name)
@@ -184,7 +172,7 @@ void jc::test_units::init()
 	//_test_hook.hook();
 
 	resource_request_hook.hook();
-	_load_model_hook.hook();
+	//_load_model_hook.hook();
 }
 
 void jc::test_units::destroy()
@@ -197,8 +185,10 @@ void jc::test_units::destroy()
 	//_test_hook.unhook();
 
 	resource_request_hook.unhook();
-	_load_model_hook.unhook();
+	//_load_model_hook.unhook();
 }
+
+shared_ptr<Vehicle> test_vehicle;
 
 void jc::test_units::test_0()
 {
@@ -250,8 +240,6 @@ void jc::test_units::test_0()
 
 	jc::write(0x76ui8, 0x4C48A3);
 	jc::write(0x76ui8, 0x4C48DB);*/
-	
-	static shared_ptr<Vehicle> vehicle;
 
 	if (g_key->is_key_pressed(VK_NUMPAD4))
 	{
@@ -261,170 +249,198 @@ void jc::test_units::test_0()
 
 		local_char->set_animation("dance_hooker_NPC_2.anim", 0.2f, true, false);*/
 
-		/*object_base_map map {};
+		const std::string een = "lave_003_Normal_Car_2.ee";
 
-		const auto m0 = mat4{ 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
-		const auto m1 = mat4{ 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
-		const auto m2 = mat4{ 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
-		const auto m3 = mat4{ -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, -1.00f, 0.00f, -0.25f, 1.72f, 0.20f, 1.00f };
-		const auto m4 = mat4{ -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, -1.00f, 0.00f, -0.34f, 0.42f, -0.12f, 1.00f };
-		const auto m5 = mat4{ 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
-		const auto m6 = mat4{ 0.50f, 0.00f, 0.00f, 0.00f, 0.00f, 0.60f, 0.00f, 0.00f, 0.00f, 0.00f, 0.60f, 0.00f, 1.20f, 0.70f, 0.00f, 1.00f };
-		const auto m7 = mat4{ 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
-		const auto v3_0 = vec3{ 0.30f, 0.30f, 1.30f };
-		const auto v3_1 = vec3{ 0.00f, 2.00f, -0.30f };
-		const auto v3_2 = vec3{ 0.00f, 0.00f, 0.00f };
-		const auto v3_3 = vec3{ 0.00f, 1.00f, -1.70f };
-		const auto v3_4 = vec3{ 0.00f, 1.00f, -1.70f };
-		const auto v3_5 = vec3{ 0.00f, 0.00f, 0.00f };
-		const auto v3_6 = vec3{ -1.00f, 4.00f, 0.00f };
-		const auto v3_7 = vec3{ 0.00f, 0.00f, 0.00f };
-		const auto v3_8 = vec3{ -0.12f, 0.06f, 0.56f };
-		const auto v3_9 = vec3{ 0.12f, 0.06f, 0.56f };
-		const auto v3_10 = vec3{ -1.00f, 3.00f, 0.00f };
-		const auto v3_11 = vec3{ 0.00f, 0.00f, 0.00f };
-		const auto v3_12 = vec3{ 0.00f, 0.00f, 0.00f };
-		const auto v3_13 = vec3{ -1.00f, 5.00f, 0.00f };
-		const auto v3_14 = vec3{ 0.00f, -1.33f, 0.50f };
-		const auto v3_15 = vec3{ 0.00f, 1.00f, 2.25f };
+		g_rsrc_streamer->request_vehicle_ee(een, [&](ExportedEntityResource*, const std::string&)
+		{
+			object_base_map map {};
 
-		map.insert<object_base_map::Int>(0x10cea63e, 1); // int
-		map.insert<object_base_map::Int>(0x1bdbd87f, 0); // int
-		map.insert<object_base_map::Int>(0x29abd0e7, 0); // int
-		map.insert<object_base_map::Int>(0x2d27d71, 1); // int
-		map.insert<object_base_map::Int>(0x2e8bae0c, 1); // int
-		map.insert<object_base_map::Int>(0x2f61d80e, 0); // int
-		map.insert<object_base_map::Int>(0x3366da33, 0); // int
-		map.insert<object_base_map::Int>(0x37595a1a, 10); // int
-		map.insert<object_base_map::Int>(0x3d9c4b55, 1); // int
-		map.insert<object_base_map::Int>(0x3f23e8c2, 0); // int
-		map.insert<object_base_map::Int>(0x4b049cc6, 1); // int
-		map.insert<object_base_map::Int>(0x57d204a4, 1); // int
-		map.insert<object_base_map::Int>(0x5aa89eea, 0); // int
-		map.insert<object_base_map::Int>(0x5eee6eac, 1); // int
-		map.insert<object_base_map::Int>(0x67372b66, 0); // int
-		map.insert<object_base_map::Int>(0x6a5fa77b, 0); // int
-		map.insert<object_base_map::Int>(0x6d629c64, 1); // int
-		map.insert<object_base_map::Int>(0x7e0179b, -1); // int
-		map.insert<object_base_map::Int>(0x89c55210, 0); // int
-		map.insert<object_base_map::Int>(0x9554e532, 0); // int
-		map.insert<object_base_map::Int>(0xa14f22a2, 1); // int
-		map.insert<object_base_map::Int>(0xaa30db97, 0); // int
-		map.insert<object_base_map::Int>(0xab890cf0, 1); // int
-		map.insert<object_base_map::Int>(0xb03f76dd, 0); // int
-		map.insert<object_base_map::Int>(0xb4b8a5e4, 0); // int
-		map.insert<object_base_map::Int>(0xbd56c9e8, 1); // int
-		map.insert<object_base_map::Int>(0xc34b70fd, 0); // int
-		map.insert<object_base_map::Int>(0xcf46bde6, 1); // int
-		map.insert<object_base_map::Int>(0xd078dd0f, 0); // int
-		map.insert<object_base_map::Int>(0xd8d7e8f2, 1); // int
-		map.insert<object_base_map::Int>(0xeb0939c3, 1); // int
-		map.insert<object_base_map::Int>(0xffa9a8a2, 1); // int
-		map.insert<object_base_map::Float>(0x1106b477, 1.00f); // float
-		map.insert<object_base_map::Float>(0x11713c81, 0.00f); // float
-		map.insert<object_base_map::Float>(0x1a379f4c, 8.00f); // float
-		map.insert<object_base_map::Float>(0x1ad78bda, 1.00f); // float
-		map.insert<object_base_map::Float>(0x1c7aa160, 0.70f); // float
-		map.insert<object_base_map::Float>(0x1f61e9a, -0.10f); // float
-		map.insert<object_base_map::Float>(0x27cc929a, -7.00f); // float
-		map.insert<object_base_map::Float>(0x29ae9b9d, 0.75f); // float
-		map.insert<object_base_map::Float>(0x3017bac1, 2.70f); // float
-		map.insert<object_base_map::Float>(0x34ac2438, 1.00f); // float
-		map.insert<object_base_map::Float>(0x38235d93, 0.00f); // float
-		map.insert<object_base_map::Float>(0x3b6ca735, 4.00f); // float
-		map.insert<object_base_map::Float>(0x42e6f844, 4.00f); // float
-		map.insert<object_base_map::Float>(0x55506c93, 30.00f); // float
-		map.insert<object_base_map::Float>(0x555b0b3a, 0.90f); // float
-		map.insert<object_base_map::Float>(0x67dfb4e9, 2.70f); // float
-		map.insert<object_base_map::Float>(0x68f17609, 0.00f); // float
-		map.insert<object_base_map::Float>(0x71b9da94, -0.75f); // float
-		map.insert<object_base_map::Float>(0x79fc37d6, -0.90f); // float
-		map.insert<object_base_map::Float>(0x8515daf3, 100.00f); // float
-		map.insert<object_base_map::Float>(0x9b92cd11, -0.75f); // float
-		map.insert<object_base_map::Float>(0x9c6cd67c, 100.00f); // float
-		map.insert<object_base_map::Float>(0x9fcd3bc1, 0.75f); // float
-		map.insert<object_base_map::Float>(0xa2edb6fe, 0.00f); // float
-		map.insert<object_base_map::Float>(0xa5a549bd, 0.10f); // float
-		map.insert<object_base_map::Float>(0xa94e99e4, 75.00f); // float
-		map.insert<object_base_map::Float>(0xcf244184, 0.00f); // float
-		map.insert<object_base_map::Float>(0xe652aac5, 0.30f); // float
-		map.insert<object_base_map::Float>(0xed737006, 0.30f); // float
-		map.insert<object_base_map::Float>(0xee13ff61, 0.20f); // float
-		map.insert<object_base_map::Float>(0xf4787d50, 1.00f); // float
-		map.insert<object_base_map::Float>(0xfa10a8d, 100.00f); // float
-		map.insert<object_base_map::Float>(0xfe31029d, 0.20f); // float
-		map.insert<object_base_map::Float>(0xfff34f1e, 0.40f); // float
-		map.insert<object_base_map::String>(0x13fca49, R"()"); // string
-		map.insert<object_base_map::String>(0x1616c9e6, R"()"); // string
-		map.insert<object_base_map::String>(0x173af671, R"()"); // string
-		map.insert<object_base_map::String>(0x274e57fb, R"(Mounted M60)"); // string
-		map.insert<object_base_map::String>(0x2a748f45, R"()"); // string
-		map.insert<object_base_map::String>(0x2bd18132, R"()"); // string
-		map.insert<object_base_map::String>(0x2f4a44f5, R"()"); // string
-		map.insert<object_base_map::String>(0x3921ad5f, R"()"); // string
-		map.insert<object_base_map::String>(0x3e3cf364, R"()"); // string
-		map.insert<object_base_map::String>(0x3e730608, R"(MODIFIER_VEHICLE_CAR)"); // string
-		map.insert<object_base_map::String>(0x475717a8, R"()"); // string
-		map.insert<object_base_map::String>(0x4a1c81fc, R"(Vehicles\Land_vehicles\LAVE_043\LAVE_043_tire_d.lod)"); // string
-		map.insert<object_base_map::String>(0x5408f582, R"()"); // string
-		map.insert<object_base_map::String>(0x62b03494, R"(Models\Vehicles\Land_vehicles\LAVE_043\LAVE_043.pfx)"); // string
-		map.insert<object_base_map::String>(0x662ada86, R"()"); // string
-		map.insert<object_base_map::String>(0x7bdf0a4b, R"()"); // string
-		map.insert<object_base_map::String>(0x7fa14b9d, R"()"); // string
-		map.insert<object_base_map::String>(0x80a47a4, R"()"); // string
-		map.insert<object_base_map::String>(0x833885e9, R"()"); // string
-		map.insert<object_base_map::String>(0x848f22dc, R"()"); // string
-		map.insert<object_base_map::String>(0x85afa691, R"()"); // string
-		map.insert<object_base_map::String>(0x8c86f0e, R"()"); // string
-		map.insert<object_base_map::String>(0xa4ab5487, R"()"); // string
-		map.insert<object_base_map::String>(0xb0ecdc44, R"(Carpaint_Sport.bmp)"); // string
-		map.insert<object_base_map::String>(0xc16ed911, R"(Fukuda Tournament)"); // string
-		map.insert<object_base_map::String>(0xc3a589bc, R"()"); // string
-		map.insert<object_base_map::String>(0xc49eb28a, R"()"); // string
-		map.insert<object_base_map::String>(0xdaf82b95, R"()"); // string
-		map.insert<object_base_map::String>(0xe2cfbec7, R"(Vehicles\Land_vehicles\LAVE_043\LAVE_043_tire.lod)"); // string
-		map.insert<object_base_map::String>(0xe48362f, R"()"); // string
-		map.insert<object_base_map::String>(0xe6420790, R"()"); // string
-		map.insert<object_base_map::String>(0xe82d4eb5, R"(models\vehicles\land_vehicles\lave_043\lave_043.pfx)"); // string
-		map.insert<object_base_map::String>(0xe86cc05c, R"()"); // string
-		map.insert<object_base_map::String>(0xfbb640e5, R"()"); // string
-		map.insert<object_base_map::String>(ObjectBase::Hash_Class, R"(CCar)"); // string
-		map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(CCar1)"); // string
-		map.insert<object_base_map::String>(ObjectBase::Hash_Model, R"(m488.rbm)"); // string Vehicles\Land_vehicles\LAVE_043\LAVE_043_body.lod
-		map.insert<object_base_map::Vec3>(0x20ad9efa, &v3_0); // vec3
-		map.insert<object_base_map::Vec3>(0x2bcceaa0, &v3_2); // vec3
-		map.insert<object_base_map::Vec3>(0x2da89476, &v3_1); // vec3
-		map.insert<object_base_map::Vec3>(0x2de4b77e, &v3_3); // vec3
-		map.insert<object_base_map::Vec3>(0x329b41fd, &v3_4); // vec3
-		map.insert<object_base_map::Vec3>(0x489f0f01, &v3_5); // vec3
-		map.insert<object_base_map::Vec3>(0x6a894c31, &v3_6); // vec3
-		map.insert<object_base_map::Vec3>(0x6d15b7fa, &v3_7); // vec3
-		map.insert<object_base_map::Vec3>(0x7ebe23fd, &v3_8); // vec3
-		map.insert<object_base_map::Vec3>(0x82ba0ccf, &v3_9); // vec3
-		map.insert<object_base_map::Vec3>(0x93ae0049, &v3_10); // vec3
-		map.insert<object_base_map::Vec3>(0x9f8bd56f, &v3_11); // vec3
-		map.insert<object_base_map::Vec3>(0xc41e4e80, &v3_12); // vec3
-		map.insert<object_base_map::Vec3>(0xd02c4ca9, &v3_13); // vec3
-		map.insert<object_base_map::Vec3>(0xf191bbc0, &v3_14); // vec3
-		map.insert<object_base_map::Vec3>(0xf58e9028, &v3_15); // vec3
-		map.insert<object_base_map::Mat4>(0x1c65cac3, &m1); // mat4
-		map.insert<object_base_map::Mat4>(0x316ec15e, &m2); // mat4
-		map.insert<object_base_map::Mat4>(0x3547f82d, &m3); // mat4
-		map.insert<object_base_map::Mat4>(0x5796b6e7, &m4); // mat4
-		map.insert<object_base_map::Mat4>(0x61786c8d, &m5); // mat4
-		map.insert<object_base_map::Mat4>(0x6d362dd4, &m6); // mat4
-		map.insert<object_base_map::Mat4>(0xb5be7095, &m7); // mat4
-		map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, &m0); // mat4
+			{
+				const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
+				const auto m1 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
+				const auto m3 = mat4 { -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, -1.00f, 0.00f, -0.25f, 1.90f, -0.20f, 1.00f };
+				const auto m4 = mat4 { -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, -1.00f, 0.00f, -0.50f, 0.56f, -0.60f, 1.00f };
+				const auto m5 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
+				const auto m6 = mat4 { 0.60f, 0.00f, 0.00f, 0.00f, 0.00f, 0.60f, 0.00f, 0.00f, 0.00f, 0.00f, 0.70f, 0.00f, 1.00f, 0.60f, 0.00f, 1.00f };
+				const auto m2 = mat4 { -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, -1.00f, 0.00f, 0.00f, 1.85f, 2.30f, 1.00f }; // special seat
+				const auto m7 = mat4 { 2.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 2.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f }; // special seat
+				const auto v3_0 = vec3 { 0.30f, 0.28f, 1.30f }; // special seat
+				const auto v3_5 = vec3 { 0.00f, 0.00f, 0.00f }; // special seat
+				const auto v3_8 = vec3 { -0.12f, 0.06f, 0.56f }; // special seat
+				const auto v3_9 = vec3 { 0.12f, 0.06f, 0.56f }; // special seat
+				const auto v3_14 = vec3 { 0.00f, -1.33f, 0.50f }; // special seat
+				const auto v3_1 = vec3 { 0.00f, 2.00f, -0.20f };
+				const auto v3_2 = vec3 { 0.00f, 0.00f, 0.00f };
+				const auto v3_3 = vec3 { 0.00f, 1.00f, -2.00f };
+				const auto v3_4 = vec3 { 0.00f, 1.00f, -2.00f };
+				const auto v3_6 = vec3 { -1.00f, 4.00f, 0.00f };
+				const auto v3_7 = vec3 { 0.00f, 0.00f, 0.00f };
+				const auto v3_10 = vec3 { -1.00f, 3.00f, 0.00f };
+				const auto v3_11 = vec3 { 0.00f, 0.00f, 0.00f };
+				const auto v3_12 = vec3 { 0.00f, 0.00f, 0.00f };
+				const auto v3_13 = vec3 { -1.00f, 5.00f, 0.00f };
+				const auto v3_15 = vec3 { 0.00f, 1.05f, 1.97f };
+				map.insert<object_base_map::Int>(0x10cea63e, 1); // int
+				map.insert<object_base_map::Int>(0x1bdbd87f, 0); // int
+				map.insert<object_base_map::Int>(0x29abd0e7, 0); // int
+				map.insert<object_base_map::Int>(0x2d27d71, 0); // int
+				map.insert<object_base_map::Int>(0x2e8bae0c, 1); // int
+				map.insert<object_base_map::Int>(0x2f61d80e, 1); // int - use mounted gun
+				map.insert<object_base_map::Int>(0x3366da33, 0); // int
+				map.insert<object_base_map::Int>(0x37595a1a, 10); // int
+				map.insert<object_base_map::Int>(0x3d9c4b55, 0); // int
+				map.insert<object_base_map::Int>(0x3f23e8c2, 0); // int
+				map.insert<object_base_map::Int>(0x4b049cc6, 1); // int
+				map.insert<object_base_map::Int>(0x57d204a4, 1); // int
+				map.insert<object_base_map::Int>(0x5aa89eea, 0); // int
+				map.insert<object_base_map::Int>(0x5eee6eac, 0); // int
+				map.insert<object_base_map::Int>(0x67372b66, 1); // int
+				map.insert<object_base_map::Int>(0x6a5fa77b, 0); // int
+				map.insert<object_base_map::Int>(0x6d629c64, 1); // int
+				map.insert<object_base_map::Int>(0x7e0179b, -1); // int
+				map.insert<object_base_map::Int>(0x89c55210, 0); // int
+				map.insert<object_base_map::Int>(0x9554e532, 0); // int
+				map.insert<object_base_map::Int>(0xa14f22a2, 0); // int
+				map.insert<object_base_map::Int>(0xaa30db97, 0); // int
+				map.insert<object_base_map::Int>(0xab890cf0, 1); // int
+				map.insert<object_base_map::Int>(0xb03f76dd, 1); // int
+				map.insert<object_base_map::Int>(0xb4b8a5e4, 0); // int
+				map.insert<object_base_map::Int>(0xbd56c9e8, 1); // int
+				map.insert<object_base_map::Int>(0xc34b70fd, 0); // int
+				map.insert<object_base_map::Int>(0xcf46bde6, 1); // int
+				map.insert<object_base_map::Int>(0xd078dd0f, 0); // int
+				map.insert<object_base_map::Int>(0xd8d7e8f2, 1); // int
+				map.insert<object_base_map::Int>(0xeb0939c3, 1); // int
+				map.insert<object_base_map::Int>(0xffa9a8a2, 1); // int
+				map.insert<object_base_map::Float>(0x1106b477, 1.00f); // float
+				map.insert<object_base_map::Float>(0x11713c81, 0.00f); // float
+				map.insert<object_base_map::Float>(0x1a379f4c, 8.00f); // float
+				map.insert<object_base_map::Float>(0x1ad78bda, 1.00f); // float
+				map.insert<object_base_map::Float>(0x1c7aa160, 0.70f); // float
+				map.insert<object_base_map::Float>(0x1f61e9a, -0.10f); // float
+				map.insert<object_base_map::Float>(0x27cc929a, -8.00f); // float
+				map.insert<object_base_map::Float>(0x29ae9b9d, 0.75f); // float
+				map.insert<object_base_map::Float>(0x3017bac1, 3.10f); // float
+				map.insert<object_base_map::Float>(0x34ac2438, 1.00f); // float
+				map.insert<object_base_map::Float>(0x38235d93, 0.00f); // float
+				map.insert<object_base_map::Float>(0x3b6ca735, 4.00f); // float
+				map.insert<object_base_map::Float>(0x42e6f844, 4.00f); // float
+				map.insert<object_base_map::Float>(0x55506c93, 30.00f); // float
+				map.insert<object_base_map::Float>(0x555b0b3a, 0.90f); // float
+				map.insert<object_base_map::Float>(0x67dfb4e9, 3.00f); // float
+				map.insert<object_base_map::Float>(0x68f17609, 0.20f); // float
+				map.insert<object_base_map::Float>(0x71b9da94, -0.75f); // float
+				map.insert<object_base_map::Float>(0x79fc37d6, -0.90f); // float
+				map.insert<object_base_map::Float>(0x8515daf3, 100.00f); // float
+				map.insert<object_base_map::Float>(0x9b92cd11, -0.75f); // float
+				map.insert<object_base_map::Float>(0x9c6cd67c, 100.00f); // float
+				map.insert<object_base_map::Float>(0x9fcd3bc1, 0.75f); // float
+				map.insert<object_base_map::Float>(0xa2edb6fe, 0.00f); // float
+				map.insert<object_base_map::Float>(0xa5a549bd, 0.10f); // float
+				map.insert<object_base_map::Float>(0xa94e99e4, 65.00f); // float
+				map.insert<object_base_map::Float>(0xcf244184, 0.00f); // float
+				map.insert<object_base_map::Float>(0xe652aac5, 0.30f); // float
+				map.insert<object_base_map::Float>(0xed737006, 0.30f); // float
+				map.insert<object_base_map::Float>(0xee13ff61, 0.20f); // float
+				map.insert<object_base_map::Float>(0xf4787d50, 1.00f); // float
+				map.insert<object_base_map::Float>(0xfa10a8d, 100.00f); // float
+				map.insert<object_base_map::Float>(0xfe31029d, 0.20f); // float
+				map.insert<object_base_map::Float>(0xfff34f1e, 0.40f); // float
+				map.insert<object_base_map::String>(0x13fca49, R"()"); // string
+				map.insert<object_base_map::String>(0x1616c9e6, R"()"); // string
+				map.insert<object_base_map::String>(0x173af671, R"()"); // string
+				{
+					map.insert<object_base_map::String>(0x274e57fb, R"(Mounted M60)"); // string
+					map.insert<object_base_map::String>(0xa4ab5487, R"(weapons\weap_011_groundmount.lod)"); // string
+				}
+				map.insert<object_base_map::String>(0x2a748f45, R"()"); // string
+				map.insert<object_base_map::String>(0x2bd18132, R"()"); // string
+				map.insert<object_base_map::String>(0x2f4a44f5, R"()"); // string
+				map.insert<object_base_map::String>(0x3921ad5f, R"()"); // string
+				map.insert<object_base_map::String>(0x3e3cf364, R"()"); // string
+				//map.insert<object_base_map::String>(0x3e730608, R"(MODIFIER_VEHICLE_CAR)"); // string
+				map.insert<object_base_map::String>(0x475717a8, R"()"); // string
+				map.insert<object_base_map::String>(0x4a1c81fc, R"()"); // string - Vehicles\Land_vehicles\LAVE_003\LAVE_003_tire_d.lod
+				map.insert<object_base_map::String>(0x5408f582, R"()"); // string
+				map.insert<object_base_map::String>(0x62b03494, R"(lave_003.pfx)"); // string
+				//map.insert<object_base_map::String>(0x62b03494, R"(lave_004.pfx)"); // string
+				map.insert<object_base_map::String>(0x662ada86, R"()"); // string
+				map.insert<object_base_map::String>(0x7bdf0a4b, R"()"); // string
+				map.insert<object_base_map::String>(0x7fa14b9d, R"()"); // string
+				map.insert<object_base_map::String>(0x80a47a4, R"()"); // string
+				map.insert<object_base_map::String>(0x833885e9, R"()"); // string
+				map.insert<object_base_map::String>(0x848f22dc, R"()"); // string
+				map.insert<object_base_map::String>(0x85afa691, R"()"); // string
+				map.insert<object_base_map::String>(0x8c86f0e, R"()"); // string
+				map.insert<object_base_map::String>(0xa4ab5487, R"()"); // string
+				map.insert<object_base_map::String>(0xb0ecdc44, R"(Carpaint_Standard.bmp)"); // string
+				map.insert<object_base_map::String>(0xc16ed911, R"(Amogus Car)"); // string
+				map.insert<object_base_map::String>(0xc3a589bc, R"()"); // string
+				map.insert<object_base_map::String>(0xc49eb28a, R"()"); // string
+				map.insert<object_base_map::String>(0xdaf82b95, R"()"); // string
+				map.insert<object_base_map::String>(0xe2cfbec7, R"(lave_004_tire_lod1.rbm)"); // string
+				map.insert<object_base_map::String>(0xe48362f, R"()"); // string
+				map.insert<object_base_map::String>(0xe6420790, R"()"); // string
+				//map.insert<object_base_map::String>(0xe82d4eb5, R"(models\vehicles\land_vehicles\lave_003\lave_003.pfx)"); // string
+				map.insert<object_base_map::String>(0xe86cc05c, R"()"); // string
+				//map.insert<object_base_map::String>(0xfbb640e5, R"(Models\Vehicles\Land_vehicles\LAVE_003\LAVE_003.dmf)"); // string
+				map.insert<object_base_map::String>(0xfbb640e5, R"()"); // string
+				map.insert<object_base_map::String>(ObjectBase::Hash_Class, R"(CCar)"); // string
+				map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(Amogus Car)"); // string
+				//map.insert<object_base_map::String>(ObjectBase::Hash_Model, R"()"); // string
+				map.insert<object_base_map::String>(ObjectBase::Hash_Model, R"(badboll_lod1pc.rbm)"); // string
+				map.insert<object_base_map::Vec3>(0x20ad9efa, &v3_0); // vec3
+				map.insert<object_base_map::Vec3>(0x2bcceaa0, &v3_2); // vec3
+				map.insert<object_base_map::Vec3>(0x2da89476, &v3_1); // vec3
+				map.insert<object_base_map::Vec3>(0x2de4b77e, &v3_3); // vec3
+				map.insert<object_base_map::Vec3>(0x329b41fd, &v3_4); // vec3
+				map.insert<object_base_map::Vec3>(0x489f0f01, &v3_5); // vec3
+				map.insert<object_base_map::Vec3>(0x6a894c31, &v3_6); // vec3
+				map.insert<object_base_map::Vec3>(0x6d15b7fa, &v3_7); // vec3
+				map.insert<object_base_map::Vec3>(0x7ebe23fd, &v3_8); // vec3
+				map.insert<object_base_map::Vec3>(0x82ba0ccf, &v3_9); // vec3
+				map.insert<object_base_map::Vec3>(0x93ae0049, &v3_10); // vec3
+				map.insert<object_base_map::Vec3>(0x9f8bd56f, &v3_11); // vec3
+				map.insert<object_base_map::Vec3>(0xc41e4e80, &v3_12); // vec3
+				map.insert<object_base_map::Vec3>(0xd02c4ca9, &v3_13); // vec3
+				map.insert<object_base_map::Vec3>(0xf191bbc0, &v3_14); // vec3
+				map.insert<object_base_map::Vec3>(0xf58e9028, &v3_15); // vec3
+				map.insert<object_base_map::Mat4>(0x1c65cac3, &m1); // mat4
+				map.insert<object_base_map::Mat4>(0x316ec15e, &m2); // mat4
+				map.insert<object_base_map::Mat4>(0x3547f82d, &m3); // mat4
+				map.insert<object_base_map::Mat4>(0x5796b6e7, &m4); // mat4
+				map.insert<object_base_map::Mat4>(0x61786c8d, &m5); // mat4
+				map.insert<object_base_map::Mat4>(0x6d362dd4, &m6); // mat4
+				map.insert<object_base_map::Mat4>(0xb5be7095, &m7); // mat4
+				map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, &m0); // mat4
+			}
 
-		const auto vehicle_type = VehicleType::CREATE();
+			TransformTR transform(local_t.get_position() + vec3(4.f, 1.f, 0.f));
 
-		vehicle_type->load("CCar", "test.ee", &map);
+			auto veh_trans = Transform(transform.t, transform.r);
 
-		vehicle = vehicle_type->create_vehicle(local_t);
-		vehicle->enable(true);
-		vehicle->set_color(0xFFFFFFFF);
+			/*if (!g_model_system->has_resource("lave_004_tire_lod1.lod"))
+			{
+				g_model_system->load_rbm("lave_004_tire_lod1.rbm", g_archives->get_asset_data("lave_004_tire_lod1.rbm"));
+			}
 
-		g_game_control->add_object_to_world(vehicle);*/
+			if (!g_physics->has_resource("lave_004.pfx"))
+			{
+				auto rbm = util::fs::read_bin_file("lave_004.pfx");
+
+				g_physics->load_pfx("lave_004.pfx", rbm, &veh_trans);
+			}*/
+
+			const auto vehicle_type = VehicleType::CREATE();
+
+			vehicle_type->load("CCar", "exported", &map);
+
+			test_vehicle = vehicle_type->create_vehicle(veh_trans);
+			test_vehicle->enable(true);
+			test_vehicle->set_color(0xFFFFFFFF);
+
+			g_game_control->add_object_to_world(test_vehicle);
+		}, true);
 
 		/*if (auto belt = local_char->get_weapon_belt())
 			belt->clear();*/
@@ -448,47 +464,206 @@ void jc::test_units::test_0()
 
 	if (g_key->is_key_pressed(VK_NUMPAD5))
 	{
-		//local_char->set_animation("dance_hooker_NPC_1.anim", 0.2f, true, false);
+		const std::string een = "arve_022_old_school_fighter.ee";
 
-		/*if (auto veh = local_char->get_vehicle())
+		g_rsrc_streamer->request_vehicle_ee(een, [&](ExportedEntityResource* eer, const std::string&)
 		{
-			if (const auto seat = veh->get_roof_seat())
+			object_base_map map {};
+
 			{
-				seat->warp_character(local_char, true);
+				const auto m0 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
+				const auto m1 = mat4 { 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f };
+				const auto m3 = mat4 { -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, -1.00f, 0.00f, -0.76f, 2.70f, 5.00f, 1.00f };
+				const auto m4 = mat4 { -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, -1.00f, 0.00f, 0.00f, 1.10f, -0.30f, 1.00f };
+				const auto m5 = mat4 { -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, -1.00f, 0.00f, 0.00f, 1.50f, 0.00f, 1.00f };
+				const auto m6 = mat4 { -3.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.70f, 0.00f, 0.00f, 0.00f, 0.00f, -4.00f, 0.00f, 0.00f, 0.40f, -0.30f, 1.00f };
+				const auto m2 = mat4 { -1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, -1.00f, 0.00f, 0.00f, 2.85f, 2.30f, 1.00f }; // special seat - relative position
+				const auto m7 = mat4 { 2.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 2.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f }; // special seat
+				const auto v3_0 = vec3 { 0.30f, 0.52f, 7.5f }; // special seat - relative camera position
+				const auto v3_6 = vec3 { -1.00f, 4.00f, 0.00f }; // special seat
+				const auto v3_9 = vec3 { 0.18f, 0.06f, 0.56f }; // special seat
+				const auto v3_10 = vec3 { 0.10f, 1.28f, 4.09f }; // special seat
+				const auto v3_15 = vec3 { 0.f, -1.05f, 0.7f }; // special seat - relative character position
+				const auto v3_1 = vec3 { -5.22f, 1.08f, -0.41f };
+				const auto v3_2 = vec3 { -0.10f, 2.05f, -0.10f };
+				const auto v3_3 = vec3 { 0.00f, 0.00f, 0.00f };
+				const auto v3_4 = vec3 { 0.00f, 1.30f, -2.90f };
+				const auto v3_5 = vec3 { 0.00f, 1.30f, -2.90f };
+				const auto v3_7 = vec3 { 0.00f, 0.00f, 0.00f };
+				const auto v3_8 = vec3 { -1.77f, 1.53f, 1.13f };
+				const auto v3_11 = vec3 { -1.00f, 3.00f, 0.00f };
+				const auto v3_12 = vec3 { 0.00f, 0.00f, 0.00f };
+				const auto v3_13 = vec3 { 0.00f, 0.00f, 0.00f };
+				const auto v3_14 = vec3 { -1.00f, 5.00f, 0.00f };
+				const auto v3_16 = vec3 { 0.01f, 1.51f, 4.27f };
+				map.insert<object_base_map::Int>(0x10cea63e, 1); // int
+				map.insert<object_base_map::Int>(0x29abd0e7, 1); // int
+				map.insert<object_base_map::Int>(0x2e8bae0c, 1); // int
+				map.insert<object_base_map::Int>(0x2f61d80e, 1); // int
+				map.insert<object_base_map::Int>(0x3366da33, 0); // int
+				map.insert<object_base_map::Int>(0x37595a1a, 10); // int
+				map.insert<object_base_map::Int>(0x4b049cc6, 1); // int
+				map.insert<object_base_map::Int>(0x57d204a4, 1); // int
+				map.insert<object_base_map::Int>(0x5aa89eea, 0); // int
+				map.insert<object_base_map::Int>(0x5eee6eac, 0); // int
+				map.insert<object_base_map::Int>(0x67372b66, 0); // int
+				map.insert<object_base_map::Int>(0x6a5fa77b, 0); // int
+				map.insert<object_base_map::Int>(0x6d629c64, 1); // int
+				map.insert<object_base_map::Int>(0x7e0179b, -1); // int
+				map.insert<object_base_map::Int>(0x9554e532, 0); // int
+				map.insert<object_base_map::Int>(0xaa30db97, 0); // int
+				map.insert<object_base_map::Int>(0xab890cf0, 1); // int
+				map.insert<object_base_map::Int>(0xb03f76dd, 1); // int
+				map.insert<object_base_map::Int>(0xb4b8a5e4, 1); // int
+				map.insert<object_base_map::Int>(0xbd56c9e8, 1); // int
+				map.insert<object_base_map::Int>(0xc34b70fd, 0); // int
+				map.insert<object_base_map::Int>(0xcf46bde6, 1); // int
+				map.insert<object_base_map::Int>(0xd078dd0f, 0); // int
+				map.insert<object_base_map::Int>(0xd8d7e8f2, 1); // int
+				map.insert<object_base_map::Int>(0xeb0939c3, 1); // int
+				map.insert<object_base_map::Int>(0xffa9a8a2, 1); // int
+				map.insert<object_base_map::Float>(0x1106b477, 300.00f); // float
+				map.insert<object_base_map::Float>(0x1a379f4c, 8.00f); // float
+				map.insert<object_base_map::Float>(0x1ad78bda, 0.70f); // float
+				map.insert<object_base_map::Float>(0x1f61e9a, -1.00f); // float
+				map.insert<object_base_map::Float>(0x29ae9b9d, 0.75f); // float
+				map.insert<object_base_map::Float>(0x3017bac1, 5.00f); // float
+				map.insert<object_base_map::Float>(0x34ac2438, 300.00f); // float
+				map.insert<object_base_map::Float>(0x38235d93, 0.00f); // float
+				map.insert<object_base_map::Float>(0x3b6ca735, 0.09f); // float
+				map.insert<object_base_map::Float>(0x45edd054, 0.05f); // float
+				map.insert<object_base_map::Float>(0x55506c93, 300.00f); // float
+				map.insert<object_base_map::Float>(0x555b0b3a, 1.00f); // float
+				map.insert<object_base_map::Float>(0x6164be27, 0.50f); // float
+				map.insert<object_base_map::Float>(0x67de3b7b, 0.25f); // float
+				map.insert<object_base_map::Float>(0x67dfb4e9, 3.20f); // float
+				map.insert<object_base_map::Float>(0x6ab06c4c, 0.40f); // float
+				map.insert<object_base_map::Float>(0x71b9da94, -0.75f); // float
+				map.insert<object_base_map::Float>(0x79fc37d6, -1.00f); // float
+				map.insert<object_base_map::Float>(0x8515daf3, 100.00f); // float
+				map.insert<object_base_map::Float>(0x9b92cd11, -0.75f); // float
+				map.insert<object_base_map::Float>(0x9c6cd67c, 100.00f); // float
+				map.insert<object_base_map::Float>(0x9fcd3bc1, 0.75f); // float
+				map.insert<object_base_map::Float>(0xa94e99e4, 65.00f); // float
+				map.insert<object_base_map::Float>(0xac7f1127, 0.07f); // float
+				map.insert<object_base_map::Float>(0xb16fe83c, 0.14f); // float
+				map.insert<object_base_map::Float>(0xb189689d, 0.05f); // float
+				map.insert<object_base_map::Float>(0xb5411373, 0.70f); // float
+				map.insert<object_base_map::Float>(0xcd1d1480, 100.00f); // float
+				map.insert<object_base_map::Float>(0xcf244184, 0.00f); // float
+				map.insert<object_base_map::Float>(0xdb12e91d, 0.70f); // float
+				map.insert<object_base_map::Float>(0xdba4c62f, 0.25f); // float
+				map.insert<object_base_map::Float>(0xed737006, 0.30f); // float
+				map.insert<object_base_map::Float>(0xf411cb9e, 0.07f); // float
+				map.insert<object_base_map::Float>(0xf4787d50, 1.00f); // float
+				map.insert<object_base_map::Float>(0xfa10a8d, 100.00f); // float
+				map.insert<object_base_map::Float>(0xfe31029d, 1.00f); // float
+				map.insert<object_base_map::Float>(0xfe56916c, 0.09f); // float
+				map.insert<object_base_map::Float>(0xfff34f1e, 0.40f); // float
+				map.insert<object_base_map::String>(0x13fca49, R"()"); // string
+				map.insert<object_base_map::String>(0x173af671, R"()"); // string
+				map.insert<object_base_map::String>(0x238dda1c, R"()"); // string
+				map.insert<object_base_map::String>(0x274e57fb, R"(Mounted M60)"); // string
+				map.insert<object_base_map::String>(0x2a748f45, R"()"); // string
+				map.insert<object_base_map::String>(0x2bd18132, R"()"); // string
+				map.insert<object_base_map::String>(0x3921ad5f, R"()"); // string
+				map.insert<object_base_map::String>(0x3e3cf364, R"()"); // string
+				map.insert<object_base_map::String>(0x3e730608, R"(MODIFIER_VEHICLE_CAR)"); // string
+				map.insert<object_base_map::String>(0x475717a8, R"()"); // string
+				map.insert<object_base_map::String>(0x4a1c81fc, R"(Vehicles\Air_vehicles\ARVE_022\ARVE_022_wheel.lod)"); // string
+				map.insert<object_base_map::String>(0x5408f582, R"()"); // string
+				map.insert<object_base_map::String>(0x62b03494, R"(Models\Vehicles\Air_vehicles\ARVE_022\ARVE_022.pfx)"); // string
+				map.insert<object_base_map::String>(0x662ada86, R"()"); // string
+				map.insert<object_base_map::String>(0x7bdf0a4b, R"()"); // string
+				map.insert<object_base_map::String>(0x7fa14b9d, R"()"); // string
+				map.insert<object_base_map::String>(0x80a47a4, R"()"); // string
+				map.insert<object_base_map::String>(0x833885e9, R"()"); // string
+				map.insert<object_base_map::String>(0x848f22dc, R"()"); // string
+				map.insert<object_base_map::String>(0x85afa691, R"()"); // string
+				map.insert<object_base_map::String>(0x8c86f0e, R"()"); // string
+				map.insert<object_base_map::String>(0x9726f27d, R"(vehicles\air_vehicles\arve_022\arve_022_propeller_alpha.lod)"); // string
+				map.insert<object_base_map::String>(0xa4ab5487, R"()"); // string
+				map.insert<object_base_map::String>(0xb0ecdc44, R"(black.bmp)"); // string
+				map.insert<object_base_map::String>(0xc16ed911, R"(McKenzie-Fergusson F2 Victor)"); // string
+				map.insert<object_base_map::String>(0xc3a589bc, R"()"); // string
+				map.insert<object_base_map::String>(0xc6660280, R"(Vehicles\Air_vehicles\ARVE_022\ARVE_022_propeller.lod)"); // string
+				map.insert<object_base_map::String>(0xcd076edb, R"()"); // string
+				map.insert<object_base_map::String>(0xdaf82b95, R"()"); // string
+				map.insert<object_base_map::String>(0xe2cfbec7, R"(Vehicles\Air_vehicles\ARVE_022\ARVE_022_wheel.lod)"); // string
+				map.insert<object_base_map::String>(0xe48362f, R"()"); // string
+				map.insert<object_base_map::String>(0xe6420790, R"()"); // string
+				map.insert<object_base_map::String>(0xe82d4eb5, R"(models\vehicles\air_vehicles\arve_014\arve_014.pfx)"); // string
+				map.insert<object_base_map::String>(0xe86cc05c, R"()"); // string
+				map.insert<object_base_map::String>(0xed54a2bb, R"()"); // string
+				map.insert<object_base_map::String>(0xfbb640e5, R"(Models\Vehicles\Air_vehicles\ARVE_022\ARVE_022.dmf)"); // string
+				map.insert<object_base_map::String>(ObjectBase::Hash_Class, R"(CAirPlane)"); // string
+				map.insert<object_base_map::String>(ObjectBase::Hash_Desc, R"(CAirPlane1)"); // string
+				map.insert<object_base_map::String>(ObjectBase::Hash_Model, R"(Vehicles\Air_vehicles\ARVE_022\ARVE_022_body.lod)"); // string
+				map.insert<object_base_map::Vec3>(0x1ab1c1b0, &v3_1); // vec3
+				map.insert<object_base_map::Vec3>(0x20ad9efa, &v3_0); // vec3
+				map.insert<object_base_map::Vec3>(0x2bcceaa0, &v3_3); // vec3
+				map.insert<object_base_map::Vec3>(0x2da89476, &v3_2); // vec3
+				map.insert<object_base_map::Vec3>(0x2de4b77e, &v3_4); // vec3
+				map.insert<object_base_map::Vec3>(0x329b41fd, &v3_5); // vec3
+				map.insert<object_base_map::Vec3>(0x489f0f01, &v3_6); // vec3
+				map.insert<object_base_map::Vec3>(0x51319039, &v3_7); // vec3
+				map.insert<object_base_map::Vec3>(0x6a894c31, &v3_8); // vec3
+				map.insert<object_base_map::Vec3>(0x7ebe23fd, &v3_9); // vec3
+				map.insert<object_base_map::Vec3>(0x82ba0ccf, &v3_10); // vec3
+				map.insert<object_base_map::Vec3>(0x93ae0049, &v3_11); // vec3
+				map.insert<object_base_map::Vec3>(0x992e85c5, &v3_12); // vec3
+				map.insert<object_base_map::Vec3>(0xc41e4e80, &v3_13); // vec3
+				map.insert<object_base_map::Vec3>(0xd02c4ca9, &v3_14); // vec3
+				map.insert<object_base_map::Vec3>(0xf191bbc0, &v3_15); // vec3
+				map.insert<object_base_map::Vec3>(0xf58e9028, &v3_16); // vec3
+				map.insert<object_base_map::Mat4>(0x1c65cac3, &m1); // mat4
+				map.insert<object_base_map::Mat4>(0x316ec15e, &m2); // mat4
+				map.insert<object_base_map::Mat4>(0x3547f82d, &m3); // mat4
+				map.insert<object_base_map::Mat4>(0x5796b6e7, &m4); // mat4
+				map.insert<object_base_map::Mat4>(0x61786c8d, &m5); // mat4
+				map.insert<object_base_map::Mat4>(0x6d362dd4, &m6); // mat4
+				map.insert<object_base_map::Mat4>(0xb5be7095, &m7); // mat4
+				map.insert<object_base_map::Mat4>(ObjectBase::Hash_Transform, &m0); // mat4
 			}
-		}*/
 
-		//log(PURPLE, "grenade: {:x}", ptr(grenade));
+			TransformTR transform(local_t.get_position() + vec3(4.f, 1.f, 0.f));
 
-		/*g_anim_system->load_anim("test.anim");
-		local_char->set_animation("test.anim", 0.2f, true, true);
-		g_anim_system->unload_anim("test.anim");*/
+			auto veh_trans = Transform(transform.t, transform.r);
 
-		//local_char->set_animation("dance_hooker_NPC_2.anim", 0.2f, true, true);
+			/*if (!g_model_system->has_resource("lave_004_tire_lod1.lod"))
+			{
+				g_model_system->load_rbm("lave_004_tire_lod1.rbm", g_archives->get_asset_data("lave_004_tire_lod1.rbm"));
+			}
+
+			if (!g_physics->has_resource("lave_004.pfx"))
+			{
+				auto rbm = util::fs::read_bin_file("lave_004.pfx");
+
+				g_physics->load_pfx("lave_004.pfx", rbm, &veh_trans);
+			}*/
+
+			const auto vehicle_type = VehicleType::CREATE();
+
+			std::string class_name;
+
+			object_base_map* _map = nullptr;
+
+			eer->get_exported_entity()->take_class_property(&class_name, _map);
+
+			vehicle_type->load(class_name, "exported", &map);
+
+			test_vehicle = vehicle_type->create_vehicle(veh_trans);
+			test_vehicle->enable(true);
+			test_vehicle->set_color(0xFFFFFFFF);
+
+			g_game_control->add_object_to_world(test_vehicle);
+		}, true);
 	}
-
-	/*if (g_key->is_key_down(VK_NUMPAD9))
+	
+	if (g_key->is_key_pressed(VK_ADD))
 	{
-		if (aaa != 24)
-		{
-			local_char->get_body_stance()->set_stance(aaa);
-			log(RED, "{}", local_char->is_crouching());
-		}
-		else
-		{
-			jc::this_call(0x4CDEC0, g_world->get_local(), 1.f);
-		}
-
-		//g_factory->spawn_general_item_pickup(local_pos + vec3(2.f, 0.f, 0.f), ItemType_Health, "medipack.lod");
-
-		//jc::this_call(0x74DE20, *seat, true);
-
-		//const auto interactable = seat->get_interactable();
-		//interactable->interact_with(local_char);
-
-		//g_factory->spawn_simple_rigid_object(local_pos + vec3(2.f, 0.f, 0.f), "crate_custom_png.rbm", "");
-		//g_archives->dump_hashed_assets();
-	}*/
+		
+	}
 
 	/*for (const auto& w : temp_weapons)
 	{
@@ -625,16 +800,8 @@ void jc::test_units::test_0()
 		}
 	}
 
-	if (g_key->is_key_pressed(VK_ADD))
+	/*if (g_key->is_key_pressed(VK_ADD))
 	{
-		/*if (!npc_lp)
-		{
-			npc_lp = game::malloc<GamePlayer>(0x53C);
-
-			jc::this_call(0x4C03B0, npc_lp);
-
-			log(GREEN, "npc lp: {:x} {:x}", ptr(npc_lp), ptr(localplayer));
-		}*/
 		
 		if (!info.handle)
 		{
@@ -666,15 +833,6 @@ void jc::test_units::test_0()
 			//info.character->set_body_stance(27);
 			//info.character->set_body_stance(25);
 			//info.character->set_body_stance(52);
-
-			/*
-			jc::write(info.character, npc_lp, 0x1C);
-			
-			if (auto weapon = info.character->get_weapon_belt()->add_weapon(Weapon_2H_SMG)) // Weapon_1H_SMG - Weapon_Grenade_Launcher
-			{
-				info.character->set_draw_weapon(weapon);
-				info.character->draw_weapon_now();
-			}*/
 		}
 		else
 		{
@@ -683,8 +841,8 @@ void jc::test_units::test_0()
 			info.handle = nullptr;
 			info.character = nullptr;
 		}
-	}
-	
+	}*/
+
 	static CharacterHandle* handle = nullptr;
 
 	static AnimatedRigidObject* garage_door = nullptr;

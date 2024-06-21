@@ -342,6 +342,25 @@ void DebugUI::render_admin_panel()
 			ImGui::EndCombo();
 		}
 
+		if (ImGui::BeginCombo("Custom Vehicles", ""))
+		{
+			for (const auto& veh_ee : g_custom_vehicle_ees)
+			{
+				bool use_filter = strlen(filter) > 0;
+
+				if ((!use_filter || (use_filter && StrStrIA(veh_ee.c_str(), filter))) && ImGui::Selectable(veh_ee.c_str(), false))
+				{
+					TransformTR transform(lp->get_position() + vec3(3.f, 1.f, 2.f));
+
+					g_net->send(Packet(WorldPID_SpawnObject, ChannelID_World, NetObject_Vehicle, transform, veh_ee));
+
+					log(RED, "wants to spawn {}", veh_ee);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+
 		ImGui::TreePop();
 	}
 

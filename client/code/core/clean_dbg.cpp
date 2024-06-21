@@ -32,10 +32,10 @@ std::map<std::string, std::pair<uint32_t, ptr>> g_hashes;
 
 constexpr bool ENABLE_HOOKS = false;
 constexpr bool ENABLE_RAYCAST_DEBUG = false;
-constexpr bool ENABLE_OBJECT_BASE_MAP_DUMP = true;
+constexpr bool ENABLE_OBJECT_BASE_MAP_DUMP = false;
 constexpr bool ENABLE_DUMPING = false;
-constexpr bool ENABLE_INIT_FROM_MAP_DUMP = true;
-constexpr bool ENABLE_ALL_MAPS_DUMP = true;
+constexpr bool ENABLE_INIT_FROM_MAP_DUMP = false;
+constexpr bool ENABLE_ALL_MAPS_DUMP = false;
 constexpr bool ENABLE_STR_DEBUG = false;
 
 inline std::string get_solution_dir()
@@ -208,7 +208,7 @@ DEFINE_HOOK_THISCALL(raycast, jc::physics::fn::RAYCAST, void*, uintptr_t _this, 
 	return raycast_hook(_this, r, a1, distance, hit_info, a3, a4, a5);
 }
 
-DEFINE_HOOK_THISCALL(object_init_from_map, 0x7A2210, void, ObjectBase* object, object_base_map* map)
+DEFINE_HOOK_THISCALL(object_init_from_map, 0x82CBA0, void, ObjectBase* object, object_base_map* map)
 {
 	if (!ENABLE_ALL_MAPS_DUMP)
 	{
@@ -532,6 +532,7 @@ void jc::clean_dbg::destroy()
 
 		if (ENABLE_OBJECT_BASE_MAP_DUMP)
 		{
+			object_init_from_map_hook.hook();
 			object_map_get_pointer_hook.unhook();
 			object_map_find_event_and_subscribe_hook.unhook();
 			object_map_find_event2_hook.unhook();
@@ -545,7 +546,6 @@ void jc::clean_dbg::destroy()
 			object_map_find_float_hook.unhook();
 			object_map_find_int_hook.unhook();
 			object_map_find_int16_hook.unhook();
-			object_init_from_map_hook.unhook();
 		}
 
 		// general debug

@@ -30,7 +30,7 @@ class PlayerGrenade;
 */
 class FactorySystem
 {
-private:
+
 public:
 
 	void init();
@@ -69,3 +69,5 @@ public:
 };
 
 inline Singleton<FactorySystem, jc::spawn_system::SINGLETON> g_factory;
+
+inline std::unordered_set<std::string> g_custom_vehicle_ees;

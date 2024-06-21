@@ -332,6 +332,28 @@ void script::register_functions(Script* script)
 		g_weapon->remove_weapon_template(v);
 	});
 
+	/* VEHICLES */
+
+	vm->add_function("loadCustomVehicle", [](luas::state& s, const std::string& ee)
+	{
+		const auto rsrc_path = s.get_global_var<std::string>(script::globals::RSRC_PATH);
+		const auto filename = rsrc_path + ee;
+
+		check(std::filesystem::is_regular_file(filename), "Vehicle EE '{}' does not exist", filename);
+
+		g_custom_vehicle_ees.insert(filename);
+	});
+
+	vm->add_function("unloadCustomVehicle", [](luas::state& s, const std::string& ee)
+	{
+		const auto rsrc_path = s.get_global_var<std::string>(script::globals::RSRC_PATH);
+		const auto filename = rsrc_path + ee;
+
+		check(std::filesystem::is_regular_file(filename), "Vehicle EE '{}' does not exist", filename);
+
+		g_custom_vehicle_ees.erase(filename);
+	});
+
 	/* OBJECTS & SPAWNING */
 
 	vm->add_function("spawnObjectiveMarker", [](const svec3& pos, const svec4& color)
@@ -497,7 +519,7 @@ void script::register_functions(Script* script)
 		const auto script = s.get_global_var<Script*>(script::globals::SCRIPT_INSTANCE);
 		const auto owner = script->get_owner();
 
-		if (const auto obj = g_net->spawn_vehicle(SyncType_Distance, NetObject_Damageable, TransformTR(pos.obj()), ee_name))
+		if (const auto obj = g_net->spawn_vehicle(SyncType_Distance, NetObject_Vehicle, TransformTR(pos.obj()), ee_name))
 		{
 			owner->add_net_object(obj);
 
