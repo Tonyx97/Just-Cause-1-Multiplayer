@@ -26,6 +26,7 @@
 #include <game/object/weapon/weapon_belt.h>
 #include <game/object/game_player/game_player.h>
 #include <game/object/area_damage/area_damage.h>
+#include <game/object/vehicle/vehicle.h>
 #elif defined(JC_SERVER)
 #include <sql.h>
 
@@ -339,7 +340,7 @@ void script::register_functions(Script* script)
 		const auto rsrc_path = s.get_global_var<std::string>(script::globals::RSRC_PATH);
 		const auto filename = rsrc_path + ee;
 
-		check(std::filesystem::is_regular_file(filename), "Vehicle EE '{}' does not exist", filename);
+		//check(std::filesystem::is_regular_file(filename), "Vehicle EE '{}' does not exist ({})", filename, std::filesystem::current_path().string());
 
 		g_custom_vehicle_ees.insert(filename);
 	});
@@ -349,7 +350,7 @@ void script::register_functions(Script* script)
 		const auto rsrc_path = s.get_global_var<std::string>(script::globals::RSRC_PATH);
 		const auto filename = rsrc_path + ee;
 
-		check(std::filesystem::is_regular_file(filename), "Vehicle EE '{}' does not exist", filename);
+		//check(std::filesystem::is_regular_file(filename), "Vehicle EE '{}' does not exist", filename);
 
 		g_custom_vehicle_ees.erase(filename);
 	});
@@ -698,6 +699,11 @@ void script::register_functions(Script* script)
 	vm->add_function("getVehicleName", [](VehicleNetObject* vehicle_net)
 	{
 		NET_OBJ_CHECK_RET(vehicle_net, get_ee, "");
+	});
+
+	vm->add_function("setVehicleFaction", [](VehicleNetObject* vehicle_net, int faction)
+	{
+		NET_OBJ_CHECK_DO(vehicle_net, set_faction, faction, true);
 	});
 
 	/* DAMAGEABLE */

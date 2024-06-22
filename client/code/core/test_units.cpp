@@ -171,7 +171,7 @@ void jc::test_units::init()
 	//_test3_hook.hook();
 	//_test_hook.hook();
 
-	resource_request_hook.hook();
+	//resource_request_hook.hook();
 	//_load_model_hook.hook();
 }
 
@@ -184,7 +184,7 @@ void jc::test_units::destroy()
 	//_test4_hook.unhook();
 	//_test_hook.unhook();
 
-	resource_request_hook.unhook();
+	//resource_request_hook.unhook();
 	//_load_model_hook.unhook();
 }
 

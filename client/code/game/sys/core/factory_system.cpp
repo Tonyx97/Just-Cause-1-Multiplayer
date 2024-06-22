@@ -248,89 +248,103 @@ shared_ptr<Vehicle> FactorySystem::spawn_vehicle(const std::string& ee_name, con
 
 	// check if the EE is from a custom vehicle
 
-	if (g_custom_vehicle_ees.contains(ee_name))
+	if (ee_name.find("resources") != std::string::npos)
 	{
-		const auto ee_data = util::fs::read_bin_file(ee_name);
+		log(GREEN, "{}", g_custom_vehicle_ees.size());
 
-		auto curr_ptr = ee_data.data();
-
-		size_t curr_offset = 0ull;
-
-		read_ee<uint32_t>(curr_ptr, curr_offset);
-		read_ee<uint32_t>(curr_ptr, curr_offset);
-		read_ee<uint32_t>(curr_ptr, curr_offset);
-
-		const auto meta_size = read_ee<uint32_t>(curr_ptr, curr_offset) + 0xC;
-
-		std::vector<AssetInfo> ee_files;
-
-		while (curr_offset < meta_size)
+		if (g_custom_vehicle_ees.contains(ee_name))
 		{
-			const auto filename = read_ee_str(curr_ptr, curr_offset);
-			const auto data_offset = read_ee<uint32_t>(curr_ptr, curr_offset);
-			const auto data_size = read_ee<uint32_t>(curr_ptr, curr_offset);
+			const auto ee_data = util::fs::read_bin_file(ee_name);
 
-			ee_files.emplace_back(filename, -1, data_offset, data_size);
-		}
+			auto curr_ptr = ee_data.data();
 
-		// init EE
+			size_t curr_offset = 0ull;
 
-		const auto ee_resource = ExportedEntityResource::CREATE();
-		const auto ee = ee_resource->get_exported_entity();
+			read_ee<uint32_t>(curr_ptr, curr_offset);
+			read_ee<uint32_t>(curr_ptr, curr_offset);
+			read_ee<uint32_t>(curr_ptr, curr_offset);
 
-		// load EE assets
+			const auto meta_size = read_ee<uint32_t>(curr_ptr, curr_offset) + 0xC;
 
-		for (const auto& ee_file : ee_files)
-		{
-			std::vector<uint8_t> file_data(ee_file.size);
+			std::vector<AssetInfo> ee_files;
 
-			read_ee_mem_at(curr_ptr, ee_file.offset, file_data.data(), ee_file.size);
-
-			const auto file_type = g_archives->get_asset_type(ee_file.name);
-
-			bool loaded = false;
-
-			while (!loaded)
+			while (curr_offset < meta_size - 0xC)
 			{
-				jc::stl::string file_name = ee_file.name;
+				const auto filename = read_ee_str(curr_ptr, curr_offset);
+				const auto data_offset = read_ee<uint32_t>(curr_ptr, curr_offset);
+				const auto data_size = read_ee<uint32_t>(curr_ptr, curr_offset);
 
-				loaded = jc::this_call<bool>(0x7618A0, ee_resource, &file_name, file_type, file_data.data(), ee_file.size);
-
-#if _DEBUG
-				log(GREEN, "loading ee file: {} (type: {}, loaded: {}) {}", ee_file.name, file_type, loaded, (char*)file_data.data());
-#endif
+				ee_files.emplace_back(filename, -1, data_offset, data_size);
 			}
 
-			if (ee_file.name.find(".epe") != std::string::npos)
+			// init EE
+
+			const auto ee_resource = ExportedEntityResource::CREATE();
+			const auto ee = ee_resource->get_exported_entity();
+
+			// load EE assets
+
+			for (const auto& ee_file : ee_files)
 			{
+				const auto file_type = g_archives->get_asset_type(ee_file.name);
+
 #if _DEBUG
-				log(GREEN, "ee: {}", (void*)ee);
-				log(GREEN, "name: {} {} {}", ee_file.name, ee_file.offset, ee_file.size);
+				log(GREEN, "loading ee file: {} (type: {})", ee_file.name, file_type);
 #endif
 
-				// spawn vehicle
+				std::vector<uint8_t> file_data(ee_file.size);
 
-				const auto vehicle_type = VehicleType::CREATE();
+				read_ee_mem_at(curr_ptr, ee_file.offset, file_data.data(), ee_file.size);
 
-				std::string class_name;
 
-				object_base_map* _map = nullptr;
+				bool loaded = false;
 
-				ee->take_class_property(&class_name, _map);
+				while (!loaded)
+				{
+					jc::stl::string file_name = ee_file.name;
 
-				vehicle_type->load(class_name, "exported", _map);
+					loaded = jc::this_call<bool>(0x7618A0, ee_resource, &file_name, file_type, file_data.data(), file_data.size());
 
-				vehicle = vehicle_type->create_vehicle(transform);
-				vehicle->enable(true);
-				vehicle->set_color(0xFFFFFFFF);
+#if _DEBUG
+					log(GREEN, "status ee file: {} (type: {}, loaded: {})", ee_file.name, file_type, loaded);
+#endif
+				}
 
-				g_game_control->add_object_to_world(vehicle);
+				if (ee_file.name.find(".epe") != std::string::npos)
+				{
+#if _DEBUG
+					log(GREEN, "ee: {}", (void*)ee);
+					log(GREEN, "name: {} {} {}", ee_file.name, ee_file.offset, ee_file.size);
+#endif
+
+					// spawn vehicle
+
+					const auto vehicle_type = VehicleType::CREATE();
+
+					std::string class_name;
+
+					object_base_map* _map = nullptr;
+
+					ee->take_class_property(&class_name, _map);
+
+					vehicle_type->load(class_name, "exported", _map);
+
+					vehicle = vehicle_type->create_vehicle(transform);
+					vehicle->enable(true);
+					vehicle->set_color(0xFFFFFFFF);
+
+					g_game_control->add_object_to_world(vehicle);
+
+					break;
+				}
 			}
+
+			ee_resource->free();
+
+			return vehicle;
 		}
 
-		ee_resource->free();
-
-		return vehicle;
+		return {};
 	}
 
 	// make sure we load the ee right now, we don't want to wait

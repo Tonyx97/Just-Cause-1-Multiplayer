@@ -69,7 +69,9 @@ bool convert_to_rbm(const std::string& path, const std::string& filename, const 
 
 				aiString name;
 
-				check(material->GetTexture(type, 0, &name) == aiReturn_SUCCESS, "Could not get a mesh texture");
+				check(material->GetTexture(type, 0, &name) == aiReturn_SUCCESS, "Could not get a mesh texture: {}", int(type));
+
+				//MessageBoxA(nullptr, name.C_Str(), "Texture", MB_OK);
 
 				return std::string(name.C_Str());
 			};

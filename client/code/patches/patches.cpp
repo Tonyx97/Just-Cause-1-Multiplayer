@@ -177,6 +177,10 @@ void jc::patches::apply_initial_patches()
 	jc::write(0x74ui8, 0x7FED33);
 #endif
 
+	// nop resource streamer debugbreak
+
+	jc::nop(0x988B9C, 5);
+
 	// replace 10 with 0 so the game opening doesn't delay
 
 	jc::write(0, jc::g::FOCUS_FREEZE_TIME);
