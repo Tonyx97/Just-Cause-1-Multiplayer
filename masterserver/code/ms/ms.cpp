@@ -20,11 +20,11 @@ void MasterServer::start_client_sv()
 
 	// get changelog
 
-	refresh_changelog();
+	//refresh_changelog();
 
 	// get news
 
-	refresh_news();
+	///refresh_news();
 
 	// setup the client server
 
